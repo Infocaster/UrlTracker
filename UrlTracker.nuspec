@@ -22,5 +22,6 @@ You can also create your own redirects, based on a simple URL or using a Regex p
   <files>
     <file src="readme.txt" target="" />
 	<file src="bin\InfoCaster.Umbraco.UrlTracker.dll" target="lib" />
+  <file src="lib\*.dll" target="lib" />
   </files>
 </package>

@@ -15,7 +15,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Helpers
     {
         public static void LogException(this Exception ex)
         {
-            LogHelper.Error(typeof(LoggingHelper), ex.Message, ex);
+            //todo: LogHelper.Error(typeof(LoggingHelper), ex.Message, ex);
         }
 
         public static void LogInformation(string message, params object[] args)
@@ -27,7 +27,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Helpers
         {
             if (UrlTrackerSettings.EnableLogging)
             {
-                LogHelper.Debug(typeof(LoggingHelper), () => { return message; });
+                //todo: LogHelper.Debug(typeof(LoggingHelper), () => { return message; });
             }
         }
     }

@@ -1,10 +1,13 @@
-﻿using InfoCaster.Umbraco.UrlTracker.Helpers;
+﻿using InfoCaster.Umbraco.UrlTracker.Extensions;
+using InfoCaster.Umbraco.UrlTracker.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
-using umbraco.NodeFactory;
+using Umbraco.Core.Models.PublishedContent;
+using Umbraco.Web;
+using Umbraco.Web.Composing;
 
 namespace InfoCaster.Umbraco.UrlTracker.Models
 {
@@ -19,6 +22,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
     [DebuggerDisplay("OUrl = {OldUrl} | Rgx = {OldRegex} | Qs = {OldUrlQueryString} | Root = {RedirectRootNodeId}")]
     public class UrlTrackerModel
     {
+        private UmbracoHelper _umbracoHelper;
         #region Data fields
         public int Id { get; set; }
         public string OldUrl { get; set; }
@@ -68,7 +72,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                     return string.Concat("Regex: ", OldRegex);
 
                 UrlTrackerDomain domain = null;
-                List<UrlTrackerDomain> domains = UmbracoHelper.GetDomains();
+                List<UrlTrackerDomain> domains = _umbracoHelper.GetDomains();
                 domain = domains.FirstOrDefault(x => x.NodeId == RedirectRootNode.Id);
                 if (domain == null)
                     domain = new UrlTrackerDomain(-1, RedirectRootNode.Id, string.Concat(HttpContext.Current.Request.Url.Host, HttpContext.Current.Request.Url.IsDefaultPort && !UrlTrackerSettings.AppendPortNumber ? string.Empty : string.Concat(":", HttpContext.Current.Request.Url.Port)));
@@ -115,10 +119,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                     }
                 }
 
-                if (!RedirectRootNode.NiceUrl.EndsWith("#") && RedirectNodeId.HasValue)
+                if (!RedirectRootNode.Url.EndsWith("#") && RedirectNodeId.HasValue)
                 {
 
-                    List<UrlTrackerDomain> domains = UmbracoHelper.GetDomains();
+                    List<UrlTrackerDomain> domains = _umbracoHelper.GetDomains();
                     List<UrlTrackerDomain> siteDomains = domains.Where(x => x.NodeId == RedirectRootNode.Id).ToList();
                     List<string> hosts =
                         siteDomains
@@ -126,17 +130,17 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                         .ToList();
                     if (hosts.Count == 0)
                     {
-                        return umbraco.library.NiceUrl(RedirectNodeId.Value);
+                        return _umbracoHelper.GetUrl(RedirectNodeId.Value);
                     }
                     var sourceUrl = new Uri(siteDomains.First().UrlWithDomain);
-                    var targetUrl = new Uri(sourceUrl, umbraco.library.NiceUrl(RedirectNodeId.Value));
+                    var targetUrl = new Uri(sourceUrl,_umbracoHelper.GetUrl(RedirectNodeId.Value));
                     if (!targetUrl.Host.Equals(sourceUrl.Host, StringComparison.OrdinalIgnoreCase))
                     {
                         return targetUrl.AbsoluteUri;
                     }
                     if (hosts.Any(n => n.Equals(sourceUrl.Host, StringComparison.OrdinalIgnoreCase)))
                     {
-                        string url = umbraco.library.NiceUrl(RedirectNodeId.Value);
+                        string url = _umbracoHelper.GetUrl(RedirectNodeId.Value);
                         // if current host is for this site already... (so no unnessecary redirects to primary domain)
                         if (url.StartsWith(Uri.UriSchemeHttp))
                         {
@@ -146,7 +150,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                         }
                         return url;
                     }
-                    var newUri = new Uri(sourceUrl, umbraco.library.NiceUrl(RedirectNodeId.Value));
+                    var newUri = new Uri(sourceUrl, _umbracoHelper.GetUrl(RedirectNodeId.Value));
                     if (sourceUrl.Host != newUri.Host)
                     {
                         return newUri.AbsoluteUri;
@@ -159,21 +163,21 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                 
                 if (RedirectNodeId.HasValue)
                 {
-                    return umbraco.library.NiceUrl(RedirectNodeId.Value);
+                    return _umbracoHelper.GetUrl(RedirectNodeId.Value);
                     //calculatedRedirectUri = new Uri();
                 }
                 return string.Empty;
 
             }
         }
-        public Node RedirectRootNode
+        public IPublishedContent RedirectRootNode
         {
             get
             {
-                Node redirectRootNode = new Node(RedirectRootNodeId);
+                IPublishedContent redirectRootNode = _umbracoHelper.Content(RedirectRootNodeId);
                 if (redirectRootNode.Id == 0)
                 {
-                    Node rootNode = new Node(-1).Children.OfType<Node>().FirstOrDefault();
+                    var rootNode = _umbracoHelper.Content(-1).Children.FirstOrDefault();
                     if (rootNode != null && rootNode.Id > 0)
                         redirectRootNode = rootNode;
                 }
@@ -213,16 +217,16 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
             {
                 if (RedirectNodeId.HasValue)
                 {
-                    var xml = umbraco.library.GetXmlNodeById(RedirectNodeId.Value.ToString());
-                    if (xml.Current.InnerXml.StartsWith("<error>No published item exist with id"))
-                        return false;
+                    return _umbracoHelper.Content(RedirectNodeId.Value).IsPublished();
                 }
                 return true;
             }
         }
         #endregion
 
-        public UrlTrackerModel() { }
+        public UrlTrackerModel() {
+            _umbracoHelper = (UmbracoHelper)Current.Factory.GetInstance(typeof(UmbracoHelper));
+        }
 
         public UrlTrackerModel(string oldUrl, string oldUrlQueryString, string oldRegex, int redirectRootNodeId, int? redirectNodeId, string redirectUrl, int redirectHttpCode, bool redirectPassThroughQueryString, bool forceRedirect, string notes)
         {
@@ -236,6 +240,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
             RedirectPassThroughQueryString = redirectPassThroughQueryString;
             ForceRedirect = forceRedirect;
             Notes = notes ?? string.Empty;
+            _umbracoHelper = (UmbracoHelper)Current.Factory.GetInstance(typeof(UmbracoHelper));
         }
 
         public UrlTrackerModel(int id, string oldUrl, string oldUrlQueryString, string oldRegex, int redirectRootNodeId, int? redirectNodeId, string redirectUrl, int redirectHttpCode, bool redirectPassThroughQueryString, bool forceRedirect, string notes, bool is404, string referrer, DateTime inserted)

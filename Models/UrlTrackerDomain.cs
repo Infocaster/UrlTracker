@@ -2,25 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using umbraco.NodeFactory;
+using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Web;
+using Umbraco.Web.Composing;
 
 namespace InfoCaster.Umbraco.UrlTracker.Models
 {
     public class UrlTrackerDomain
     {
+        private UmbracoHelper _umbracoHelper;
         public int Id { get; set; }
         public int NodeId { get; set; }
         public string Name { get; set; }
 
-		private Node _node = null;
-		public Node Node
+		private IPublishedContent _node = null;
+		public IPublishedContent Node
 		{
 			get
 			{
 				if (_node == null)
 				{
-					_node = new Node(NodeId);
+					_node = _umbracoHelper.Content(NodeId);
 				}
 
 				return _node;
@@ -36,7 +38,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                     using (InfoCaster.Umbraco.UrlTracker.Helpers.ContextHelper.EnsureHttpContext())
                     {
                         // not sure if this will ever occur because the ensurehttpcontext is now added...
-                        if (UmbracoContext.Current != null)
+                        if (Current.UmbracoContext != null)
                         {
                             /*var url = new Node(node.Id).Url;
                             return url;*/
@@ -44,7 +46,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                         }
                         else
                         {
-                            return string.Format("{0}{1}{2}", HttpContext.Current != null ? HttpContext.Current.Request.Url.Scheme : Uri.UriSchemeHttp, Uri.SchemeDelimiter, HttpContext.Current.Request.Url.Host + "/" + Node.Parent.UrlName + "/" + Node.UrlName);
+                            return string.Format("{0}{1}{2}", HttpContext.Current != null ? HttpContext.Current.Request.Url.Scheme : Uri.UriSchemeHttp, Uri.SchemeDelimiter, HttpContext.Current.Request.Url.Host + "/" + Node.Parent.Name + "/" + Node.Name);
                         }
                     }
                 }
@@ -62,13 +64,16 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
             }
         }
 
-        public UrlTrackerDomain() { }
+        public UrlTrackerDomain(UmbracoHelper umbracoHelper) {
+            _umbracoHelper = umbracoHelper;
+        }
 
         public UrlTrackerDomain(int id, int nodeId, string name)
         {
             Id = id;
             NodeId = nodeId;
             Name = name;
+            _umbracoHelper = (UmbracoHelper)Current.Factory.GetInstance(typeof(UmbracoHelper));
         }
 
         public override string ToString()

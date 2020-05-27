@@ -10,8 +10,9 @@ using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using umbraco.BasePages;
 using umbraco.controls;
-using Umbraco.Web.UI.Pages;
+using Umbraco.Web.UI;
 
 namespace InfoCaster.Umbraco.UrlTracker.UI
 {

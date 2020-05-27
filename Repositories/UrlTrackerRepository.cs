@@ -7,11 +7,14 @@ using InfoCaster.Umbraco.UrlTracker.Helpers;
 using InfoCaster.Umbraco.UrlTracker.Models;
 using umbraco.BusinessLogic;
 using umbraco.DataLayer;
-using umbraco.NodeFactory;
+//using umbraco.NodeFactory;
 using Umbraco.Core;
+//using Umbraco.Core.Composing;
+using Umbraco.Web.Composing;
 using Umbraco.Core.Models;
 using Umbraco.Core.Persistence;
 using Umbraco.Web;
+using Umbraco.Core.Models.PublishedContent;
 
 namespace InfoCaster.Umbraco.UrlTracker.Repositories
 {
@@ -23,12 +26,13 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
         static DateTime LastForcedRedirectCacheRefreshTime = DateTime.UtcNow;
         static readonly object _cacheLock = new object();
         static readonly object _timeoutCacheLock = new object();
-        static readonly DatabaseProviders DatabaseProvider = ApplicationContext.Current.DatabaseContext.DatabaseProvider;
+        static readonly string DatabaseProvider = Constants.DatabaseProviders.SqlServer;
 
         #region Add
         public static bool AddUrlMapping(IContent content, int rootNodeId, string url, AutoTrackingTypes type, bool isChild = false)
         {
-            if (url != "#" && content.Template != null && content.Template.Id > 0)
+            UmbracoHelper umbracoHelper = Current.Factory.GetInstance<UmbracoHelper>();
+            if (url != "#" && content.TemplateId > 0)
             {
                 string notes = isChild ? "An ancestor" : "This page";
                 switch (type)
@@ -51,8 +55,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 
                 if (UrlTrackerSettings.HasDomainOnChildNode)
                 {
-                    var rootNode = new Node(rootNodeId);
-                    var rootUri = new Uri(rootNode.NiceUrl);
+                    var rootUri = new Uri(umbracoHelper.GetUrl(rootNodeId));
                     var shortRootUrl = UrlTrackerHelper.ResolveShortestUrl(rootUri.AbsolutePath);
                     if (url.StartsWith(shortRootUrl, StringComparison.OrdinalIgnoreCase))
                     {
@@ -71,16 +74,14 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 
                         query = "INSERT INTO icUrlTracker (RedirectRootNodeId, RedirectNodeId, OldUrl, Notes) VALUES (@rootNodeId, @nodeId, @url, @notes)";
                         _sqlHelper.ExecuteNonQuery(query, _sqlHelper.CreateParameter("rootNodeId", rootNodeId), _sqlHelper.CreateParameter("nodeId", content.Id), _sqlHelper.CreateStringParameter("url", url), _sqlHelper.CreateStringParameter("notes", notes));
-
-                        if (content.Children().Any())
-                        {
-                            foreach (IContent child in content.Children())
-                            {
-                                Node node = new Node(child.Id);
-                                AddUrlMapping(child, rootNodeId, node.NiceUrl, type, true);
-                            }
-                        }
-
+                        //if (content.Children().Any())
+                        //{
+                        //    foreach (IPublishedContent child in content.Children())
+                        //    {
+                        //        Node node = new Node(child.Id);
+                        //        AddUrlMapping(child, rootNodeId, node.NiceUrl, type, true);
+                        //    }
+                        //}
                         return true;
                     }
                 }
@@ -99,10 +100,11 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 
         public static void AddGoneEntryByNodeId(int nodeId)
         {
-            if (UmbracoContext.Current == null) // NiceUrl will throw an exception if UmbracoContext is null, and we'll be unable to retrieve the URL of the node
+            UmbracoHelper umbracoHelper = Current.Factory.GetInstance<UmbracoHelper>();
+            if (Current.UmbracoContext == null) // NiceUrl will throw an exception if UmbracoContext is null, and we'll be unable to retrieve the URL of the node
                 return;
 
-            string url = umbraco.library.NiceUrl(nodeId);
+            string url = umbracoHelper.GetUrl(nodeId);
             if (url == "#")
                 return;
 
@@ -457,7 +459,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
                 for (var i = 1; i <= 3; i++)
                 {
                     var alreadyAdded = false;
-                    if (DatabaseProvider == DatabaseProviders.SqlServerCE)
+                    if (DatabaseProvider == Constants.DatabaseProviders.SqlCe)
                     {
                         //Check if columns exists
                         var query =
@@ -488,7 +490,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
         {
             const string basicFolderName = "InfoCaster.Umbraco.UrlTracker.SQL.";
             var folderName = basicFolderName;
-            if (DatabaseProvider == DatabaseProviders.SqlServerCE)
+            if (DatabaseProvider == Constants.DatabaseProviders.SqlCe)
             {
                 folderName += "SqlServerCompact.";
             }
@@ -501,6 +503,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 
         public static int MigrateData()
         {
+            UmbracoHelper umbracoHelper = Current.Factory.GetInstance<UmbracoHelper>();
             if (!GetUrlTrackerTableExists())
                 throw new Exception("Url Tracker table not found.");
             if (!GetUrlTrackeOldTableExists())
@@ -525,7 +528,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 
             foreach (OldUrlTrackerModel oldUrlTrackerEntry in oldUrlTrackerEntries)
             {
-                Node node = new Node(oldUrlTrackerEntry.NodeId);
+                var node = umbracoHelper.Content(oldUrlTrackerEntry.NodeId);
                 if ((node.Id > 0 || true) && !string.IsNullOrEmpty(oldUrlTrackerEntry.OldUrl) && oldUrlTrackerEntry.OldUrl != "#")
                 {
                     string oldUrl = oldUrlTrackerEntry.OldUrl;
@@ -554,7 +557,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
                         !oldUrlTrackerEntry.IsRegex ? oldUrl : string.Empty,
                         oldUri != null ? !string.IsNullOrEmpty(oldUri.Query) && oldUri.Query.StartsWith("?") ? oldUri.Query.Substring(1) : oldUri.Query : string.Empty,
                         oldUrlTrackerEntry.IsRegex ? oldUrl : string.Empty,
-                        node.GetDomainRootNode().Id,
+                        node.Root().Id,
                         oldUrlTrackerEntry.NodeId,
                         string.Empty,
                         301,
