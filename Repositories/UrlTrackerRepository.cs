@@ -5,8 +5,6 @@ using System.Threading;
 using InfoCaster.Umbraco.UrlTracker.Extensions;
 using InfoCaster.Umbraco.UrlTracker.Helpers;
 using InfoCaster.Umbraco.UrlTracker.Models;
-using umbraco.BusinessLogic;
-using umbraco.DataLayer;
 //using umbraco.NodeFactory;
 using Umbraco.Core;
 //using Umbraco.Core.Composing;
@@ -14,13 +12,13 @@ using Umbraco.Web.Composing;
 using Umbraco.Core.Models;
 using Umbraco.Core.Persistence;
 using Umbraco.Web;
-using Umbraco.Core.Models.PublishedContent;
+using System.Data.Common;
+using static InfoCaster.Umbraco.UrlTracker.Helpers.SqlHelper;
 
 namespace InfoCaster.Umbraco.UrlTracker.Repositories
 {
     public static class UrlTrackerRepository
     {
-        static ISqlHelper _sqlHelper { get { return Application.SqlHelper; } }
         static readonly Uri _baseUri = new Uri("http://www.example.org");
         static List<UrlTrackerModel> _forcedRedirectsCache;
         static DateTime LastForcedRedirectCacheRefreshTime = DateTime.UtcNow;
@@ -31,6 +29,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
         #region Add
         public static bool AddUrlMapping(IContent content, int rootNodeId, string url, AutoTrackingTypes type, bool isChild = false)
         {
+
             UmbracoHelper umbracoHelper = Current.Factory.GetInstance<UmbracoHelper>();
             if (url != "#" && content.TemplateId > 0)
             {
@@ -66,14 +65,23 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
                 if (!string.IsNullOrEmpty(url))
                 {
                     string query = "SELECT 1 FROM icUrlTracker WHERE RedirectNodeId = @nodeId AND OldUrl = @url";
-                    int exists = _sqlHelper.ExecuteScalar<int>(query, _sqlHelper.CreateParameter("nodeId", content.Id), _sqlHelper.CreateStringParameter("url", url));
-
+                    var SqlParams = new List<SqlParameter>();
+                    SqlParams.Add(CreateGenericParameter("nodeId", content.Id));
+                    SqlParams.Add(CreateStringParameter("url", url));
+                    int exists = ExecuteScalar<int>(query, SqlParams);
                     if (exists != 1)
                     {
                         LoggingHelper.LogInformation("UrlTracker Repository | Adding mapping for node id: {0} and url: {1}", new string[] { content.Id.ToString(), url });
 
                         query = "INSERT INTO icUrlTracker (RedirectRootNodeId, RedirectNodeId, OldUrl, Notes) VALUES (@rootNodeId, @nodeId, @url, @notes)";
-                        _sqlHelper.ExecuteNonQuery(query, _sqlHelper.CreateParameter("rootNodeId", rootNodeId), _sqlHelper.CreateParameter("nodeId", content.Id), _sqlHelper.CreateStringParameter("url", url), _sqlHelper.CreateStringParameter("notes", notes));
+                        var SqlInsertParams = new List<SqlParameter>();
+                        SqlInsertParams.Add(CreateGenericParameter("rootNodeId", rootNodeId));
+                        SqlInsertParams.Add(CreateGenericParameter("nodeId", content.Id));
+                        SqlInsertParams.Add(CreateStringParameter("url", url));
+                        SqlInsertParams.Add(CreateGenericParameter("nodeId", content.Id));
+                        SqlInsertParams.Add(CreateStringParameter("notes", notes));
+
+                        ExecuteScalar<int>(query, SqlInsertParams);
                         //if (content.Children().Any())
                         //{
                         //    foreach (IPublishedContent child in content.Children())
@@ -92,7 +100,18 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
         public static void AddUrlTrackerEntry(UrlTrackerModel urlTrackerModel)
         {
             string query = "INSERT INTO icUrlTracker (OldUrl, OldUrlQueryString, OldRegex, RedirectRootNodeId, RedirectNodeId, RedirectUrl, RedirectHttpCode, RedirectPassThroughQueryString, ForceRedirect, Notes) VALUES (@oldUrl, @oldUrlQueryString, @oldRegex, @redirectRootNodeId, @redirectNodeId, @redirectUrl, @redirectHttpCode, @redirectPassThroughQueryString, @forceRedirect, @notes)";
-            _sqlHelper.ExecuteNonQuery(query, _sqlHelper.CreateStringParameter("oldUrl", urlTrackerModel.OldUrl), _sqlHelper.CreateStringParameter("oldUrlQueryString", urlTrackerModel.OldUrlQueryString), _sqlHelper.CreateStringParameter("oldRegex", urlTrackerModel.OldRegex), _sqlHelper.CreateParameter("redirectRootNodeId", urlTrackerModel.RedirectRootNodeId), _sqlHelper.CreateNullableParameter("redirectNodeId", urlTrackerModel.RedirectNodeId), _sqlHelper.CreateStringParameter("redirectUrl", urlTrackerModel.RedirectUrl), _sqlHelper.CreateParameter("redirectHttpCode", urlTrackerModel.RedirectHttpCode), _sqlHelper.CreateParameter("redirectPassThroughQueryString", urlTrackerModel.RedirectPassThroughQueryString), _sqlHelper.CreateParameter("forceRedirect", urlTrackerModel.ForceRedirect), _sqlHelper.CreateStringParameter("notes", urlTrackerModel.Notes));
+            var SqlInsertParams = new List<SqlParameter>();
+            SqlInsertParams.Add(CreateStringParameter("oldUrl", urlTrackerModel.OldUrl));
+            SqlInsertParams.Add(CreateStringParameter("oldUrlQueryString", urlTrackerModel.OldUrlQueryString));
+            SqlInsertParams.Add(CreateStringParameter("oldRegex", urlTrackerModel.OldRegex));
+            SqlInsertParams.Add(CreateGenericParameter("redirectRootNodeId", urlTrackerModel.RedirectRootNodeId));
+            SqlInsertParams.Add(CreateGenericParameter("redirectNodeId", urlTrackerModel.RedirectNodeId));
+            SqlInsertParams.Add(CreateStringParameter("redirectUrl", urlTrackerModel.RedirectUrl));
+            SqlInsertParams.Add(CreateGenericParameter("redirectHttpCode", urlTrackerModel.RedirectHttpCode));
+            SqlInsertParams.Add(CreateGenericParameter("redirectPassThroughQueryString", urlTrackerModel.RedirectPassThroughQueryString));
+            SqlInsertParams.Add(CreateGenericParameter("forceRedirect", urlTrackerModel.ForceRedirect));
+            SqlInsertParams.Add(CreateStringParameter("notes", urlTrackerModel.Notes));
+            ExecuteScalar<int>(query, SqlInsertParams);
 
             if (urlTrackerModel.ForceRedirect)
                 ReloadForcedRedirectsCache();
@@ -116,13 +135,21 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
             url = UrlTrackerHelper.ResolveShortestUrl(url);
 
             string query = "SELECT 1 FROM icUrlTracker WHERE RedirectNodeId = @redirectNodeId AND OldUrl = @oldUrl AND RedirectHttpCode = 410";
-            int exists = _sqlHelper.ExecuteScalar<int>(query, _sqlHelper.CreateParameter("redirectNodeId", nodeId), _sqlHelper.CreateStringParameter("oldUrl", url));
+            var SqlParams = new List<SqlParameter>();
+            SqlParams.Add(CreateGenericParameter("redirectNodeId", nodeId));
+            SqlParams.Add(CreateStringParameter("oldUrl", url));
+
+            int exists = ExecuteScalar<int>(query, SqlParams);
             if (exists != 1)
             {
                 LoggingHelper.LogInformation("UrlTracker Repository | Inserting 410 Gone mapping for node with id: {0}", nodeId);
 
                 query = "INSERT INTO icUrlTracker (RedirectNodeId, OldUrl, RedirectHttpCode, Notes) VALUES (@redirectNodeId, @oldUrl, 410, @notes)";
-                _sqlHelper.ExecuteNonQuery(query, _sqlHelper.CreateParameter("redirectNodeId", nodeId), _sqlHelper.CreateStringParameter("oldUrl", url), _sqlHelper.CreateStringParameter("notes", "Node removed"));
+                var SqlInsertParams = new List<SqlParameter>();
+                SqlInsertParams.Add(CreateGenericParameter("redirectNodeId", nodeId));
+                SqlInsertParams.Add(CreateStringParameter("oldUrl", url));
+                SqlInsertParams.Add(CreateStringParameter("notes", "Node removed"));
+                ExecuteScalar<int>(query, SqlInsertParams);
             }
             else
                 LoggingHelper.LogInformation("UrlTracker Repository | Skipping 410 Gone mapping for node with id: {0} (already exists)", nodeId);
@@ -133,13 +160,17 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
         public static void DeleteUrlTrackerEntriesByNodeId(int nodeId)
         {
             string query = "SELECT 1 FROM icUrlTracker WHERE RedirectNodeId = @nodeId AND RedirectHttpCode != 410";
-            int exists = _sqlHelper.ExecuteScalar<int>(query, _sqlHelper.CreateParameter("nodeId", nodeId));
+            var SqlParams = new List<SqlParameter>();
+            SqlParams.Add(CreateGenericParameter("nodeId", nodeId));
+            int exists = ExecuteScalar<int>(query, SqlParams);
             if (exists == 1)
             {
                 LoggingHelper.LogInformation("UrlTracker Repository | Deleting Url Tracker entry of node with id: {0}", nodeId);
 
                 query = "DELETE FROM icUrlTracker WHERE RedirectNodeId = @nodeId AND RedirectHttpCode != 410";
-                _sqlHelper.ExecuteNonQuery(query, _sqlHelper.CreateParameter("nodeId", nodeId));
+                var SqlDeleteParams = new List<SqlParameter>();
+                SqlDeleteParams.Add(CreateGenericParameter("nodeId", nodeId));
+                ExecuteScalar<int>(query, SqlDeleteParams);
             }
 
             ReloadForcedRedirectsCache();
@@ -148,13 +179,17 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
         public static void DeleteNotFoundEntriesByOldUrl(string oldUrl)
         {
             string query = "SELECT 1 FROM icUrlTracker WHERE Is404 = 1 AND OldUrl = @oldUrl";
-            int exists = _sqlHelper.ExecuteScalar<int>(query, _sqlHelper.CreateParameter("oldUrl", oldUrl));
+            var SqlParams = new List<SqlParameter>();
+            SqlParams.Add(CreateGenericParameter("oldUrl", oldUrl));
+            int exists = ExecuteScalar<int>(query, SqlParams);
             if (exists == 1)
             {
                 LoggingHelper.LogInformation("UrlTracker Repository | Deleting Not Found entries with OldUrl: {0}", oldUrl);
 
                 query = "DELETE FROM icUrlTracker WHERE Is404 = 1 AND OldUrl = @oldUrl";
-                _sqlHelper.ExecuteNonQuery(query, _sqlHelper.CreateParameter("oldUrl", oldUrl));
+                var SqlDeleteParams = new List<SqlParameter>();
+                SqlDeleteParams.Add(CreateGenericParameter("oldUrl", oldUrl));
+                ExecuteScalar<int>(query, SqlDeleteParams);
             }
         }
 
@@ -163,7 +198,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
             LoggingHelper.LogInformation("UrlTracker Repository | Deleting Url Tracker entry with id: {0}", id);
 
             string query = "DELETE FROM icUrlTracker WHERE Id = @id";
-            _sqlHelper.ExecuteNonQuery(query, _sqlHelper.CreateParameter("id", id));
+            var SqlDeleteParams = new List<SqlParameter>();
+            SqlDeleteParams.Add(CreateGenericParameter("id", id));
+            ExecuteScalar<int>(query, SqlDeleteParams);
 
             ReloadForcedRedirectsCache();
         }
@@ -173,7 +210,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
             LoggingHelper.LogInformation("UrlTracker Repository | Clearing all not found entries");
 
             string query = "DELETE FROM icUrlTracker WHERE Is404 = 1";
-            _sqlHelper.ExecuteNonQuery(query);
+            ExecuteScalar<int>(query);
         }
 
         public static void DeleteNotFoundEntriesByRootAndOldUrl(int redirectRootNodeId, string oldUrl)
@@ -182,9 +219,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
             LoggingHelper.LogInformation("UrlTracker Repository | Deleting Not Found entries with OldUrl: {0}", oldUrl);
 
             const string query = "DELETE FROM icUrlTracker WHERE Is404 = 1 AND OldUrl = @oldUrl AND RedirectRootNodeId = @rootId";
-            _sqlHelper.ExecuteNonQuery(query,
-                _sqlHelper.CreateParameter("oldUrl", oldUrl),
-                _sqlHelper.CreateParameter("rootId", redirectRootNodeId));
+            var SqlDeleteParams = new List<SqlParameter>();
+            SqlDeleteParams.Add(CreateGenericParameter("oldUrl", oldUrl));
+            SqlDeleteParams.Add(CreateGenericParameter("rootId", redirectRootNodeId));
+            ExecuteScalar<int>(query, SqlDeleteParams);
         }
         #endregion
 
@@ -229,15 +267,15 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
                     query = string.Concat(query, " OR RedirectNodeId = @intKeyword");
                 query = string.Concat(query, ")");
             }
-            List<IParameter> parameters = new List<IParameter>
+            List<SqlParameter> parameters = new List<SqlParameter>
             {
-                _sqlHelper.CreateParameter("is404", _404 ? 1 : 0),
-                _sqlHelper.CreateParameter("redirectHttpCode", include410Gone ? 0 : 410)
+                CreateGenericParameter("is404", _404 ? 1 : 0),
+                CreateGenericParameter("redirectHttpCode", include410Gone ? 0 : 410)
             };
             if (!string.IsNullOrEmpty(keyword))
-                parameters.Add(_sqlHelper.CreateParameter("keyword", "%" + keyword + "%"));
+                parameters.Add(CreateGenericParameter("keyword", "%" + keyword + "%"));
             if (intKeyword != 0)
-                parameters.Add(_sqlHelper.CreateParameter("intKeyword", intKeyword));
+                parameters.Add(CreateGenericParameter("intKeyword", intKeyword));
             using (IRecordsReader reader = _sqlHelper.ExecuteReader(query, parameters.ToArray()))
             {
                 while (reader.Read())
@@ -405,7 +443,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
         public static bool HasNotFoundEntries()
         {
             string query = "SELECT 1 FROM icUrlTracker WHERE Is404 = 1";
-            return _sqlHelper.ExecuteScalar<int>(query) == 1;
+            return ExecuteScalar<int>(query) == 1;
         }
         #endregion
 
@@ -413,30 +451,51 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
         public static void UpdateUrlTrackerEntry(UrlTrackerModel urlTrackerModel)
         {
             string query = "UPDATE icUrlTracker SET OldUrl = @oldUrl, OldUrlQueryString = @oldUrlQueryString, OldRegex = @oldRegex, RedirectRootNodeId = @redirectRootNodeId, RedirectNodeId = @redirectNodeId, RedirectUrl = @redirectUrl, RedirectHttpCode = @redirectHttpCode, RedirectPassThroughQueryString = @redirectPassThroughQueryString, ForceRedirect = @forceRedirect, Notes = @notes, Is404 = @is404 WHERE Id = @id";
-            _sqlHelper.ExecuteNonQuery(query, _sqlHelper.CreateStringParameter("oldUrl", urlTrackerModel.OldUrl), _sqlHelper.CreateStringParameter("oldUrlQueryString", urlTrackerModel.OldUrlQueryString), _sqlHelper.CreateStringParameter("oldRegex", urlTrackerModel.OldRegex), _sqlHelper.CreateParameter("redirectRootNodeId", urlTrackerModel.RedirectRootNodeId), _sqlHelper.CreateNullableParameter<int?>("redirectNodeId", urlTrackerModel.RedirectNodeId), _sqlHelper.CreateStringParameter("redirectUrl", urlTrackerModel.RedirectUrl), _sqlHelper.CreateParameter("redirectHttpCode", urlTrackerModel.RedirectHttpCode), _sqlHelper.CreateParameter("redirectPassThroughQueryString", urlTrackerModel.RedirectPassThroughQueryString), _sqlHelper.CreateParameter("forceRedirect", urlTrackerModel.ForceRedirect), _sqlHelper.CreateStringParameter("notes", urlTrackerModel.Notes), _sqlHelper.CreateParameter("is404", urlTrackerModel.Is404), _sqlHelper.CreateParameter("id", urlTrackerModel.Id));
+            var sqlUpdateParameters = new List<SqlParameter>();
+            sqlUpdateParameters.Add(CreateStringParameter("oldUrl", urlTrackerModel.OldUrl));
+            sqlUpdateParameters.Add(CreateStringParameter("oldUrlQueryString", urlTrackerModel.OldUrlQueryString));
+            sqlUpdateParameters.Add(CreateStringParameter("oldRegex", urlTrackerModel.OldRegex));
+            sqlUpdateParameters.Add(CreateGenericParameter("redirectRootNodeId", urlTrackerModel.RedirectRootNodeId));
+            sqlUpdateParameters.Add(CreateGenericParameter("redirectNodeId", urlTrackerModel.RedirectNodeId));
+            sqlUpdateParameters.Add(CreateStringParameter("redirectUrl", urlTrackerModel.RedirectUrl));
+            sqlUpdateParameters.Add(CreateGenericParameter("redirectNodeId", urlTrackerModel.RedirectNodeId));
+            sqlUpdateParameters.Add(CreateGenericParameter("redirectHttpCode", urlTrackerModel.RedirectHttpCode));
+            sqlUpdateParameters.Add(CreateGenericParameter("redirectPassThroughQueryString", urlTrackerModel.RedirectPassThroughQueryString));
+            sqlUpdateParameters.Add(CreateGenericParameter("forceRedirect", urlTrackerModel.ForceRedirect));
+            sqlUpdateParameters.Add(CreateStringParameter("notes", urlTrackerModel.Notes));
+            sqlUpdateParameters.Add(CreateGenericParameter("is404", urlTrackerModel.Is404));
+            sqlUpdateParameters.Add(CreateGenericParameter("id", urlTrackerModel.Id));
+
+            ExecuteNonQuery(query, sqlUpdateParameters);
 
             if (urlTrackerModel.ForceRedirect)
                 ReloadForcedRedirectsCache();
         }
 
-		public static void Convert410To301(int nodeId)
-		{
-			string query = "UPDATE icUrlTracker SET RedirectHttpCode = 301 WHERE RedirectHttpCode = 410 AND RedirectNodeId = @redirectNodeId";
-			_sqlHelper.ExecuteNonQuery(query, _sqlHelper.CreateParameter("redirectNodeId", nodeId));
-		}
+        public static void Convert410To301(int nodeId)
+        {
+            string query = "UPDATE icUrlTracker SET RedirectHttpCode = 301 WHERE RedirectHttpCode = 410 AND RedirectNodeId = @redirectNodeId";
+            var sqlUpdateParameters = new List<SqlParameter>();
+            sqlUpdateParameters.Add(CreateGenericParameter("redirectNodeId", nodeId));
+            ExecuteNonQuery(query, sqlUpdateParameters);
+        }
         #endregion
 
         #region Support
         public static bool GetUrlTrackerTableExists()
         {
             string query = "SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = @tableName";
-            return _sqlHelper.ExecuteScalar<int>(query, _sqlHelper.CreateParameter("tableName", UrlTrackerSettings.TableName)) == 1;
+            var sqlParameters = new List<SqlParameter>();
+            sqlParameters.Add(CreateGenericParameter("tableName", UrlTrackerSettings.TableName));
+            return ExecuteScalar<int>(query, sqlParameters) == 1;
         }
 
         public static bool GetUrlTrackeOldTableExists()
         {
             string query = "SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = @tableName";
-            return _sqlHelper.ExecuteScalar<int>(query, _sqlHelper.CreateParameter("tableName", UrlTrackerSettings.OldTableName)) == 1;
+            var sqlParameters = new List<SqlParameter>();
+            sqlParameters.Add(CreateGenericParameter("tableName", UrlTrackerSettings.OldTableName));
+            return ExecuteScalar<int>(query, sqlParameters) == 1;
         }
 
         public static void CreateUrlTrackerTable()
@@ -447,7 +506,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
             var folderName = GetFolderName();
 
             var createTableQuery = EmbeddedResourcesHelper.GetString(string.Concat(folderName, "create-table-1.sql"));
-            _sqlHelper.ExecuteNonQuery(createTableQuery);
+            ExecuteNonQuery(createTableQuery);
         }
 
         public static void UpdateUrlTrackerTable()
@@ -480,7 +539,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
                         var query =
                             EmbeddedResourcesHelper.GetString(string.Concat(folderName, "update-table-" + i + ".sql"));
                         if (!string.IsNullOrEmpty(query))
-                            _sqlHelper.ExecuteNonQuery(query);
+                            ExecuteNonQuery(query);
                     }
                 }
             }
@@ -513,7 +572,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
             List<OldUrlTrackerModel> oldUrlTrackerEntries = new List<OldUrlTrackerModel>();
             string query = string.Format("SELECT * FROM {0}", UrlTrackerSettings.OldTableName);
             IRecordsReader recordsReader = _sqlHelper.ExecuteReader(query);
-            while(recordsReader.Read())
+            while (recordsReader.Read())
             {
                 oldUrlTrackerEntries.Add(new OldUrlTrackerModel()
                 {
