@@ -45,10 +45,8 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
         public void Init(HttpApplication app)
         {
             _scope = Current.ScopeProvider.CreateScope();
-            if(_umbracoHelper == null)
-            {
-                _umbracoHelper = Current.Factory.GetInstance<UmbracoHelper>();
-            }
+                
+            //CheckUrlTrackerInstalled();
             if (!_urlTrackerSubscribed)
             {
                 lock (_urlTrackerSubscribeLock)
@@ -72,13 +70,13 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 			app.PostResolveRequestCache -= Context_PostResolveRequestCache;
 			app.PostResolveRequestCache += Context_PostResolveRequestCache;
 
-			LoggingHelper.LogInformation("UrlTracker HttpModule | Subscribed to AcquireRequestState events");
+            LoggingHelper.LogInformation("UrlTracker HttpModule | Subscribed to AcquireRequestState events");
 
         }
 
 		void Context_PostResolveRequestCache(object sender, EventArgs e)
 		{
-			CheckUrlTrackerInstalled();
+			//CheckUrlTrackerInstalled();
 
 			if (_execute)
 				UrlTrackerDo("AcquireRequestState", ignoreHttpStatusCode: true, context: HttpContext.Current);
@@ -87,7 +85,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 
 		void UmbracoModule_EndRequest(object sender, UmbracoRequestEventArgs args)
         {
-            CheckUrlTrackerInstalled();
+            //CheckUrlTrackerInstalled();
 
             if (_execute)
                 UrlTrackerDo("EndRequest", context: args.HttpContext.ApplicationInstance.Context);
@@ -99,37 +97,21 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 
 		#endregion
 
-		static void CheckUrlTrackerInstalled()
-        {
-            try
-            {
-                if (!_urlTrackerInstalled)
-                {
-                    lock (_lock)
-                    {
-                        _urlTrackerInstalled = UrlTrackerRepository.GetUrlTrackerTableExists();
-                        if (!_urlTrackerInstalled)
-                        {
-                            UrlTrackerRepository.CreateUrlTrackerTable();
-                            UrlTrackerInstallerService installer = new UrlTrackerInstallerService() { DontWait = true };
-                            try
-                            {
-                                installer.InstallDashboard();
-                            }
-                            catch (DashboardAlreadyInstalledException) { }
-                        }
-                        UrlTrackerRepository.UpdateUrlTrackerTable();
-                    }
-                }
-            }
-            catch (ArgumentNullException) // Thrown if the umbraco connectionstring is empty
-            {
-                _execute = false;
-            }
-        }
-
         void UrlTrackerDo(string callingEventName, bool ignoreHttpStatusCode = false, HttpContext context = null)
         {
+            if (_umbracoHelper == null)
+            {
+                try
+                {
+                    //_umbracoHelper = Current.Factory.TryGetInstance<UmbracoHelper>();
+                    _umbracoHelper = Current.Factory.CreateInstance<UmbracoHelper>();
+                }
+                catch (Exception ex)
+                {
+                    LoggingHelper.LogException(ex);
+                    return;
+                }
+            }
             if (context == null)
             {
                 LoggingHelper.LogInformation("UrlTracker HttpModule | No HttpContext has been passed by {0}", callingEventName);
@@ -165,9 +147,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
             if (_urlTrackerInstalled && (response.StatusCode == (int)HttpStatusCode.NotFound || ignoreHttpStatusCode))
             {
                 if (response.StatusCode == (int)HttpStatusCode.NotFound)
-                    LoggingHelper.LogInformation("UrlTracker HttpModule | Response statusCode is 404, continue URL matching");
+                LoggingHelper.LogInformation("UrlTracker HttpModule | Response statusCode is 404, continue URL matching");
                 else
-                    LoggingHelper.LogInformation("UrlTracker HttpModule | Checking for forced redirects (AcquireRequestState), continue URL matching");
+                LoggingHelper.LogInformation("UrlTracker HttpModule | Checking for forced redirects (AcquireRequestState), continue URL matching");
 
                 string urlWithoutQueryString = url;
                 if (_umbracoHelper.IsReservedPathOrUrl(url))

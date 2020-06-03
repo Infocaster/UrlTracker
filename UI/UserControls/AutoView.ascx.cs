@@ -1,4 +1,5 @@
-﻿using InfoCaster.Umbraco.UrlTracker.Helpers;
+﻿using InfoCaster.Umbraco.UrlTracker.Extensions;
+using InfoCaster.Umbraco.UrlTracker.Helpers;
 using InfoCaster.Umbraco.UrlTracker.Models;
 using InfoCaster.Umbraco.UrlTracker.Repositories;
 using System;
@@ -7,18 +8,30 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using umbraco.NodeFactory;
+using Umbraco.Core.Composing;
+using Umbraco.Core.Models.PublishedContent;
+using Umbraco.Web;
+//using umbraco.NodeFactory;
 
 namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
 {
     public partial class AutoView : System.Web.UI.UserControl, IUrlTrackerView
     {
         public UrlTrackerModel UrlTrackerModel { get; set; }
+        private UmbracoHelper _umbracoHelper;
+
+        public AutoView(UmbracoHelper umbracoHelper)
+        {
+            _umbracoHelper = umbracoHelper;
+        }
 
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
-
+            if(_umbracoHelper == null)
+            {
+                _umbracoHelper = (UmbracoHelper) Current.Factory.GetInstance(typeof(UmbracoHelper));
+            }
             lnkOldUrl.ToolTip = UrlTrackerResources.OldUrlTestInfo;
             rbPermanent.Text = UrlTrackerResources.RedirectType301;
             rbTemporary.Text = UrlTrackerResources.RedirectType302;
@@ -28,9 +41,9 @@ namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
         public void LoadView()
         {
             UrlTrackerDomain domain = null;
-            Node redirectRootNode = new Node(UrlTrackerModel.RedirectRootNodeId);
+            IPublishedContent redirectRootNode = _umbracoHelper.Content(UrlTrackerModel.RedirectRootNodeId);
 
-            List<UrlTrackerDomain> domains = UmbracoHelper.GetDomains();
+            List<UrlTrackerDomain> domains = _umbracoHelper.GetDomains();
             domain = domains.FirstOrDefault(x => x.NodeId == redirectRootNode.Id);
             if (domain == null)
                 domain = new UrlTrackerDomain(-1, redirectRootNode.Id, HttpContext.Current.Request.Url.Host);
@@ -45,7 +58,7 @@ namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
 
             lnkOldUrl.Text = string.Format("{0} <i class=\"icon-share\"></i>", UrlTrackerModel.CalculatedOldUrl);
             lnkOldUrl.NavigateUrl = UrlTrackerModel.CalculatedOldUrlWithDomain;
-            Node redirectNode = new Node(UrlTrackerModel.RedirectNodeId.Value);
+            var redirectNode = _umbracoHelper.Content(UrlTrackerModel.RedirectNodeId.Value);
             lnkRedirectNode.Text = redirectNode.Id > 0 ? redirectNode.Name : UrlTrackerResources.RedirectNodeUnpublished;
             lnkRedirectNode.ToolTip = UrlTrackerResources.SyncTree;
             lnkRedirectNode.NavigateUrl = string.Format("javascript:parent.UmbClientMgr.mainTree().syncTree('{0}', false);", redirectNode.Path);

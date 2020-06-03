@@ -1,5 +1,5 @@
 ﻿using ClientDependency.Core.Logging;
-using ImageProcessor.Common.Exceptions;
+//using ImageProcessor.Common.Exceptions;
 using InfoCaster.Umbraco.UrlTracker.Modules;
 using log4net;
 using System;
@@ -11,18 +11,18 @@ using System.Web;
 using umbraco.BusinessLogic;
 using Umbraco.Core.Composing;
 using Umbraco.Core.Logging;
-using ILogger = ClientDependency.Core.Logging.ILogger;
+using ILogger = Umbraco.Core.Logging.ILogger;
 using UmbracoLog = umbraco.BusinessLogic.Log;
 
 namespace InfoCaster.Umbraco.UrlTracker.Helpers
 {
     public static class LoggingHelper
     {
-        private static ILogger logger = Current.Factory.GetInstanceFor<ILogger, UrlTrackerModule>();
+        private static ILogger logger = Current.Logger;
 
         public static void LogException(this Exception ex)
         {
-            logger.Error(ex.Message, ex);
+            logger.Error(typeof(UrlTrackerComponent), ex);
         }
 
         public static void LogInformation(string message, params object[] args)
@@ -34,7 +34,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Helpers
         {
             if (UrlTrackerSettings.EnableLogging)
             {
-                logger.Debug(message);
+                logger.Debug(typeof(UrlTrackerComponent), message);
             }
         }
     }

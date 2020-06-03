@@ -11,8 +11,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using umbraco.BasePages;
-using umbraco.controls;
+//using umbraco.controls;
 using Umbraco.Web.UI;
+
 
 namespace InfoCaster.Umbraco.UrlTracker.UI
 {
@@ -54,7 +55,7 @@ namespace InfoCaster.Umbraco.UrlTracker.UI
             }
         }
 
-        ContentPicker _contentPicker = new ContentPicker();
+        //ContentPicker _contentPicker = new ContentPicker();
         bool _gridviewFiltered = false;
         bool _isNotFoundView { get { return mvSwitchButtons.GetActiveView() == vwSwitchButtonsUrlTracker; } }
         bool _earlyErrorDetected { get { return mvUrlTrackerError.GetActiveView() == vwUrlTrackerErrorMessage; } }

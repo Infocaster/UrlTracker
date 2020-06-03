@@ -2,20 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
+using InfoCaster.Umbraco.UrlTracker.Extensions;
 using InfoCaster.Umbraco.UrlTracker.Helpers;
 using InfoCaster.Umbraco.UrlTracker.Models;
 using InfoCaster.Umbraco.UrlTracker.Repositories;
+using Umbraco.Web.Composing;
+using Umbraco.Web;
 
 namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
 {
     public partial class CustomView : System.Web.UI.UserControl, IUrlTrackerView
     {
         public UrlTrackerModel UrlTrackerModel { get; set; }
-
+        private UmbracoHelper _umbracoHelper;
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
-
+            if (_umbracoHelper == null)
+            {
+                _umbracoHelper = (UmbracoHelper)Current.Factory.GetInstance(typeof(UmbracoHelper));
+            }
             tbOldUrl.Attributes["placeholder"] = UrlTrackerResources.OldUrlWatermark;
             tbOldRegex.Attributes["placeholder"] = UrlTrackerResources.RegexWatermark;
             tbOldUrlQueryString.Attributes["placeholder"] = UrlTrackerResources.OldUrlQueryStringWatermark;
@@ -32,7 +38,7 @@ namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
         /// </summary>
         public void LoadView()
         {
-            List<UrlTrackerDomain> domains = UmbracoHelper.GetDomains();
+            List<UrlTrackerDomain> domains = _umbracoHelper.GetDomains();
             if (ddlRootNode.Items.Count == 1 && domains.Count > 1 || (domains.Count==1 && new Uri(domains[0].UrlWithDomain).AbsolutePath != "/"))
             {
                 // if there is only one site, but it is not with a root domain (ie: www.site.com but instead www.site.com/corporate) then also show the dropdown
@@ -67,7 +73,7 @@ namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
             }
             mvRedirect.SetActiveView(UrlTrackerModel.RedirectNodeId.HasValue ? vwRedirectNode : vwRedirectUrl);
             if (UrlTrackerModel.RedirectNodeId.HasValue)
-                cpRedirectNode.Value = UrlTrackerModel.RedirectNodeId.Value.ToString();
+                //cpRedirectNode.Value = UrlTrackerModel.RedirectNodeId.Value.ToString();
             tbRedirectUrl.Text = UrlTrackerModel.RedirectUrl;
 
             rbPermanent.Checked = UrlTrackerModel.RedirectHttpCode == 301;
@@ -83,15 +89,15 @@ namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
 
         public void Save()
         {
-            List<UrlTrackerDomain> domains = UmbracoHelper.GetDomains();
+            List<UrlTrackerDomain> domains = _umbracoHelper.GetDomains();
 
             UrlTrackerModel.OldUrl = UrlTrackerHelper.ResolveShortestUrl(tbOldUrl.Text);
             UrlTrackerModel.OldUrlQueryString = tbOldUrlQueryString.Text;
             UrlTrackerModel.OldRegex = tbOldRegex.Text;
-            UrlTrackerModel.RedirectRootNodeId = domains.Count>1 || (domains.Count == 1 && new Uri(domains[0].UrlWithDomain).AbsolutePath != "/") ? int.Parse(ddlRootNode.SelectedValue) : domains.Any() ? domains.Single().NodeId : new Node(-1).ChildrenAsList.First().Id;
-            if (!string.IsNullOrEmpty(cpRedirectNode.Value))
-                UrlTrackerModel.RedirectNodeId = int.Parse(cpRedirectNode.Value);
-            else
+            UrlTrackerModel.RedirectRootNodeId = domains.Count>1 || (domains.Count == 1 && new Uri(domains[0].UrlWithDomain).AbsolutePath != "/") ? int.Parse(ddlRootNode.SelectedValue) : domains.Any() ? domains.Single().NodeId : _umbracoHelper.Content(-1).FirstChild().Id;
+            //if (!string.IsNullOrEmpty(cpRedirectNode.Value))
+            //    UrlTrackerModel.RedirectNodeId = int.Parse(cpRedirectNode.Value);
+            //else
                 UrlTrackerModel.RedirectNodeId = null;
             UrlTrackerModel.RedirectUrl = tbRedirectUrl.Text;
             UrlTrackerModel.RedirectHttpCode = rbPermanent.Checked ? 301 : 302;

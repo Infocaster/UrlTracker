@@ -7,14 +7,19 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using umbraco.NodeFactory;
+using Umbraco.Web;
+using InfoCaster.Umbraco.UrlTracker.Extensions;
+using Umbraco.Web.Composing;
+using Umbraco.Core.Models.PublishedContent;
+using Umbraco.Core;
+//using umbraco.NodeFactory;
 
 namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
 {
     public partial class AdvancedView : System.Web.UI.UserControl, IUrlTrackerView
     {
         public UrlTrackerModel UrlTrackerModel { get; set; }
-
+        private UmbracoHelper umbracoHelper;
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
@@ -28,11 +33,12 @@ namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
             cbRedirectPassthroughQueryString.Text = UrlTrackerResources.PassthroughQueryStringLabel;
             cbForceRedirect.Text = UrlTrackerResources.ForceRedirectLabel;
             tbNotes.Attributes["placeholder"] = UrlTrackerResources.NotesWatermark;
+            umbracoHelper = (UmbracoHelper)Current.Factory.GetInstance(typeof(UmbracoHelper));
         }
 
         public void LoadView()
         {
-            List<UrlTrackerDomain> domains = UmbracoHelper.GetDomains();
+            List<UrlTrackerDomain> domains = umbracoHelper.GetDomains();
             if (ddlRootNode.Items.Count == 1 && domains.Count > 1)
             {
                 ddlRootNode.DataSource = domains.Select(x => new ListItem(UrlTrackerHelper.GetName(x), x.NodeId.ToString()));
@@ -53,7 +59,7 @@ namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
             tbOldUrlQueryString.Text = UrlTrackerModel.OldUrlQueryString;
             
             if (UrlTrackerModel.RedirectNodeId.HasValue)
-                cpRedirectNode.Value = UrlTrackerModel.RedirectNodeId.Value.ToString();
+                //cpRedirectNode.Value = UrlTrackerModel.RedirectNodeId.Value.ToString();
             tbRedirectUrl.Text = UrlTrackerModel.RedirectUrl;
             
             rbPermanent.Checked = UrlTrackerModel.RedirectHttpCode == 301;
@@ -69,15 +75,15 @@ namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
 
         public void Save()
         {
-            List<UrlTrackerDomain> domains = UmbracoHelper.GetDomains();
+            List<UrlTrackerDomain> domains = umbracoHelper.GetDomains();
 
             UrlTrackerModel.OldUrl = UrlTrackerHelper.ResolveShortestUrl(tbOldUrl.Text);
             UrlTrackerModel.OldUrlQueryString = tbOldUrlQueryString.Text;
             UrlTrackerModel.OldRegex = tbOldRegex.Text;
-            UrlTrackerModel.RedirectRootNodeId = domains.Count > 1 ? int.Parse(ddlRootNode.SelectedValue) : domains.Any() ? domains.Single().NodeId : new Node(-1).ChildrenAsList.First().Id;
-            if (!string.IsNullOrEmpty(cpRedirectNode.Value))
-                UrlTrackerModel.RedirectNodeId = int.Parse(cpRedirectNode.Value);
-            else
+            UrlTrackerModel.RedirectRootNodeId = domains.Count > 1 ? int.Parse(ddlRootNode.SelectedValue) : domains.Any() ? domains.Single().NodeId : umbracoHelper.Content(-1).FirstChild().Id;
+            //if (!string.IsNullOrEmpty(cpRedirectNode.Value))
+            //    UrlTrackerModel.RedirectNodeId = int.Parse(cpRedirectNode.Value);
+            //else
                 UrlTrackerModel.RedirectNodeId = null;
             UrlTrackerModel.RedirectUrl = tbRedirectUrl.Text;
             UrlTrackerModel.RedirectHttpCode = rbPermanent.Checked ? 301 : 302;

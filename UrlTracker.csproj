@@ -268,9 +268,6 @@
     <Reference Include="Umbraco.Core, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\UmbracoCms.Core.8.6.1\lib\net472\Umbraco.Core.dll</HintPath>
     </Reference>
-    <Reference Include="umbraco.DataLayer">
-      <HintPath>..\..\website-afvalwijzer\lib\Umbraco\umbraco.DataLayer.dll</HintPath>
-    </Reference>
     <Reference Include="Umbraco.Examine, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\UmbracoCms.Web.8.6.1\lib\net472\Umbraco.Examine.dll</HintPath>
     </Reference>
@@ -285,6 +282,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\UrlTrackerManagerController.cs" />
     <Compile Include="Exceptions\DashboardAlreadyInstalledException.cs" />
     <Compile Include="Helpers\ContextHelper.cs" />
     <Compile Include="Helpers\SqlHelper.cs" />
@@ -390,33 +388,87 @@
     <Content Include="BackOffice\Html\UrlTrackerManager.html" />
     <Content Include="UI\Installer\UrlTrackerInstaller.ascx" />
     <Content Include="UI\Installer\UrlTrackerInstallerService.asmx" />
-    <Content Include="UI\res\css\bootstrap.css" />
-    <Content Include="UI\res\css\bootstrap.min.css" />
-    <Content Include="UI\res\css\info.css" />
-    <Content Include="UI\res\css\installer.css" />
-    <Content Include="UI\res\css\urltracker.css" />
-    <Content Include="UI\res\img\asc-hover.png" />
-    <Content Include="UI\res\img\asc.png" />
-    <Content Include="UI\res\img\cross.png" />
-    <Content Include="UI\res\img\desc-hover.png" />
-    <Content Include="UI\res\img\desc.png" />
-    <Content Include="UI\res\img\edit.png" />
-    <Content Include="UI\res\img\glyphicons-halflings-white.png" />
-    <Content Include="UI\res\img\glyphicons-halflings.png" />
-    <Content Include="UI\res\img\info.png" />
-    <Content Include="UI\res\img\trash.png" />
-    <Content Include="UI\res\img\urltracker-icon.png" />
-    <Content Include="UI\res\img\urltracker.png" />
-    <Content Include="UI\res\js\bootstrap.js" />
-    <Content Include="UI\res\js\bootstrap.min.js" />
-    <Content Include="UI\res\js\installer.js" />
-    <Content Include="UI\res\js\jquery-1.11.2.min.js" />
-    <Content Include="UI\res\js\jquery-migrate-1.2.1.min.js" />
-    <Content Include="UI\res\js\jquery.validate.additional-methods.js" />
-    <Content Include="UI\res\js\jquery.validate.additional-methods.min.js" />
-    <Content Include="UI\res\js\jquery.validate.js" />
-    <Content Include="UI\res\js\jquery.validate.min.js" />
-    <Content Include="UI\res\js\main.js" />
+    <Content Include="UI\res\css\bootstrap.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\css\bootstrap.min.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\css\info.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\css\installer.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\css\urltracker.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\img\asc-hover.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\img\asc.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\img\cross.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\img\desc-hover.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\img\desc.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\img\edit.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\img\glyphicons-halflings-white.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\img\glyphicons-halflings.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\img\info.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\img\trash.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\img\urltracker-icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\img\urltracker.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\js\bootstrap.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\js\bootstrap.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\js\installer.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\js\jquery-1.11.2.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\js\jquery-migrate-1.2.1.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\js\jquery.validate.additional-methods.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\js\jquery.validate.additional-methods.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\js\jquery.validate.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\js\jquery.validate.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\res\js\main.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="UI\UrlTrackerInfo.aspx" />
     <Content Include="UI\UrlTrackerManager.aspx" />
     <Content Include="UI\UrlTrackerManagerWrapper.ascx" />
@@ -425,10 +477,11 @@
     <Content Include="UI\UserControls\CreateView.ascx" />
     <Content Include="UI\UserControls\CustomView.ascx" />
     <Content Include="UI\UserControls\NotFoundView.ascx" />
-    <Content Include="web.config" />
+    <None Include="web.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <Content Include="Views\UrlTrackerManager.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <PropertyGroup>

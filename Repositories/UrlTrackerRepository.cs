@@ -24,7 +24,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
         static DateTime LastForcedRedirectCacheRefreshTime = DateTime.UtcNow;
         static readonly object _cacheLock = new object();
         static readonly object _timeoutCacheLock = new object();
-        static readonly string DatabaseProvider = Constants.DatabaseProviders.SqlServer;
+        static readonly string DatabaseProvider = Constants.DatabaseProviders.SqlCe;
 
         #region Add
         public static bool AddUrlMapping(IContent content, int rootNodeId, string url, AutoTrackingTypes type, bool isChild = false)
@@ -521,10 +521,11 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
         #region Support
         public static bool GetUrlTrackerTableExists()
         {
-            string query = "SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = @tableName";
-            var sqlParameters = new List<SqlHelper.SqlParameter>();
-            sqlParameters.Add(CreateGenericParameter("tableName", UrlTrackerSettings.TableName));
-            return ExecuteScalar<int>(query, sqlParameters) == 1;
+            string query = "SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'icUrlTracker'";
+            //var sqlParameters = new List<SqlHelper.SqlParameter>();
+            //sqlParameters.Add(CreateGenericParameter("tableName", UrlTrackerSettings.TableName));
+            //return ExecuteScalar<int>(query, sqlParameters) == 1;
+            return ExecuteScalar<int>(query) == 1;
         }
 
         public static bool GetUrlTrackeOldTableExists()
@@ -562,7 +563,8 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
                             EmbeddedResourcesHelper.GetString(string.Concat(folderName, "check-table-" + i + ".sql"));
                         if (!string.IsNullOrEmpty(query))
                         {
-                            var connection = new SqlConnection(Current.ScopeProvider.CreateScope().Database.Connection.ConnectionString);
+                            var connectionString = Current.ScopeProvider.CreateScope().Database.ConnectionString;   
+                            var connection = new SqlConnection(connectionString);
                             SqlCommand command = new SqlCommand(query, connection);
                             // Connection.open() ?
                             var reader = command.ExecuteReader();

@@ -2,22 +2,28 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.UI.WebControls;
+using InfoCaster.Umbraco.UrlTracker.Extensions;
 using InfoCaster.Umbraco.UrlTracker.Helpers;
 using InfoCaster.Umbraco.UrlTracker.Models;
 using InfoCaster.Umbraco.UrlTracker.Repositories;
-using umbraco.NodeFactory;
+using Umbraco.Core.Composing;
+using Umbraco.Web;
+//using umbraco.NodeFactory;
 
 namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
 {
     public partial class CreateView : System.Web.UI.UserControl
     {
         public string OldUrlClientUniqueId { get { return tbOldUrl.UniqueID; } }
-
+        private UmbracoHelper _umbracoHelper;
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
-            List<UrlTrackerDomain> domains = UmbracoHelper.GetDomains();
+            if(_umbracoHelper == null)
+            {
+                _umbracoHelper = (UmbracoHelper)Current.Factory.GetInstance(typeof(UmbracoHelper));
+            }
+            List<UrlTrackerDomain> domains = _umbracoHelper.GetDomains();
             if (ddlRootNode.Items.Count == 1 && domains.Count > 1 || (domains.Count == 1 && new Uri(domains[0].UrlWithDomain).AbsolutePath != "/"))
             {
                 if (ddlRootNode.Items.Count <= 1)
@@ -53,15 +59,15 @@ namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
 
         public void CreateNew()
         {
-            List<UrlTrackerDomain> domains = UmbracoHelper.GetDomains();
-            int siteId = domains.Count > 1 || (domains.Count == 1 && new Uri(domains[0].UrlWithDomain).AbsolutePath != "/") ? int.Parse(ddlRootNode.SelectedValue) : domains.Any() ? domains.Single().NodeId : new Node(-1).ChildrenAsList.First().Id;
-            UrlTrackerRepository.AddUrlTrackerEntry(new UrlTrackerModel(UrlTrackerHelper.ResolveShortestUrl(tbOldUrl.Text), tbOldUrlQueryString.Text, tbOldRegex.Text, siteId, !string.IsNullOrEmpty(cpRedirectNode.Value) ? (int?)int.Parse(cpRedirectNode.Value) : null, tbRedirectUrl.Text, rbPermanent.Checked ? 301 : 302, cbRedirectPassthroughQueryString.Checked, cbForceRedirect.Checked, tbNotes.Text));
+            //List<UrlTrackerDomain> domains = _umbracoHelper.GetDomains();
+            //int siteId = domains.Count > 1 || (domains.Count == 1 && new Uri(domains[0].UrlWithDomain).AbsolutePath != "/") ? int.Parse(ddlRootNode.SelectedValue) : domains.Any() ? domains.Single().NodeId : new Node(-1).ChildrenAsList.First().Id;
+            //UrlTrackerRepository.AddUrlTrackerEntry(new UrlTrackerModel(UrlTrackerHelper.ResolveShortestUrl(tbOldUrl.Text), tbOldUrlQueryString.Text, tbOldRegex.Text, siteId, !string.IsNullOrEmpty(cpRedirectNode.Value) ? (int?)int.Parse(cpRedirectNode.Value) : null, tbRedirectUrl.Text, rbPermanent.Checked ? 301 : 302, cbRedirectPassthroughQueryString.Checked, cbForceRedirect.Checked, tbNotes.Text));
 
-            if (ddlRootNode.SelectedIndex != -1)
-                ddlRootNode.SelectedIndex = 0;
-            tbOldUrl.Text = tbOldUrlQueryString.Text = tbOldRegex.Text = cpRedirectNode.Value = tbRedirectUrl.Text = tbNotes.Text = string.Empty;
-            rbPermanent.Checked = cbRedirectPassthroughQueryString.Checked = true;
-            rbTemporary.Checked = false;
+            //if (ddlRootNode.SelectedIndex != -1)
+            //    ddlRootNode.SelectedIndex = 0;
+            //tbOldUrl.Text = tbOldUrlQueryString.Text = tbOldRegex.Text = cpRedirectNode.Value = tbRedirectUrl.Text = tbNotes.Text = string.Empty;
+            //rbPermanent.Checked = cbRedirectPassthroughQueryString.Checked = true;
+            //rbTemporary.Checked = false;
         }
     }
 }

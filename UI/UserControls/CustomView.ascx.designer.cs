@@ -109,7 +109,7 @@ namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::umbraco.controls.ContentPicker cpRedirectNode;
+        //protected global::umbraco.controls.ContentPicker cpRedirectNode;
         
         /// <summary>
         /// vwRedirectUrl control.

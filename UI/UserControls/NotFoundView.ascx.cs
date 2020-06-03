@@ -1,4 +1,5 @@
-﻿using InfoCaster.Umbraco.UrlTracker.Helpers;
+﻿using InfoCaster.Umbraco.UrlTracker.Extensions;
+using InfoCaster.Umbraco.UrlTracker.Helpers;
 using InfoCaster.Umbraco.UrlTracker.Models;
 using InfoCaster.Umbraco.UrlTracker.Repositories;
 using System;
@@ -7,18 +8,23 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using umbraco.NodeFactory;
+using Umbraco.Web;
+using Umbraco.Web.Composing;
+//using umbraco.NodeFactory;
 
 namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
 {
     public partial class NotFoundView : System.Web.UI.UserControl, IUrlTrackerView
     {
         public UrlTrackerModel UrlTrackerModel { get; set; }
-
+        private UmbracoHelper _umbracoHelper;
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
-
+            if (_umbracoHelper == null)
+            {
+                _umbracoHelper = (UmbracoHelper)Current.Factory.GetInstance(typeof(UmbracoHelper));
+            }
             lnkOldUrl.ToolTip = UrlTrackerResources.OldUrlTestInfo;
             tbRedirectUrl.Attributes["placeholder"] = UrlTrackerResources.RedirectUrlWatermark;
             rbPermanent.Text = UrlTrackerResources.RedirectType301;
@@ -29,9 +35,9 @@ namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
         public void LoadView()
         {
             UrlTrackerDomain domain = null;
-            Node redirectRootNode = new Node(UrlTrackerModel.RedirectRootNodeId);
+            var redirectRootNode = _umbracoHelper.Content(UrlTrackerModel.RedirectRootNodeId);
 
-            List<UrlTrackerDomain> domains = UmbracoHelper.GetDomains();
+            List<UrlTrackerDomain> domains = _umbracoHelper.GetDomains();
             domain = domains.FirstOrDefault(x => x.NodeId == redirectRootNode.Id);
             if (domain == null)
                 domain = new UrlTrackerDomain(-1, redirectRootNode.Id, HttpContext.Current.Request.Url.Host);
@@ -51,18 +57,18 @@ namespace InfoCaster.Umbraco.UrlTracker.UI.UserControls
 
         public void Save()
         {
-            UrlTrackerModel.Is404 = false;
-            UrlTrackerModel.Referrer = string.Empty;
-            if (!string.IsNullOrEmpty(cpRedirectNode.Value))
-                UrlTrackerModel.RedirectNodeId = int.Parse(cpRedirectNode.Value);
-            else
-                UrlTrackerModel.RedirectNodeId = null;
-            UrlTrackerModel.RedirectUrl = tbRedirectUrl.Text;
-            UrlTrackerModel.RedirectHttpCode = rbPermanent.Checked ? 301 : 302;
-            UrlTrackerModel.RedirectPassThroughQueryString = cbRedirectPassthroughQueryString.Checked;
-            UrlTrackerModel.Notes = tbNotes.Text;
-            UrlTrackerRepository.UpdateUrlTrackerEntry(UrlTrackerModel);
-            UrlTrackerRepository.DeleteNotFoundEntriesByRootAndOldUrl(UrlTrackerModel.RedirectRootNodeId, UrlTrackerModel.OldUrl);
+            //UrlTrackerModel.Is404 = false;
+            //UrlTrackerModel.Referrer = string.Empty;
+            //if (!string.IsNullOrEmpty(cpRedirectNode.Value))
+            //    UrlTrackerModel.RedirectNodeId = int.Parse(cpRedirectNode.Value);
+            //else
+            //    UrlTrackerModel.RedirectNodeId = null;
+            //UrlTrackerModel.RedirectUrl = tbRedirectUrl.Text;
+            //UrlTrackerModel.RedirectHttpCode = rbPermanent.Checked ? 301 : 302;
+            //UrlTrackerModel.RedirectPassThroughQueryString = cbRedirectPassthroughQueryString.Checked;
+            //UrlTrackerModel.Notes = tbNotes.Text;
+            //UrlTrackerRepository.UpdateUrlTrackerEntry(UrlTrackerModel);
+            //UrlTrackerRepository.DeleteNotFoundEntriesByRootAndOldUrl(UrlTrackerModel.RedirectRootNodeId, UrlTrackerModel.OldUrl);
         }
     }
 }
