@@ -374,15 +374,6 @@
     <Compile Include="UrlTrackerSettings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SQL\MicrosoftSqlServer\create-table-1.sql" />
-    <EmbeddedResource Include="SQL\MicrosoftSqlServer\update-table-1.sql" />
-    <EmbeddedResource Include="SQL\MicrosoftSqlServer\update-table-2.sql" />
-    <EmbeddedResource Include="SQL\MicrosoftSqlServer\update-table-3.sql" />
-    <EmbeddedResource Include="SQL\SqlServerCompact\check-table-1.sql" />
-    <EmbeddedResource Include="SQL\SqlServerCompact\check-table-2.sql" />
-    <EmbeddedResource Include="SQL\SqlServerCompact\create-table-1.sql" />
-    <EmbeddedResource Include="SQL\SqlServerCompact\update-table-1.sql" />
-    <EmbeddedResource Include="SQL\SqlServerCompact\update-table-2.sql" />
     <Content Include="BackOffice\App.js" />
     <Content Include="BackOffice\directives\UrlTrackerManager.js" />
     <Content Include="BackOffice\Html\UrlTrackerManager.html" />
