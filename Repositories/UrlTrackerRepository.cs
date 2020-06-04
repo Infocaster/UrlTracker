@@ -65,23 +65,30 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
                 if (!string.IsNullOrEmpty(url))
                 {
                     string query = "SELECT 1 FROM icUrlTracker WHERE RedirectNodeId = @nodeId AND OldUrl = @url";
-                    var SqlParams = new List<SqlHelper.SqlParameter>();
-                    SqlParams.Add(SqlHelper.CreateGenericParameter("nodeId", content.Id));
-                    SqlParams.Add(CreateStringParameter("url", url));
-                    int exists = ExecuteScalar<int>(query, SqlParams);
+                    //var SqlParams = new List<SqlHelper.SqlParameter>();
+                    //SqlParams.Add(SqlHelper.CreateGenericParameter("nodeId", content.Id));
+                    //SqlParams.Add(CreateStringParameter("url", url));
+                    int exists = ExecuteScalar<int>(query, new { @nodeId = content.Id, @url = url });
                     if (exists != 1)
                     {
                         LoggingHelper.LogInformation("UrlTracker Repository | Adding mapping for node id: {0} and url: {1}", new string[] { content.Id.ToString(), url });
 
                         query = "INSERT INTO icUrlTracker (RedirectRootNodeId, RedirectNodeId, OldUrl, Notes) VALUES (@rootNodeId, @nodeId, @url, @notes)";
-                        var SqlInsertParams = new List<SqlHelper.SqlParameter>();
-                        SqlInsertParams.Add(CreateGenericParameter("rootNodeId", rootNodeId));
-                        SqlInsertParams.Add(CreateGenericParameter("nodeId", content.Id));
-                        SqlInsertParams.Add(CreateStringParameter("url", url));
-                        SqlInsertParams.Add(CreateGenericParameter("nodeId", content.Id));
-                        SqlInsertParams.Add(CreateStringParameter("notes", notes));
+                        //var SqlInsertParams = new List<SqlHelper.SqlParameter>();
+                        //SqlInsertParams.Add(CreateGenericParameter("rootNodeId", rootNodeId));
+                        //SqlInsertParams.Add(CreateGenericParameter("nodeId", content.Id));
+                        //SqlInsertParams.Add(CreateStringParameter("url", url));
+                        //SqlInsertParams.Add(CreateGenericParameter("nodeId", content.Id));
+                        //SqlInsertParams.Add(CreateStringParameter("notes", notes));
 
-                        ExecuteScalar<int>(query, SqlInsertParams);
+                        var parameters = new { 
+                            @rootNodeId = rootNodeId,
+                            @nodeId = content.Id,
+                            @url = url,
+                            @notes = notes
+                        };
+
+                        ExecuteScalar<int>(query, parameters);
                         //if (content.Children().Any())
                         //{
                         //    foreach (IPublishedContent child in content.Children())

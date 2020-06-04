@@ -23,12 +23,8 @@ using Umbraco.Core.Migrations.Upgrade;
 using Umbraco.Core.Scoping;
 using NPoco;
 using Umbraco.Core.Persistence.DatabaseAnnotations;
-using Microsoft.Owin.Security.Provider;
-using System.Web.UI.WebControls;
-using InfoCaster.Umbraco.UrlTracker;
-using InfoCaster.Umbraco.UrlTracker.Modules;
-using InfoCaster.Umbraco.UrlTracker.Providers;
-using System.Web.Hosting;
+using System.ComponentModel;
+using IComponent = Umbraco.Core.Composing.IComponent;
 
 namespace InfoCaster.Umbraco.UrlTracker
 {
@@ -44,19 +40,23 @@ namespace InfoCaster.Umbraco.UrlTracker
 
     public class UrlTrackerComponent : IComponent
     {
-        private UmbracoHelper _umbracoHelper;
+        private Lazy<UmbracoHelper> _umbracoHelper;
 
         private IScopeProvider _scopeProvider;
         private IMigrationBuilder _migrationBuilder;
         private IKeyValueService _keyValueService;
         private ILogger _logger;
+        private IUmbracoContextFactory _umbracoContextFactory;
 
-        public UrlTrackerComponent(IScopeProvider scopeProvider, IMigrationBuilder migrationBuilder, IKeyValueService keyValueService, ILogger logger)
+        public UrlTrackerComponent(IScopeProvider scopeProvider, IMigrationBuilder migrationBuilder, IKeyValueService keyValueService, ILogger logger, 
+            IUmbracoContextFactory umbracoContextFactory, Lazy<UmbracoHelper> umbracoHelper)
         {
             _scopeProvider = scopeProvider;
             _migrationBuilder = migrationBuilder;
             _keyValueService = keyValueService;
             _logger = logger;
+            _umbracoContextFactory = umbracoContextFactory;
+            _umbracoHelper = umbracoHelper;
         }
 
         protected ClientTools ClientTools
@@ -79,6 +79,7 @@ namespace InfoCaster.Umbraco.UrlTracker
             var upgrader = new Upgrader(migrationPlan);
             upgrader.Execute(_scopeProvider, _migrationBuilder, _keyValueService, _logger);
             
+
             if (!UrlTrackerSettings.IsDisabled && !UrlTrackerSettings.IsTrackingDisabled)
             {
                 //todo: resolve check from migration and execute this
@@ -97,12 +98,18 @@ namespace InfoCaster.Umbraco.UrlTracker
 
         private void DomainService_Saved(IDomainService sender, SaveEventArgs<IDomain> e)
         {
-            _umbracoHelper.ClearDomains();
+            using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
+            {
+                _umbracoHelper.Value.ClearDomains();
+            }
         }
 
         private void DomainService_Deleted(IDomainService sender, DeleteEventArgs<IDomain> e)
         {
-            _umbracoHelper.ClearDomains();
+            using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
+            {
+                _umbracoHelper.Value.ClearDomains();
+            }
         }
 
         public void Terminate()
@@ -138,52 +145,52 @@ namespace InfoCaster.Umbraco.UrlTracker
                 try
 #endif
                 {
-                    if (_umbracoHelper == null)
+                    using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
                     {
-                        _umbracoHelper = Current.Factory.TryGetInstance<UmbracoHelper>();
-                    }
-                    IPublishedContent node = _umbracoHelper.Content(content.Id);
-                    if (node.Name != content.Name && !string.IsNullOrEmpty(node.Name)) // If name is null, it's a new document
-                    {
-                        // Rename occurred
-                        UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.Renamed);
-
-                        if (ClientTools != null)
-                            ClientTools.ChangeContentFrameUrl(string.Concat("/umbraco/editContent.aspx?id=", content.Id));
-                    }
-                    if (content.HasProperty("umbracoUrlName"))
-                    {
-                        string contentUmbracoUrlNameValue = content.GetValue("umbracoUrlName") != null ? content.GetValue("umbracoUrlName").ToString() : string.Empty;
-                        string nodeUmbracoUrlNameValue = node.GetProperty("umbracoUrlName") != null ? node.GetProperty("umbracoUrlName").GetValue().ToString() : string.Empty;
-                        if (contentUmbracoUrlNameValue != nodeUmbracoUrlNameValue)
+                        
+                        IPublishedContent node = _umbracoHelper.Value.Content(content.Id);
+                        if (node.Name != content.Name && !string.IsNullOrEmpty(node.Name)) // If name is null, it's a new document
                         {
-                            // 'umbracoUrlName' property value added/changed
-                            UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.UrlOverwritten);
+                            // Rename occurred
+                            UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.Renamed);
 
                             if (ClientTools != null)
                                 ClientTools.ChangeContentFrameUrl(string.Concat("/umbraco/editContent.aspx?id=", content.Id));
                         }
-                    }
-                    if (UrlTrackerSettings.SEOMetadataInstalled && content.HasProperty(UrlTrackerSettings.SEOMetadataPropertyName))
-                    {
-                        string contentSEOMetadataValue = content.GetValue(UrlTrackerSettings.SEOMetadataPropertyName) != null ? content.GetValue(UrlTrackerSettings.SEOMetadataPropertyName).ToString() : string.Empty;
-                        string nodeSEOMetadataValue = node.GetProperty("umbracoUrlName") != null ? node.GetProperty("umbracoUrlName").GetValue().ToString() : string.Empty;
-                        if (contentSEOMetadataValue != nodeSEOMetadataValue)
+                        if (content.HasProperty("umbracoUrlName"))
                         {
-                            dynamic contentJson = JObject.Parse(contentSEOMetadataValue);
-                            string contentUrlName = contentJson.urlName;
-
-                            dynamic nodeJson = JObject.Parse(nodeSEOMetadataValue);
-                            string nodeUrlName = nodeJson.urlName;
-
-                            if (contentUrlName != nodeUrlName)
+                            string contentUmbracoUrlNameValue = content.GetValue("umbracoUrlName") != null ? content.GetValue("umbracoUrlName").ToString() : string.Empty;
+                            string nodeUmbracoUrlNameValue = node.GetProperty("umbracoUrlName") != null ? node.GetProperty("umbracoUrlName").GetValue().ToString() : string.Empty;
+                            if (contentUmbracoUrlNameValue != nodeUmbracoUrlNameValue)
                             {
-                                // SEOMetadata UrlName property value added/changed
-                                UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.UrlOverwrittenSEOMetadata);
-                                UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.UrlOverwrittenSEOMetadata);
+                                // 'umbracoUrlName' property value added/changed
+                                UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.UrlOverwritten);
 
                                 if (ClientTools != null)
                                     ClientTools.ChangeContentFrameUrl(string.Concat("/umbraco/editContent.aspx?id=", content.Id));
+                            }
+                        }
+                        if (UrlTrackerSettings.SEOMetadataInstalled && content.HasProperty(UrlTrackerSettings.SEOMetadataPropertyName))
+                        {
+                            string contentSEOMetadataValue = content.GetValue(UrlTrackerSettings.SEOMetadataPropertyName) != null ? content.GetValue(UrlTrackerSettings.SEOMetadataPropertyName).ToString() : string.Empty;
+                            string nodeSEOMetadataValue = node.GetProperty("umbracoUrlName") != null ? node.GetProperty("umbracoUrlName").GetValue().ToString() : string.Empty;
+                            if (contentSEOMetadataValue != nodeSEOMetadataValue)
+                            {
+                                dynamic contentJson = JObject.Parse(contentSEOMetadataValue);
+                                string contentUrlName = contentJson.urlName;
+
+                                dynamic nodeJson = JObject.Parse(nodeSEOMetadataValue);
+                                string nodeUrlName = nodeJson.urlName;
+
+                                if (contentUrlName != nodeUrlName)
+                                {
+                                    // SEOMetadata UrlName property value added/changed
+                                    UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.UrlOverwrittenSEOMetadata);
+                                    UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.UrlOverwrittenSEOMetadata);
+
+                                    if (ClientTools != null)
+                                        ClientTools.ChangeContentFrameUrl(string.Concat("/umbraco/editContent.aspx?id=", content.Id));
+                                }
                             }
                         }
                     }
@@ -212,11 +219,15 @@ namespace InfoCaster.Umbraco.UrlTracker
             try
 #endif
             {
-                if (content != null)
+                using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
                 {
-                    IPublishedContent node = _umbracoHelper.Content(content.Id);
-                    if (node != null && !string.IsNullOrEmpty(node.Url) && !content.Path.StartsWith("-1,-20")) // -1,-20 == Recycle bin | Not moved to recycle bin
-                        UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.Moved);
+
+                    if (content != null)
+                    {
+                        IPublishedContent node = _umbracoHelper.Value.Content(content.Id);
+                        if (node != null && !string.IsNullOrEmpty(node.Url) && !content.Path.StartsWith("-1,-20")) // -1,-20 == Recycle bin | Not moved to recycle bin
+                            UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.Moved);
+                    }
                 }
             }
 #if !DEBUG
@@ -267,27 +278,31 @@ namespace InfoCaster.Umbraco.UrlTracker
             public string OldRexEx { get; set; }
 
             [Column("RedirectRootNodeId")]
-            public int RedirectRootNodeId { get; set; }
+            public int? RedirectRootNodeId { get; set; }
 
             [Column("RedirectNodeId")]
-            public int RedirectNodeId { get; set; }
+            public int? RedirectNodeId { get; set; }
             
             [Column("RedirectUrl")]
-            public string RedirectUrl { get; set; }
+            public string  RedirectUrl { get; set; }
 
             [Column("RedirectHttpCode")]
+            [DefaultValue(301)]
             public int RedirectHttpCode { get; set; }
             
             [Column("RedirectPassThroughQueryString")]
+            [DefaultValue(true)]
             public bool RedirectPassThroughQueryString { get; set; }
             
             [Column("ForceRedirect")]
+            [DefaultValue(false)]
             public bool ForceRedirect { get; set; }
 
             [Column("Notes")]
             public string Notes { get; set; }
 
             [Column("Is404")]
+            [DefaultValue(false)]
             public bool Is404 { get; set; }
 
             [Column("Referrer")]

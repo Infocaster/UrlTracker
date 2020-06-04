@@ -9,7 +9,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Helpers
     public static class SqlHelper
     {
 
-        public static T ExecuteScalar<T>(string query, List<SqlParameter> args = null)
+        public static T ExecuteScalar<T>(string query, object args = null)
         {
             using (var scope = Current.ScopeProvider.CreateScope(autoComplete: true))
             {
@@ -19,8 +19,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Helpers
                 }
                 else
                 {
-                    var argsArray = args.ToArray();
-                    return scope.Database.ExecuteScalar<T>(query, argsArray);
+                    return scope.Database.ExecuteScalar<T>(query, args);
                 }
 
             }; 
