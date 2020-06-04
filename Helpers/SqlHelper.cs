@@ -25,7 +25,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Helpers
             }; 
         }
 
-        public static void ExecuteNonQuery(string query, List<SqlParameter> args = null)
+        public static void ExecuteNonQuery(string query, object args = null)
         {
             using (var scope = Current.ScopeProvider.CreateScope(autoComplete: true))
             {
@@ -35,8 +35,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Helpers
                 }
                 else
                 {
-                    var argsArray = args.ToArray();
-                    scope.Database.Execute(query, argsArray);
+                    scope.Database.Execute(query, args);
                 }
 
             };
