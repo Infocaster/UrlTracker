@@ -269,46 +269,55 @@ namespace InfoCaster.Umbraco.UrlTracker
             public int Id { get; set; }
 
             [Column("OldUrl")]
+            [NullSetting(NullSetting = NullSettings.Null)]
             public string OldUrl { get; set; }
 
             [Column("OldUrlQueryString")]
+            [NullSetting(NullSetting = NullSettings.Null)]
             public string OldUrlQueryString { get; set; }
 
             [Column("OldRegex")]
+            [NullSetting(NullSetting = NullSettings.Null)]
             public string OldRexEx { get; set; }
 
             [Column("RedirectRootNodeId")]
+            [NullSetting(NullSetting = NullSettings.Null)]
             public int? RedirectRootNodeId { get; set; }
 
             [Column("RedirectNodeId")]
+            [NullSetting(NullSetting = NullSettings.Null)]
             public int? RedirectNodeId { get; set; }
             
             [Column("RedirectUrl")]
+            [NullSetting(NullSetting = NullSettings.Null)]
             public string  RedirectUrl { get; set; }
 
             [Column("RedirectHttpCode")]
-            [DefaultValue(301)]
+            [Constraint(Default = 301)]
             public int RedirectHttpCode { get; set; }
             
             [Column("RedirectPassThroughQueryString")]
-            [DefaultValue(true)]
+            [Constraint(Default = "1")]
             public bool RedirectPassThroughQueryString { get; set; }
             
             [Column("ForceRedirect")]
-            [DefaultValue(false)]
+            [Constraint(Default = "0")]
             public bool ForceRedirect { get; set; }
 
             [Column("Notes")]
+            [NullSetting(NullSetting = NullSettings.Null)]
             public string Notes { get; set; }
 
             [Column("Is404")]
-            [DefaultValue(false)]
+            [Constraint(Default = false)]
             public bool Is404 { get; set; }
 
             [Column("Referrer")]
+            [NullSetting(NullSetting = NullSettings.Null)]
             public string Referred { get; set; }
 
             [Column("Inserted")]
+            [Constraint(Default = "getdate()")]
             public DateTime Inserted { get; set; }
         }
     }
