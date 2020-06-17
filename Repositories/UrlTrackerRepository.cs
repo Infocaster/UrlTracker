@@ -14,6 +14,8 @@ using Umbraco.Core.Persistence;
 using Umbraco.Web;
 using System.Data.SqlClient;
 using static InfoCaster.Umbraco.UrlTracker.Helpers.SqlHelper;
+using Umbraco.Web.Install.Models;
+using NPoco;
 
 namespace InfoCaster.Umbraco.UrlTracker.Repositories
 {
@@ -296,109 +298,86 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
                 query = string.Concat(query, ")");
             }
 
-
-            var connection = new SqlConnection(Current.ScopeProvider.CreateScope().Database.Connection.ConnectionString);
-            SqlCommand command = new SqlCommand(query, connection);
-
-            command.Parameters.AddWithValue("is404", _404 ? 1 : 0);
-            command.Parameters.AddWithValue("redirectHttpCode", include410Gone ? 0 : 410);
-            command.Parameters.AddWithValue("redirectHttpCode", include410Gone ? 0 : 410);
-
-            if (!string.IsNullOrEmpty(keyword))
-                command.Parameters.AddWithValue("keyword", "%" + keyword + "%");
-            if (intKeyword != 0)
-                command.Parameters.AddWithValue("intKeyword", intKeyword);
-
-            using (SqlDataReader reader = command.ExecuteReader())
+            //todo: check for ce or full sqlserver 
+            using(var scope = Current.ScopeProvider.CreateScope())
             {
-                while (reader.Read())
+                var parameters = new {
+                    @is404 = _404, 
+                    @redirectHttpCode = include410Gone ? 0 : 410 ,
+                    @keyword = "%" + keyword + "%",
+                    @intKeyword = intKeyword
+                };
+                var result = scope.Database.Fetch<UrlTrackerModel>(query, parameters);
+                urlTrackerEntries.AddRange(result);
+            
+                urlTrackerEntries = urlTrackerEntries.Where(x => x.RedirectNodeIsPublished).ToList();
+
+                if (!showAutoEntries || !showCustomEntries || !showRegexEntries || !string.IsNullOrEmpty(keyword))
                 {
-                    urlTrackerEntries.Add(new UrlTrackerModel(
-                        (int)reader["Id"],
-                        (string)reader["OldUrl"],
-                        (string)reader["OldUrlQueryString"],
-                        (string)reader["OldRegex"],
-                        (int)reader["RedirectRootNodeId"],
-                        (int?)reader["RedirectNodeId"],
-                        (string)reader["RedirectUrl"],
-                        (int)reader["RedirectHttpCode"],
-                        (bool)reader["RedirectPassThroughQueryString"],
-                        (bool)reader["ForceRedirect"],
-                        (string)reader["Notes"],
-                        (bool)reader["Is404"],
-                        (string)reader["Referrer"],
-                        (DateTime)reader["Inserted"]));
-                }
-            }
-
-            urlTrackerEntries = urlTrackerEntries.Where(x => x.RedirectNodeIsPublished).ToList();
-
-            if (!showAutoEntries || !showCustomEntries || !showRegexEntries || !string.IsNullOrEmpty(keyword))
-            {
-                IEnumerable<UrlTrackerModel> filteredUrlTrackerEntries = urlTrackerEntries;
-                if (!showAutoEntries)
-                    filteredUrlTrackerEntries = filteredUrlTrackerEntries.Where(x => x.ViewType != UrlTrackerViewTypes.Auto);
-                if (!showCustomEntries)
-                    filteredUrlTrackerEntries = filteredUrlTrackerEntries.Where(x => x.ViewType != UrlTrackerViewTypes.Custom || (showRegexEntries ? string.IsNullOrEmpty(x.OldUrl) : false));
-                if (!showRegexEntries)
-                    filteredUrlTrackerEntries = filteredUrlTrackerEntries.Where(x => !string.IsNullOrEmpty(x.OldUrl));
-                //if (!string.IsNullOrEmpty(keyword))
-                //{
-                //	filteredUrlTrackerEntries = filteredUrlTrackerEntries.Where(x =>
-                //		(x.CalculatedOldUrl != null && x.CalculatedOldUrl.ToLower().Contains(keyword)) ||
-                //		(x.CalculatedRedirectUrl != null && x.CalculatedRedirectUrl.ToLower().Contains(keyword)) ||
-                //		(x.OldRegex != null && x.OldRegex.ToLower().Contains(keyword)) ||
-                //		(x.Notes != null && x.Notes.ToLower().Contains(keyword))
-                //	);
-                //}
-                urlTrackerEntries = filteredUrlTrackerEntries.ToList();
-            }
-
-            if (!string.IsNullOrEmpty(sortExpression))
-            {
-                string sortBy = sortExpression;
-                bool isDescending = false;
-
-                if (sortExpression.ToLowerInvariant().EndsWith(" desc"))
-                {
-                    sortBy = sortExpression.Substring(0, sortExpression.Length - " desc".Length);
-                    isDescending = true;
+                    IEnumerable<UrlTrackerModel> filteredUrlTrackerEntries = urlTrackerEntries;
+                    if (!showAutoEntries)
+                        filteredUrlTrackerEntries = filteredUrlTrackerEntries.Where(x => x.ViewType != UrlTrackerViewTypes.Auto);
+                    if (!showCustomEntries)
+                        filteredUrlTrackerEntries = filteredUrlTrackerEntries.Where(x => x.ViewType != UrlTrackerViewTypes.Custom || (showRegexEntries ? string.IsNullOrEmpty(x.OldUrl) : false));
+                    if (!showRegexEntries)
+                        filteredUrlTrackerEntries = filteredUrlTrackerEntries.Where(x => !string.IsNullOrEmpty(x.OldUrl));
+                    if (!string.IsNullOrEmpty(keyword))
+                    {
+                        filteredUrlTrackerEntries = filteredUrlTrackerEntries.Where(x =>
+                            (x.CalculatedOldUrl != null && x.CalculatedOldUrl.ToLower().Contains(keyword)) ||
+                            (x.CalculatedRedirectUrl != null && x.CalculatedRedirectUrl.ToLower().Contains(keyword)) ||
+                            (x.OldRegex != null && x.OldRegex.ToLower().Contains(keyword)) ||
+                            (x.Notes != null && x.Notes.ToLower().Contains(keyword))
+                        );
+                    }
+                    urlTrackerEntries = filteredUrlTrackerEntries.ToList();
                 }
 
-                switch (sortBy)
+                if (!string.IsNullOrEmpty(sortExpression))
                 {
+                    string sortBy = sortExpression;
+                    bool isDescending = false;
 
-                    case "RedirectRootNodeName":
-                        urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.RedirectRootNodeName) : urlTrackerEntries.OrderBy(x => x.RedirectRootNodeName)).ToList();
-                        break;
-                    case "CalculatedOldUrl":
-                        urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.CalculatedOldUrl) : urlTrackerEntries.OrderBy(x => x.CalculatedOldUrl)).ToList();
-                        break;
-                    case "CalculatedRedirectUrl":
-                        urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.CalculatedRedirectUrl) : urlTrackerEntries.OrderBy(x => x.CalculatedRedirectUrl)).ToList();
-                        break;
-                    case "RedirectHttpCode":
-                        urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.RedirectHttpCode) : urlTrackerEntries.OrderBy(x => x.RedirectHttpCode)).ToList();
-                        break;
-                    case "Referrer":
-                        urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.Referrer) : urlTrackerEntries.OrderBy(x => x.Referrer)).ToList();
-                        break;
-                    case "NotFoundCount":
-                        urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.NotFoundCount) : urlTrackerEntries.OrderBy(x => x.NotFoundCount)).ToList();
-                        break;
-                    case "Notes":
-                        urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.Notes) : urlTrackerEntries.OrderBy(x => x.Notes)).ToList();
-                        break;
-                    case "Inserted":
-                        urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.Inserted) : urlTrackerEntries.OrderBy(x => x.Inserted)).ToList();
-                        break;
+                    if (sortExpression.ToLowerInvariant().EndsWith(" desc"))
+                    {
+                        sortBy = sortExpression.Substring(0, sortExpression.Length - " desc".Length);
+                        isDescending = true;
+                    }
+
+                    switch (sortBy)
+                    {
+
+                        case "RedirectRootNodeName":
+                            urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.RedirectRootNodeName) : urlTrackerEntries.OrderBy(x => x.RedirectRootNodeName)).ToList();
+                            break;
+                        case "CalculatedOldUrl":
+                            urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.CalculatedOldUrl) : urlTrackerEntries.OrderBy(x => x.CalculatedOldUrl)).ToList();
+                            break;
+                        case "CalculatedRedirectUrl":
+                            urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.CalculatedRedirectUrl) : urlTrackerEntries.OrderBy(x => x.CalculatedRedirectUrl)).ToList();
+                            break;
+                        case "RedirectHttpCode":
+                            urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.RedirectHttpCode) : urlTrackerEntries.OrderBy(x => x.RedirectHttpCode)).ToList();
+                            break;
+                        case "Referrer":
+                            urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.Referrer) : urlTrackerEntries.OrderBy(x => x.Referrer)).ToList();
+                            break;
+                        case "NotFoundCount":
+                            urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.NotFoundCount) : urlTrackerEntries.OrderBy(x => x.NotFoundCount)).ToList();
+                            break;
+                        case "Notes":
+                            urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.Notes) : urlTrackerEntries.OrderBy(x => x.Notes)).ToList();
+                            break;
+                        case "Inserted":
+                            urlTrackerEntries = (isDescending ? urlTrackerEntries.OrderByDescending(x => x.Inserted) : urlTrackerEntries.OrderBy(x => x.Inserted)).ToList();
+                            break;
+                    }
                 }
+                if (startRowIndex.HasValue)
+                    urlTrackerEntries = urlTrackerEntries.Skip(startRowIndex.Value).ToList();
+                if (maximumRows.HasValue)
+                    urlTrackerEntries = urlTrackerEntries.Take(maximumRows.Value).ToList();
             }
-            if (startRowIndex.HasValue)
-                urlTrackerEntries = urlTrackerEntries.Skip(startRowIndex.Value).ToList();
-            if (maximumRows.HasValue)
-                urlTrackerEntries = urlTrackerEntries.Take(maximumRows.Value).ToList();
-
             return urlTrackerEntries;
         }
 

@@ -41,7 +41,6 @@ namespace InfoCaster.Umbraco.UrlTracker
     public class UrlTrackerComponent : IComponent
     {
         private Lazy<UmbracoHelper> _umbracoHelper;
-
         private IScopeProvider _scopeProvider;
         private IMigrationBuilder _migrationBuilder;
         private IKeyValueService _keyValueService;
@@ -109,6 +108,7 @@ namespace InfoCaster.Umbraco.UrlTracker
             using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
             {
                 _umbracoHelper.Value.ClearDomains();
+                
             }
         }
 
@@ -147,9 +147,9 @@ namespace InfoCaster.Umbraco.UrlTracker
                 {
                     using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
                     {
-                        
-                        IPublishedContent node = _umbracoHelper.Value.Content(content.Id);
-                        if (node.Name != content.Name && !string.IsNullOrEmpty(node.Name)) // If name is null, it's a new document
+                        var contentCache = ctx.UmbracoContext.Content;
+                        IPublishedContent node = contentCache.GetById(content.Id);
+                        if (node?.Name != content.Name && !string.IsNullOrEmpty(node?.Name)) // If name is null, it's a new document
                         {
                             // Rename occurred
                             UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.Renamed);
@@ -224,7 +224,8 @@ namespace InfoCaster.Umbraco.UrlTracker
 
                     if (content != null)
                     {
-                        IPublishedContent node = _umbracoHelper.Value.Content(content.Id);
+                        var contentCache = ctx.UmbracoContext.Content;
+                        IPublishedContent node = contentCache.GetById(content.Id);
                         if (node != null && !string.IsNullOrEmpty(node.Url) && !content.Path.StartsWith("-1,-20")) // -1,-20 == Recycle bin | Not moved to recycle bin
                             UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.Moved);
                     }
@@ -249,76 +250,15 @@ namespace InfoCaster.Umbraco.UrlTracker
         public override void Migrate()
         {
             Logger.Debug<AddUrlTrackerTable>("Running migration {MigrationStep}", "AddUrlTrackerTable");
-            if(!TableExists("icUrlTracker"))
+            if (!TableExists("icUrlTracker"))
             {
                 Create.Table<UrlTrackerSchema>().Do();
             }
             else
             {
-                Logger.Debug<AddUrlTrackerTable>("The database table {DbTable} already exists, skipping","icUrlTracker");
+                Logger.Debug<AddUrlTrackerTable>("The database table {DbTable} already exists, skipping", "icUrlTracker");
             }
         }
 
-        [TableName("icUrlTracker")]
-        [PrimaryKey("Id", AutoIncrement = true)]
-        [ExplicitColumns]
-        public class UrlTrackerSchema
-        {
-            [PrimaryKeyColumn(AutoIncrement = true, IdentitySeed = 1)]
-            [Column("Id")]
-            public int Id { get; set; }
-
-            [Column("OldUrl")]
-            [NullSetting(NullSetting = NullSettings.Null)]
-            public string OldUrl { get; set; }
-
-            [Column("OldUrlQueryString")]
-            [NullSetting(NullSetting = NullSettings.Null)]
-            public string OldUrlQueryString { get; set; }
-
-            [Column("OldRegex")]
-            [NullSetting(NullSetting = NullSettings.Null)]
-            public string OldRexEx { get; set; }
-
-            [Column("RedirectRootNodeId")]
-            [NullSetting(NullSetting = NullSettings.Null)]
-            public int? RedirectRootNodeId { get; set; }
-
-            [Column("RedirectNodeId")]
-            [NullSetting(NullSetting = NullSettings.Null)]
-            public int? RedirectNodeId { get; set; }
-            
-            [Column("RedirectUrl")]
-            [NullSetting(NullSetting = NullSettings.Null)]
-            public string  RedirectUrl { get; set; }
-
-            [Column("RedirectHttpCode")]
-            [Constraint(Default = 301)]
-            public int RedirectHttpCode { get; set; }
-            
-            [Column("RedirectPassThroughQueryString")]
-            [Constraint(Default = "1")]
-            public bool RedirectPassThroughQueryString { get; set; }
-            
-            [Column("ForceRedirect")]
-            [Constraint(Default = "0")]
-            public bool ForceRedirect { get; set; }
-
-            [Column("Notes")]
-            [NullSetting(NullSetting = NullSettings.Null)]
-            public string Notes { get; set; }
-
-            [Column("Is404")]
-            [Constraint(Default = false)]
-            public bool Is404 { get; set; }
-
-            [Column("Referrer")]
-            [NullSetting(NullSetting = NullSettings.Null)]
-            public string Referred { get; set; }
-
-            [Column("Inserted")]
-            [Constraint(Default = "getdate()")]
-            public DateTime Inserted { get; set; }
-        }
     }
 }

@@ -45,29 +45,29 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
         public void Init(HttpApplication app)
         {
             _scope = Current.ScopeProvider.CreateScope();
-                
+            _urlTrackerInstalled = true;
             //CheckUrlTrackerInstalled();
-            if (!_urlTrackerSubscribed)
-            {
-                lock (_urlTrackerSubscribeLock)
-                {
-                    if (!_urlTrackerSubscribed)
-                    {
-						// YSOD when running in integrated mode :(
-						// app.PostResolveRequestCache += Context_PostResolveRequestCache;
+            //      if (!_urlTrackerSubscribed)
+            //      {
+            //          lock (_urlTrackerSubscribeLock)
+            //          {
+            //              if (!_urlTrackerSubscribed)
+            //              {
+            //// YSOD when running in integrated mode :(
+            //// app.PostResolveRequestCache += Context_PostResolveRequestCache;
 
-						UmbracoModule.EndRequest += UmbracoModule_EndRequest;
+            //UmbracoModule.EndRequest += UmbracoModule_EndRequest;
 
-                        LoggingHelper.LogInformation("UrlTracker HttpModule | Subscribed to EndRequest events");
+            //                  LoggingHelper.LogInformation("UrlTracker HttpModule | Subscribed to EndRequest events");
 
-                        _urlTrackerSubscribed = true;
-                    }
-                }
-            }
+            //                  _urlTrackerSubscribed = true;
+            //              }
+            //          }
+            //      }
 
-			// Prevent YSOD crash
-			// https://stackoverflow.com/questions/3712598/httpmodule-init-safely-add-httpapplication-beginrequest-handler-in-iis7-integr
-			app.PostResolveRequestCache -= Context_PostResolveRequestCache;
+            // Prevent YSOD crash
+            // https://stackoverflow.com/questions/3712598/httpmodule-init-safely-add-httpapplication-beginrequest-handler-in-iis7-integr
+            app.PostResolveRequestCache -= Context_PostResolveRequestCache;
 			app.PostResolveRequestCache += Context_PostResolveRequestCache;
 
             LoggingHelper.LogInformation("UrlTracker HttpModule | Subscribed to AcquireRequestState events");
@@ -103,13 +103,12 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
             {
                 try
                 {
-                    //_umbracoHelper = Current.Factory.TryGetInstance<UmbracoHelper>();
                     _umbracoHelper = Current.Factory.CreateInstance<UmbracoHelper>();
                 }
                 catch (Exception ex)
                 {
                     LoggingHelper.LogException(ex);
-                    return;
+                    //return;
                 }
             }
             if (context == null)
@@ -200,17 +199,24 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
                 }
                 if (rootNodeId == -1)
                 {
-                    IPublishedContent node = _umbracoHelper.Content(rootNodeId);
-                    var children = node.Children().ToArray();
-                    if (children != null && children.Any())
-                        rootNodeId = children.First().Id;
+                    if (Current.UmbracoContext != null)
+                    {
+                        rootNodeId = Current.UmbracoContext.Content.GetAtRoot()
+                            .First()
+                            .Root()
+                            .Id;
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
                 else
                 {
                     var rootUrl = "/";
                     try
                     {
-                        IPublishedContent node = _umbracoHelper.Content(rootNodeId);
+                        IPublishedContent node = Current.UmbracoContext.Content.GetById(rootNodeId);
                         rootUrl = node.Url;
                     }
                     catch (ArgumentNullException)
@@ -261,10 +267,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
                                     int redirectNodeId = result.RedirectNodeId.Value;
                                     LoggingHelper.LogInformation("UrlTracker HttpModule | Redirect node id: {0}", redirectNodeId);
 
-                                    IPublishedContent n = _umbracoHelper.Content(rootNodeId);
+                                    IPublishedContent n = Current.UmbracoContext.Content.GetById(rootNodeId);
                                     if (n != null && n.Name != null && n.Id > 0)
                                     {
-                                        redirectUrl = _umbracoHelper.Content(redirectNodeId).Url;
+                                        redirectUrl = Current.UmbracoContext.Content.GetById(redirectNodeId).Url;
                                         LoggingHelper.LogInformation("UrlTracker HttpModule | Redirect url set to: {0}", redirectUrl);
                                     }
                                     else
@@ -307,10 +313,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
                             if (match.UrlTrackerModel.RedirectNodeId.HasValue)
                             {
                                 LoggingHelper.LogInformation("UrlTracker HttpModule | Redirect node id: {0}", match.UrlTrackerModel.RedirectNodeId.Value);
-                                IPublishedContent n = _umbracoHelper.Content(rootNodeId);
+                                IPublishedContent n = Current.UmbracoContext.Content.GetById(rootNodeId);
                                 if (n != null && n.Name != null && n.Id > 0)
                                 {
-                                    redirectUrl = _umbracoHelper.Content(match.UrlTrackerModel.RedirectNodeId.Value).Url;
+                                    redirectUrl = Current.UmbracoContext.Content.GetById(match.UrlTrackerModel.RedirectNodeId.Value).Url;
                                     LoggingHelper.LogInformation("UrlTracker HttpModule | Redirect url set to: {0}", redirectUrl);
                                 }
                                 else
@@ -451,10 +457,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
             {
                 int redirectNodeId = result.RedirectNodeId.Value;
                 LoggingHelper.LogInformation("UrlTracker HttpModule | Redirect node id: {0}", redirectNodeId);
-                IPublishedContent n = _umbracoHelper.Content(rootNodeId);
+                IPublishedContent n = Current.UmbracoContext.Content.GetById(rootNodeId);
                 if (n != null && n.Name != null && n.Id > 0)
                 {
-                    string tempUrl = _umbracoHelper.Content(redirectNodeId).Url;
+                    string tempUrl = Current.UmbracoContext.Content.GetById(redirectNodeId).Url;
                     redirectUrl = tempUrl.StartsWith(Uri.UriSchemeHttp) ? tempUrl : string.Format("{0}{1}{2}{3}{4}", HttpContext.Current.Request.Url.Scheme, Uri.SchemeDelimiter, HttpContext.Current.Request.Url.Host, HttpContext.Current.Request.Url.Port != 80 && UrlTrackerSettings.AppendPortNumber ? string.Concat(":", HttpContext.Current.Request.Url.Port) : string.Empty, tempUrl);
                     if (redirectUrl.StartsWith(Uri.UriSchemeHttp))
                     {
@@ -540,10 +546,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
                 {
                     LoggingHelper.LogInformation("UrlTracker HttpModule | Redirect node id: {0}", forcedRedirect.RedirectNodeId.Value);
 
-                    IPublishedContent n = _umbracoHelper.Content(rootNodeId);
+                    IPublishedContent n = Current.UmbracoContext.Content.GetById(rootNodeId);
                     if (n != null && n.Name != null && n.Id > 0)
                     {
-                        string tempUrl = _umbracoHelper.Content(forcedRedirect.RedirectNodeId.Value).Url;
+                        string tempUrl = Current.UmbracoContext.Content.GetById(forcedRedirect.RedirectNodeId.Value).Url;
                         redirectUrl = tempUrl.StartsWith(Uri.UriSchemeHttp) ? tempUrl : string.Format("{0}{1}{2}{3}{4}", HttpContext.Current.Request.Url.Scheme, Uri.SchemeDelimiter, HttpContext.Current.Request.Url.Host, HttpContext.Current.Request.Url.Port != 80 && UrlTrackerSettings.AppendPortNumber ? string.Concat(":", HttpContext.Current.Request.Url.Port) : string.Empty, tempUrl);
                         if (redirectUrl.StartsWith(Uri.UriSchemeHttp))
                         {
