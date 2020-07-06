@@ -298,7 +298,6 @@
     <Compile Include="Extensions\NameValueCollectionExtension.cs" />
     <Compile Include="Models\UrlTrackerModel.cs" />
     <Compile Include="Modules\UrlTrackerModule.cs" />
-    <Compile Include="UI\Dashboard.cs" />
     <Compile Include="UI\Installer\UrlTrackerInstaller.ascx.cs">
       <DependentUpon>UrlTrackerInstaller.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -309,15 +308,6 @@
     <Compile Include="UI\Installer\UrlTrackerInstallerService.asmx.cs">
       <DependentUpon>UrlTrackerInstallerService.asmx</DependentUpon>
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UI\301UrlTracker.Master.cs">
-      <DependentUpon>301UrlTracker.Master</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Compile>
-    <Compile Include="UI\301UrlTracker.Master.designer.cs">
-      <DependentUpon>301UrlTracker.Master</DependentUpon>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="UI\UrlTrackerInfo.aspx.cs">
       <DependentUpon>UrlTrackerInfo.aspx</DependentUpon>
@@ -508,9 +498,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\UserControls\NotFoundView.ascx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="UI\301UrlTracker.Master">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="web.config" />
