@@ -298,6 +298,7 @@
     <Compile Include="Extensions\NameValueCollectionExtension.cs" />
     <Compile Include="Models\UrlTrackerModel.cs" />
     <Compile Include="Modules\UrlTrackerModule.cs" />
+    <Compile Include="UI\Dashboard.cs" />
     <Compile Include="UI\Installer\UrlTrackerInstaller.ascx.cs">
       <DependentUpon>UrlTrackerInstaller.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -309,6 +310,15 @@
       <DependentUpon>UrlTrackerInstallerService.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UI\301UrlTracker.Master.cs">
+      <DependentUpon>301UrlTracker.Master</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+    <Compile Include="UI\301UrlTracker.Master.designer.cs">
+      <DependentUpon>301UrlTracker.Master</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="UI\UrlTrackerInfo.aspx.cs">
       <DependentUpon>UrlTrackerInfo.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -319,54 +329,70 @@
     <Compile Include="UI\UrlTrackerManager.aspx.cs">
       <DependentUpon>UrlTrackerManager.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="UI\UrlTrackerManager.aspx.designer.cs">
       <DependentUpon>UrlTrackerManager.aspx</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="UI\UrlTrackerManagerWrapper.ascx.cs">
       <DependentUpon>UrlTrackerManagerWrapper.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="UI\UrlTrackerManagerWrapper.ascx.designer.cs">
       <DependentUpon>UrlTrackerManagerWrapper.ascx</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="UI\UserControls\AdvancedView.ascx.cs">
       <DependentUpon>AdvancedView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="UI\UserControls\AdvancedView.ascx.designer.cs">
       <DependentUpon>AdvancedView.ascx</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="UI\UserControls\AutoView.ascx.cs">
       <DependentUpon>AutoView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="UI\UserControls\AutoView.ascx.designer.cs">
       <DependentUpon>AutoView.ascx</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="UI\UserControls\CreateView.ascx.cs">
       <DependentUpon>CreateView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="UI\UserControls\CreateView.ascx.designer.cs">
       <DependentUpon>CreateView.ascx</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="UI\UserControls\CustomView.ascx.cs">
       <DependentUpon>CustomView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="UI\UserControls\CustomView.ascx.designer.cs">
       <DependentUpon>CustomView.ascx</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="UI\UserControls\IUrlTrackerView.cs" />
+    <Compile Include="UI\UserControls\IUrlTrackerView.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="UI\UserControls\NotFoundView.ascx.cs">
       <DependentUpon>NotFoundView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="UI\UserControls\NotFoundView.ascx.designer.cs">
       <DependentUpon>NotFoundView.ascx</DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="UrlTrackerApplicationEventHandler.cs" />
+    <Compile Include="UrlTrackerComponent .cs" />
     <Compile Include="Models\AutoTrackingTypes.cs" />
     <Compile Include="Helpers\UrlTrackerHelper.cs" />
     <Compile Include="Repositories\UrlTrackerRepository.cs" />
@@ -378,6 +404,7 @@
     <Content Include="BackOffice\App.js" />
     <Content Include="BackOffice\directives\UrlTrackerManager.js" />
     <Content Include="BackOffice\Html\UrlTrackerManager.html" />
+    <Content Include="UI\lang\en-us.xml" />
     <Content Include="UI\Installer\UrlTrackerInstaller.ascx" />
     <Content Include="UI\Installer\UrlTrackerInstallerService.asmx" />
     <Content Include="UI\res\css\bootstrap.css">
@@ -462,20 +489,38 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="UI\UrlTrackerInfo.aspx" />
-    <Content Include="UI\UrlTrackerManager.aspx" />
-    <Content Include="UI\UrlTrackerManagerWrapper.ascx" />
-    <Content Include="UI\UserControls\AdvancedView.ascx" />
-    <Content Include="UI\UserControls\AutoView.ascx" />
-    <Content Include="UI\UserControls\CreateView.ascx" />
-    <Content Include="UI\UserControls\CustomView.ascx" />
-    <Content Include="UI\UserControls\NotFoundView.ascx" />
+    <Content Include="UI\UrlTrackerManager.aspx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\UrlTrackerManagerWrapper.ascx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\UserControls\AdvancedView.ascx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\UserControls\AutoView.ascx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\UserControls\CreateView.ascx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\UserControls\CustomView.ascx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\UserControls\NotFoundView.ascx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\301UrlTracker.Master">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="web.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <Content Include="Views\UrlTrackerManager.cshtml" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Views\" />
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
