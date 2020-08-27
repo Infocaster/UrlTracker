@@ -8,11 +8,11 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Web;
-using umbraco.BusinessLogic;
+//using umbraco.BusinessLogic;
 using Umbraco.Core.Composing;
 using Umbraco.Core.Logging;
 using ILogger = Umbraco.Core.Logging.ILogger;
-using UmbracoLog = umbraco.BusinessLogic.Log;
+//using UmbracoLog = umbraco.BusinessLogic.Log;
 
 namespace InfoCaster.Umbraco.UrlTracker.Helpers
 {

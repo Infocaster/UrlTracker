@@ -3,7 +3,6 @@ using InfoCaster.Umbraco.UrlTracker.Extensions;
 using InfoCaster.Umbraco.UrlTracker.Helpers;
 using InfoCaster.Umbraco.UrlTracker.Models;
 using InfoCaster.Umbraco.UrlTracker.Repositories;
-using InfoCaster.Umbraco.UrlTracker.UI.Installer;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
