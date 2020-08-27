@@ -1,6 +1,7 @@
 ﻿using InfoCaster.Umbraco.UrlTracker.Models;
 using InfoCaster.Umbraco.UrlTracker.Repositories;
 using InfoCaster.Umbraco.UrlTracker.ViewModels;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
     public class UrlTrackerManagerController : UmbracoApiController
     {
         [HttpGet]
-        public UrlTrackerOverviewModel Index(int skip, int ammount)
+        public IHttpActionResult Index(int skip, int ammount)
         {
             var allEntries = UrlTrackerRepository.GetUrlTrackerEntries();
             var model = new UrlTrackerOverviewModel
@@ -21,14 +22,14 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
                 Entries = allEntries.Skip(skip).Take(ammount).AsEnumerable(),
                 TotalPages = (int)(allEntries.Count / ammount)
             };
-            return model;
+            return Ok(model);
         }
 
         [HttpGet]
-        public UrlTrackerModel Details(int id)
+        public IHttpActionResult Details(int id)
         {
             var entry = UrlTrackerRepository.GetUrlTrackerEntryById(id);
-            return entry;
+            return Ok(entry);
         }
 
         [HttpPost]

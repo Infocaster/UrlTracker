@@ -1,5 +1,6 @@
 ﻿using InfoCaster.Umbraco.UrlTracker.Extensions;
 using InfoCaster.Umbraco.UrlTracker.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -18,10 +19,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
         NotFound
     }
 
-    [Serializable]
     [DebuggerDisplay("OUrl = {OldUrl} | Rgx = {OldRegex} | Qs = {OldUrlQueryString} | Root = {RedirectRootNodeId}")]
     public class UrlTrackerModel
     {
+        [JsonIgnore]
         private UmbracoHelper _umbracoHelper;
         #region Data fields
         public int Id { get; set; }
@@ -42,6 +43,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
         #endregion
 
         #region Calculated properties
+        [JsonIgnore]
         public string CalculatedOldUrlWithoutQuery
         {
             get
@@ -51,6 +53,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                 return CalculatedOldUrl.Contains('?') ? CalculatedOldUrl.Substring(0, CalculatedOldUrl.IndexOf('?')) : CalculatedOldUrl;
             }
         }
+        [JsonIgnore]
         public string CalculatedOldUrl
         {
             get
@@ -62,6 +65,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                 return !pathAndQuery.StartsWith("/") ? string.Concat("/", pathAndQuery.Substring(1)) : pathAndQuery;
             }
         }
+        [JsonIgnore]
         public string CalculatedOldUrlWithDomain
         {
             get
@@ -90,6 +94,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                 }
             }
         }
+        [JsonIgnore]
         public string CalculatedRedirectUrl
         {
             get
@@ -170,6 +175,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
 
             }
         }
+        [JsonIgnore]
         public IPublishedContent RedirectRootNode
         {
             get
@@ -184,6 +190,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                 return redirectRootNode;
             }
         }
+        [JsonIgnore]
         public string RedirectRootNodeName
         {
             get
@@ -200,6 +207,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                 }
             }
         }
+        [JsonIgnore]
         public UrlTrackerViewTypes ViewType
         {
             get
@@ -211,6 +219,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                 return UrlTrackerViewTypes.Custom;
             }
         }
+        [JsonIgnore]
         public bool RedirectNodeIsPublished
         {
             get
