@@ -14,16 +14,12 @@ using Umbraco.Core.Models;
 using Umbraco.Core.Services;
 using Umbraco.Core.Services.Implement;
 using Umbraco.Web;
-using Umbraco.Web.UI;
-using umbraco.BasePages;
+//using umbraco.BasePages;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.Logging;
 using Umbraco.Core.Migrations;
 using Umbraco.Core.Migrations.Upgrade;
 using Umbraco.Core.Scoping;
-using NPoco;
-using Umbraco.Core.Persistence.DatabaseAnnotations;
-using System.ComponentModel;
 using IComponent = Umbraco.Core.Composing.IComponent;
 
 namespace InfoCaster.Umbraco.UrlTracker
@@ -58,16 +54,16 @@ namespace InfoCaster.Umbraco.UrlTracker
             _umbracoHelper = umbracoHelper;
         }
 
-        protected ClientTools ClientTools
-        {
-            get
-            {
-                Page page = HttpContext.Current.CurrentHandler as Page;
-                if (page != null)
-                    return new ClientTools(page);
-                return null;
-            }
-        }
+        //protected ClientTools ClientTools
+        //{
+        //    get
+        //    {
+        //        Page page = HttpContext.Current.CurrentHandler as Page;
+        //        if (page != null)
+        //            return new ClientTools(page);
+        //        return null;
+        //    }
+        //}
 
         public void Initialize()
         {
@@ -154,8 +150,8 @@ namespace InfoCaster.Umbraco.UrlTracker
                             // Rename occurred
                             UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.Renamed);
 
-                            if (ClientTools != null)
-                                ClientTools.ChangeContentFrameUrl(string.Concat("/umbraco/editContent.aspx?id=", content.Id));
+                            //if (ClientTools != null)
+                            //    ClientTools.ChangeContentFrameUrl(string.Concat("/umbraco/editContent.aspx?id=", content.Id));
                         }
                         if (content.HasProperty("umbracoUrlName"))
                         {
@@ -166,8 +162,8 @@ namespace InfoCaster.Umbraco.UrlTracker
                                 // 'umbracoUrlName' property value added/changed
                                 UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.UrlOverwritten);
 
-                                if (ClientTools != null)
-                                    ClientTools.ChangeContentFrameUrl(string.Concat("/umbraco/editContent.aspx?id=", content.Id));
+                                //if (ClientTools != null)
+                                //    ClientTools.ChangeContentFrameUrl(string.Concat("/umbraco/editContent.aspx?id=", content.Id));
                             }
                         }
                         if (UrlTrackerSettings.SEOMetadataInstalled && content.HasProperty(UrlTrackerSettings.SEOMetadataPropertyName))
@@ -188,8 +184,8 @@ namespace InfoCaster.Umbraco.UrlTracker
                                     UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.UrlOverwrittenSEOMetadata);
                                     UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.UrlOverwrittenSEOMetadata);
 
-                                    if (ClientTools != null)
-                                        ClientTools.ChangeContentFrameUrl(string.Concat("/umbraco/editContent.aspx?id=", content.Id));
+                                    //if (ClientTools != null)
+                                    //    ClientTools.ChangeContentFrameUrl(string.Concat("/umbraco/editContent.aspx?id=", content.Id));
                                 }
                             }
                         }
