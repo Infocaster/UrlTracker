@@ -1,17 +1,76 @@
-﻿using System;
+﻿using InfoCaster.Umbraco.UrlTracker.Models;
+using InfoCaster.Umbraco.UrlTracker.Repositories;
+using InfoCaster.Umbraco.UrlTracker.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Mvc;
+using System.Web.Http;
+using Umbraco.Web.WebApi;
 
 namespace InfoCaster.Umbraco.UrlTracker.Controllers
 {
-    public class UrlTrackerManagerController : Controller
+    public class UrlTrackerManagerController : UmbracoApiController
     {
-        // GET: UrlTrackerManager
-        public ActionResult Index()
+        [HttpGet]
+        public UrlTrackerOverviewModel Index(int skip, int ammount)
         {
-            return View();
+            var allEntries = UrlTrackerRepository.GetUrlTrackerEntries();
+            var model = new UrlTrackerOverviewModel
+            {
+                Entries = allEntries.Skip(skip).Take(ammount).AsEnumerable(),
+                TotalPages = (int)(allEntries.Count / ammount)
+            };
+            return model;
+        }
+
+        [HttpGet]
+        public UrlTrackerModel Details(int id)
+        {
+            var entry = UrlTrackerRepository.GetUrlTrackerEntryById(id);
+            return entry;
+        }
+
+        [HttpPost]
+        public IHttpActionResult SaveChanges(UrlTrackerModel model)
+        {
+            try
+            {
+                UrlTrackerRepository.UpdateUrlTrackerEntry(model);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        public IHttpActionResult Create(UrlTrackerModel model)
+        {
+            try
+            {
+                UrlTrackerRepository.AddUrlTrackerEntry(model);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpPost]
+        public IHttpActionResult Delete(int id)
+        {
+            try
+            {
+                UrlTrackerRepository.DeleteUrlTrackerEntry(id);
+                return Ok();
+            }
+            catch
+            {
+                return BadRequest();
+            }
         }
     }
 }
