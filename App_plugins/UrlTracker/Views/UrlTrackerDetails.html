@@ -1,0 +1,51 @@
+﻿<div ng-controller="UrlTracker.DetailsController as vm">
+    <h1>Url Tracker</h1>
+    <umb-breadcrumbs
+        ng-if="vm.ancestors && vm.ancestors.length > 0"
+        ancestors="vm.ancestors"
+        entity-type="content">
+    </umb-breadcrumbs>
+    <form name="UrlTrackerEntryForm" >
+        <umb-editor-view>
+                <umb-editor-container>
+                <h3>Required</h3>
+                <hr />
+                <div>
+                    <label>Root node</label>
+                    <umb-dropdown>
+                        <umb-dropdown-item ng-repeat="item in vm.rootNodes">
+                            <a href="" ng-click="vm.entry.redirectRootNodeId = item.id" >{{item.name}}</a>
+                        </umb-dropdown-item>
+                    </umb-dropdown>
+                    <label>Old Url</label>
+                    <input type="text" value="{{vm.entry.oldUrl}}" />
+                    <label>or Regex</label>
+                    <input type="text" value="{{vm.entry.oldRegex}}" />
+                    <label>Old Url query string</label>
+                    <input type="text" value="{{vm.entry.oldUrlQueryString}}" />
+                    <label>Redirect node</label>
+                    <label>or redirect URL</label>
+                    <input type="text" value="{{vm.entry.redirectUrl}}" />
+                </div>
+                <h3>Optional</h3>
+                <hr />
+                <div>
+                    <label>Redirect type</label>
+                    <input type="radio" value="301" title="Permanent (301)" selected />
+                    <input type="radio" value="302" title="Temporary (302)"  />
+                    <label>Forward query string</label>
+                    <input type="checkbox" value="{{vm.entry.oldRegex}}" />
+                    <label>Force redirect</label>
+                    <input type="checkbox" value="{{vm.entry.oldUrlQueryString}}" />
+                    <label>Notes</label>
+                    <input type="text" value="{{vm.entry.redirectUrl}}" />
+                    Created: {{vm.entry.inserted}}
+                </div>
+            </umb-editor-container>
+        </umb-editor-view>
+    </form>
+    <div>
+        <button class="btn btn-toolbar" value="< Return to overview" ng-click="vm.returnToOverview()"></button>
+        <button class="btn btn-primary" value="Save changes" ng-click="vm.saveChanges()"></button>
+    </div>
+</div>

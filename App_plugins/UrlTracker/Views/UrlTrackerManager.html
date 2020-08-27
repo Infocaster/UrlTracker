@@ -1,0 +1,54 @@
+﻿<div>
+    <div ng-controller="UrlTracker.OverviewController as vm">
+        <div class="row">
+            <umb-button
+                action="vm.clickCreateButton()"
+                type="button"        
+                button-style="action"
+                state="vm.createButtonState"
+                label="Create"
+                disabled="vm.createButtonState === 'busy'">
+            </umb-button>
+            <input type="text" value="Search" disabled />
+
+            <label>Filter: </label>
+            <input type="checkbox" value="Automatic entries" disabled/>
+            <input type="checkbox" value="Custom Url entries" disabled />
+            <input type="checkbox" value="Custom Regex entries" disabled />
+            <hr />
+        </div>
+        <div class="row">
+            <umb-table
+                items="vm.items"
+                item-properties="vm.options.includeProperties"
+                allow-select-all="vm.allowSelectAll"
+                on-select="vm.selectItem"
+                on-click="vm.clickItem"
+                on-select-all="vm.selectAll"
+                on-selected-all="vm.isSelectedAll"
+                on-sorting-direction="vm.isSortDirection"
+                on-sort="vm.sort" >
+            </umb-table>
+        </div>
+        <div class="row">
+        <umb-pagination
+            page-number="vm.pagination.pageNumber"
+            total-pages="vm.pagination.totalPages"
+            on-next="vm.nextPage"
+            on-prev="vm.prevPage"
+            on-go-to-page="vm.goToPage">
+        </umb-pagination>
+        <hr />
+        <umb-button actions="vm.deleteSelected"
+                    typeof="button"
+                    label="Delete selected">
+        </umb-button>
+        <label>Pagesize:</label>
+        <umb-dropdown>
+            <umb-dropdown-item ng-repeat="item in vm.pageSizeOptions">
+                <a href="" ng-click="vm.pageSizeChanged(item.value)" >{{item.value}}</a>
+            </umb-dropdown-item>
+        </umb-dropdown>
+        </div>
+    </div>
+</div>
