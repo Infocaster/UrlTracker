@@ -290,7 +290,6 @@
     <Compile Include="Helpers\ContextHelper.cs" />
     <Compile Include="Helpers\SqlHelper.cs" />
     <Compile Include="Models\UrlTrackerSchema.cs" />
-    <Compile Include="Models\UrlTrackerViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\EmbeddedResourcesHelper.cs" />
     <Compile Include="Models\OldUrlTrackerModel.cs" />
