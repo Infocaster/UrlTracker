@@ -1,36 +1,31 @@
 ﻿(function () {
     "use strict";
-    angular.module("umbraco").controller("UrlTracker.OverviewController", ["UrlTrackerEntryService", function (UrlTrackerEntryService) {
+    angular.module("umbraco").controller("UrlTracker.OverviewController", ["$scope","UrlTrackerEntryService","editorService", function ($scope, UrlTrackerEntryService, editorService) {
 
         var vm = this;
         //table
+        vm.items = [
+        ];
+        vm.selectedItems = [];
         vm.options = {
             includeProperties: [
-                { alias: "Culture", header: "Site" }
+                { alias: "RedirectNodeId", header: "NodeId" },
+                { alias: "OldUrl", header: "OldUrl" },
+                { alias: "RedirectUrl", header: "NewUrl" },
+                { alias: "Notes", header: "Notes" },
+                { alias: "Inserted", header: "CreatedAt" }
             ]
         }
+        vm.allItemsSelected = false;
         vm.itemsPerPage = 20;
-        vm.selectItem = selectItem;
-        vm.clickItem = clickItem;
-        vm.selectAll = selectAll;
-        vm.isSelectedAll = isSelectedAll;
-        vm.isSortDirection = isSortDirection;
-        vm.sort = sort;
-
         //buttons
         vm.createButtonState = "init";
-        vm.clickCreateButton = clickCreateButton;
-        vm.pageSizeChanged = pageSizeChanged;
 
         //pagination
         vm.pagination = {
             pageNumber: 1,
-            totalPages: 10
+            totalPages: 1
         }
-
-        vm.nextPage = nextPage;
-        vm.prevPage = prevPage;
-        vm.goToPage = goToPage;
 
         vm.pageSizeOptions = [
             { "value": 10 },
@@ -40,7 +35,23 @@
             { "value": 100 },
             { "value": 200 },
         ];
+
+        vm.dropdownOpen = false;
+        vm.showDetailPage = false;
+
         getItems();
+
+        vm.dropDownClose = function() {
+            vm.dropdownOpen = false;
+        }
+
+        vm.toggle = function() {
+            vm.dropdownOpen = true;
+        }
+
+        vm.dropDownSelect =  function(item) {
+            vm.itemsPerPage = item.value
+        }
 
         function getItems() {
             var skipNr = 0;
@@ -48,62 +59,83 @@
                 skipNr = (vm.pagination.pageNumber - 1) * vm.itemsPerPage;
             }
             var apiResult = UrlTrackerEntryService.getEntries(vm,skipNr, vm.itemsPerPage);
-            //vm.items = apiResult.Entries;
-            //vm.pagination.totalPages = apiResult.TotalPages;
-            //vm.items = [];
-            //vm.pagination.totalPages = 1;
+            vm.items = apiResult.Entries;
+            vm.pagination.totalPages = apiResult.TotalPages;
         }
 
-        function selectAll($event) {
 
+        vm.clickEntry = function(item) {
+            vm.overlay.entry = item;
+            editorService.open(vm.overlay);
         }
 
-        function isSelectedAll() {
-
-        }
-
-        function clickItem(item) {
-            window.location.assign("/App_plugins/UrlTracker/Views/UrlTrackerDetails.html?id=" + item.id);
-        }
-
-        function selectItem(selectedItem, $index, $event) {
-
-        }
-
-        function isSortDirection(col, direction) {
-
-        }
-
-        function sort(field, allow, isSystem) {
-            //todo: get items sorted
-        }
-
-        function nextPage(pageNumber) {
-            vm.pageNumber.pageNumber = pageNumber;
+        vm.nextPage = function (pageNumber) {
+            vm.pagination.pageNumber = pageNumber;
             getItems();
         }
 
-        function prevPage(pageNumber) {
-            vm.pageNumber.pageNumber = pageNumber;
+        vm.prevPage = function(pageNumber) {
+            vm.pagination.pageNumber = pageNumber;
             getItems();
         }
 
-        function goToPage(pageNumber) {
-            vm.pageNumber.pageNumber = pageNumber;
+        vm.goToPage = function(pageNumber) {
+            vm.pagination.pageNumber = pageNumber;
             getItems();
         }
 
-        function clickCreateButton() {
-            window.location.assign("/App_plugins/UrlTracker/Views/UrlTrackerDetails.html");
+        vm.editEntry = function (entry) {
+            vm.openPanel(entry);
+        } 
+
+        vm.deleteEntry = function (entry) {
+            UrlTrackerEntryService.deleteEntry(entry.id);
         }
 
-        function filter() {
-
+        vm.clickCreateButton = function () {
+            vm.openPanel(null);
         }
 
-        function pageSizeChanged(size) {
+        vm.openPanel = function (model) {
+            vm.overlay.entry = model;
+            editorService.open(vm.overlay)
+        }
+
+        vm.pageSizeChanged= function(size) {
             vm.itemsPerPage = size;
             getItems();
         }
+
+        vm.overlay = {
+            view: "/App_Plugins/UrlTracker/Views/UrlTrackerDetails.html",
+            entry: null,
+            submit: function (model) {
+                editorService.close();
+                getItems();
+            },
+            close: function (oldModel) {
+                editorService.close();
+            }
+        };
+
+        vm.selectAll = function () {
+            if (vm.allItemsSelected) {
+                vm.allItemsSelected = false;
+                vm.selectedItems = []
+            }
+            else {
+                vm.allItemsSelected = true;
+                vm.selectedItems = vm.items;
+            }
+        }
+
+        vm.selectEntry = function (item) {
+            vm.selectedItems.push(item);
+        }
+
+        vm.saveEntry= function(entry){
+            UrlTrackerEntryService.saveEntry(entry);
+        }
+
     }]);
 })();

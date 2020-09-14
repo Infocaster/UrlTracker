@@ -17,19 +17,51 @@
             <input type="checkbox" value="Custom Regex entries" disabled />
             <hr />
         </div>
-        <div class="row">
-            <umb-table
-                items="vm.items"
-                item-properties="vm.options.includeProperties"
-                allow-select-all="vm.allowSelectAll"
-                on-select="vm.selectItem"
-                on-click="vm.clickItem"
-                on-select-all="vm.selectAll"
-                on-selected-all="vm.isSelectedAll"
-                on-sorting-direction="vm.isSortDirection"
-                on-sort="vm.sort" >
-            </umb-table>
+        <div class="umb-table">
+                <div class="umb-table-head">
+                    <div class="umb-table-row">
+                        <div class="umb-table-cell col-id"><input type="checkbox" ng-click="vm.selectAll"/></div>
+                        <div class="umb-table-cell">Site</div>
+                        <div class="umb-table-cell">Old URL/ RegEx</div>
+						<div class="umb-table-cell col-destination">New URL</div>
+                        <div class="umb-table-cell col-notes">Notes</div>
+                        <div class="umb-table-cell col-date">Created</div>
+                        <div class="umb-table-cell col-actions"></div>
+                    </div>
+                </div>
+                <div class="umb-table-body">
+                    <div class="umb-table-row" ng-repeat="item in vm.items">
+                        <div class="umb-table-cell col-id"><input type="checkbox" ng-checked="vm.allItemsSelected" ng-click="vm.selectEntry(item)" /></div>
+                        
+                        <div class="umb-table-cell" ng-click="vm.clickEntry(item)">
+                            <span>
+                                {{item.RedirectNodeId}}
+                            </span>
+                        </div>
+
+                        <div class="umb-table-cell" ng-click="vm.clickEntry(item)">
+                            <span ng-if="item.OldUrl">{{item.OldUrl}}</span>
+                            <span ng-if="item.OldRexEx">{{item.OldRexEx}}</span>
+                        </div>
+
+                        <div class="umb-table-cell col-destination" ng-click="vm.clickEntry(item)">
+                            <span>{{item.RedirectUrl}}</span>
+                        </div>
+                        <div class="umb-table-cell col-notes" ng-click="vm.clickEntry(item)">
+                            {{item.Notes}}
+                        </div>
+                        <div class="umb-table-cell col-date" ng-click="vm.clickEntry(item)">
+                        {{item.Inserted | date: 'yyyy-MM-dd HH:mm'}}
+                        </div>
+                        <div class="umb-table-cell col-actions justify-end">
+                            <a href="#" prevent-default="" ng-click="vm.editEntry(item)" class="umb-era-button umb-button--s">Edit</a> &nbsp;| &nbsp; 
+                            <a href="#" prevent-default="" ng-click="vm.deleteEntry(item)" class="umb-era-button umb-button--s -red">Delete</a>
+                        </div>
+                    </div>
+                </div>
         </div>
+
+
         <div class="row">
         <umb-pagination
             page-number="vm.pagination.pageNumber"
@@ -39,16 +71,11 @@
             on-go-to-page="vm.goToPage">
         </umb-pagination>
         <hr />
-        <umb-button actions="vm.deleteSelected"
-                    typeof="button"
+        <umb-button action="vm.deleteSelected()"
+                    type="button"
                     label="Delete selected">
         </umb-button>
-        <label>Pagesize:</label>
-        <umb-dropdown>
-            <umb-dropdown-item ng-repeat="item in vm.pageSizeOptions">
-                <a href="" ng-click="vm.pageSizeChanged(item.value)" >{{item.value}}</a>
-            </umb-dropdown-item>
-        </umb-dropdown>
+        <label>Page size:</label>
         </div>
     </div>
 </div>

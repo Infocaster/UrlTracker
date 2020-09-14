@@ -8,7 +8,6 @@
         }
     ],
   "javascript": [
-    "/App_Plugins/UrlTracker/Scripts/UrlTrackerApp.js",
     "/App_Plugins/UrlTracker/Scripts/UrlTrackerEntryService.js",
     "/App_Plugins/UrlTracker/Scripts/UrlTracker.OverviewController.js",
     "/App_Plugins/UrlTracker/Scripts/UrlTracker.DetailsController.js"
