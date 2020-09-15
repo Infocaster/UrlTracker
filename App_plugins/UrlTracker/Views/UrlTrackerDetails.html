@@ -6,47 +6,47 @@
                 <hr />
                 <div>
                     <div class="row">
-                        <label>Root node</label>
-                        <!--<umb-dropdown>
-                            <umb-dropdown-item ng-repeat="item in vm.rootNodes">
-                                <a href="" ng-click="vm.entry.redirectRootNodeId = item.id" >{{item.name}}</a>
-                            </umb-dropdown-item>
-                        </umb-dropdown>-->
+                        <label>Root node </label>
+                        <select ng-model="vm.entry.RedirectRootNodeId">
+                            <option ng-repeat="node in vm.allRootNodes" value="{{node.id}}" ng-value="{{node.id}}" >{{node.name}}</option>
+                        </select>
                     </div>
                     <div class="row">
-                        <label>Old Url</label>
-                        <input type="text" value="{{vm.entry.OldUrl}}" ng-model="vm.entry.OldUrl" />
-                        <label>or Regex</label>
-                        <input type="text" value="{{vm.entry.OldRegex}}" ng-model="vm.entry.OldRegex" />
+                            <label>Old Url </label>
+                            <input type="text" value="{{vm.entry.OldUrl}}" ng-model="vm.entry.OldUrl" />
+
+                            <label> or Regex </label>
+                            <input type="text" value="{{vm.entry.OldRegex}}" ng-model="vm.entry.OldRegex" />
                     </div>
                     <div class="row">
-                        <label>Old Url query string</label>
-                        <input type="text" value="{{vm.entry.OldUrlQueryString}}" ng-model="vm.entry.OldUrlQueryString" />
+                            <label>Old Url query string </label>
+                            <input type="text" value="{{vm.entry.OldUrlQueryString}}" ng-model="vm.entry.OldUrlQueryString" />
                     </div>
                     <div class="row">
-                        <label>Redirect node</label>
-                        <label>or redirect URL</label>
-                        <input type="text" value="{{vm.entry.RedirectUrl}}" ng-model="vm.entry.RedirectUrl" />
+                            <label>Redirect node </label>
+
+                            <label> Or redirect URL </label>
+                            <input type="text" value="{{vm.entry.RedirectUrl}}" ng-model="vm.entry.RedirectUrl" />
                     </div>
                 </div>
                 <h3>Optional</h3>
                 <hr />
                 <div>
                     <div class="row">
-                        <label>Redirect type</label>
-                        <input type="radio" ng-value=301 title="Permanent (301)" ng-model="vm.entry.RedirectHttpCode"/> <label>Permanent (301)</label>
-                        <input type="radio" ng-value=302 title="Temporary (302)" ng-model="vm.entry.RedirectHttpCode"/><label>Temporary (302)</label>
+                        <label>Redirect type </label>
+                        <input type="radio" ng-value=301 title="Permanent (301)" ng-model="vm.entry.RedirectHttpCode"/> <label> Permanent (301) </label>
+                        <input type="radio" ng-value=302 title="Temporary (302)" ng-model="vm.entry.RedirectHttpCode"/><label> Temporary (302) </label>
                     </div>
                     <div class="row">
-                        <label>Forward query string</label>
+                        <label>Forward query string </label>
                         <input type="checkbox" value="{{vm.entry.OldRegex}}" ng-model="vm.entry.OldRegex" />
                     </div>
                     <div class="row">
-                        <label>Force redirect</label>
+                        <label>Force redirect </label>
                         <input type="checkbox" value="{{vm.entry.ForceRedirect}}" ng-model="vm.entry.ForceRedirect" />
                     </div>
                     <div class="row">
-                        <label>Notes</label>
+                        <label>Notes </label>
                         <input type="text" value="{{vm.entry.Notes}}" ng-model="vm.entry.Notes" />
                         Created: {{vm.entry.Inserted}}
                     </div>
