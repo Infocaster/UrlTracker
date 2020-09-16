@@ -43,9 +43,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Helpers
 
             if (url != "/" && !_urlWithDotRegex.IsMatch(url))
             {
-                if (!GlobalSettings.UseDirectoryUrls && !url.EndsWith(".aspx"))
-                    url += ".aspx";
-                else if (UmbracoSettings.AddTrailingSlash && !url.EndsWith("/"))
+                if (UmbracoSettings.AddTrailingSlash && !url.EndsWith("/"))
                     url += "/";
             }
 
