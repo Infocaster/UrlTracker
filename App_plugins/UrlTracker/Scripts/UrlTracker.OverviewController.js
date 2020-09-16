@@ -101,8 +101,7 @@
             editorService.open(vm.overlay)
         }
 
-        vm.pageSizeChanged= function(size) {
-            vm.itemsPerPage = size;
+        vm.pageSizeChanged= function() {
             getItems();
         }
 

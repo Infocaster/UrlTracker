@@ -12,21 +12,28 @@
                         </select>
                     </div>
                     <div class="row">
+                        <div>    
                             <label>Old Url </label>
                             <input type="text" value="{{vm.entry.OldUrl}}" ng-model="vm.entry.OldUrl" />
-
+                        </div>
+                        <div>
                             <label> or Regex </label>
                             <input type="text" value="{{vm.entry.OldRegex}}" ng-model="vm.entry.OldRegex" />
+                        </div>
                     </div>
                     <div class="row">
                             <label>Old Url query string </label>
                             <input type="text" value="{{vm.entry.OldUrlQueryString}}" ng-model="vm.entry.OldUrlQueryString" />
                     </div>
                     <div class="row">
-                            <label>Redirect node </label>
-
-                            <label> Or redirect URL </label>
-                            <input type="text" value="{{vm.entry.RedirectUrl}}" ng-model="vm.entry.RedirectUrl" />
+                            <div>
+                                <label>Redirect node </label>
+                                <a href="" >{{vm.redirectNode.contentTypeName}} </a>
+                            </div>
+                            <div>    
+                                <label> Or redirect URL </label>
+                                <input type="text" value="{{vm.entry.RedirectUrl}}" ng-model="vm.entry.RedirectUrl" />
+                            </div>
                     </div>
                 </div>
                 <h3>Optional</h3>
@@ -48,6 +55,8 @@
                     <div class="row">
                         <label>Notes </label>
                         <input type="text" value="{{vm.entry.Notes}}" ng-model="vm.entry.Notes" />
+                    </div>
+                    <div class="row">
                         Created: {{vm.entry.Inserted}}
                     </div>
                 </div>
@@ -55,7 +64,7 @@
         </umb-editor-view>
     </form>
         <umb-editor-footer>
-            <umb-editor-footer-content-right>
+            <umb-editor-footer-content-left>
                 <umb-button
                     type="button"
                     button-style="link"
@@ -69,6 +78,6 @@
                     label-key="general_submit"
                     action="vm.saveChanges()">
                 </umb-button>
-            </umb-editor-footer-content-right>
+            </umb-editor-footer-content-left>
         </umb-editor-footer>
 </div>

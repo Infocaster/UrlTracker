@@ -12,8 +12,13 @@
                 vm.allRootNodes = rootNodes.items;
             })
 
+
         if ($scope.model.entry != null) {
             vm.entry = $scope.model.entry
+            contentResource.getById(vm.entry.RedirectNodeId)
+                .then(function (redirectNode) {
+                    vm.redirectNode = redirectNode;
+                });
         }
         else {
             //show empty
@@ -45,10 +50,10 @@
         function submit() {
             if ($scope.model.submit) {
                 if (vm.isNewEntry) {
-                    //UrlTrackerEntryService.createEntry($scope.model.entry);
+                    UrlTrackerEntryService.createEntry($scope.model.entry);
                 }
                 else{
-                    //UrlTrackerEntryService.saveEntry($scope.model.entry);
+                    UrlTrackerEntryService.saveEntry($scope.model.entry);
                 }
                 
                 $scope.model.submit($scope.model);

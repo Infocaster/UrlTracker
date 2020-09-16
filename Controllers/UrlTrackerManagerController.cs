@@ -61,7 +61,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult Delete(int id)
+        public IHttpActionResult Delete([FromUri] int id)
         {
             try
             {
