@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web;
-using umbraco;
 
 namespace InfoCaster.Umbraco.UrlTracker.Helpers
 {
@@ -41,7 +40,8 @@ namespace InfoCaster.Umbraco.UrlTracker.Helpers
 
             if (url != "/" && !_urlWithDotRegex.IsMatch(url))
             {
-                if (UmbracoSettings.AddTrailingSlash && !url.EndsWith("/"))
+                
+                if (umbraco.UmbracoSettings.AddTrailingSlash && !url.EndsWith("/"))
                     url += "/";
             }
 

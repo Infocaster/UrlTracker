@@ -2,6 +2,9 @@
     "use strict";
     angular.module("umbraco").factory("UrlTrackerEntryService",["$http", "$log", function($http, $log) {
         var getEntries = function (scope,skip, ammount) {
+            if (scope.loading != undefined) {
+                scope.loading = true;
+            }
             return $http({
                 url: "/umbraco/api/UrlTrackerManager/Index",
                 method: "GET",
@@ -12,30 +15,40 @@
             }).then(function (response) {
                 scope.items = response.data.Entries;
                 scope.pagination.totalPages = response.data.TotalPages;
+                if (scope.loading != undefined) {
+                    scope.loading = false;
+                }
             }).catch(function (data) {
+                if (scope.loading != undefined) {
+                    scope.loading = false;
+                }
                 $log.log(data)
             });
         }
 
-        var saveEntry = function (entry) {
+        var saveEntry = function (scope, entry) {
             return $http({
                 url: "/umbraco/api/UrlTrackerManager/SaveChanges",
                 method: "POST",
                 data: entry
             }).then(function () {
-                //return data;
+                if (scope.getItems != undefined) {
+                    scope.getItems();
+                }
             }).catch(function (data) {
                 $log.log(data)
             });
         }
 
-        var createEntry = function (entry) {
+        var createEntry = function (scope,entry) {
             return $http({
                 url: "/umbraco/api/UrlTrackerManager/Create",
                 method: "POST",
                 data: entry
             }).then(function () {
-                //return data;
+                if (scope.getItems != undefined) {
+                    scope.getItems();
+                }
             }).catch(function (data) {
                 $log.log(data)
             });
@@ -67,6 +80,9 @@
         }
 
         var search = function (scope, query ,skip, ammount) {
+            if (scope.loading != undefined) {
+                scope.loading = true;
+            }
             return $http({
                 url: "/umbraco/api/UrlTrackerManager/Search",
                 method: "GET",
@@ -76,9 +92,15 @@
                     ammount: ammount
                 }
             }).then(function (response) {
+                if (scope.loading != undefined) {
+                    scope.loading = false;
+                }
                 scope.items = response.data.Entries;
                 scope.pagination.totalPages = response.data.TotalPages;
             }).catch(function (data) {
+                if (scope.loading != undefined) {
+                    scope.loading = false;
+                }
                 $log.log(data)
             });
         }

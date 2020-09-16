@@ -11,7 +11,7 @@
             .then(function (rootNodes) {
                 vm.allRootNodes = rootNodes.items;
             });
-
+        vm.loading = false;
         vm.allItemsSelected = false;
         vm.itemsPerPage = 20;
         vm.createButtonState = "init";
@@ -55,6 +55,7 @@
             UrlTrackerEntryService.getEntries(vm,skipNr, vm.itemsPerPage);
         }
 
+        vm.getItems = getItems;
 
         vm.clickEntry = function(item) {
             vm.overlay.entry = item;
@@ -103,6 +104,12 @@
             entry: null,
             submit: function (model) {
                 editorService.close();
+                if (model.isNewEntry) {
+                    UrlTrackerEntryService.createEntry(vm,model.entry);
+                }
+                else {
+                    UrlTrackerEntryService.saveEntry(vm,model.entry);
+                }
                 getItems();
             },
             close: function (oldModel) {

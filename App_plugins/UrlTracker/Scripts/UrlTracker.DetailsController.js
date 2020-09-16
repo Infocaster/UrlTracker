@@ -66,12 +66,9 @@
 
         function submit() {
             if ($scope.model.submit) {
-                if (vm.isNewEntry) {
-                    UrlTrackerEntryService.createEntry(vm.entry);
-                }
-                else{
-                    UrlTrackerEntryService.saveEntry(vm.entry);
-                }
+
+                $scope.model.isNewEntry = vm.isNewEntry;
+                $scope.model.entry = vm.entry;
                 
                 $scope.model.submit($scope.model);
             }
