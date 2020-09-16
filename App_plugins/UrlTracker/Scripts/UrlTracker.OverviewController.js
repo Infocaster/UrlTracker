@@ -20,7 +20,7 @@
         vm.itemsPerPage = 20;
         //buttons
         vm.createButtonState = "init";
-
+        vm.searchString = "";
         //pagination
         vm.pagination = {
             pageNumber: 1,
@@ -136,5 +136,42 @@
             UrlTrackerEntryService.saveEntry(entry);
         }
 
+        vm.deleteSelected = function () {
+            vm.selectedItems.forEach(item => {
+                UrlTrackerEntryService.deleteEntry(item.id);
+            });
+            vm.selectedItems = [];
+            getItems();
+        }
+
+        vm.search = function () {
+            if (vm.searchString !== "") {
+                var skipNr = 0;
+                if (vm.pagination.pageNumber > 1) {
+                    skipNr = (vm.pagination.pageNumber - 1) * vm.itemsPerPage;
+                }
+                var apiResult = UrlTrackerEntryService.search(vm, vm.searchString, skipNr, vm.itemsPerPage);
+                vm.items = apiResult.Entries;
+                vm.pagination.totalPages = apiResult.TotalPages;
+            }
+            else{
+                getItems();
+            }
+        }
+
     }]);
+
+    angular.module("umbraco").directive('ngEnter', function () {
+        return function (scope, element, attrs) {
+            element.bind("keydown keypress", function (event) {
+                if (event.which === 13) {
+                    scope.$apply(function () {
+                        scope.$eval(attrs.ngEnter);
+                    });
+                    event.preventDefault();
+                }
+            });
+        };
+    });
+
 })();

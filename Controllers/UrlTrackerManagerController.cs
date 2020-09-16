@@ -26,6 +26,22 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
         }
 
         [HttpGet]
+        public IHttpActionResult Search(string query, int skip, int ammount)
+        {
+            var allEntries = UrlTrackerRepository.GetUrlTrackerEntries();
+            var searchFilter = allEntries.Where(e => (e.OldUrl!= null && e.OldUrl.Contains(query))
+            || (e.RedirectUrl != null && e.RedirectUrl.Contains(query)) 
+            || (e.OldRegex != null && e.OldRegex.Contains(query)));
+
+            var model = new UrlTrackerOverviewModel
+            {
+                Entries = searchFilter.Skip(skip).Take(ammount).AsEnumerable(),
+                TotalPages = (int)(allEntries.Count / ammount)
+            };
+            return Ok(model);
+        }
+
+        [HttpGet]
         public IHttpActionResult Details(int id)
         {
             var entry = UrlTrackerRepository.GetUrlTrackerEntryById(id);

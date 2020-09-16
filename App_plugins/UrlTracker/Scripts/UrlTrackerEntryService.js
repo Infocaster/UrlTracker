@@ -69,12 +69,30 @@
             });
         }
 
+        var search = function (scope, query ,skip, ammount) {
+            return $http({
+                url: "/umbraco/api/UrlTrackerManager/Search",
+                method: "GET",
+                params: {
+                    query: query,
+                    skip: skip,
+                    ammount: ammount
+                }
+            }).then(function (response) {
+                scope.items = response.data.Entries;
+                scope.pagination.totalPages = response.data.TotalPages;
+            }).catch(function (data) {
+                $log.catch(data);
+            });
+        }
+
         var UrlTrackerEntryService = {
             getEntries: getEntries,
             getEntryDetails: getEntryDetails,
             deleteEntry: deleteEntry,
             saveEntry: saveEntry,
-            createEntry : createEntry
+            createEntry: createEntry,
+            search:search
         };
         return UrlTrackerEntryService;
     }]);
