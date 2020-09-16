@@ -417,6 +417,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="App_plugins\UrlTracker\Views\Wrapper.html" />
+    <Content Include="UrlTracker.nuspec" />
     <None Include="web.config" />
   </ItemGroup>
   <ItemGroup>
