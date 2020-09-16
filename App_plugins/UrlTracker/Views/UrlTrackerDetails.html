@@ -6,32 +6,33 @@
                 <hr />
                 <div>
                     <div class="row">
-                        <label>Root node </label>
+                        <label>Root node: </label>
                         <select ng-model="vm.entry.RedirectRootNodeId">
                             <option ng-repeat="node in vm.allRootNodes" value="{{node.id}}" ng-value="{{node.id}}" >{{node.name}}</option>
                         </select>
                     </div>
                     <div class="row">
                         <div>    
-                            <label>Old Url </label>
+                            <label>Old Url: </label>
                             <input type="text" value="{{vm.entry.OldUrl}}" ng-model="vm.entry.OldUrl" />
                         </div>
                         <div>
-                            <label> or Regex </label>
+                            <label> or Regex: </label>
                             <input type="text" value="{{vm.entry.OldRegex}}" ng-model="vm.entry.OldRegex" />
                         </div>
                     </div>
                     <div class="row">
-                            <label>Old Url query string </label>
+                            <label>Old Url query string: </label>
                             <input type="text" value="{{vm.entry.OldUrlQueryString}}" ng-model="vm.entry.OldUrlQueryString" />
                     </div>
                     <div class="row">
                             <div>
-                                <label>Redirect node </label>
-                                <a href="" >{{vm.redirectNode.contentTypeName}} </a>
+                                <label>Redirect node: </label>
+                                <a href="" ng-if="vm.redirectNode != null" ng-click="vm.openNodePicker()" >{{vm.redirectNode}} </a>
+                                <a href="" ng-if="vm.redirectNode == null" ng-click="vm.openNodePicker()" > pick a node</a>
                             </div>
                             <div>    
-                                <label> Or redirect URL </label>
+                                <label> Or redirect URL: </label>
                                 <input type="text" value="{{vm.entry.RedirectUrl}}" ng-model="vm.entry.RedirectUrl" />
                             </div>
                     </div>
@@ -40,20 +41,20 @@
                 <hr />
                 <div>
                     <div class="row">
-                        <label>Redirect type </label>
+                        <label>Redirect type: </label>
                         <input type="radio" ng-value=301 title="Permanent (301)" ng-model="vm.entry.RedirectHttpCode"/> <label> Permanent (301) </label>
                         <input type="radio" ng-value=302 title="Temporary (302)" ng-model="vm.entry.RedirectHttpCode"/><label> Temporary (302) </label>
                     </div>
                     <div class="row">
-                        <label>Forward query string </label>
+                        <label>Forward query string: </label>
                         <input type="checkbox" value="{{vm.entry.OldRegex}}" ng-model="vm.entry.OldRegex" />
                     </div>
                     <div class="row">
-                        <label>Force redirect </label>
+                        <label>Force redirect: </label>
                         <input type="checkbox" value="{{vm.entry.ForceRedirect}}" ng-model="vm.entry.ForceRedirect" />
                     </div>
                     <div class="row">
-                        <label>Notes </label>
+                        <label>Notes: </label>
                         <input type="text" value="{{vm.entry.Notes}}" ng-model="vm.entry.Notes" />
                     </div>
                     <div class="row">

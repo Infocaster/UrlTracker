@@ -323,7 +323,6 @@
     <Content Include="App_plugins\UrlTracker\Scripts\UrlTracker.OverviewController.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="App_plugins\UrlTracker\Scripts\UrlTrackerApp.js" />
     <Content Include="App_plugins\UrlTracker\Scripts\UrlTrackerEntryService.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

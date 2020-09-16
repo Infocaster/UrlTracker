@@ -63,7 +63,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult Create(UrlTrackerModel model)
+        public IHttpActionResult Create([FromBody]UrlTrackerModel model)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
         }
 
         [HttpPost]
-        public IHttpActionResult Delete([FromUri] int id)
+        public IHttpActionResult Delete(int id)
         {
             try
             {

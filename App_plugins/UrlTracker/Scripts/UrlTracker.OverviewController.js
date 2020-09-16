@@ -1,21 +1,16 @@
 ﻿(function () {
     "use strict";
-    angular.module("umbraco").controller("UrlTracker.OverviewController", ["$scope","UrlTrackerEntryService","editorService", function ($scope, UrlTrackerEntryService, editorService) {
+    angular.module("umbraco").controller("UrlTracker.OverviewController", ["$scope", "UrlTrackerEntryService", "editorService", "contentResource", function ($scope, UrlTrackerEntryService, editorService, contentResource) {
 
         var vm = this;
         //table
         vm.items = [
         ];
         vm.selectedItems = [];
-        vm.options = {
-            includeProperties: [
-                { alias: "RedirectNodeId", header: "NodeId" },
-                { alias: "OldUrl", header: "OldUrl" },
-                { alias: "RedirectUrl", header: "NewUrl" },
-                { alias: "Notes", header: "Notes" },
-                { alias: "Inserted", header: "CreatedAt" }
-            ]
-        }
+        contentResource.getChildren(-1)
+            .then(function (rootNodes) {
+                vm.allRootNodes = rootNodes.items;
+            });
         vm.allItemsSelected = false;
         vm.itemsPerPage = 20;
         //buttons
@@ -89,7 +84,8 @@
         } 
 
         vm.deleteEntry = function (entry) {
-            UrlTrackerEntryService.deleteEntry(entry.id);
+            UrlTrackerEntryService.deleteEntry(entry.Id);
+            getItems();
         }
 
         vm.clickCreateButton = function () {
@@ -138,7 +134,7 @@
 
         vm.deleteSelected = function () {
             vm.selectedItems.forEach(item => {
-                UrlTrackerEntryService.deleteEntry(item.id);
+                UrlTrackerEntryService.deleteEntry(item.Id);
             });
             vm.selectedItems = [];
             getItems();
@@ -157,6 +153,12 @@
             else{
                 getItems();
             }
+        }
+
+        vm.getSiteName = function (entry) {
+            return vm.allRootNodes.find(function (item) {
+                return item.id == entry.RedirectRootNodeId
+            }).name;
         }
 
     }]);

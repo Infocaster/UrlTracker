@@ -13,7 +13,7 @@
                 scope.items = response.data.Entries;
                 scope.pagination.totalPages = response.data.TotalPages;
             }).catch(function (data) {
-                $log.catch(data);
+
             });
         }
 
@@ -25,7 +25,7 @@
             }).then(function () {
                 //return data;
             }).catch(function (data) {
-                $log.catch(data);
+
             });
         }
 
@@ -43,15 +43,12 @@
 
         var deleteEntry = function (entryId) {
             return $http({
-                url: "/umbraco/api/UrlTrackerManager/Delete",
-                method: "POST",
-                params: {
-                    id: entryId
-                }
+                url: "/umbraco/api/UrlTrackerManager/Delete?id="+entryId,
+                method: "POST"
             }).then(function (data) {
                 return data;
             }).catch(function (data) {
-                $log.catch(data);
+
             });
         }
 
@@ -65,7 +62,7 @@
             }).then(function (data) {
                 scope.entry = data.response;
             }).catch(function (data) {
-                $log.catch(data);
+
             });
         }
 
@@ -82,7 +79,7 @@
                 scope.items = response.data.Entries;
                 scope.pagination.totalPages = response.data.TotalPages;
             }).catch(function (data) {
-                $log.catch(data);
+
             });
         }
 

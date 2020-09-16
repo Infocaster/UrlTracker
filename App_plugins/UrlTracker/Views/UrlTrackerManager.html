@@ -1,5 +1,4 @@
 ﻿<div ng-controller="UrlTracker.OverviewController as vm">
-    <umb-editor-view>
         <umb-editor-container>
             <div class="row">
                 <umb-button
@@ -23,7 +22,7 @@
             <div class="umb-table">
                     <div class="umb-table-head">
                         <div class="umb-table-row">
-                            <div class="umb-table-cell col-id"><input type="checkbox" ng-click="vm.selectAll"/></div>
+                            <div class="umb-table-cell col-id"><input type="checkbox" ng-click="vm.selectAll()"/></div>
                             <div class="umb-table-cell">Site</div>
                             <div class="umb-table-cell">Old URL/ RegEx</div>
 						    <div class="umb-table-cell col-destination">New URL</div>
@@ -38,7 +37,7 @@
                         
                             <div class="umb-table-cell" ng-click="vm.clickEntry(item)">
                                 <span>
-                                    {{item.RedirectNodeId}}
+                                    {{vm.getSiteName(item)}}
                                 </span>
                             </div>
 
@@ -74,7 +73,6 @@
                 <hr />
              </div>       
         </umb-editor-container>
-    </umb-editor-view>
     <umb-editor-footer>
         <umb-editor-footer-content-left>
         <umb-button action="vm.deleteSelected()"
