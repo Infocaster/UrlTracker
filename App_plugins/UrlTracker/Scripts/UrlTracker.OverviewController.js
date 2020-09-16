@@ -11,12 +11,11 @@
             .then(function (rootNodes) {
                 vm.allRootNodes = rootNodes.items;
             });
+
         vm.allItemsSelected = false;
         vm.itemsPerPage = 20;
-        //buttons
         vm.createButtonState = "init";
         vm.searchString = "";
-
         vm.pagination = {
             pageNumber: 1,
             totalPages: 1
@@ -125,7 +124,16 @@
         }
 
         vm.selectEntry = function (item) {
-            vm.selectedItems.push(item);
+            var isInSelectionIndex = vm.selectedItems.findIndex(function (i) {
+                return i.Id == item.Id
+            });
+            if (isInSelectionIndex != -1) {
+                vm.selectedItems.splice(isInSelectionIndex, 1);
+            }
+            else {
+                vm.selectedItems.push(item);
+            }
+            
         }
 
         vm.saveEntry= function(entry){
@@ -158,6 +166,12 @@
         vm.getSiteName = function (entry) {
             return vm.allRootNodes.find(function (item) {
                 return item.id == entry.RedirectRootNodeId
+            }).name;
+        }
+
+        vm.getNodeUrl = function (entry) {
+            return vm.nodes.find(function (node) {
+                return node.id == entry.Id
             }).name;
         }
 
