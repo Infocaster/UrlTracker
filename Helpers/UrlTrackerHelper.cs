@@ -27,8 +27,6 @@ namespace InfoCaster.Umbraco.UrlTracker.Helpers
                     url = url.Substring(1);
                 if (url.EndsWith("/"))
                     url = url.Substring(0, url.Length - "/".Length);
-                if (url.EndsWith(".aspx"))
-                    url = url.Substring(0, url.Length - ".aspx".Length);
             }
             return url;
         }
