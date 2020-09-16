@@ -47,7 +47,7 @@
                             </div>
 
                             <div class="umb-table-cell col-destination" ng-click="vm.clickEntry(item)">
-                                <span>{{item.RedirectUrl}}</span>
+                                <span ng-if="item.RedirectUrl != null">{{item.RedirectUrl}}</span>
                             </div>
                             <div class="umb-table-cell col-notes" ng-click="vm.clickEntry(item)">
                                 {{item.Notes}}

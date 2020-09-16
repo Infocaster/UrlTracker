@@ -13,7 +13,7 @@
                 scope.items = response.data.Entries;
                 scope.pagination.totalPages = response.data.TotalPages;
             }).catch(function (data) {
-
+                $log.log(data)
             });
         }
 
@@ -25,7 +25,7 @@
             }).then(function () {
                 //return data;
             }).catch(function (data) {
-
+                $log.log(data)
             });
         }
 
@@ -37,7 +37,7 @@
             }).then(function () {
                 //return data;
             }).catch(function (data) {
-                $log.catch(data);
+                $log.log(data)
             });
         }
 
@@ -48,7 +48,7 @@
             }).then(function (data) {
                 return data;
             }).catch(function (data) {
-
+                $log.log(data)
             });
         }
 
@@ -62,7 +62,7 @@
             }).then(function (data) {
                 scope.entry = data.response;
             }).catch(function (data) {
-
+                $log.log(data)
             });
         }
 
@@ -79,7 +79,7 @@
                 scope.items = response.data.Entries;
                 scope.pagination.totalPages = response.data.TotalPages;
             }).catch(function (data) {
-
+                $log.log(data)
             });
         }
 

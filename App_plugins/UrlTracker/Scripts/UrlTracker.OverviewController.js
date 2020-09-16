@@ -52,9 +52,7 @@
             if (vm.pagination.pageNumber > 1) {
                 skipNr = (vm.pagination.pageNumber - 1) * vm.itemsPerPage;
             }
-            var apiResult = UrlTrackerEntryService.getEntries(vm,skipNr, vm.itemsPerPage);
-            vm.items = apiResult.Entries;
-            vm.pagination.totalPages = apiResult.TotalPages;
+            UrlTrackerEntryService.getEntries(vm,skipNr, vm.itemsPerPage);
         }
 
 
@@ -168,13 +166,6 @@
                 return item.id == entry.RedirectRootNodeId
             }).name;
         }
-
-        vm.getNodeUrl = function (entry) {
-            return vm.nodes.find(function (node) {
-                return node.id == entry.Id
-            }).name;
-        }
-
     }]);
 
     angular.module("umbraco").directive('ngEnter', function () {
