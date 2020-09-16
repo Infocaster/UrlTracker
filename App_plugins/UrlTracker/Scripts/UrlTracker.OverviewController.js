@@ -16,7 +16,7 @@
         //buttons
         vm.createButtonState = "init";
         vm.searchString = "";
-        //pagination
+
         vm.pagination = {
             pageNumber: 1,
             totalPages: 1

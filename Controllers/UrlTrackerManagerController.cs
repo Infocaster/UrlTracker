@@ -17,10 +17,12 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
         public IHttpActionResult Index(int skip, int ammount)
         {
             var allEntries = UrlTrackerRepository.GetUrlTrackerEntries();
+            var selectedEntries = allEntries.Skip(skip).Take(ammount).AsEnumerable();
+            var pageCount = (int)(allEntries.Count() / ammount) + 1;
             var model = new UrlTrackerOverviewModel
             {
-                Entries = allEntries.Skip(skip).Take(ammount).AsEnumerable(),
-                TotalPages = (int)(allEntries.Count / ammount)
+                Entries = selectedEntries,
+                TotalPages = pageCount
             };
             return Ok(model);
         }
