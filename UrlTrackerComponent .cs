@@ -21,6 +21,7 @@ using Umbraco.Core.Migrations;
 using Umbraco.Core.Migrations.Upgrade;
 using Umbraco.Core.Scoping;
 using IComponent = Umbraco.Core.Composing.IComponent;
+using InfoCaster.Umbraco.UrlTracker.Helpers;
 
 namespace InfoCaster.Umbraco.UrlTracker
 {
