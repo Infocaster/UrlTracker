@@ -24,6 +24,6 @@ You can also create your own redirects, based on a simple URL or using a Regex p
     <file src="lib\businesslogic.xml" target="lib" />
     <file src="lib\interfaces.dll" target="lib" />
     <file src="lib\interfaces.xml" target="lib" />
-    <file src="App_plugins\UrlTracker\**\*" target="App_plugins\UrlTracker" />
+    <file src="App_plugins\UrlTracker\**\*" target="content\App_plugins\UrlTracker" />
   </files>
 </package>
