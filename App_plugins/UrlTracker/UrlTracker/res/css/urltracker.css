@@ -1,0 +1,146 @@
+﻿.urltracker-checkbox-page-size {
+	width: auto;
+	margin: 0;
+}
+
+.urltracker-label-page-size {
+	position: relative;
+	top: 3px;
+	margin-right: 10px;
+}
+
+.urltracker-sub-header-button > .umb-button {
+	margin-left: 0;
+}
+
+form[name="UrlTrackerEntryForm"] input,
+form[name="UrlTrackerEntryForm"] select {
+	width: 100%;
+}
+
+.urltracker-pagination,
+.urltracker-page-size {
+	display: inline-block;
+}
+
+.urltracker-page-size {
+	float: right;
+	margin: 20px 0;
+}
+
+.urltracker-form-box > input {
+	margin-bottom: 0;
+}
+
+.urltracker-form-box input[type="checkbox"] {
+	margin: 0 5px 0 15px;
+}
+
+.urltracker-form-box.search-box {
+	position: relative;
+}
+
+.urltracker-form-box.search-box > input {
+	padding-left: 25px !important;
+}
+
+.urltracker-form-box.search-box > i.icon-search {
+	position: absolute;
+	z-index: 1;
+	top: 50%;
+	left: 6px;
+	transform: translateY(-50%);
+	color: #d8d7d9;
+}
+
+.urltracker-filters {
+	padding-right: 10px !important;
+}
+
+.urltracker-body .umb-table {
+	box-sizing: content-box;
+}
+
+.urltracker-body .circle {
+	display: inline-block;
+	position: relative;
+	width: 165px;
+	height: 165px;
+	background-color: #ff0069;
+	border-radius: 50%;
+}
+
+.urltracker-body .circle > .circle-content {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+}
+
+.urltracker-body .circle > .circle-content > .circle-title {
+	display: block;
+	margin-bottom: 5px;
+	font-size: 2.2rem;
+	font-weight: bold;
+	color: white;
+}
+
+.urltracker-body .circle > .circle-content > .circle-subtitle {
+	font-size: 1rem;
+	color: white;
+}
+
+.urltracker-body .icon-eye {
+	font-size: 20px;
+	position: relative;
+	top: 4px;
+}
+
+.urltracker-body .top-bar {
+	position: relative;
+}
+
+.urltracker-body .top-bar:before {
+	content: '';
+	position: absolute;
+	top: -20px;
+	left: 50%;
+	width: 430px;
+	height: 160px;
+	transform: translateX(-50%);
+	background-color: #ffc800;
+	border-bottom-left-radius: 300px;
+	border-bottom-right-radius: 300px;
+}
+
+/*Last tab item (info tab)*/
+.urltracker-body .umb-tabs-nav > li:nth-child(4) { 
+	float: right;
+}
+
+.urltracker-dashboard-table .umb-table-cell:first-of-type {
+	flex: 1 1 5%;
+	margin: auto 0;
+	padding: 6px 16px;
+}
+
+.urltracker-body .col-icons {
+	flex: .3;
+	justify-content: flex-end;
+}
+
+.urltracker-dashboard-table .col-icons {
+	flex: .6;
+	justify-content: flex-end;
+}
+
+.urltracker-body .col-icons > i {
+	font-size: 18px;
+	padding: 5px;
+	cursor: pointer;
+}
+
+.urltracker-body .col-icons > i:hover {
+	color: #000000;
+}

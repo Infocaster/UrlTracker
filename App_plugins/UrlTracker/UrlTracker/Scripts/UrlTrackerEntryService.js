@@ -1,32 +1,89 @@
 ﻿(function () {
     "use strict";
     angular.module("umbraco").factory("UrlTrackerEntryService",["$http", "$log", function($http, $log) {
-        var getEntries = function (scope, skip, ammount) {
+        var getRedirects = function (scope, skip, amount) {
             if (scope.loading != undefined) {
                 scope.loading = true;
             }
             return $http({
-                url: "/umbraco/api/UrlTrackerManager/Index",
+                url: "/umbraco/api/UrlTrackerManager/GetRedirects",
                 method: "GET",
                 params: {
                     skip: skip,
-                    ammount: ammount
+                    amount: amount
                 }
             }).then(function (response) {
                 scope.items = response.data.Entries;
-                scope.pagination.totalPages = response.data.TotalPages;
+                scope.numberOfItems = response.data.NumberOfEntries;
+                scope.pagination.totalPages = (response.data.NumberOfEntries / amount);
+
                 if (scope.loading != undefined) {
                     scope.loading = false;
                 }
             }).catch(function (data) {
+	            $log.log(data);
+
                 if (scope.loading != undefined) {
                     scope.loading = false;
                 }
-                $log.log(data);
             });
         }
 
+        var getNotFounds = function (scope, skip, amount) {
+	        if (scope.loading != undefined) {
+		        scope.loading = true;
+	        }
+	        return $http({
+		        url: "/umbraco/api/UrlTrackerManager/GetNotFounds",
+		        method: "GET",
+		        params: {
+			        skip: skip,
+			        amount: amount
+		        }
+	        }).then(function (response) {
+		        scope.items = response.data.Entries;
+		        scope.numberOfItems = response.data.NumberOfEntries;
+		        scope.pagination.totalPages = (response.data.NumberOfEntries / amount);
 
+		        if (scope.loading != undefined) {
+			        scope.loading = false;
+		        }
+	        }).catch(function (data) {
+		        $log.log(data);
+
+		        if (scope.loading != undefined) {
+			        scope.loading = false;
+		        }
+	        });
+        }
+
+        var searchRedirects = function (scope, skip, amount, query) {
+	        if (scope.loading != undefined) {
+		        scope.loading = true;
+	        }
+	        return $http({
+                url: "/umbraco/api/UrlTrackerManager/GetRedirectsByFilter",
+		        method: "GET",
+		        params: {
+			        skip: skip,
+                    amount: amount,
+			        query: query
+		        }
+	        }).then(function (response) {
+		        if (scope.loading != undefined) {
+			        scope.loading = false;
+                }
+
+		        scope.items = response.data.Entries;
+                scope.pagination.totalPages = response.data.TotalPages;
+                scope.pagination.totalPages = (response.data.NumberOfEntries / amount);
+	        }).catch(function (data) {
+		        if (scope.loading != undefined) {
+			        scope.loading = false;
+		        }
+		        $log.log(data);
+	        });
+        }
 
         var saveEntry = function (scope, entry) {
             return $http({
@@ -81,7 +138,7 @@
             });
         }
 
-        var search = function (scope, query ,skip, ammount) {
+        var search = function (scope, query, skip, amount, _404 = false) {
             if (scope.loading != undefined) {
                 scope.loading = true;
             }
@@ -91,7 +148,8 @@
                 params: {
                     query: query,
                     skip: skip,
-                    ammount: ammount
+                    ammount: amount,
+                    _404: _404
                 }
             }).then(function (response) {
                 if (scope.loading != undefined) {
@@ -108,12 +166,12 @@
         }
 
         var UrlTrackerEntryService = {
-            getEntries: getEntries,
+            getRedirects: getRedirects,
             getEntryDetails: getEntryDetails,
             deleteEntry: deleteEntry,
             saveEntry: saveEntry,
             createEntry: createEntry,
-            search:search
+            searchRedirects: searchRedirects
         };
         return UrlTrackerEntryService;
     }]);

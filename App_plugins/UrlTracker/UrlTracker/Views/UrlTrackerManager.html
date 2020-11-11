@@ -1,0 +1,306 @@
+﻿<div ng-controller="UrlTracker.OverviewController as vm" class="urltracker-body">
+	<umb-tabs-nav tabs="vm.tabs" on-tab-change="vm.changeTab(tab)"></umb-tabs-nav>
+
+	<umb-tab-content ng-repeat="tab in vm.tabs" tab="tab" ng-show="tab.active">
+		<umb-loader ng-if="vm.loading"></umb-loader>
+
+		<div class="container" ng-if="tab.alias == 'dashboard'">
+			<div class="row pt-2 top-bar">
+				<div class="col-12 text-center">
+					<div class="circle">
+						<div class="circle-content">
+							<span class="circle-title">22</span>
+							<span class="circle-subtitle">Not founds</span>
+						</div>
+					</div>
+					<!--<div class="circle ml-4">
+						<div class="circle-content">
+							<span class="circle-title">128</span>
+							<span class="circle-subtitle">Redirects</span>
+						</div>
+					</div>-->
+				</div>
+			</div>
+			<div class="row mt-5 mb-5">
+				<div class="col-7 pr-5">
+					<div class="row align-items-center">
+						<div class="col">
+							<h4><b>Most occurenced not founds</b></h4>
+							<small>Create a redirect to increase SEO performance</small>
+						</div>
+						<div class="col-auto">
+							<a href="">Show all <i class="icon-eye ml-1"></i></a>
+						</div>
+					</div>
+
+					<div class="umb-table urltracker-dashboard-table mt-4">
+						<div class="umb-table-head">
+							<div class="umb-table-row">
+								<div class="umb-table-cell">Site</div>
+								<div class="umb-table-cell">URL</div>
+								<div class="umb-table-cell col-destination">
+									Occurrences
+								</div>
+								<div class="umb-table-cell col-notes">Referrer</div>
+								<div class="umb-table-cell col-date">
+									Last occurred
+								</div>
+								<div class="umb-table-cell col-icons"></div>
+							</div>
+						</div>
+						<div class="umb-table-body">
+							<div class="umb-table-row">
+								<div class="umb-table-cell">
+									<span>
+										Website
+									</span>
+								</div>
+
+								<div class="umb-table-cell">
+									nieuwsartikel-1
+								</div>
+
+								<div class="umb-table-cell">
+									204
+								</div>
+								<div class="umb-table-cell col-notes">
+									/
+								</div>
+								<div class="umb-table-cell col-date">
+									06-11-2020 12:30
+								</div>
+								<div class="umb-table-cell col-icons">
+									<i class="icon-redo"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-5">
+					<div class="row align-items-center">
+						<div class="col">
+							<h4><b>Newest redirects</b></h4>
+							<small>Automatically added redirects</small>
+						</div>
+						<div class="col-auto">
+							<a href="">Show all <i class="icon-eye ml-1"></i></a>
+						</div>
+					</div>
+					<div class="umb-table urltracker-dashboard-table mt-4">
+						<div class="umb-table-head">
+							<div class="umb-table-row">
+								<div class="umb-table-cell">Site</div>
+								<div class="umb-table-cell">Old URL</div>
+								<div class="umb-table-cell">New URL</div>
+							</div>
+						</div>
+						<div class="umb-table-body">
+							<div class="umb-table-row">
+								<div class="umb-table-cell">
+									<span>
+										Website
+									</span>
+								</div>
+
+								<div class="umb-table-cell">
+									nieuwsartikel-3
+								</div>
+
+								<div class="umb-table-cell">
+									nieuwsartikel-3-nieuw
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div ng-if="tab.alias == 'redirects'">
+			<umb-editor-sub-header ng-if="vm.redirects.selectedItems.length == 0">
+				<umb-editor-sub-header-content-left>
+					<umb-button action="vm.createEntry()" type="button" button-style="outline" label="Create Redirect" class="urltracker-sub-header-button"></umb-button>
+				</umb-editor-sub-header-content-left>
+
+				<!-- ToDo: filters -->
+				<umb-editor-sub-header-content-right>
+					<!--<umb-editor-sub-header-section class="urltracker-filters">
+						<div class="urltracker-form-box">
+							<input id="automatic" type="checkbox" value="Automatic entries" />
+							<label for="automatic">Automatic entries</label>
+						</div>
+						<div class="urltracker-form-box">
+							<input id="customUrl" type="checkbox" value="Custom Url entries" />
+							<label for="customUrl">Custom Url entries</label>
+						</div>
+						<div class="urltracker-form-box">
+							<input id="customRegex" type="checkbox" value="Custom Regex entries" />
+							<label for="customRegex">Custom Regex entries</label>
+						</div>
+					</umb-editor-sub-header-section>-->
+					<umb-editor-sub-header-section>
+						<div class="urltracker-form-box search-box">
+							<i class="icon-search"></i>
+							<input type="text" ng-model="vm.redirects.searchString" ng-enter="vm.redirects.search()" placeholder="Search..." />
+						</div>
+					</umb-editor-sub-header-section>
+				</umb-editor-sub-header-content-right>
+			</umb-editor-sub-header>
+
+			<umb-editor-sub-header ng-if="vm.redirects.selectedItems.length > 0" class="--state-selection">
+				<umb-editor-sub-header-content-left>
+					<umb-button action="vm.redirects.clearSelection()" type="button" button-style="white" state="" label="Clear selection"></umb-button>
+				</umb-editor-sub-header-content-left>
+				<umb-editor-sub-header-content-right>
+					<umb-button action="vm.redirects.deleteSelected()" type="button" button-style="white" label="Delete" icon="icon-trash"></umb-button>
+				</umb-editor-sub-header-content-right>
+			</umb-editor-sub-header>
+
+			<div class="umb-table" ng-if="!vm.redirects.loading">
+				<div class="umb-table-head">
+					<div class="umb-table-row">
+						<div class="umb-table-cell col-select">
+							<input class="item-select" type="checkbox" ng-click="vm.redirects.selectAll()" />
+						</div>
+						<div class="umb-table-cell">Site</div>
+						<div class="umb-table-cell">Old URL/ RegEx</div>
+						<div class="umb-table-cell col-destination">New URL</div>
+						<div class="umb-table-cell col-notes">Notes</div>
+						<div class="umb-table-cell col-date">
+							<button class="umb-table-head__link sortable">Created</button>
+						</div>
+						<div class="umb-table-cell col-icons"></div>
+					</div>
+				</div>
+				<div class="umb-table-body">
+					<div class="umb-table-row -selectable umb-outline" ng-repeat="item in vm.redirects.items" ng-click="vm.redirects.clickItem(item)">
+						<div class="umb-table-cell col-select">
+							<input class="item-select" type="checkbox" ng-checked="vm.redirects.allItemsSelected" ng-click="vm.redirects.toggleSelectItem($event, item)" />
+						</div>
+
+						<div class="umb-table-cell">
+							<span>
+								{{vm.getSiteName(item)}}
+							</span>
+						</div>
+
+						<div class="umb-table-cell">
+							<span ng-if="item.OldUrl">{{item.OldUrl}}</span>
+							<span ng-if="item.OldRexEx">{{item.OldRexEx}}</span>
+						</div>
+
+						<div class="umb-table-cell col-destination">
+							<span ng-if="item.RedirectUrl != null">{{item.RedirectUrl}}</span>
+						</div>
+						<div class="umb-table-cell col-notes">
+							{{item.Notes}}
+						</div>
+						<div class="umb-table-cell col-date">
+							{{item.Inserted | date: 'yyyy-MM-dd HH:mm'}}
+						</div>
+						<div class="umb-table-cell col-icons">
+							<i class="icon-trash"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+			<umb-pagination page-number="vm.redirects.pagination.pageNumber"
+							total-pages="vm.redirects.pagination.totalPages"
+							on-next="vm.redirects.nextPage"
+							on-prev="vm.redirects.prevPage"
+							on-go-to-page="vm.redirects.goToPage"
+							class="urltracker-pagination">
+			</umb-pagination>
+			<div class="urltracker-page-size">
+				<select ng-model="vm.redirects.itemsPerPage" ng-change="vm.redirects.pageSizeChanged()" class="urltracker-checkbox-page-size">
+					<option ng-repeat="option in vm.pageSizeOptions" value="{{option.value}}" ng-value="{{option.value}}">{{option.value}}</option>
+				</select>
+			</div>
+		</div>
+
+		<div ng-if="tab.alias == 'notFounds'">
+			<umb-editor-sub-header ng-if="vm.notFounds.selectedItems.length == 0">
+				<!-- ToDo: filters -->
+				<umb-editor-sub-header-content-right>
+					<umb-editor-sub-header-section>
+						<div class="urltracker-form-box search-box">
+							<i class="icon-search"></i>
+							<input type="text" ng-model="vm.notFounds.searchString" ng-enter="vm.notFounds.search()" placeholder="Search..." />
+						</div>
+					</umb-editor-sub-header-section>
+				</umb-editor-sub-header-content-right>
+			</umb-editor-sub-header>
+
+			<umb-editor-sub-header ng-if="vm.notFounds.selectedItems.length > 0" class="--state-selection">
+				<umb-editor-sub-header-content-left>
+					<umb-button action="vm.redirects.clearSelection()" type="button" button-style="white" state="" label="Clear selection"></umb-button>
+				</umb-editor-sub-header-content-left>
+				<umb-editor-sub-header-content-right>
+					<umb-button action="vm.redirects.deleteSelected()" type="button" button-style="white" label="Delete" icon="icon-trash"></umb-button>
+				</umb-editor-sub-header-content-right>
+			</umb-editor-sub-header>
+
+			<div class="umb-table" ng-if="!vm.notFounds.loading">
+				<div class="umb-table-head">
+					<div class="umb-table-row">
+						<div class="umb-table-cell col-select">
+							<input class="item-select" type="checkbox" ng-click="vm.notFounds.selectAll()" />
+						</div>
+						<div class="umb-table-cell">Site</div>
+						<div class="umb-table-cell">Old URL/ RegEx</div>
+						<div class="umb-table-cell col-destination">New URL</div>
+						<div class="umb-table-cell col-notes">Notes</div>
+						<div class="umb-table-cell col-date">
+							<button class="umb-table-head__link sortable">Created</button>
+						</div>
+						<div class="umb-table-cell col-icons"></div>
+					</div>
+				</div>
+				<div class="umb-table-body">
+					<div class="umb-table-row -selectable umb-outline" ng-repeat="item in vm.notFounds.items" ng-click="vm.notFounds.clickItem(item)">
+						<div class="umb-table-cell col-select">
+							<input class="item-select" type="checkbox" ng-checked="vm.notFounds.allItemsSelected" ng-click="vm.notFounds.toggleSelectItem($event, item)" />
+						</div>
+
+						<div class="umb-table-cell">
+							<span>
+								{{vm.getSiteName(item)}}
+							</span>
+						</div>
+
+						<div class="umb-table-cell">
+							<span ng-if="item.OldUrl">{{item.OldUrl}}</span>
+							<span ng-if="item.OldRexEx">{{item.OldRexEx}}</span>
+						</div>
+
+						<div class="umb-table-cell col-destination">
+							<span ng-if="item.RedirectUrl != null">{{item.RedirectUrl}}</span>
+						</div>
+						<div class="umb-table-cell col-notes">
+							{{item.Notes}}
+						</div>
+						<div class="umb-table-cell col-date">
+							{{item.Inserted | date: 'yyyy-MM-dd HH:mm'}}
+						</div>
+						<div class="umb-table-cell col-icons">
+							<i class="icon-trash"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+			<umb-pagination page-number="vm.notFounds.pagination.pageNumber"
+							total-pages="vm.notFounds.pagination.totalPages"
+							on-next="vm.notFounds.nextPage"
+							on-prev="vm.notFounds.prevPage"
+							on-go-to-page="vm.notFounds.goToPage"
+							class="urltracker-pagination">
+			</umb-pagination>
+			<div class="urltracker-page-size">
+				<select ng-model="vm.notFounds.itemsPerPage" ng-change="vm.notFounds.pageSizeChanged()" class="urltracker-checkbox-page-size">
+					<option ng-repeat="option in vm.pageSizeOptions" value="{{option.value}}" ng-value="{{option.value}}">{{option.value}}</option>
+				</select>
+			</div>
+		</div>
+
+	</umb-tab-content>
+</div>

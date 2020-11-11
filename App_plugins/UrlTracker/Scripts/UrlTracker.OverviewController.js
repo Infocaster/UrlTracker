@@ -30,23 +30,6 @@
             { "value": 200 },
         ];
 
-        vm.dropdownOpen = false;
-        vm.showDetailPage = false;
-
-        getItems();
-
-        vm.dropDownClose = function() {
-            vm.dropdownOpen = false;
-        }
-
-        vm.toggle = function() {
-            vm.dropdownOpen = true;
-        }
-
-        vm.dropDownSelect =  function(item) {
-            vm.itemsPerPage = item.value
-        }
-
         function getItems() {
             var skipNr = 0;
             if (vm.pagination.pageNumber > 1) {
@@ -87,12 +70,13 @@
         }
 
         vm.clickCreateButton = function () {
+	        console.log('create');
             vm.openPanel(null);
         }
 
         vm.openPanel = function (model) {
             vm.overlay.entry = model;
-            editorService.open(vm.overlay)
+            editorService.open(vm.overlay);
         }
 
         vm.pageSizeChanged= function() {
