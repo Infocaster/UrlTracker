@@ -286,28 +286,31 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\UrlTrackerManagerController.cs" />
+    <Compile Include="Helpers\UrlTrackerNewHelper.cs" />
+    <Compile Include="Helpers\IUrlTrackerNewHelper.cs" />
+    <Compile Include="Helpers\IUrlTrackerNewLoggingHelper.cs" />
+    <Compile Include="Helpers\UrlTrackerNewLoggingHelper.cs" />
+    <Compile Include="Models\UrlTrackerGetResult.cs" />
+    <Compile Include="Services\IUrlTrackerCacheService.cs" />
+    <Compile Include="Services\UrlTrackerService.cs" />
+    <Compile Include="Services\IUrlTrackerService.cs" />
+    <Compile Include="Services\UrlTrackerCacheService.cs" />
+    <Compile Include="Settings\IUrlTrackerNewSettings.cs" />
+    <Compile Include="UrlTrackerEnums.cs" />
     <Compile Include="Exceptions\DashboardAlreadyInstalledException.cs" />
     <Compile Include="Helpers\ContextHelper.cs" />
-    <Compile Include="Helpers\SqlHelper.cs" />
     <Compile Include="Models\UrlTrackerSchema.cs" />
+    <Compile Include="NewRepositories\UrlTrackerNewRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Helpers\EmbeddedResourcesHelper.cs" />
-    <Compile Include="Models\OldUrlTrackerModel.cs" />
     <Compile Include="Providers\EmbeddedResourcesVirtualPathProvider.cs" />
     <Compile Include="Models\UrlTrackerDomain.cs" />
-    <Compile Include="Extensions\UmbracoHelperExtensions.cs" />
-    <Compile Include="Helpers\LoggingHelper.cs" />
-    <Compile Include="Extensions\INodeExtensions.cs" />
     <Compile Include="Extensions\NameValueCollectionExtension.cs" />
     <Compile Include="Models\UrlTrackerModel.cs" />
     <Compile Include="Modules\UrlTrackerModule.cs" />
+    <Compile Include="NewRepositories\IUrlTrackerNewRepository.cs" />
     <Compile Include="UrlTrackerComponent .cs" />
-    <Compile Include="Models\AutoTrackingTypes.cs" />
-    <Compile Include="Helpers\UrlTrackerHelper.cs" />
-    <Compile Include="Repositories\UrlTrackerRepository.cs" />
     <Compile Include="UrlTrackerPreApplicationStart.cs" />
-    <Compile Include="UrlTrackerResources.cs" />
-    <Compile Include="UrlTrackerSettings.cs" />
+    <Compile Include="Settings\UrlTrackerNewSettings.cs" />
     <Compile Include="ViewModels\UrlTrackerOverviewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -407,6 +410,97 @@
     <Content Include="App_plugins\UrlTracker\res\js\main.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\lang\en-US.user.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\lang\nl-NL.user.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\css\urltracker-grid.min.css" />
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\css\urltracker.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\img\asc-hover.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\img\asc.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\img\cross.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\img\desc-hover.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\img\desc.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\img\edit.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\img\glyphicons-halflings-white.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\img\glyphicons-halflings.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\img\info.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\img\trash.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\img\urltracker-icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\img\urltracker.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\js\bootstrap.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\js\bootstrap.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\js\installer.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\js\jquery-1.11.2.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\js\jquery-migrate-1.2.1.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\js\jquery.validate.additional-methods.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\js\jquery.validate.additional-methods.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\js\jquery.validate.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\js\jquery.validate.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\res\js\main.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\Scripts\UrlTracker.DetailsController.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\Scripts\UrlTracker.OverviewController.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\Scripts\UrlTrackerEntryService.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\Views\UrlTrackerDetails.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_plugins\UrlTracker\UrlTracker\Views\UrlTrackerManager.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="App_plugins\UrlTracker\Views\UrlTrackerDetails.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -418,6 +512,9 @@
     </Content>
     <Content Include="App_plugins\UrlTracker\Views\Wrapper.html" />
     <Content Include="UrlTracker.nuspec" />
+    <Content Include="App_plugins\UrlTracker\UrlTracker\package.manifest">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="web.config" />
   </ItemGroup>
   <ItemGroup>

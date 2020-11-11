@@ -1,261 +1,223 @@
 ﻿using InfoCaster.Umbraco.UrlTracker.Extensions;
 using InfoCaster.Umbraco.UrlTracker.Models;
-using InfoCaster.Umbraco.UrlTracker.Repositories;
+using InfoCaster.Umbraco.UrlTracker.NewRepositories;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.UI;
+using InfoCaster.Umbraco.UrlTracker.Helpers;
+using InfoCaster.Umbraco.UrlTracker.Services;
+using InfoCaster.Umbraco.UrlTracker.Settings;
 using Umbraco.Core;
 using Umbraco.Core.Composing;
 using Umbraco.Core.Events;
-using Umbraco.Core.Models;
-using Umbraco.Core.Services;
-using Umbraco.Core.Services.Implement;
-using Umbraco.Web;
-//using umbraco.BasePages;
-using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.Logging;
 using Umbraco.Core.Migrations;
 using Umbraco.Core.Migrations.Upgrade;
+using Umbraco.Core.Models;
+using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.Scoping;
-using IComponent = Umbraco.Core.Composing.IComponent;
-using InfoCaster.Umbraco.UrlTracker.Helpers;
+using Umbraco.Core.Services;
+using Umbraco.Core.Services.Implement;
+using Umbraco.Web;
 
 namespace InfoCaster.Umbraco.UrlTracker
 {
 
-    [RuntimeLevel(MinLevel = RuntimeLevel.Run)]
-    public class UrlTrackerComposer : IUserComposer
-    {
-        public void Compose(Composition composition)
-        {
-            composition.Components().Append<UrlTrackerComponent>();
-        }
-    }
+	[RuntimeLevel(MinLevel = RuntimeLevel.Run)]
+	public class UrlTrackerComposer : IUserComposer
+	{
+		public void Compose(Composition composition)
+		{
+			composition.Components().Append<UrlTrackerComponent>();
 
-    public class UrlTrackerComponent : IComponent
-    {
-        private Lazy<UmbracoHelper> _umbracoHelper;
-        private IScopeProvider _scopeProvider;
-        private IMigrationBuilder _migrationBuilder;
-        private IKeyValueService _keyValueService;
-        private ILogger _logger;
-        private IUmbracoContextFactory _umbracoContextFactory;
+			composition.Register<IUrlTrackerNewHelper, UrlTrackerNewHelper>();
+			composition.Register<IUrlTrackerNewLoggingHelper, UrlTrackerNewLoggingHelper>();
+			composition.Register<IUrlTrackerNewRepository, UrlTrackerNewRepository>();
+			composition.Register<IUrlTrackerCacheService, UrlTrackerCacheService>();
+			composition.Register<IUrlTrackerService, UrlTrackerService>();
 
-        public UrlTrackerComponent(IScopeProvider scopeProvider, IMigrationBuilder migrationBuilder, IKeyValueService keyValueService, ILogger logger, 
-            IUmbracoContextFactory umbracoContextFactory, Lazy<UmbracoHelper> umbracoHelper)
-        {
-            _scopeProvider = scopeProvider;
-            _migrationBuilder = migrationBuilder;
-            _keyValueService = keyValueService;
-            _logger = logger;
-            _umbracoContextFactory = umbracoContextFactory;
-            _umbracoHelper = umbracoHelper;
-        }
+			composition.Register<IUrlTrackerNewSettings, UrlTrackerNewSettings>(Lifetime.Singleton);
+		}
+	}
 
-        //protected ClientTools ClientTools
-        //{
-        //    get
-        //    {
-        //        Page page = HttpContext.Current.CurrentHandler as Page;
-        //        if (page != null)
-        //            return new ClientTools(page);
-        //        return null;
-        //    }
-        //}
+	public class UrlTrackerComponent : IComponent
+	{
+		private readonly IScopeProvider _scopeProvider;
+		private readonly IMigrationBuilder _migrationBuilder;
+		private readonly IKeyValueService _keyValueService;
+		private readonly ILogger _logger;
+		private readonly IUrlTrackerService _urlTrackerService;
+		private readonly IUrlTrackerNewSettings _urlTrackerSettings;
+		private readonly IUrlTrackerNewRepository _urlTrackerRepository;
 
-        public void Initialize()
-        {
-            var migrationPlan = new MigrationPlan("UrlTracker");
-            migrationPlan.From(string.Empty)
-                .To<AddUrlTrackerTable>("urlTracker");
+		public UrlTrackerComponent(
+			IUrlTrackerNewSettings urlTrackerSettings,
+			IUrlTrackerNewRepository urlTrackerRepository,
+			IUrlTrackerService urlTrackerService,
+			IScopeProvider scopeProvider,
+			IMigrationBuilder migrationBuilder,
+			IKeyValueService keyValueService,
+			ILogger logger)
+		{
+			_urlTrackerSettings = urlTrackerSettings;
+			_urlTrackerRepository = urlTrackerRepository;
+			_scopeProvider = scopeProvider;
+			_migrationBuilder = migrationBuilder;
+			_keyValueService = keyValueService;
+			_logger = logger;
+			_urlTrackerService = urlTrackerService;
+		}
 
-            var upgrader = new Upgrader(migrationPlan);
-            upgrader.Execute(_scopeProvider, _migrationBuilder, _keyValueService, _logger);
-            
+		public void Initialize()
+		{
+			var migrationPlan = new MigrationPlan("UrlTracker");
+			migrationPlan.From(string.Empty).To<AddUrlTrackerTable>("urlTracker");
 
-            if (!UrlTrackerSettings.IsDisabled && !UrlTrackerSettings.IsTrackingDisabled)
-            {
-                //todo: resolve check from migration and execute this
-                //UrlTrackerRepository.ReloadForcedRedirectsCache();
-                
-                ContentService.Moving += ContentService_Moving;
-                ContentService.Publishing += ContentService_Publishing;
-                ContentService.Published += ContentService_Published;
-                ContentService.Deleting += ContentService_Deleting;
-                
-                //content.BeforeClearDocumentCache += content_BeforeClearDocumentCache;
-                DomainService.Deleted += DomainService_Deleted;
-                DomainService.Saved += DomainService_Saved;
-            }
-        }
+			var upgrader = new Upgrader(migrationPlan);
+			upgrader.Execute(_scopeProvider, _migrationBuilder, _keyValueService, _logger);
 
-        private void DomainService_Saved(IDomainService sender, SaveEventArgs<IDomain> e)
-        {
-            using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
-            {
-                _umbracoHelper.Value.ClearDomains();
-            }
-        }
 
-        private void DomainService_Deleted(IDomainService sender, DeleteEventArgs<IDomain> e)
-        {
-            using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
-            {
-                _umbracoHelper.Value.ClearDomains();
-                
-            }
-        }
+			if (!_urlTrackerSettings.IsDisabled() && !_urlTrackerSettings.IsTrackingDisabled())
+			{
+				//todo: resolve check from migration and execute this
 
-        public void Terminate()
-        {
-            //maybe some clean up needed?
-        }
+				ContentService.Moving += ContentService_Moving;
+				ContentService.Publishing += ContentService_Publishing;
+				ContentService.Published += ContentService_Published;
 
-        void ContentService_Deleting(IContentService sender, DeleteEventArgs<IContent> e)
-        {
-            foreach (IContent content in e.DeletedEntities)
-            {
+				ContentService.Deleting += ContentService_Deleting;
+				DomainService.Deleted += DomainService_Deleted;
+				DomainService.Saved += DomainService_Saved;
+			}
+		}
+
+		public void Terminate() { }
+
+		private void DomainService_Saved(IDomainService sender, SaveEventArgs<IDomain> e)
+		{
+			_urlTrackerService.ClearDomains();
+		}
+
+		private void DomainService_Deleted(IDomainService sender, DeleteEventArgs<IDomain> e)
+		{
+			_urlTrackerService.ClearDomains();
+		}
+
+		void ContentService_Deleting(IContentService sender, DeleteEventArgs<IContent> e)
+		{
+			foreach (IContent content in e.DeletedEntities)
+			{
 #if !DEBUG
                 try
 #endif
-                {
-                    UrlTrackerRepository.DeleteUrlTrackerEntriesByNodeId(content.Id);
-                }
+				{
+					_urlTrackerRepository.DeleteEntryByRedirectNodeId(content.Id);
+				}
 #if !DEBUG
                 catch (Exception ex)
                 {
                     ex.LogException();
                 }
 #endif
-            }
-        }
+			}
+		}
 
-        void ContentService_Publishing(IContentService sender, ContentPublishingEventArgs e)
-        {
-            // When content is renamed or 'umbracoUrlName' property value is added/updated
-            foreach (IContent content in e.PublishedEntities)
-            {
+		void ContentService_Publishing(IContentService sender, ContentPublishingEventArgs e)
+		{
+			// When content is renamed or 'umbracoUrlName' property value is added/updated
+			foreach (IContent newContent in e.PublishedEntities)
+			{
 #if !DEBUG
                 try
 #endif
-                {
-                    using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
-                    {
-                        var contentCache = ctx.UmbracoContext.Content;
-                        IPublishedContent node = contentCache.GetById(content.Id);
-                        if (node?.Name != content.Name && !string.IsNullOrEmpty(node?.Name)) // If name is null, it's a new document
-                        {
-                            // Rename occurred
-                            UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.Renamed);
+				{
+					var oldContent = _urlTrackerService.GetNodeById(newContent.Id);
 
-                            //if (ClientTools != null)
-                            //    ClientTools.ChangeContentFrameUrl(string.Concat("/umbraco/editContent.aspx?id=", content.Id));
-                        }
-                        if (content.HasProperty("umbracoUrlName"))
-                        {
-                            string contentUmbracoUrlNameValue = content.GetValue("umbracoUrlName") != null ? content.GetValue("umbracoUrlName").ToString() : string.Empty;
-                            string nodeUmbracoUrlNameValue = node.GetProperty("umbracoUrlName") != null ? node.GetProperty("umbracoUrlName").GetValue().ToString() : string.Empty;
-                            if (contentUmbracoUrlNameValue != nodeUmbracoUrlNameValue)
-                            {
-                                // 'umbracoUrlName' property value added/changed
-                                UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.UrlOverwritten);
+					if (oldContent?.Name != newContent.Name && !string.IsNullOrEmpty(oldContent?.Name)) // If name is null, it's a new document
+						_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.Renamed);
 
-                                //if (ClientTools != null)
-                                //    ClientTools.ChangeContentFrameUrl(string.Concat("/umbraco/editContent.aspx?id=", content.Id));
-                            }
-                        }
-                        if (UrlTrackerSettings.SEOMetadataInstalled && content.HasProperty(UrlTrackerSettings.SEOMetadataPropertyName))
-                        {
-                            string contentSEOMetadataValue = content.GetValue(UrlTrackerSettings.SEOMetadataPropertyName) != null ? content.GetValue(UrlTrackerSettings.SEOMetadataPropertyName).ToString() : string.Empty;
-                            string nodeSEOMetadataValue = node.GetProperty("umbracoUrlName") != null ? node.GetProperty("umbracoUrlName").GetValue().ToString() : string.Empty;
-                            if (contentSEOMetadataValue != nodeSEOMetadataValue)
-                            {
-                                dynamic contentJson = JObject.Parse(contentSEOMetadataValue);
-                                string contentUrlName = contentJson.urlName;
+					if (newContent.HasProperty("umbracoUrlName"))
+					{
+						var newContentUmbracoUrlName = newContent.GetValue("umbracoUrlName") != null ? newContent.GetValue("umbracoUrlName").ToString() : string.Empty;
+						var oldContentUmbracoUrlName = oldContent.GetProperty("umbracoUrlName") != null ? oldContent.GetProperty("umbracoUrlName").GetValue().ToString() : string.Empty;
 
-                                dynamic nodeJson = JObject.Parse(nodeSEOMetadataValue);
-                                string nodeUrlName = nodeJson.urlName;
+						if (newContentUmbracoUrlName != oldContentUmbracoUrlName)  // 'umbracoUrlName' property value added/changed
+							_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.UrlOverwritten);
+					}
 
-                                if (contentUrlName != nodeUrlName)
-                                {
-                                    // SEOMetadata UrlName property value added/changed
-                                    UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.UrlOverwrittenSEOMetadata);
-                                    UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.UrlOverwrittenSEOMetadata);
+					if (_urlTrackerSettings.IsSEOMetadataInstalled() && newContent.HasProperty(_urlTrackerSettings.GetSEOMetadataPropertyName()))
+					{
+						var newContentSEOMetadata = newContent.GetValue(_urlTrackerSettings.GetSEOMetadataPropertyName()) != null ? newContent.GetValue(_urlTrackerSettings.GetSEOMetadataPropertyName()).ToString() : string.Empty;
+						var oldContentSEOMetadata = oldContent.GetProperty("umbracoUrlName") != null ? oldContent.GetProperty("umbracoUrlName").GetValue().ToString() : string.Empty;
 
-                                    //if (ClientTools != null)
-                                    //    ClientTools.ChangeContentFrameUrl(string.Concat("/umbraco/editContent.aspx?id=", content.Id));
-                                }
-                            }
-                        }
-                    }
-                }
+						if (newContentSEOMetadata != oldContentSEOMetadata)
+						{
+							dynamic contentJson = JObject.Parse(newContentSEOMetadata);
+							string newContentUrlName = contentJson.urlName;
+
+							dynamic nodeJson = JObject.Parse(oldContentSEOMetadata);
+							string oldContentUrlName = nodeJson.urlName;
+
+							if (newContentUrlName != oldContentUrlName) // SEOMetadata UrlName property value added/changed
+								_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.UrlOverwrittenSEOMetadata);
+						}
+					}
+				}
 #if !DEBUG
                 catch (Exception ex)
                 {
                     ex.LogException();
                 }
 #endif
-            }
-        }
+			}
+		}
 
-        void ContentService_Published(IContentService sender, ContentPublishedEventArgs e)
-        {
-            foreach (IContent content in e.PublishedEntities)
-            {
-                UrlTrackerRepository.Convert410To301(content.Id);
-            }
-        }
+		void ContentService_Published(IContentService sender, ContentPublishedEventArgs e)
+		{
+			foreach (IContent content in e.PublishedEntities)
+			{
+				_urlTrackerRepository.Convert410To301ByNodeId(content.Id);
+			}
+		}
 
-        void ContentService_Moving(IContentService sender, MoveEventArgs<IContent> e)
-        {
-            IContent content = e.MoveInfoCollection.First().Entity; // i guess? 
+		void ContentService_Moving(IContentService sender, MoveEventArgs<IContent> e)
+		{
+			IContent newContent = e.MoveInfoCollection.First().Entity;
+
+			if (newContent == null)
+				return;
 #if !DEBUG
             try
 #endif
-            {
-                using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
-                {
+			{
+				var oldContent = _urlTrackerService.GetNodeById(newContent.Id);
 
-                    if (content != null)
-                    {
-                        var contentCache = ctx.UmbracoContext.Content;
-                        IPublishedContent node = contentCache.GetById(content.Id);
-                        if (node != null && !string.IsNullOrEmpty(node.Url) && !content.Path.StartsWith("-1,-20")) // -1,-20 == Recycle bin | Not moved to recycle bin
-                            UrlTrackerRepository.AddUrlMapping(content, node.Root().Id, node.Url, AutoTrackingTypes.Moved);
-                    }
-                }
-            }
+				if (oldContent != null && !string.IsNullOrEmpty(oldContent.Url) && !newContent.Path.StartsWith("-1,-20")) // -1,-20 == Recycle bin | Not moved to recycle bin
+					_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.Moved);
+			}
 #if !DEBUG
             catch (Exception ex)
             {
                 ex.LogException();
             }
 #endif
-        }
+		}
 
-    }
+	}
 
-    public class AddUrlTrackerTable : MigrationBase
-    {
-        public AddUrlTrackerTable(IMigrationContext context) : base(context)
-        {
-        }
+	public class AddUrlTrackerTable : MigrationBase
+	{
+		public AddUrlTrackerTable(IMigrationContext context) : base(context) { }
 
-        public override void Migrate()
-        {
-            Logger.Debug<AddUrlTrackerTable>("Running migration {MigrationStep}", "AddUrlTrackerTable");
-            if (!TableExists("icUrlTracker"))
-            {
-                Create.Table<UrlTrackerSchema>().Do();
-            }
-            else
-            {
-                Logger.Debug<AddUrlTrackerTable>("The database table {DbTable} already exists, skipping", "icUrlTracker");
-            }
-        }
+		public override void Migrate()
+		{
+			Logger.Debug<AddUrlTrackerTable>("Running migration {MigrationStep}", "AddUrlTrackerTable");
 
-    }
+			if (!TableExists("icUrlTracker"))
+				Create.Table<UrlTrackerSchema>().Do();
+			else
+				Logger.Debug<AddUrlTrackerTable>("The database table {DbTable} already exists, skipping", "icUrlTracker");
+		}
+
+	}
 }

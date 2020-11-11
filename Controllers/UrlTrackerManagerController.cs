@@ -1,95 +1,118 @@
-﻿using InfoCaster.Umbraco.UrlTracker.Models;
-using InfoCaster.Umbraco.UrlTracker.Repositories;
+﻿using System;
+using InfoCaster.Umbraco.UrlTracker.Models;
 using InfoCaster.Umbraco.UrlTracker.ViewModels;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Http;
+using InfoCaster.Umbraco.UrlTracker.NewRepositories;
 using Umbraco.Web.WebApi;
 
 namespace InfoCaster.Umbraco.UrlTracker.Controllers
 {
-    public class UrlTrackerManagerController : UmbracoApiController
-    {
+	public class UrlTrackerManagerController : UmbracoApiController
+	{
+		private readonly IUrlTrackerNewRepository _urlTrackerRepository;
+
+	    public UrlTrackerManagerController(IUrlTrackerNewRepository urlTrackerRepository)
+	    {
+		    _urlTrackerRepository = urlTrackerRepository;
+	    }
+
         [HttpGet]
-        public IHttpActionResult Index(int skip, int ammount)
+        public IHttpActionResult GetRedirects(int skip, int amount)
         {
-            var allEntries = UrlTrackerRepository.GetUrlTrackerEntries();
-            var selectedEntries = allEntries.Skip(skip).Take(ammount).AsEnumerable();
-            var pageCount = (int)(allEntries.Count() / ammount) + 1;
+	        var entriesResult = _urlTrackerRepository.GetRedirects(skip, amount);
+
             var model = new UrlTrackerOverviewModel
             {
-                Entries = selectedEntries,
-                TotalPages = pageCount
+                Entries = entriesResult.Records,
+                NumberOfEntries = entriesResult.TotalRecords
             };
+
             return Ok(model);
         }
 
         [HttpGet]
-        public IHttpActionResult Search(string query, int skip, int ammount)
+        public IHttpActionResult GetNotFounds(int skip, int amount)
         {
-            var allEntries = UrlTrackerRepository.GetUrlTrackerEntries();
-            var searchFilter = allEntries.Where(e => (e.OldUrl!= null && e.OldUrl.Contains(query))
-            || (e.RedirectUrl != null && e.RedirectUrl.Contains(query)) 
-            || (e.OldRegex != null && e.OldRegex.Contains(query)));
+	        var entriesResult = _urlTrackerRepository.GetNotFounds(skip, amount);
+
+	        var model = new UrlTrackerOverviewModel
+	        {
+		        Entries = entriesResult.Records,
+                NumberOfEntries = entriesResult.TotalRecords
+	        };
+
+	        return Ok(model);
+        }
+
+        [HttpGet]
+        public IHttpActionResult GetRedirectsByFilter(int skip, int amount, string query)
+        {
+	        var entriesResult = _urlTrackerRepository.GetRedirectsByFilter(skip, amount, searchQuery: query);
 
             var model = new UrlTrackerOverviewModel
             {
-                Entries = searchFilter.Skip(skip).Take(ammount).AsEnumerable(),
-                TotalPages = (int)(allEntries.Count / ammount)
+	            Entries = entriesResult.Records,
+	            NumberOfEntries = entriesResult.TotalRecords
             };
+
             return Ok(model);
         }
 
         [HttpGet]
         public IHttpActionResult Details(int id)
         {
-            var entry = UrlTrackerRepository.GetUrlTrackerEntryById(id);
-            return Ok(entry);
+            //var entry = UrlTrackerRepository.GetUrlTrackerEntryById(id);
+            //return Ok(entry);
+
+            return Ok();
         }
 
         [HttpPost]
         public IHttpActionResult SaveChanges(UrlTrackerModel model)
         {
-            try
-            {
-                UrlTrackerRepository.UpdateUrlTrackerEntry(model);
-                return Ok();
-            }
-            catch
-            {
-                return BadRequest();
-            }
+            //try
+            //{
+            //    _urlTrackerRepository.UpdateEntry(model);
+            //}
+            //catch(Exception e)
+            //{
+            //    return BadRequest();
+            //}
+
+            return Ok();
         }
 
         [HttpPost]
         public IHttpActionResult Create([FromBody]UrlTrackerModel model)
         {
-            try
-            {
-                UrlTrackerRepository.AddUrlTrackerEntry(model);
-                return Ok();
-            }
-            catch
-            {
-                return BadRequest();
-            }
+            //try
+            //{
+            //    UrlTrackerRepository.AddUrlTrackerEntry(model);
+            //    return Ok();
+            //}
+            //catch
+            //{
+            //    return BadRequest();
+            //}
+
+            return Ok();
         }
 
         [HttpPost]
         public IHttpActionResult Delete(int id)
         {
-            try
-            {
-                UrlTrackerRepository.DeleteUrlTrackerEntry(id);
-                return Ok();
-            }
-            catch
-            {
-                return BadRequest();
-            }
+            //try
+            //{
+            //    UrlTrackerRepository.DeleteUrlTrackerEntry(id);
+            //    return Ok();
+            //}
+            //catch
+            //{
+            //    return BadRequest();
+            //}
+
+            return Ok();
         }
     }
 }

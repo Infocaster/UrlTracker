@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using InfoCaster.Umbraco.UrlTracker.Helpers;
+using InfoCaster.Umbraco.UrlTracker.Services;
+using InfoCaster.Umbraco.UrlTracker.Settings;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Web;
 using Umbraco.Web.Composing;
@@ -10,7 +13,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
 {
     public class UrlTrackerDomain
     {
-        private UmbracoHelper _umbracoHelper;
+        private IUrlTrackerService _urlTrackerService => Current.Factory.GetInstanceFor<IUrlTrackerService, UrlTrackerService>();
+        private IUrlTrackerNewSettings _urlTrackerSettings => Current.Factory.GetInstanceFor<IUrlTrackerNewSettings, UrlTrackerNewSettings>();
+
         public int Id { get; set; }
         public int NodeId { get; set; }
         public string Name { get; set; }
@@ -22,7 +27,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
 			{
 				if (_node == null)
 				{
-					_node = _umbracoHelper.Content(NodeId);
+					_node = _urlTrackerService.GetNodeById(NodeId);
 				}
 
 				return _node;
@@ -32,8 +37,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
         {
             get
             {
-                var node = Node;
-                if (UrlTrackerSettings.HasDomainOnChildNode && node.Parent != null)
+                if (_urlTrackerSettings.HasDomainOnChildNode() && Node.Parent != null)
                 {
                     using (InfoCaster.Umbraco.UrlTracker.Helpers.ContextHelper.EnsureHttpContext())
                     {
@@ -64,16 +68,11 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
             }
         }
 
-        public UrlTrackerDomain(UmbracoHelper umbracoHelper) {
-            _umbracoHelper = umbracoHelper;
-        }
-
         public UrlTrackerDomain(int id, int nodeId, string name)
         {
             Id = id;
             NodeId = nodeId;
             Name = name;
-            _umbracoHelper = (UmbracoHelper)Current.Factory.GetInstance(typeof(UmbracoHelper));
         }
 
         public override string ToString()
