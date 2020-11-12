@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 using InfoCaster.Umbraco.UrlTracker.Services;
 using InfoCaster.Umbraco.UrlTracker.Settings;
 using Umbraco.Core.Models.PublishedContent;
@@ -25,11 +26,11 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
     public class UrlTrackerModel
     {
         [JsonIgnore]
-	    private IUrlTrackerNewHelper _urlTrackerHelper => Current.Factory.GetInstanceFor<IUrlTrackerNewHelper, UrlTrackerNewHelper>();
+	    private IUrlTrackerNewHelper _urlTrackerHelper => DependencyResolver.Current.GetService<IUrlTrackerNewHelper>();
 	    [JsonIgnore]
-	    private IUrlTrackerService _urlTrackerService => Current.Factory.GetInstanceFor<IUrlTrackerService, UrlTrackerService>();
+	    private IUrlTrackerService _urlTrackerService => DependencyResolver.Current.GetService<IUrlTrackerService>();
         [JsonIgnore]
-	    private IUrlTrackerNewSettings _urlTrackerSettings => Current.Factory.GetInstanceFor<IUrlTrackerNewSettings, UrlTrackerNewSettings>();
+	    private IUrlTrackerNewSettings _urlTrackerSettings => DependencyResolver.Current.GetService<IUrlTrackerNewSettings>();
 
         public UrlTrackerModel()
 	    {
@@ -95,6 +96,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                 UrlTrackerDomain domain = null;
                 List<UrlTrackerDomain> domains = _urlTrackerService.GetDomains();
                 domain = domains.FirstOrDefault(x => x.NodeId == RedirectRootNode.Id);
+
                 if (domain == null)
                     domain = new UrlTrackerDomain(-1, RedirectRootNode.Id, string.Concat(HttpContext.Current.Request.Url.Host, HttpContext.Current.Request.Url.IsDefaultPort && !_urlTrackerSettings.AppendPortNumber() ? string.Empty : string.Concat(":", HttpContext.Current.Request.Url.Port)));
 
@@ -111,64 +113,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                 }
             }
         }
-        [JsonIgnore]
-        public string CalculatedRedirectUrl
-        {
-            get
-            {
-                string calculatedRedirectUri = !string.IsNullOrEmpty(RedirectUrl) ? RedirectUrl : null;
-
-                if (calculatedRedirectUri != null)
-                {
-                    if (calculatedRedirectUri.StartsWith(Uri.UriSchemeHttp + Uri.SchemeDelimiter) || calculatedRedirectUri.StartsWith(Uri.UriSchemeHttps + Uri.SchemeDelimiter))
-                        return calculatedRedirectUri;
-                    return !calculatedRedirectUri.StartsWith("/") ? string.Concat("/", calculatedRedirectUri) : calculatedRedirectUri;
-                }
-
-                if (!RedirectRootNode.Url.EndsWith("#") && RedirectNodeId.HasValue)
-                {
-                    List<UrlTrackerDomain> domains = _urlTrackerService.GetDomains();
-                    List<UrlTrackerDomain> siteDomains = domains.Where(x => x.NodeId == RedirectRootNode.Id).ToList();
-                    List<string> hosts = siteDomains.Select(n => new Uri(n.UrlWithDomain).Host).ToList();
-
-                    if (hosts.Count == 0)
-                        return _urlTrackerService.GetUrlByNodeId(RedirectNodeId.Value);
-
-                    var sourceUrl = new Uri(siteDomains.First().UrlWithDomain);
-                    var targetUrl = new Uri(sourceUrl, _urlTrackerService.GetUrlByNodeId(RedirectNodeId.Value));
-
-                    if (!targetUrl.Host.Equals(sourceUrl.Host, StringComparison.OrdinalIgnoreCase))
-                        return targetUrl.AbsoluteUri;
-
-                    if (hosts.Any(n => n.Equals(sourceUrl.Host, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        string url = _urlTrackerService.GetUrlByNodeId(RedirectNodeId.Value);
-                        // if current host is for this site already... (so no unnessecary redirects to primary domain)
-                        if (url.StartsWith(Uri.UriSchemeHttp))
-                        {
-                            // if url is with domain, strip domain
-                            var uri = new Uri(url);
-
-                            return uri.AbsolutePath + uri.Fragment;
-                        }
-
-                        return url;
-                    }
-
-                    var newUri = new Uri(sourceUrl, _urlTrackerService.GetUrlByNodeId(RedirectNodeId.Value));
-
-                    if (sourceUrl.Host != newUri.Host)
-                        return newUri.AbsoluteUri;
-
-                    return newUri.AbsolutePath + newUri.Fragment;
-                }
-
-                if (RedirectNodeId.HasValue)
-                    return _urlTrackerService.GetUrlByNodeId(RedirectNodeId.Value);
-
-                return string.Empty;
-            }
-        }
+      
         [JsonIgnore]
         public IPublishedContent RedirectRootNode
         {
@@ -186,23 +131,25 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                 return redirectRootNode;
             }
         }
+
         [JsonIgnore]
         public string RedirectRootNodeName
         {
-            get
-            {
-                if (_urlTrackerSettings.HasDomainOnChildNode())
-                {
-                    return RedirectRootNode.Parent == null
-                        ? RedirectRootNode.Name
-                        : RedirectRootNode.Parent.Name + "/" + RedirectRootNode.Name;
-                }
-                else
-                {
-                    return RedirectRootNode.Name;
-                }
-            }
+	        get
+	        {
+		        if (_urlTrackerSettings.HasDomainOnChildNode())
+		        {
+			        return RedirectRootNode.Parent == null
+				        ? RedirectRootNode.Name
+				        : RedirectRootNode.Parent.Name + "/" + RedirectRootNode.Name;
+		        }
+		        else
+		        {
+			        return RedirectRootNode.Name;
+		        }
+	        }
         }
+
         [JsonIgnore]
         public UrlTrackerViewTypes ViewType
         {
@@ -215,15 +162,89 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
                 return UrlTrackerViewTypes.Custom;
             }
         }
+
+        [JsonIgnore]
+        public IPublishedContent RedirectNode
+        {
+	        get
+	        {
+		        if (RedirectNodeId.HasValue)
+			        return _urlTrackerService.GetNodeById(RedirectNodeId.Value);
+
+		        return null;
+	        }
+        }
+
         [JsonIgnore]
         public bool RedirectNodeIsPublished
         {
             get
             {
-                if (RedirectNodeId.HasValue)
-                    return _urlTrackerService.GetNodeById(RedirectNodeId.Value).IsPublished();
+	            return RedirectNode?.IsPublished() ?? false;
+            }
+        }
 
-                return true;
+        public string RedirectNodeName
+        {
+	        get
+	        {
+		        return RedirectNode?.Name ?? "";
+	        }
+        }
+
+        public string CalculatedRedirectUrl
+        {
+            get
+            {
+                string calculatedRedirectUri = !string.IsNullOrEmpty(RedirectUrl) ? RedirectUrl : null;
+
+                if (calculatedRedirectUri != null)
+                {
+                    if (calculatedRedirectUri.StartsWith(Uri.UriSchemeHttp + Uri.SchemeDelimiter) || calculatedRedirectUri.StartsWith(Uri.UriSchemeHttps + Uri.SchemeDelimiter))
+                        return calculatedRedirectUri;
+
+                    return _urlTrackerHelper.ResolveShortestUrl(calculatedRedirectUri);
+                }
+
+                if (!RedirectRootNode.Url.EndsWith("#") && RedirectNodeId.HasValue)
+                {
+                    var siteDomains = _urlTrackerService.GetDomains().Where(x => x.NodeId == RedirectRootNode.Id).ToList();
+                    var hosts = siteDomains.Select(n => new Uri(n.UrlWithDomain).Host).ToList();
+
+                    if (hosts.Count == 0)
+                        return _urlTrackerHelper.ResolveShortestUrl(_urlTrackerService.GetUrlByNodeId(RedirectNodeId.Value));
+
+                    var sourceUrl = new Uri(siteDomains.First().UrlWithDomain);
+                    var targetUrl = new Uri(sourceUrl, _urlTrackerService.GetUrlByNodeId(RedirectNodeId.Value));
+
+                    if (!targetUrl.Host.Equals(sourceUrl.Host, StringComparison.OrdinalIgnoreCase))
+                        return targetUrl.AbsoluteUri;
+
+                    if (hosts.Any(n => n.Equals(sourceUrl.Host, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        string url = _urlTrackerService.GetUrlByNodeId(RedirectNodeId.Value);
+                        // if current host is for this site already... (so no unnessecary redirects to primary domain)
+                        if (url.StartsWith(Uri.UriSchemeHttp)) // if url is with domain, strip domain
+                        {
+                            var uri = new Uri(url);
+                            return _urlTrackerHelper.ResolveShortestUrl(uri.AbsolutePath + uri.Fragment);
+                        }
+
+                        return _urlTrackerHelper.ResolveShortestUrl(url);
+                    }
+
+                    var newUri = new Uri(sourceUrl, _urlTrackerService.GetUrlByNodeId(RedirectNodeId.Value));
+
+                    if (sourceUrl.Host != newUri.Host)
+                        return _urlTrackerHelper.ResolveShortestUrl(newUri.AbsoluteUri);
+
+                    return _urlTrackerHelper.ResolveShortestUrl(newUri.AbsolutePath + newUri.Fragment);
+                }
+
+                if (RedirectNodeId.HasValue)
+                    return _urlTrackerHelper.ResolveShortestUrl(_urlTrackerService.GetUrlByNodeId(RedirectNodeId.Value));
+
+                return string.Empty;
             }
         }
         #endregion

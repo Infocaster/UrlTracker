@@ -260,7 +260,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 					else
 					{
 						// Forced matching (cache)
-						List<UrlTrackerModel> forcedRedirects = _urlTrackerRepository.GetForcedRedirects().Where(x => !string.IsNullOrEmpty(x.OldRegex)).ToList();
+						List<UrlTrackerModel> forcedRedirects = _urlTrackerService.GetForcedRedirects().Where(x => !string.IsNullOrEmpty(x.OldRegex)).ToList();
 
 						if (forcedRedirects == null || !forcedRedirects.Any())
 							return;
@@ -492,7 +492,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 
 		void LoadUrlTrackerMatchesFromCache(HttpRequest request, string urlWithoutQueryString, bool urlHasQueryString, string shortestUrl, int rootNodeId, ref string redirectUrl, ref int? redirectHttpCode, ref bool redirectPassThroughQueryString)
 		{
-			var forcedRedirects = _urlTrackerRepository.GetForcedRedirects();
+			var forcedRedirects = _urlTrackerService.GetForcedRedirects();
 
 			if (forcedRedirects == null || !forcedRedirects.Any())
 				return;

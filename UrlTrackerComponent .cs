@@ -48,11 +48,9 @@ namespace InfoCaster.Umbraco.UrlTracker
 		private readonly ILogger _logger;
 		private readonly IUrlTrackerService _urlTrackerService;
 		private readonly IUrlTrackerNewSettings _urlTrackerSettings;
-		private readonly IUrlTrackerNewRepository _urlTrackerRepository;
 
 		public UrlTrackerComponent(
 			IUrlTrackerNewSettings urlTrackerSettings,
-			IUrlTrackerNewRepository urlTrackerRepository,
 			IUrlTrackerService urlTrackerService,
 			IScopeProvider scopeProvider,
 			IMigrationBuilder migrationBuilder,
@@ -60,7 +58,6 @@ namespace InfoCaster.Umbraco.UrlTracker
 			ILogger logger)
 		{
 			_urlTrackerSettings = urlTrackerSettings;
-			_urlTrackerRepository = urlTrackerRepository;
 			_scopeProvider = scopeProvider;
 			_migrationBuilder = migrationBuilder;
 			_keyValueService = keyValueService;
@@ -111,7 +108,7 @@ namespace InfoCaster.Umbraco.UrlTracker
                 try
 #endif
 				{
-					_urlTrackerRepository.DeleteEntryByRedirectNodeId(content.Id);
+					_urlTrackerService.DeleteEntryByRedirectNodeId(content.Id);
 				}
 #if !DEBUG
                 catch (Exception ex)
@@ -176,7 +173,7 @@ namespace InfoCaster.Umbraco.UrlTracker
 		{
 			foreach (IContent content in e.PublishedEntities)
 			{
-				_urlTrackerRepository.Convert410To301ByNodeId(content.Id);
+				_urlTrackerService.Convert410To301ByNodeId(content.Id);
 			}
 		}
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 using InfoCaster.Umbraco.UrlTracker.Helpers;
 using InfoCaster.Umbraco.UrlTracker.Services;
 using InfoCaster.Umbraco.UrlTracker.Settings;
@@ -13,8 +14,8 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
 {
     public class UrlTrackerDomain
     {
-        private IUrlTrackerService _urlTrackerService => Current.Factory.GetInstanceFor<IUrlTrackerService, UrlTrackerService>();
-        private IUrlTrackerNewSettings _urlTrackerSettings => Current.Factory.GetInstanceFor<IUrlTrackerNewSettings, UrlTrackerNewSettings>();
+        private IUrlTrackerService _urlTrackerService => DependencyResolver.Current.GetService<IUrlTrackerService>();
+        private IUrlTrackerNewSettings _urlTrackerSettings => DependencyResolver.Current.GetService<IUrlTrackerNewSettings>();
 
         public int Id { get; set; }
         public int NodeId { get; set; }
