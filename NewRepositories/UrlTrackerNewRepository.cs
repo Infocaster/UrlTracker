@@ -62,71 +62,6 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 			}
 		}
 
-		//public bool AddUrlMapping(IContent newContent, string oldUrl, UrlTrackerReason reason, bool isChild = false)
-		//{
-		//	//rootnodeid
-		//	//old url
-
-		//	if (url != "#" && content.TemplateId > 0)
-		//	{
-		//		string notes = isChild ? "An ancestor" : "This page";
-
-		//		if (type == UrlTrackerReason.Moved)
-		//			notes += " was moved";
-		//		else if (type == UrlTrackerReason.Renamed)
-		//			notes += " was renamed";
-		//		else if (type == UrlTrackerReason.UrlOverwritten)
-		//			notes += "'s property 'umbracoUrlName' changed";
-		//		else if (type == UrlTrackerReason.UrlOverwrittenSEOMetadata)
-		//			notes += $"'s property '{_urlTrackerSettings.IsDisabled()}' changed";
-
-		//		url = _urlTrackerHelper.ResolveShortestUrl(url);
-
-		//		if (_urlTrackerSettings.HasDomainOnChildNode())
-		//		{
-		//			var rootUri = new Uri(_urlTrackerHelper.GetUrlByNodeId(rootNodeId));
-		//			var shortRootUrl = _urlTrackerHelper.ResolveShortestUrl(rootUri.AbsolutePath);
-
-		//			if (url.StartsWith(shortRootUrl, StringComparison.OrdinalIgnoreCase))
-		//				url = _urlTrackerHelper.ResolveShortestUrl(url.Substring(shortRootUrl.Length));
-		//		}
-
-		//		if (!string.IsNullOrEmpty(url))
-		//		{
-		//			int exists;
-
-		//			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-		//			{
-		//				string query = "SELECT 1 FROM icUrlTracker WHERE RedirectNodeId = @nodeId AND OldUrl = @url";
-		//				exists = scope.Database.ExecuteScalar<int>(query, new { nodeId = content.Id, url = url });
-		//			}
-
-		//			if (exists != 1)
-		//			{
-		//				_urlTrackerLoggingHelper.LogInformation("UrlTracker Repository | Adding mapping for node id: {0} and url: {1}", new string[] { content.Id.ToString(), url });
-
-		//				var entry = new UrlTrackerModel
-		//				{
-		//					RedirectRootNodeId = rootNodeId,
-		//					RedirectNodeId = content.Id,
-		//					OldUrl = url,
-		//					Notes = notes
-		//				};
-
-		//				AddEntry(entry);
-
-		//				var ancestors = _urlTrackerHelper.GetContentAncestorsById(content.Id);
-		//				foreach (var ancestor in ancestors)
-		//				{
-		//					AddUrlMapping(ancestor, rootNodeId, _urlTrackerHelper.GetUrlByNodeId(ancestor.Id), type, true);
-		//				}
-		//			}
-		//		}
-		//	}
-
-		//	return false;
-		//}
-
 		#endregion
 
 		#region Get
@@ -141,7 +76,15 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 			return default(T);
 		}
 
-		private UrlTrackerGetResult GetEntries(int? skip, int? amount, UrlTrackerEntryType type, UrlTrackerSortType? sort, string searchQuery = "", bool onlyForcedRedirects = false)
+		public UrlTrackerModel GetEntryById(int id)
+		{
+			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+			{
+				return scope.Database.SingleOrDefault<UrlTrackerModel>("SELECT * FROM icUrlTracker WHERE Id = @id", new {id = id});
+			}
+		}
+
+		public UrlTrackerGetResult GetEntries(int? skip, int? amount, UrlTrackerEntryType type, UrlTrackerSortType? sort, string searchQuery = "", bool onlyForcedRedirects = false)
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
@@ -208,31 +151,6 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 
 		}
 
-		public UrlTrackerGetResult GetRedirects(int? skip, int? amount)
-		{
-			return GetEntries(skip, amount, UrlTrackerEntryType.Redirect, UrlTrackerSortType.CreatedDesc);
-		}
-
-		public UrlTrackerGetResult GetNotFounds(int? skip, int? amount)
-		{
-			return GetEntries(skip, amount, UrlTrackerEntryType.NotFound, UrlTrackerSortType.CreatedDesc);
-		}
-
-		public UrlTrackerGetResult GetRedirectsByFilter(int? skip, int? amount, UrlTrackerSortType sortType = UrlTrackerSortType.CreatedDesc, string searchQuery = "")
-		{
-			return GetEntries(skip, amount, UrlTrackerEntryType.Redirect, sortType, searchQuery);
-		}
-
-		public List<UrlTrackerModel> GetForcedRedirects()
-		{
-			var cachedForcedRedirects = _urlTrackerCacheService.Get<List<UrlTrackerModel>>(_forcedRedirectsCacheKey);
-
-			if (cachedForcedRedirects == null)
-				return ReloadForcedRedirectsCache();
-
-			return cachedForcedRedirects;
-		}
-
 		public bool RedirectExist(int redirectNodeId, string oldUrl)
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
@@ -276,9 +194,6 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 				};
 
 				scope.Database.Execute(query, parameters);
-
-				if (entry.ForceRedirect)
-					ReloadForcedRedirectsCache();
 			}
 		}
 
@@ -294,7 +209,16 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 
 		#region Delete
 
-		public void DeleteEntryByRedirectNodeId(int nodeId)
+		public void DeleteEntryById(int id)	
+		{
+			using (var scope = _scopeProvider.CreateScope())
+			{
+				scope.Database.Execute("DELETE FROM icUrlTracker WHERE Id = @id", new {id = id});
+				scope.Complete();
+			}
+		}
+
+		public bool DeleteEntryByRedirectNodeId(int nodeId)
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
@@ -310,8 +234,10 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 						"DELETE FROM icUrlTracker WHERE RedirectNodeId = @nodeId AND RedirectHttpCode != 410",
 						new { nodeId = nodeId });
 
-					ReloadForcedRedirectsCache();
+					return true;
 				}
+
+				return false;
 			}
 		}
 
@@ -333,23 +259,6 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 			{
 				return scope.Database.ExecuteScalar<int>("SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = @tableName", new { tableName = _urlTrackerSettings.GetOldTableName() }) == 1;
 			}
-		}
-
-		#endregion
-
-		#region Reload cache
-
-		public List<UrlTrackerModel> ReloadForcedRedirectsCache()
-		{
-			var forcedRedirects = GetEntries(null, null, UrlTrackerEntryType.Redirect, null, onlyForcedRedirects: true).Records;
-
-			_urlTrackerCacheService.Set(
-				_forcedRedirectsCacheKey,
-				forcedRedirects,
-				_urlTrackerSettings.IsForcedRedirectCacheTimeoutEnabled() ? _urlTrackerSettings.GetForcedRedirectCacheTimeoutSeconds() : (TimeSpan?)null
-			);
-
-			return forcedRedirects;
 		}
 
 		#endregion

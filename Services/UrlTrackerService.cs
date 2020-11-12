@@ -48,6 +48,14 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			_contentService = contentService;
 		}
 
+		private readonly string _forcedRedirectsCacheKey = "UrlTrackerForcedRedirects";
+
+		#region Add
+
+		public bool AddEntry(UrlTrackerModel entry)
+		{
+			return _urlTrackerRepository.AddEntry(entry);
+		}
 
 		public bool AddRedirect(IContent newContent, IPublishedContent oldContent, UrlTrackerRedirectType redirectType, UrlTrackerReason reason, bool isChild = false)
 		{
@@ -57,7 +65,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			var rootNodeId = oldContent.Root().Id;
 			var oldUrl = _urlTrackerHelper.ResolveShortestUrl(oldContent.Url);
 
-			if (string.IsNullOrEmpty(oldUrl) || _urlTrackerRepository.RedirectExist(newContent.Id, oldUrl))
+			if (oldUrl == "/" || string.IsNullOrEmpty(oldUrl) || _urlTrackerRepository.RedirectExist(newContent.Id, oldUrl))
 				return false;
 
 			string notes = isChild ? "An ancestor" : "This page";
@@ -99,6 +107,45 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			return true;
 		}
 
+		#endregion
+
+		#region Get
+
+		public UrlTrackerModel GetEntryById(int id)
+		{
+			return _urlTrackerRepository.GetEntryById(id);
+		}
+
+		public UrlTrackerGetResult GetRedirects(int skip, int amount)
+		{
+			return _urlTrackerRepository.GetEntries(skip, amount, UrlTrackerEntryType.Redirect, UrlTrackerSortType.CreatedDesc);
+		}
+
+		public UrlTrackerGetResult GetNotFounds(int skip, int amount)
+		{
+			return _urlTrackerRepository.GetEntries(skip, amount, UrlTrackerEntryType.NotFound, UrlTrackerSortType.CreatedDesc);
+		}
+
+		public UrlTrackerGetResult GetRedirectsByFilter(int skip, int amount, UrlTrackerSortType sortType = UrlTrackerSortType.CreatedDesc, string searchQuery = "")
+		{
+			return _urlTrackerRepository.GetEntries(skip, amount, UrlTrackerEntryType.Redirect, sortType, searchQuery);
+		}
+
+		public List<UrlTrackerModel> GetForcedRedirects()
+		{
+			var cachedForcedRedirects = _urlTrackerCacheService.Get<List<UrlTrackerModel>>(_forcedRedirectsCacheKey);
+
+			if (cachedForcedRedirects == null)
+				return ReloadForcedRedirectsCache();
+
+			return cachedForcedRedirects;
+		}
+
+		public bool RedirectExist(int redirectNodeId, string oldUrl)
+		{
+			return _urlTrackerRepository.RedirectExist(redirectNodeId, oldUrl);
+		}
+
 		public List<UrlTrackerDomain> GetDomains()
 		{
 			var urlTrackerDomains = _urlTrackerCacheService.Get<List<UrlTrackerDomain>>(_urlTrackerDomainsCacheKey);
@@ -120,11 +167,6 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			return urlTrackerDomains;
 		}
 
-		public void ClearDomains()
-		{
-			_urlTrackerCacheService.Clear(_urlTrackerDomainsCacheKey);
-		}
-
 		public string GetUrlByNodeId(int nodeId)
 		{
 			using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
@@ -140,5 +182,57 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 				return ctx.UmbracoContext.Content.GetById(nodeId);
 			}
 		}
+
+		#endregion
+
+		#region Update
+
+		public void UpdateEntry(UrlTrackerModel entry)
+		{
+			_urlTrackerRepository.UpdateEntry(entry);
+
+			if (entry.ForceRedirect)
+				ReloadForcedRedirectsCache();
+		}
+
+		public void Convert410To301ByNodeId(int nodeId)
+		{
+			_urlTrackerRepository.Convert410To301ByNodeId(nodeId);
+		}
+
+		public void ClearDomains()
+		{
+			_urlTrackerCacheService.Clear(_urlTrackerDomainsCacheKey);
+		}
+
+		public List<UrlTrackerModel> ReloadForcedRedirectsCache()
+		{
+			var forcedRedirects = _urlTrackerRepository.GetEntries(null, null, UrlTrackerEntryType.Redirect, null, onlyForcedRedirects: true).Records;
+
+			_urlTrackerCacheService.Set(
+				_forcedRedirectsCacheKey,
+				forcedRedirects,
+				_urlTrackerSettings.IsForcedRedirectCacheTimeoutEnabled() ? _urlTrackerSettings.GetForcedRedirectCacheTimeoutSeconds() : (TimeSpan?)null
+			);
+
+			return forcedRedirects;
+		}
+
+		#endregion
+
+		#region Delete
+
+		public void DeleteEntryById(int id)
+		{
+			_urlTrackerRepository.DeleteEntryById(id);
+		}
+
+		public void DeleteEntryByRedirectNodeId(int nodeId)
+		{
+			if (_urlTrackerRepository.DeleteEntryByRedirectNodeId(nodeId))
+				ReloadForcedRedirectsCache();
+		}
+
+		#endregion
 	}
 }

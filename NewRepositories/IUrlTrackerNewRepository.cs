@@ -11,16 +11,14 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 		#region Add
 
 		bool AddEntry(UrlTrackerModel entry);
-		//bool AddUrlMapping(IContent newContent, UrlTrackerReason reason, bool isChild = false);
 
 		#endregion
 
 		#region Get
+
 		T FirstOrDefault<T>(string query, object parameters = null);
-		UrlTrackerGetResult GetRedirects(int? skip, int? amount);
-		UrlTrackerGetResult GetNotFounds(int? skip, int? amount);
-		UrlTrackerGetResult GetRedirectsByFilter(int? skip, int? amount, UrlTrackerSortType sortType = UrlTrackerSortType.CreatedDesc, string searchQuery = "");
-		List<UrlTrackerModel> GetForcedRedirects();
+		UrlTrackerModel GetEntryById(int id);
+		UrlTrackerGetResult GetEntries(int? skip, int? amount, UrlTrackerEntryType type, UrlTrackerSortType? sort, string searchQuery = "", bool onlyForcedRedirects = false);
 		bool RedirectExist(int redirectNodeId, string oldUrl);
 		#endregion
 
@@ -34,7 +32,8 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 
 		#region Delete
 
-		void DeleteEntryByRedirectNodeId(int nodeId);
+		void DeleteEntryById(int id);
+		bool DeleteEntryByRedirectNodeId(int nodeId);
 
 		#endregion
 
@@ -44,11 +43,5 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 		bool DoesUrlTrackerOldTableExists();
 
 		#endregion
-
-		#region Reload cache
-
-		List<UrlTrackerModel> ReloadForcedRedirectsCache();
-
-		#endregion 
 	}
 }
