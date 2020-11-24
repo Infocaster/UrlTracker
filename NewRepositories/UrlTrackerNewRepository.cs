@@ -42,12 +42,11 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
-				string query = "INSERT INTO icUrlTracker (OldUrl, OldUrlQueryString, OldRegex, RedirectRootNodeId, RedirectNodeId, RedirectUrl, RedirectHttpCode, RedirectPassThroughQueryString, ForceRedirect, Notes) VALUES (@oldUrl, @oldUrlQueryString, @oldRegex, @redirectRootNodeId, @redirectNodeId, @redirectUrl, @redirectHttpCode, @redirectPassThroughQueryString, @forceRedirect, @notes)";
+				string query = "INSERT INTO icUrlTracker (OldUrl, OldRegex, RedirectRootNodeId, RedirectNodeId, RedirectUrl, RedirectHttpCode, RedirectPassThroughQueryString, ForceRedirect, Notes, Is404, Referrer) VALUES (@oldUrl, @oldRegex, @redirectRootNodeId, @redirectNodeId, @redirectUrl, @redirectHttpCode, @redirectPassThroughQueryString, @forceRedirect, @notes, @is404, @referrer)";
 
 				var parameters = new
 				{
 					oldUrl = entry.OldUrl,
-					oldUrlQueryString = entry.OldUrlQueryString,
 					oldRegex = entry.OldRegex,
 					redirectRootNodeId = entry.RedirectRootNodeId,
 					redirectNodeId = entry.RedirectNodeId,
@@ -55,7 +54,9 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 					redirectHttpCode = entry.RedirectHttpCode,
 					redirectPassThroughQueryString = entry.RedirectPassThroughQueryString,
 					forceRedirect = entry.ForceRedirect,
-					notes = entry.Notes
+					notes = entry.Notes,
+					is404 = entry.Is404,
+					referrer = entry.Referrer
 				};
 
 				return scope.Database.Execute(query, parameters) == 1;
@@ -72,35 +73,28 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 			{
 				return scope.Database.FirstOrDefault<T>(query, parameters);
 			}
-
-			return default(T);
 		}
 
 		public UrlTrackerModel GetEntryById(int id)
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
-				return scope.Database.SingleOrDefault<UrlTrackerModel>("SELECT * FROM icUrlTracker WHERE Id = @id", new {id = id});
+				return scope.Database.SingleOrDefault<UrlTrackerModel>("SELECT * FROM icUrlTracker WHERE Id = @id", new { id = id });
 			}
 		}
 
-		public UrlTrackerGetResult GetEntries(int? skip, int? amount, UrlTrackerEntryType type, UrlTrackerSortType? sort, string searchQuery = "", bool onlyForcedRedirects = false)
+		public UrlTrackerGetResult GetRedirects(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.CreatedDesc, string searchQuery = "", bool onlyForcedRedirects = false)
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
 				var result = new UrlTrackerGetResult();
 				var searchQueryInt = 0;
 
-				var query = new StringBuilder("SELECT COUNT(*) FROM icUrlTracker WHERE");
-
-				if (type == UrlTrackerEntryType.Redirect)
-					query.Append(" is404 = 0");
-				else if (type == UrlTrackerEntryType.NotFound)
-					query.Append(" is404 = 1");
+				var query = new StringBuilder("SELECT COUNT(*) FROM icUrlTracker WHERE is404 = 0");
 
 				if (!string.IsNullOrEmpty(searchQuery))
 				{
-					query.Append(" AND (OldUrl LIKE @searchQuery OR OldUrlQueryString LIKE @searchQuery OR OldRegex LIKE @searchQuery OR RedirectUrl LIKE @searchQuery OR Notes LIKE @searchQuery");
+					query.Append(" AND (OldUrl LIKE @searchQuery OR OldRegex LIKE @searchQuery OR RedirectUrl LIKE @searchQuery OR Notes LIKE @searchQuery");
 					if (int.TryParse(searchQuery, out searchQueryInt))
 						query.Append(" OR RedirectNodeId = @searchQueryInt");
 					query.Append(")");
@@ -119,21 +113,10 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 
 				result.TotalRecords = scope.Database.ExecuteScalar<int>(query.ToString(), parameters);
 
-				if (sort != null || skip != null || amount != null)
-				{
-					if (sort == UrlTrackerSortType.CreatedDesc || sort == null)
-						query.Append(" ORDER BY Inserted DESC");
-					else if (sort == UrlTrackerSortType.CreatedAsc)
-						query.Append(" ORDER BY Inserted ASC");
-					else if (sort == UrlTrackerSortType.OccurencedDesc)
-						query.Append(" ORDER BY Inserted DESC");
-					else if (sort == UrlTrackerSortType.OccurencedAsc)
-						query.Append(" ORDER BY Inserted ASC");
-					else if (sort == UrlTrackerSortType.LastOccurenceDesc)
-						query.Append(" ORDER BY Inserted DESC");
-					else if (sort == UrlTrackerSortType.LastOccurenceAsc)
-						query.Append(" ORDER BY Inserted ASC");
-				}
+				if (sort == UrlTrackerSortType.CreatedDesc)
+					query.Append(" ORDER BY Inserted DESC");
+				else if (sort == UrlTrackerSortType.CreatedAsc)
+					query.Append(" ORDER BY Inserted ASC");
 
 				query.Replace("SELECT COUNT(*)", "SELECT *");
 
@@ -146,20 +129,72 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 
 				return result;
 			}
-
-			return new UrlTrackerGetResult();
-
 		}
+
+		public UrlTrackerGetResult GetNotFounds(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.LastOccurrenceDesc, string searchQuery = "")
+		{
+			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+			{
+				var result = new UrlTrackerGetResult();
+				var query = new StringBuilder("SELECT COUNT(*) FROM (SELECT e.OldUrl FROM icUrlTracker AS e WHERE e.Is404 = 1");
+
+				if (!string.IsNullOrEmpty(searchQuery))
+					query.Append(" AND (e.OldUrl LIKE @searchQuery)"); //ToDo: Search on referrer
+
+				query.Append(" GROUP BY e.OldUrl, e.RedirectRootNodeId, e.Is404) result");
+
+				var parameters = new
+				{
+					skip = skip,
+					amount = amount,
+					searchQuery = $"%{searchQuery}%",
+				};
+
+				result.TotalRecords = scope.Database.ExecuteScalar<int>(query.ToString(), parameters);
+
+				if (sort == UrlTrackerSortType.LastOccurrenceDesc)
+					query.Append(" ORDER BY Inserted DESC");
+				else if (sort == UrlTrackerSortType.LastOccurrenceAsc)
+					query.Append(" ORDER BY Inserted ASC");
+				else if (sort == UrlTrackerSortType.OccurrencesDesc)
+					query.Append(" ORDER BY Occurrences DESC");
+				else if (sort == UrlTrackerSortType.OccurrencesAsc)
+					query.Append(" ORDER BY Occurrences ASC");
+
+				var newSelect = new StringBuilder("SELECT * FROM (SELECT MAX(e.Id) AS Id, e.OldUrl, e.RedirectRootNodeId, MAX(e.Inserted) as Inserted, COUNT(e.OldUrl) AS Occurrences, e.Is404");
+				newSelect.Append(", Referrer = (SELECT TOP(1) r.Referrer AS Occurrenced FROM icUrlTracker AS r WHERE r.is404 = 1 AND r.OldUrl = e.OldUrl GROUP BY r.Referrer ORDER BY COUNT(r.Referrer) DESC)");
+
+				query.Replace("SELECT COUNT(*) FROM (SELECT e.OldUrl", newSelect.ToString());
+
+				if (skip != null)
+					query.Append(" OFFSET @skip ROWS");
+				if (amount != null)
+					query.Append(" FETCH NEXT @amount ROWS ONLY");
+
+				var test = query.ToString();
+
+				result.Records = scope.Database.Fetch<UrlTrackerModel>(query.ToString(), parameters);
+
+				return result;
+			}
+		}
+
+		//public int GetNotFoundsXDaysAgo(int days)
+		//{
+
+		//}
 
 		public bool RedirectExist(int redirectNodeId, string oldUrl)
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
-				return scope.Database.ExecuteScalar<bool>("SELECT 1 FROM icUrlTracker WHERE RedirectNodeId = @redirectNodeId AND OldUrl = @oldUrl", new { redirectNodeId = redirectNodeId, oldUrl = oldUrl });
+				return scope.Database.ExecuteScalar<bool>(
+					"SELECT 1 FROM icUrlTracker WHERE RedirectNodeId = @redirectNodeId AND OldUrl = @oldUrl",
+					new { redirectNodeId = redirectNodeId, oldUrl = oldUrl });
 			}
 		}
 
-		#endregion Get
+		#endregion
 
 		#region Update
 
@@ -175,12 +210,11 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
-				string query = "UPDATE icUrlTracker SET OldUrl = @oldUrl, OldUrlQueryString = @oldUrlQueryString, OldRegex = @oldRegex, RedirectRootNodeId = @redirectRootNodeId, RedirectNodeId = @redirectNodeId, RedirectUrl = @redirectUrl, RedirectHttpCode = @redirectHttpCode, RedirectPassThroughQueryString = @redirectPassThroughQueryString, ForceRedirect = @forceRedirect, Notes = @notes, Is404 = @is404 WHERE Id = @id";
+				string query = "UPDATE icUrlTracker SET OldUrl = @oldUrl, OldRegex = @oldRegex, RedirectRootNodeId = @redirectRootNodeId, RedirectNodeId = @redirectNodeId, RedirectUrl = @redirectUrl, RedirectHttpCode = @redirectHttpCode, RedirectPassThroughQueryString = @redirectPassThroughQueryString, ForceRedirect = @forceRedirect, Notes = @notes, Is404 = @is404 WHERE Id = @id";
 
 				var parameters = new
 				{
 					oldUrl = entry.OldUrl,
-					oldUrlQueryString = entry.OldUrlQueryString,
 					oldRegex = entry.OldRegex,
 					redirectRootNodeId = entry.RedirectRootNodeId,
 					redirectNodeId = entry.RedirectNodeId,
@@ -209,11 +243,11 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 
 		#region Delete
 
-		public void DeleteEntryById(int id)	
+		public void DeleteEntryById(int id)
 		{
 			using (var scope = _scopeProvider.CreateScope())
 			{
-				scope.Database.Execute("DELETE FROM icUrlTracker WHERE Id = @id", new {id = id});
+				scope.Database.Execute("DELETE FROM icUrlTracker WHERE Id = @id", new { id = id });
 				scope.Complete();
 			}
 		}
@@ -238,6 +272,21 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 				}
 
 				return false;
+			}
+		}
+
+		public bool DeleteNotFounds(string url, int rootNodeId)
+		{
+			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+			{
+				return scope.Database.Execute(
+					"DELETE FROM icUrlTracker WHERE OldUrl = @url AND RedirectRootNodeId = @rootNodeId AND Is404 = 1",
+					new
+					{
+						url = url,
+						rootNodeId = rootNodeId
+					}
+				) == 1;
 			}
 		}
 

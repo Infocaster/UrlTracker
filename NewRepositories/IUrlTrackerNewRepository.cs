@@ -18,8 +18,10 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 
 		T FirstOrDefault<T>(string query, object parameters = null);
 		UrlTrackerModel GetEntryById(int id);
-		UrlTrackerGetResult GetEntries(int? skip, int? amount, UrlTrackerEntryType type, UrlTrackerSortType? sort, string searchQuery = "", bool onlyForcedRedirects = false);
+		UrlTrackerGetResult GetRedirects(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.CreatedDesc, string searchQuery = "", bool onlyForcedRedirects = false);
+		UrlTrackerGetResult GetNotFounds(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.LastOccurrenceDesc, string searchQuery = "");
 		bool RedirectExist(int redirectNodeId, string oldUrl);
+
 		#endregion
 
 		#region Update
@@ -34,6 +36,7 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 
 		void DeleteEntryById(int id);
 		bool DeleteEntryByRedirectNodeId(int nodeId);
+		bool DeleteNotFounds(string url, int rootNodeId);
 
 		#endregion
 
