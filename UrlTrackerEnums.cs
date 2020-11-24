@@ -16,10 +16,10 @@
 	{
 		CreatedDesc,
 		CreatedAsc,
-		OccurencedDesc,
-		OccurencedAsc,
-		LastOccurenceDesc,
-		LastOccurenceAsc
+		OccurrencesDesc,
+		OccurrencesAsc,
+		LastOccurrenceDesc,
+		LastOccurrenceAsc
 	}
 
 	public enum UrlTrackerReason

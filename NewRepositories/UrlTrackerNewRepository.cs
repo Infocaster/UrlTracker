@@ -179,11 +179,6 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 			}
 		}
 
-		//public int GetNotFoundsXDaysAgo(int days)
-		//{
-
-		//}
-
 		public bool RedirectExist(int redirectNodeId, string oldUrl)
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))

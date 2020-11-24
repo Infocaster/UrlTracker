@@ -130,6 +130,8 @@ namespace InfoCaster.Umbraco.UrlTracker
 				{
 					var oldContent = _urlTrackerService.GetNodeById(newContent.Id);
 
+					//Is er iets veranderd in de verschillende cultures?
+
 					if (oldContent?.Name != newContent.Name && !string.IsNullOrEmpty(oldContent?.Name)) // If name is null, it's a new document
 						_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.Renamed);
 
