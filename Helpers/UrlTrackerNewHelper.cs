@@ -22,8 +22,6 @@ namespace InfoCaster.Umbraco.UrlTracker.Helpers
 		private readonly IUrlTrackerCacheService _urlTrackerCacheService;
 		private readonly IGlobalSettings _globalSettings;
 
-		private readonly Regex _urlWithDotRegex = new Regex("\\S+\\.\\S+");
-
 		private readonly string _reservedListCacheKey = "UrlTrackerReservedList";
 
 		public UrlTrackerNewHelper(IUrlTrackerCacheService urlTrackerCacheService, IGlobalSettings globalSettings)
@@ -58,13 +56,6 @@ namespace InfoCaster.Umbraco.UrlTracker.Helpers
 			{
 				Uri uri = new Uri(url);
 				url = Uri.UnescapeDataString(uri.PathAndQuery);
-			}
-
-			if (url != "/" && !_urlWithDotRegex.IsMatch(url))
-			{
-
-				if (umbraco.UmbracoSettings.AddTrailingSlash && !url.EndsWith("/"))
-					url += "/";
 			}
 
 			return url;
