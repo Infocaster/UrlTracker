@@ -9,7 +9,7 @@ using Umbraco.Web.WebApi;
 
 namespace InfoCaster.Umbraco.UrlTracker.Controllers
 {
-	public class UrlTrackerManagerController : UmbracoApiController
+	public class UrlTrackerManagerController : UmbracoAuthorizedApiController
 	{
 		private readonly IUrlTrackerService _urlTrackerService;
 
@@ -18,73 +18,94 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 			_urlTrackerService = urlTrackerService;
 		}
 
+		#region General
+
+		[HttpPost]
+		public IHttpActionResult UpdateEntry(UrlTrackerModel model)
+		{
+			_urlTrackerService.UpdateEntry(model);
+			return Ok();
+		}
+
+
+		[HttpPost]
+		public IHttpActionResult DeleteEntry(int id, bool is404 = false)
+		{
+			_urlTrackerService.DeleteEntryById(id, is404);
+			return Ok();
+		}
+
+		#endregion
+
+		#region Redirects
+
+		[HttpPost]
+		public IHttpActionResult AddRedirect([FromBody] UrlTrackerModel model)
+		{
+			_urlTrackerService.AddRedirect(model);
+			return Ok();
+		}
+
 		[HttpGet]
-        public IHttpActionResult GetRedirects(int skip, int amount)
-        {
-	        var entriesResult = _urlTrackerService.GetRedirects(skip, amount);
-
-            var model = new UrlTrackerOverviewModel
-            {
-                Entries = entriesResult.Records,
-                NumberOfEntries = entriesResult.TotalRecords
-            };
-
-            return Ok(model);
-        }
-
-        [HttpGet]
-        public IHttpActionResult GetNotFounds(int skip, int amount)
-        {
-	        var entriesResult = _urlTrackerService.GetNotFounds(skip, amount);
-
-	        var model = new UrlTrackerOverviewModel
-	        {
-		        Entries = entriesResult.Records,
-                NumberOfEntries = entriesResult.TotalRecords
-	        };
-
-	        return Ok(model);
-        }
-
-        [HttpGet]
-        public IHttpActionResult GetRedirectsByFilter(int skip, int amount, string query, UrlTrackerSortType sortType)
-        {
-	        var entriesResult = _urlTrackerService.GetRedirectsByFilter(skip, amount, sortType, query);
-
-            var model = new UrlTrackerOverviewModel
-            {
-	            Entries = entriesResult.Records,
-	            NumberOfEntries = entriesResult.TotalRecords
-            };
-
-            return Ok(model);
-        }
-
-        [HttpGet]
-        public IHttpActionResult Details(int id)
-        {
-			return Ok(_urlTrackerService.GetEntryById(id));
-        }
-
-        [HttpPost]
-        public IHttpActionResult SaveChanges(UrlTrackerModel model)
-        {
-            _urlTrackerService.UpdateEntry(model);
-            return Ok();
-        }
-
-		[HttpPost]
-		public IHttpActionResult AddEntry([FromBody] UrlTrackerModel model)
+		public IHttpActionResult GetRedirects(int skip, int amount)
 		{
-			_urlTrackerService.AddEntry(model);
-			return Ok();
+			var entriesResult = _urlTrackerService.GetRedirects(skip, amount);
+
+			var model = new UrlTrackerOverviewModel
+			{
+				Entries = entriesResult.Records,
+				NumberOfEntries = entriesResult.TotalRecords
+			};
+
+			return Ok(model);
 		}
 
-		[HttpPost]
-		public IHttpActionResult Delete(int id)
+		[HttpGet]
+		public IHttpActionResult GetRedirectsByFilter(int skip, int amount, string query, UrlTrackerSortType sortType)
 		{
-			_urlTrackerService.DeleteEntryById(id);
-			return Ok();
+			var entriesResult = _urlTrackerService.GetRedirectsByFilter(skip, amount, sortType, query);
+
+			var model = new UrlTrackerOverviewModel
+			{
+				Entries = entriesResult.Records,
+				NumberOfEntries = entriesResult.TotalRecords
+			};
+
+			return Ok(model);
 		}
+
+		#endregion
+
+		#region Not founds
+
+		[HttpGet]
+		public IHttpActionResult GetNotFounds(int skip, int amount)
+		{
+			var entriesResult = _urlTrackerService.GetNotFounds(skip, amount);
+
+			var model = new UrlTrackerOverviewModel
+			{
+				Entries = entriesResult.Records,
+				NumberOfEntries = entriesResult.TotalRecords
+			};
+
+			return Ok(model);
+		}
+
+		[HttpGet]
+		public IHttpActionResult GetNotFoundsByFilter(int skip, int amount, string query, UrlTrackerSortType sortType)
+		{
+			var entriesResult = _urlTrackerService.GetNotFoundsByFilter(skip, amount, sortType, query);
+
+			var model = new UrlTrackerOverviewModel
+			{
+				Entries = entriesResult.Records,
+				NumberOfEntries = entriesResult.TotalRecords
+			};
+
+			return Ok(model);
+		}
+
+		#endregion
 	}
 }
