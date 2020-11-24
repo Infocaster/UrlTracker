@@ -1,87 +1,116 @@
 ﻿(function () {
-    "use strict";
-    angular.module("umbraco").controller("UrlTracker.DetailsController", ["$scope", "UrlTrackerEntryService", "contentResource", "editorService", function ($scope, UrlTrackerEntryService, contentResource, editorService) {
+	"use strict";
+	angular.module("umbraco").controller("UrlTracker.DetailsController", ["$scope", "UrlTrackerEntryService", "contentResource", "editorService", function ($scope, UrlTrackerEntryService, contentResource, editorService) {
+		var vm = this;
 
-        var vm = this;
-        vm.show = false;
-        vm.isNewEntry = false;
-        vm.advancedView = false;
-        vm.redirectNode = null;
+		vm.isNewEntry = false;
+		vm.advancedView = false;
+		vm.redirectNode = null;
 
-        contentResource.getChildren(-1)
-            .then(function (rootNodes) {
-                vm.allRootNodes = rootNodes.items;
-            })
+		contentResource.getChildren(-1)
+			.then(function (rootNodes) {
+				vm.allRootNodes = rootNodes.items;
+			});
 
+		if ($scope.model.entry != null) {
+			vm.entry = $scope.model.entry;
 
-        if ($scope.model.entry != null) {
-            vm.entry = $scope.model.entry
-            contentResource.getById(vm.entry.RedirectNodeId)
-                .then(function (redirectNode) {
-                    vm.redirectNode = redirectNode.contentTypeName;
-                });
-        }
-        else {
-            //show empty
-            vm.isNewEntry = true;
-            vm.advancedView = true;
-            vm.entry = {
-                OldUrl: "",
-                OldUrlQueryString: "",
-                RedirectNodeId: null,
-                OldRexEx: "",
-                RedirectUrl: "",
-                Refferer: "",
-                ForceRedirect: false,
-                RedirectPassThroughQueryString: false,
-                RedirectHttpCode: 301,
-                Notes: "",
-                RedirectRootNodeId: -1
-            };
-        }
+			if (vm.entry.Is404) {
+				vm.title = "Create redirect";
+				vm.entry.RedirectHttpCode = 301;
+				vm.entry.Notes = "Redirect created to prevent 404";
+			} else {
+				vm.title = "Edit redirect";
+				vm.advancedView = true;
+			}
 
-        vm.setRootNode = function (node) {
-            vm.entry.RedirectRootNodeId = node;
-        }
+			if (vm.entry.RedirectNodeId && vm.entry.RedirectNodeId != 0) {
+				contentResource.getNiceUrl(vm.entry.RedirectNodeId).then(
+					function (url) {
+						vm.entry.RedirectNodeUrl = url;
+					}
+				);
 
-        vm.openNodePicker = function () {
-            var pickerOptions = {
-                startNodeId: vm.entry.RedirectNodeId,
-                multiPicker: false,
-                submit: function (model) {
-                    vm.redirectNode = model.selection[0].name;
-                    vm.entry.RedirectNodeId = model.selection[0].id;
-                    editorService.close();
-                },
-                close: function (model) {
-                    editorService.close();
-                }
-            }
-            editorService.contentPicker(pickerOptions);
-        }
+				contentResource.getById(vm.entry.RedirectNodeId)
+					.then(function (redirectNode) {
+						vm.entry.RedirectNodeName = redirectNode.variants[0].name;
+						vm.entry.RedirectNodeIcon = redirectNode.icon;
+					});
+			}
+		}
+		else {
+			vm.title = "Create redirect";
 
-        function toggleAdvancedView() {
-            vm.advancedView != vm.advancedView;
-        }
+			vm.isNewEntry = true;
+			vm.advancedView = true;
+			vm.entry = {
+				OldUrl: "",
+				RedirectNodeId: null,
+				OldRexEx: "",
+				RedirectUrl: "",
+				Refferer: "",
+				ForceRedirect: false,
+				RedirectPassThroughQueryString: false,
+				RedirectHttpCode: 301,
+				Notes: "",
+				RedirectRootNodeId: -1
+			};
+		}
 
-        function submit() {
-            if ($scope.model.submit) {
+		vm.setRootNode = function (node) {
+			vm.entry.RedirectRootNodeId = node;
+		}
 
-                $scope.model.isNewEntry = vm.isNewEntry;
-                $scope.model.entry = vm.entry;
-                
-                $scope.model.submit($scope.model);
-            }
-        }
+		vm.openNodePicker = function () {
+			var pickerOptions = {
+				startNodeId: vm.entry.RedirectRootNodeId,
+				multiPicker: false,
+				submit: function (model) {
+					vm.entry.RedirectNodeName = model.selection[0].name;
+					vm.entry.RedirectNodeId = model.selection[0].id;
+					vm.entry.RedirectNodeIcon = model.selection[0].icon;
 
-        function close() {
-            if ($scope.model.close) {
-                $scope.model.close();
-            }
-        }
+					contentResource.getNiceUrl(vm.entry.RedirectNodeId).then(
+						function (url) {
+							vm.entry.RedirectNodeUrl = url;
+						}
+					);
 
-        vm.saveChanges = submit;
-        vm.close = close;
-        vm.toggleAdvancedView = toggleAdvancedView;
-    }]);
+					editorService.close();
+				},
+				close: function (model) {
+					editorService.close();
+				}
+			}
+			editorService.contentPicker(pickerOptions);
+		}
+
+		vm.removeRedirectNode = function () {
+			vm.entry.RedirectNodeName = vm.entry.RedirectNodeId = vm.entry.RedirectNodeIcon = null;
+		}
+
+		function submit() {
+			if ($scope.model.submit) {
+				$scope.model.isNewEntry = vm.isNewEntry;
+				$scope.model.entry = vm.entry;
+
+				$scope.model.submit($scope.model);
+			}
+		}
+
+		function close() {
+			if ($scope.model.close) {
+				$scope.model.close();
+			}
+		}
+
+		vm.saveChanges = submit;
+		vm.close = close;
+
+		vm.allowRemove = true;
+		vm.allowOpen = false;
+		vm.sortable = false;
+
+		vm.nodes = null;
+	}]);
 })();

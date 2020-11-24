@@ -1,36 +1,145 @@
 ﻿(function () {
     "use strict";
-    angular.module("umbraco").factory("UrlTrackerEntryService",["$http", "$log", function($http, $log) {
-        var getEntries = function (scope, skip, ammount) {
+    angular.module("umbraco").factory("UrlTrackerEntryService", ["$http", "$log", function ($http, $log) {
+        var addRedirect = function (scope, entry) {
+            console.log(entry);
+		    return $http({
+			    url: "/umbraco/BackOffice/api/UrlTrackerManager/AddRedirect",
+			    method: "POST",
+			    data: entry
+		    }).then(function () {
+			    if (scope.getItems != undefined) {
+				    scope.getItems();
+			    }
+		    }).catch(function (data) {
+			    $log.log(data);
+		    });
+	    }
+
+        var getRedirects = function (scope, skip, amount) {
             if (scope.loading != undefined) {
                 scope.loading = true;
             }
             return $http({
-                url: "/umbraco/api/UrlTrackerManager/Index",
+                url: "/umbraco/BackOffice/api/UrlTrackerManager/GetRedirects",
                 method: "GET",
                 params: {
                     skip: skip,
-                    ammount: ammount
+                    amount: amount
                 }
             }).then(function (response) {
                 scope.items = response.data.Entries;
-                scope.pagination.totalPages = response.data.TotalPages;
+                scope.numberOfItems = response.data.NumberOfEntries;
+                scope.pagination.totalPages = (response.data.NumberOfEntries / amount);
+
                 if (scope.loading != undefined) {
                     scope.loading = false;
                 }
             }).catch(function (data) {
+	            $log.log(data);
+
                 if (scope.loading != undefined) {
                     scope.loading = false;
                 }
-                $log.log(data);
             });
         }
 
+        var getNotFounds = function (scope, skip, amount) {
+	        if (scope.loading != undefined) {
+		        scope.loading = true;
+	        }
+	        return $http({
+		        url: "/umbraco/BackOffice/api/UrlTrackerManager/GetNotFounds",
+		        method: "GET",
+		        params: {
+			        skip: skip,
+			        amount: amount
+		        }
+            }).then(function (response) {
+                console.log(response.data.NumberOfEntries);
+		        scope.items = response.data.Entries;
+		        scope.numberOfItems = response.data.NumberOfEntries;
+                scope.pagination.totalPages = (response.data.NumberOfEntries / amount);
 
+		        if (scope.loading != undefined) {
+			        scope.loading = false;
+		        }
+	        }).catch(function (data) {
+		        $log.log(data);
 
-        var saveEntry = function (scope, entry) {
+		        if (scope.loading != undefined) {
+			        scope.loading = false;
+		        }
+	        });
+        }
+
+        var getRedirectsByFilters = function (scope, skip, amount, query, sortType = "CreatedDesc") {
+	        if (scope.loading != undefined) {
+		        scope.loading = true;
+	        }
+	        return $http({
+                url: "/umbraco/BackOffice/api/UrlTrackerManager/GetRedirectsByFilter",
+		        method: "GET",
+		        params: {
+			        skip: skip,
+                    amount: amount,
+                    query: query,
+                    sortType: sortType
+		        }
+	        }).then(function (response) {
+		        if (scope.loading != undefined) {
+			        scope.loading = false;
+                }
+                
+                scope.items = response.data.Entries;
+
+                if (scope.pagination != null) {
+                    scope.pagination.totalPages = response.data.NumberOfEntries;
+                    scope.pagination.totalPages = (response.data.NumberOfEntries / amount);
+                }
+	        }).catch(function (data) {
+		        if (scope.loading != undefined) {
+			        scope.loading = false;
+		        }
+		        $log.log(data);
+	        });
+        }
+
+        var getNotFoundsByFilters = function (scope, skip, amount, query, sortType = "LastOccurrenceDesc") {
+	        if (scope.loading != undefined) {
+		        scope.loading = true;
+	        }
+	        return $http({
+                url: "/umbraco/BackOffice/api/UrlTrackerManager/GetNotFoundsByFilter",
+		        method: "GET",
+		        params: {
+			        skip: skip,
+			        amount: amount,
+			        query: query,
+			        sortType: sortType
+		        }
+	        }).then(function (response) {
+		        if (scope.loading != undefined) {
+			        scope.loading = false;
+		        }
+
+		        scope.items = response.data.Entries;
+
+		        if (scope.pagination != null) {
+			        scope.pagination.totalPages = response.data.NumberOfEntries;
+			        scope.pagination.totalPages = (response.data.NumberOfEntries / amount);
+		        }
+	        }).catch(function (data) {
+		        if (scope.loading != undefined) {
+			        scope.loading = false;
+		        }
+		        $log.log(data);
+	        });
+        }
+
+        var updateEntry = function (scope, entry) {
             return $http({
-                url: "/umbraco/api/UrlTrackerManager/SaveChanges",
+                url: "/umbraco/BackOffice/api/UrlTrackerManager/UpdateEntry",
                 method: "POST",
                 data: entry
             }).then(function () {
@@ -42,23 +151,9 @@
             });
         }
 
-        var createEntry = function (scope,entry) {
+        var deleteEntry = function (entryId, is404 = false) {
             return $http({
-                url: "/umbraco/api/UrlTrackerManager/Create",
-                method: "POST",
-                data: entry
-            }).then(function () {
-                if (scope.getItems != undefined) {
-                    scope.getItems();
-                }
-            }).catch(function (data) {
-                $log.log(data)
-            });
-        }
-
-        var deleteEntry = function (entryId) {
-            return $http({
-                url: "/umbraco/api/UrlTrackerManager/Delete?id="+entryId,
+                url: "/umbraco/BackOffice/api/UrlTrackerManager/DeleteEntry?id=" + entryId + "&is404=" + is404,
                 method: "POST"
             }).then(function (data) {
                 return data;
@@ -81,39 +176,15 @@
             });
         }
 
-        var search = function (scope, query ,skip, ammount) {
-            if (scope.loading != undefined) {
-                scope.loading = true;
-            }
-            return $http({
-                url: "/umbraco/api/UrlTrackerManager/Search",
-                method: "GET",
-                params: {
-                    query: query,
-                    skip: skip,
-                    ammount: ammount
-                }
-            }).then(function (response) {
-                if (scope.loading != undefined) {
-                    scope.loading = false;
-                }
-                scope.items = response.data.Entries;
-                scope.pagination.totalPages = response.data.TotalPages;
-            }).catch(function (data) {
-                if (scope.loading != undefined) {
-                    scope.loading = false;
-                }
-                $log.log(data)
-            });
-        }
-
         var UrlTrackerEntryService = {
-            getEntries: getEntries,
+            getRedirects: getRedirects,
+            getNotFounds: getNotFounds,
             getEntryDetails: getEntryDetails,
             deleteEntry: deleteEntry,
-            saveEntry: saveEntry,
-            createEntry: createEntry,
-            search:search
+            updateEntry: updateEntry,
+            addRedirect: addRedirect,
+            getRedirectsByFilters: getRedirectsByFilters,
+            getNotFoundsByFilters: getNotFoundsByFilters
         };
         return UrlTrackerEntryService;
     }]);

@@ -1,175 +1,407 @@
 ﻿(function () {
-    "use strict";
-    angular.module("umbraco").controller("UrlTracker.OverviewController", ["$scope", "UrlTrackerEntryService", "editorService", "contentResource", function ($scope, UrlTrackerEntryService, editorService, contentResource) {
+	"use strict";
+	angular.module("umbraco").controller("UrlTracker.OverviewController", ["$scope", "UrlTrackerEntryService", "editorService", "contentResource", "notificationsService", function ($scope, UrlTrackerEntryService, editorService, contentResource, notificationsService) {
+		//#region General
+		var vm = this;
 
-        var vm = this;
-        //table
-        vm.items = [
-        ];
-        vm.selectedItems = [];
-        contentResource.getChildren(-1)
-            .then(function (rootNodes) {
-                vm.allRootNodes = rootNodes.items;
-            });
-        vm.loading = false;
-        vm.allItemsSelected = false;
-        vm.itemsPerPage = 20;
-        vm.createButtonState = "init";
-        vm.searchString = "";
-        vm.pagination = {
-            pageNumber: 1,
-            totalPages: 1
-        }
+		vm.dashboard = {
+			notFoundsThisWeek: 0,
+			notFounds: {
+				loading: false,
+				items: [] //top 10
+			},
+			redirects: {
+				loading: false,
+				items: [] //newest
+			},
 
-        vm.pageSizeOptions = [
-            { "value": 10 },
-            { "value": 20 },
-            { "value": 30 },
-            { "value": 50 },
-            { "value": 100 },
-            { "value": 200 },
-        ];
+		}
 
-        function getItems() {
-            var skipNr = 0;
-            if (vm.pagination.pageNumber > 1) {
-                skipNr = (vm.pagination.pageNumber - 1) * vm.itemsPerPage;
-            }
-            UrlTrackerEntryService.getEntries(vm,skipNr, vm.itemsPerPage);
-        }
+		vm.redirects = {
+			items: [],
+			numberOfItems: 0,
+			selectedItems: [],
+			allSelected: false,
+			itemsPerPage: 20,
+			createButtonState: "init",
+			searchString: "",
+			pagination: {
+				pageNumber: 1,
+				totalPages: 1
+			},
+			loading: false
+		};
 
-        vm.getItems = getItems;
+		vm.notFounds = {
+			items: [],
+			numberOfItems: 0,
+			selectedItems: [],
+			allSelected: false,
+			itemsPerPage: 20,
+			searchString: "",
+			pagination: {
+				pageNumber: 1,
+				totalPages: 1
+			},
+			loading: false
+		};
 
-        vm.clickEntry = function(item) {
-            vm.overlay.entry = item;
-            editorService.open(vm.overlay);
-        }
+		contentResource.getChildren(-1).then(function (rootNodes) {
+			vm.allRootNodes = rootNodes.items;
+			console.log(vm.allRootNodes);
+		});
 
-        vm.nextPage = function (pageNumber) {
-            vm.pagination.pageNumber = pageNumber;
-            getItems();
-        }
+		UpdateDashboard();
+		GetRedirects(vm.redirects);
+		GetNotFounds(vm.notFounds);
 
-        vm.prevPage = function(pageNumber) {
-            vm.pagination.pageNumber = pageNumber;
-            getItems();
-        }
+		vm.tabs = [
+			{
+				"alias": "dashboard",
+				"label": "Dashboard",
+				"active": true
+			},
+			{
+				"alias": "notFounds",
+				"label": "Not founds"
+			},
+			{
+				"alias": "redirects",
+				"label": "Redirects"
+			},
+			{
+				"alias": "info",
+				"label": "Info"
+			}
+		];
 
-        vm.goToPage = function(pageNumber) {
-            vm.pagination.pageNumber = pageNumber;
-            getItems();
-        }
+		vm.pageSizeOptions = [
+			{ "value": 10 },
+			{ "value": 20 },
+			{ "value": 30 },
+			{ "value": 50 },
+			{ "value": 100 },
+			{ "value": 200 }
+		];
 
-        vm.editEntry = function (entry) {
-            vm.openPanel(entry);
-        } 
+		vm.changeTab = function (alias) {
+			vm.tabs.forEach(x => x.active = false);
+			vm.tabs.find(x => x.alias == alias).active = true;
+		}
 
-        vm.deleteEntry = function (entry) {
-            UrlTrackerEntryService.deleteEntry(entry.Id);
-            getItems();
-        }
+		vm.getSiteName = function (entry) {
+			if (vm.allRootNodes) {
+				return vm.allRootNodes.find(function (item) {
+					return item.id == entry.RedirectRootNodeId;
+				}).name;
+			}
+		}
 
-        vm.clickCreateButton = function () {
-	        console.log('create');
-            vm.openPanel(null);
-        }
+		function GetRedirects(scope) {
+			var skip = 0;
+			if (scope.pagination.pageNumber > 1)
+				skip = (scope.pagination.pageNumber - 1) * scope.itemsPerPage;
 
-        vm.openPanel = function (model) {
-            vm.overlay.entry = model;
-            editorService.open(vm.overlay);
-        }
+			UrlTrackerEntryService.getRedirects(scope, skip, scope.itemsPerPage);
+		}
 
-        vm.pageSizeChanged= function() {
-            getItems();
-        }
+		function GetNotFounds(scope) {
+			var skip = 0;
+			if (scope.pagination.pageNumber > 1)
+				skip = (scope.pagination.pageNumber - 1) * scope.itemsPerPage;
 
-        vm.overlay = {
-            view: "/App_Plugins/UrlTracker/Views/UrlTrackerDetails.html",
-            entry: null,
-            submit: function (model) {
-                editorService.close();
-                if (model.isNewEntry) {
-                    UrlTrackerEntryService.createEntry(vm,model.entry);
-                }
-                else {
-                    UrlTrackerEntryService.saveEntry(vm,model.entry);
-                }
-                getItems();
-            },
-            close: function (oldModel) {
-                editorService.close();
-            }
-        };
+			UrlTrackerEntryService.getNotFounds(scope, skip, scope.itemsPerPage);
+		}
 
-        vm.selectAll = function () {
-            if (vm.allItemsSelected) {
-                vm.allItemsSelected = false;
-                vm.selectedItems = []
-            }
-            else {
-                vm.allItemsSelected = true;
-                vm.selectedItems = vm.items;
-            }
-        }
+		function GetRedirectsByFilter(scope) {
+			var skip = 0;
+			if (scope.pagination.pageNumber > 1)
+				skip = (scope.pagination.pageNumber - 1) * scope.itemsPerPage;
 
-        vm.selectEntry = function (item) {
-            var isInSelectionIndex = vm.selectedItems.findIndex(function (i) {
-                return i.Id == item.Id
-            });
-            if (isInSelectionIndex != -1) {
-                vm.selectedItems.splice(isInSelectionIndex, 1);
-            }
-            else {
-                vm.selectedItems.push(item);
-            }
-            
-        }
+			UrlTrackerEntryService.getRedirectsByFilters(scope, skip, scope.itemsPerPage, scope.searchString);
+		}
 
-        vm.saveEntry= function(entry){
-            UrlTrackerEntryService.saveEntry(entry);
-        }
+		function GetNotFoundsByFilter(scope) {
+			var skip = 0;
+			if (scope.pagination.pageNumber > 1)
+				skip = (scope.pagination.pageNumber - 1) * scope.itemsPerPage;
 
-        vm.deleteSelected = function () {
-            vm.selectedItems.forEach(item => {
-                UrlTrackerEntryService.deleteEntry(item.Id);
-            });
-            vm.selectedItems = [];
-            getItems();
-        }
+			UrlTrackerEntryService.getNotFoundsByFilters(scope, skip, scope.itemsPerPage, scope.searchString);
+		}
 
-        vm.search = function () {
-            if (vm.searchString !== "") {
-                var skipNr = 0;
-                if (vm.pagination.pageNumber > 1) {
-                    skipNr = (vm.pagination.pageNumber - 1) * vm.itemsPerPage;
-                }
-                var apiResult = UrlTrackerEntryService.search(vm, vm.searchString, skipNr, vm.itemsPerPage);
-                vm.items = apiResult.Entries;
-                vm.pagination.totalPages = apiResult.TotalPages;
-            }
-            else{
-                getItems();
-            }
-        }
+		function UpdateDashboard() {
+			UrlTrackerEntryService.getRedirectsByFilters(vm.dashboard.redirects, 0, 10, "", "CreatedDesc");
+			UrlTrackerEntryService.getNotFoundsByFilters(vm.dashboard.notFounds, 0, 10, "", "OccurrencesDesc");
+		}
 
-        vm.getSiteName = function (entry) {
-            return vm.allRootNodes.find(function (item) {
-                return item.id == entry.RedirectRootNodeId
-            }).name;
-        }
-    }]);
+		vm.entryDetailsOverlay = {
+			view: "/App_Plugins/UrlTracker/Views/UrlTrackerDetails.html",
+			size: "small",
+			entry: null,
+			submit: function (model) {
+				var promise;
+				if (model.isNewEntry || model.entry.Is404) {
+					promise = UrlTrackerEntryService.addRedirect(vm, model.entry);
+				} else {
+					promise = UrlTrackerEntryService.updateEntry(vm, model.entry);
+				}
 
-    angular.module("umbraco").directive('ngEnter', function () {
-        return function (scope, element, attrs) {
-            element.bind("keydown keypress", function (event) {
-                if (event.which === 13) {
-                    scope.$apply(function () {
-                        scope.$eval(attrs.ngEnter);
-                    });
-                    event.preventDefault();
-                }
-            });
-        };
-    });
+				promise.then(function () {
+					if (model.isNewEntry || model.entry.Is404) {
+						notificationsService.success("Created", "Succesfully created a new redirect");
+					} else {
+						notificationsService.success("Edited", "Succesfully edited redirect");
+					}
+
+					editorService.close();
+					GetRedirects(vm.redirects);
+					GetNotFounds(vm.notFounds);
+					UpdateDashboard();
+				});
+			},
+			close: function (oldModel) {
+				editorService.close();
+			}
+		}
+		//#endregion
+
+		//#region Redirect functions 
+
+		vm.redirects.create = function () {
+			vm.entryDetailsOverlay.entry = null;
+			editorService.open(vm.entryDetailsOverlay);
+		}
+
+		vm.redirects.clickItem = function (item) {
+			vm.entryDetailsOverlay.entry = Object.assign({}, item);
+			editorService.open(vm.entryDetailsOverlay);
+		}
+
+		vm.redirects.goToPage = function (pageNumber) {
+			if (vm.redirects.pageNumber == pageNumber)
+				return;
+
+			vm.redirects.pagination.pageNumber = pageNumber;
+			GetRedirects(vm.redirects);
+		}
+
+		vm.redirects.nextPage = function (pageNumber) {
+			vm.redirects.goToPage(pageNumber);
+		}
+
+		vm.redirects.prevPage = function (pageNumber) {
+			vm.redirects.goToPage(pageNumber);
+		}
+
+		vm.redirects.deleteItem = function (item) {
+			event.stopPropagation();
+
+			UrlTrackerEntryService.deleteEntry(item.Id).then(function () {
+				if (vm.redirects.searchString)
+					GetRedirectsByFilter(vm.redirects);
+				else
+					GetRedirects(vm.redirects);
+
+				notificationsService.success("Deleted", "Redirect succesfully deleted");
+				UpdateDashboard();
+			});
+		}
+
+		vm.redirects.pageSizeChanged = function () {
+			GetRedirects(vm.redirects);
+		}
+
+		vm.redirects.selectAll = function () {
+			if (vm.redirects.allItemsSelected) {
+				vm.redirects.allItemsSelected = false;
+				vm.redirects.selectedItems = [];
+			}
+			else {
+				vm.redirects.allItemsSelected = true;
+				vm.redirects.selectedItems = vm.redirects.items;
+			}
+		}
+
+		vm.redirects.toggleSelectItem = function (event, item) {
+			event.stopPropagation();
+			var isAlreadySelected = vm.redirects.selectedItems.findIndex(function (i) {
+				return i.Id == item.Id;
+			});
+
+			if (isAlreadySelected != -1) {
+				vm.redirects.selectedItems.splice(isAlreadySelected, 1);
+			}
+			else {
+				vm.redirects.selectedItems.push(item);
+			}
+		}
+
+		vm.redirects.deleteSelected = function () {
+			vm.redirects.selectedItems.forEach(item => {
+				UrlTrackerEntryService.deleteEntry(item.Id);
+			});
+
+			vm.redirects.selectedItems = [];
+
+			setTimeout(function () {
+				notificationsService.success("Deleted", "Redirects succesfully deleted");
+				GetRedirects(vm.redirects);
+				UpdateDashboard();
+			}, 100);
+		}
+
+		vm.redirects.clearSelection = function () {
+			vm.redirects.allItemsSelected = false;
+			vm.redirects.selectedItems = [];
+
+			var checkboxes = document.getElementsByClassName('select-redirect');
+			for (var i = 0; i < checkboxes.length; i++) {
+				if (checkboxes[i].type == 'checkbox')
+					checkboxes[i].checked = false;
+			}
+		}
+
+		vm.redirects.search = function () {
+			if (vm.redirects.searchString !== "")
+				GetRedirectsByFilter(vm.redirects);
+			else
+				GetRedirects(vm.redirects);
+		}
+
+		//#endregion
+
+		//#region Not founds
+
+		vm.notFounds.createRedirect = function(item)
+		{
+			vm.entryDetailsOverlay.entry = Object.assign({}, item);
+			editorService.open(vm.entryDetailsOverlay);
+		}
+
+		vm.notFounds.goToPage = function (pageNumber) {
+			if (vm.notFounds.pageNumber == pageNumber)
+				return;
+
+			vm.notFounds.pagination.pageNumber = pageNumber;
+			GetNotFounds(vm.notFounds);
+		}
+
+		vm.notFounds.nextPage = function (pageNumber) {
+			vm.notFounds.goToPage(pageNumber);
+		}
+
+		vm.notFounds.prevPage = function (pageNumber) {
+			vm.notFounds.goToPage(pageNumber);
+		}
+
+		vm.notFounds.editItem = function (item) {
+			vm.openPanel(entry);
+		}
+
+		vm.notFounds.deleteItem = function (item) {
+			event.stopPropagation();
+
+			UrlTrackerEntryService.deleteEntry(item.Id, true).then(function () {
+				if (vm.notFounds.searchString)
+					GetNotFoundsByFilter(vm.notFounds);
+				else
+					GetNotFounds(vm.notFounds);
+
+				notificationsService.success("Deleted", "Not found succesfully deleted");
+				UpdateDashboard();
+			});
+		}
+
+		vm.notFounds.pageSizeChanged = function () {
+			GetNotFounds(vm.notFounds);
+		}
+
+		vm.notFounds.selectAll = function () {
+			if (vm.notFounds.allItemsSelected) {
+				vm.notFounds.allItemsSelected = false;
+				vm.notFounds.selectedItems = [];
+			}
+			else {
+				vm.notFounds.allItemsSelected = true;
+				vm.notFounds.selectedItems = vm.notFounds.items;
+			}
+		}
+
+		vm.notFounds.toggleSelectItem = function (event, item) {
+			event.stopPropagation();
+			var isAlreadySelected = vm.notFounds.selectedItems.findIndex(function (i) {
+				return i.Id == item.Id;
+			});
+
+			if (isAlreadySelected != -1) {
+				vm.notFounds.selectedItems.splice(isAlreadySelected, 1);
+			}
+			else {
+				vm.notFounds.selectedItems.push(item);
+			}
+		}
+
+		vm.notFounds.deleteSelected = function () {
+			vm.notFounds.selectedItems.forEach(item => {
+				UrlTrackerEntryService.deleteEntry(item.Id, true);
+			});
+
+			vm.notFounds.selectedItems = [];
+
+			setTimeout(function () {
+				notificationsService.success("Deleted", "Not founds succesfully deleted");
+				GetNotFounds(vm.notFounds);
+				UpdateDashboard();
+			}, 100);
+		}
+
+		vm.notFounds.clearSelection = function () {
+			vm.notFounds.allItemsSelected = false;
+			vm.notFounds.selectedItems = [];
+
+			var checkboxes = document.getElementsByClassName('select-notfound');
+			for (var i = 0; i < checkboxes.length; i++) {
+				if (checkboxes[i].type == 'checkbox')
+					checkboxes[i].checked = false;
+			}
+		}
+
+		vm.notFounds.search = function () {
+			if (vm.notFounds.searchString !== "")
+				GetNotFoundsByFilter(vm.notFounds);
+			else
+				GetNotFounds(vm.notFounds);
+		}
+
+
+		//#endregion
+
+		//#region Watchers
+
+		$scope.$watch('vm.redirects.numberOfItems', function () {
+			vm.tabs.find(x => x.alias == "redirects").label = "Redirects" + " (" + vm.redirects.numberOfItems + ")";
+		});
+
+		$scope.$watch('vm.notFounds.numberOfItems', function () {
+			vm.tabs.find(x => x.alias == "notFounds").label = "Not founds " + " (" + vm.notFounds.numberOfItems + ")";
+		});
+
+		//#endregion
+
+	}]);
+
+
+	angular.module("umbraco").directive('ngEnter', function () {
+		return function (scope, element, attrs) {
+			element.bind("keydown keypress", function (event) {
+				if (event.which === 13) {
+					scope.$apply(function () {
+						scope.$eval(attrs.ngEnter);
+					});
+					event.preventDefault();
+				}
+			});
+		};
+	});
 
 })();
