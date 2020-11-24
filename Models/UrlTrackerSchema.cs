@@ -18,10 +18,6 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
         [NullSetting(NullSetting = NullSettings.Null)]
         public string OldUrl { get; set; }
 
-        [Column("OldUrlQueryString")]
-        [NullSetting(NullSetting = NullSettings.Null)]
-        public string OldUrlQueryString { get; set; }
-
         [Column("OldRegex")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string OldRexEx { get; set; }
@@ -39,7 +35,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
         public string RedirectUrl { get; set; }
 
         [Column("RedirectHttpCode")]
-        [Constraint(Default = 301)]
+        [NullSetting(NullSetting = NullSettings.Null)]
         public int RedirectHttpCode { get; set; }
 
         [Column("RedirectPassThroughQueryString")]
