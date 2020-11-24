@@ -9,22 +9,23 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 	{
 		#region Create
 
-		bool AddEntry(UrlTrackerModel entry);
+		bool AddRedirect(UrlTrackerModel entry);
 		bool AddRedirect(IContent newContent, IPublishedContent oldContent, UrlTrackerRedirectType redirectType, UrlTrackerReason reason, bool isChild = false);
+		bool AddNotFound(string url, int rootNodeId, string referrer);
 
 		#endregion
 
 		#region Get
-
 		UrlTrackerModel GetEntryById(int id);
 		UrlTrackerGetResult GetRedirects(int skip, int amount);
 		UrlTrackerGetResult GetNotFounds(int skip, int amount);
 		UrlTrackerGetResult GetRedirectsByFilter(int skip, int amount, UrlTrackerSortType sortType = UrlTrackerSortType.CreatedDesc, string searchQuery = "");
+		UrlTrackerGetResult GetNotFoundsByFilter(int skip, int amount, UrlTrackerSortType sortType = UrlTrackerSortType.LastOccurrenceDesc, string searchQuery = "");
 		List<UrlTrackerModel> GetForcedRedirects();
-		bool RedirectExist(int redirectNodeId, string oldUrl);
 		List<UrlTrackerDomain> GetDomains();
 		string GetUrlByNodeId(int nodeId);
 		IPublishedContent GetNodeById(int nodeId);
+		bool RedirectExist(int redirectNodeId, string oldUrl);
 
 		#endregion
 
@@ -39,7 +40,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 		#region Delete
 
-		void DeleteEntryById(int id);
+		void DeleteEntryById(int id, bool is404 = false);
 		void DeleteEntryByRedirectNodeId(int nodeId);
 
 		#endregion

@@ -52,8 +52,14 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 		#region Add
 
-		public bool AddEntry(UrlTrackerModel entry)
+		public bool AddRedirect(UrlTrackerModel entry)
 		{
+			if (entry.Is404)
+			{
+				_urlTrackerRepository.DeleteNotFounds(entry.OldUrl, entry.RedirectRootNodeId);
+				entry.Is404 = false;
+			}
+
 			return _urlTrackerRepository.AddEntry(entry);
 		}
 
@@ -107,6 +113,19 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			return true;
 		}
 
+		public bool AddNotFound(string url, int rootNodeId, string referrer)
+		{
+			return _urlTrackerRepository.AddEntry(
+				new UrlTrackerModel
+				{
+					RedirectRootNodeId = rootNodeId,
+					OldUrl = url,
+					Referrer = referrer,
+					Is404 = true
+				}
+			);
+		}
+
 		#endregion
 
 		#region Get
@@ -118,17 +137,22 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 		public UrlTrackerGetResult GetRedirects(int skip, int amount)
 		{
-			return _urlTrackerRepository.GetEntries(skip, amount, UrlTrackerEntryType.Redirect, UrlTrackerSortType.CreatedDesc);
-		}
-
-		public UrlTrackerGetResult GetNotFounds(int skip, int amount)
-		{
-			return _urlTrackerRepository.GetEntries(skip, amount, UrlTrackerEntryType.NotFound, UrlTrackerSortType.CreatedDesc);
+			return _urlTrackerRepository.GetRedirects(skip, amount);
 		}
 
 		public UrlTrackerGetResult GetRedirectsByFilter(int skip, int amount, UrlTrackerSortType sortType = UrlTrackerSortType.CreatedDesc, string searchQuery = "")
 		{
-			return _urlTrackerRepository.GetEntries(skip, amount, UrlTrackerEntryType.Redirect, sortType, searchQuery);
+			return _urlTrackerRepository.GetRedirects(skip, amount, sortType, searchQuery);
+		}
+
+		public UrlTrackerGetResult GetNotFounds(int skip, int amount)
+		{
+			return _urlTrackerRepository.GetNotFounds(skip, amount);
+		}
+
+		public UrlTrackerGetResult GetNotFoundsByFilter(int skip, int amount, UrlTrackerSortType sortType = UrlTrackerSortType.LastOccurrenceDesc, string searchQuery = "")
+		{
+			return _urlTrackerRepository.GetNotFounds(skip, amount, sortType, searchQuery);
 		}
 
 		public List<UrlTrackerModel> GetForcedRedirects()
@@ -139,11 +163,6 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 				return ReloadForcedRedirectsCache();
 
 			return cachedForcedRedirects;
-		}
-
-		public bool RedirectExist(int redirectNodeId, string oldUrl)
-		{
-			return _urlTrackerRepository.RedirectExist(redirectNodeId, oldUrl);
 		}
 
 		public List<UrlTrackerDomain> GetDomains()
@@ -183,6 +202,11 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			}
 		}
 
+		public bool RedirectExist(int redirectNodeId, string oldUrl)
+		{
+			return _urlTrackerRepository.RedirectExist(redirectNodeId, oldUrl);
+		}
+
 		#endregion
 
 		#region Update
@@ -207,7 +231,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 		public List<UrlTrackerModel> ReloadForcedRedirectsCache()
 		{
-			var forcedRedirects = _urlTrackerRepository.GetEntries(null, null, UrlTrackerEntryType.Redirect, null, onlyForcedRedirects: true).Records;
+			var forcedRedirects = _urlTrackerRepository.GetRedirects(null, null, onlyForcedRedirects: true).Records;
 
 			_urlTrackerCacheService.Set(
 				_forcedRedirectsCacheKey,
@@ -222,9 +246,17 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 		#region Delete
 
-		public void DeleteEntryById(int id)
+		public void DeleteEntryById(int id, bool is404)
 		{
-			_urlTrackerRepository.DeleteEntryById(id);
+			if (is404)
+			{
+				var entry = _urlTrackerRepository.GetEntryById(id);
+				_urlTrackerRepository.DeleteNotFounds(entry.OldUrl, entry.RedirectRootNodeId);
+			}
+			else
+			{
+				_urlTrackerRepository.DeleteEntryById(id);
+			}
 		}
 
 		public void DeleteEntryByRedirectNodeId(int nodeId)
