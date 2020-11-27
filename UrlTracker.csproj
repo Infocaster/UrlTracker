@@ -291,6 +291,7 @@
     <Compile Include="Helpers\IUrlTrackerNewLoggingHelper.cs" />
     <Compile Include="Helpers\UrlTrackerNewLoggingHelper.cs" />
     <Compile Include="Models\UrlTrackerGetResult.cs" />
+    <Compile Include="Models\UrlTrackerLanguage.cs" />
     <Compile Include="Services\IUrlTrackerCacheService.cs" />
     <Compile Include="Services\UrlTrackerService.cs" />
     <Compile Include="Services\IUrlTrackerService.cs" />
@@ -390,6 +391,7 @@
     <Content Include="App_plugins\UrlTracker\res\js\main.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="App_plugins\UrlTracker\res\js\urltracker.js" />
     <Content Include="App_plugins\UrlTracker\Scripts\UrlTracker.DetailsController.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

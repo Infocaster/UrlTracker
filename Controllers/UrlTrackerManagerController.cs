@@ -35,6 +35,12 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 			return Ok();
 		}
 
+		[HttpGet]
+		public IHttpActionResult GetLanguages()
+		{
+			return Ok(_urlTrackerService.GetLanguages());
+		}
+
 		#endregion
 
 		#region Redirects

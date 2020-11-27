@@ -130,35 +130,16 @@ namespace InfoCaster.Umbraco.UrlTracker
 				{
 					var oldContent = _urlTrackerService.GetNodeById(newContent.Id);
 
-					//Is er iets veranderd in de verschillende cultures?
-
-					if (oldContent?.Name != newContent.Name && !string.IsNullOrEmpty(oldContent?.Name)) // If name is null, it's a new document
-						_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.Renamed);
-
-					if (newContent.HasProperty("umbracoUrlName"))
+					if (oldContent != null) // If old content is null, it's a new document
 					{
-						var newContentUmbracoUrlName = newContent.GetValue("umbracoUrlName") != null ? newContent.GetValue("umbracoUrlName").ToString() : string.Empty;
-						var oldContentUmbracoUrlName = oldContent.GetProperty("umbracoUrlName") != null ? oldContent.GetProperty("umbracoUrlName").GetValue().ToString() : string.Empty;
-
-						if (newContentUmbracoUrlName != oldContentUmbracoUrlName)  // 'umbracoUrlName' property value added/changed
-							_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.UrlOverwritten);
-					}
-
-					if (_urlTrackerSettings.IsSEOMetadataInstalled() && newContent.HasProperty(_urlTrackerSettings.GetSEOMetadataPropertyName()))
-					{
-						var newContentSEOMetadata = newContent.GetValue(_urlTrackerSettings.GetSEOMetadataPropertyName()) != null ? newContent.GetValue(_urlTrackerSettings.GetSEOMetadataPropertyName()).ToString() : string.Empty;
-						var oldContentSEOMetadata = oldContent.GetProperty("umbracoUrlName") != null ? oldContent.GetProperty("umbracoUrlName").GetValue().ToString() : string.Empty;
-
-						if (newContentSEOMetadata != oldContentSEOMetadata)
+						if (newContent.AvailableCultures.Any())
 						{
-							dynamic contentJson = JObject.Parse(newContentSEOMetadata);
-							string newContentUrlName = contentJson.urlName;
-
-							dynamic nodeJson = JObject.Parse(oldContentSEOMetadata);
-							string oldContentUrlName = nodeJson.urlName;
-
-							if (newContentUrlName != oldContentUrlName) // SEOMetadata UrlName property value added/changed
-								_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.UrlOverwrittenSEOMetadata);
+							foreach (var culture in newContent.PublishedCultures)
+								MatchNodes(newContent, oldContent, culture);
+						}
+						else
+						{
+							MatchNodes(newContent, oldContent);
 						}
 					}
 				}
@@ -171,7 +152,7 @@ namespace InfoCaster.Umbraco.UrlTracker
 			}
 		}
 
-		void ContentService_Published(IContentService sender, ContentPublishedEventArgs e)
+		void ContentService_Published(IContentService sender, ContentPublishedEventArgs e) //Uitwerken
 		{
 			foreach (IContent content in e.PublishedEntities)
 			{
@@ -181,18 +162,30 @@ namespace InfoCaster.Umbraco.UrlTracker
 
 		void ContentService_Moving(IContentService sender, MoveEventArgs<IContent> e)
 		{
-			IContent newContent = e.MoveInfoCollection.First().Entity;
-
-			if (newContent == null)
-				return;
 #if !DEBUG
             try
 #endif
+			foreach (var moved in e.MoveInfoCollection)
 			{
+				IContent newContent = moved.Entity;
+
+				if (newContent == null)
+					return;
+
 				var oldContent = _urlTrackerService.GetNodeById(newContent.Id);
 
-				if (oldContent != null && !string.IsNullOrEmpty(oldContent.Url) && !newContent.Path.StartsWith("-1,-20")) // -1,-20 == Recycle bin | Not moved to recycle bin
-					_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.Moved);
+				if (oldContent != null && !string.IsNullOrEmpty(oldContent.Url) && oldContent.Parent.Id != moved.NewParentId)
+				{
+					if (newContent.AvailableCultures.Any())
+					{
+						foreach (var culture in newContent.AvailableCultures)
+							_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.Moved, culture);
+					}
+					else
+					{
+						_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.Moved);
+					}
+				}
 			}
 #if !DEBUG
             catch (Exception ex)
@@ -202,6 +195,40 @@ namespace InfoCaster.Umbraco.UrlTracker
 #endif
 		}
 
+		private void MatchNodes(IContent newContent, IPublishedContent oldContent, string culture = "")
+		{
+			var newContentName = string.IsNullOrEmpty(culture) ? newContent.Name : newContent.CultureInfos[culture].Name;
+
+			if (!string.IsNullOrEmpty(oldContent.Name(culture)) && newContentName != oldContent.Name(culture)) // 'Name' changed
+				_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.Renamed, culture);
+
+			if (newContent.HasProperty("umbracoUrlName"))
+			{
+				var newContentUmbracoUrlName = newContent.GetValue("umbracoUrlName", culture)?.ToString() ?? "";
+				var oldContentUmbracoUrlName = oldContent.Value("umbracoUrlName", culture)?.ToString() ?? "";
+
+				if (!newContentUmbracoUrlName.Equals(oldContentUmbracoUrlName))  // 'umbracoUrlName' property value added/changed
+					_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.UrlOverwritten, culture);
+			}
+
+			if (_urlTrackerSettings.IsSEOMetadataInstalled() && newContent.HasProperty(_urlTrackerSettings.GetSEOMetadataPropertyName()))
+			{
+				var newContentSEOMetadata = newContent.GetValue(_urlTrackerSettings.GetSEOMetadataPropertyName(), culture)?.ToString() ?? "";
+				var oldContentSEOMetadata = oldContent.Value(_urlTrackerSettings.GetSEOMetadataPropertyName(), culture)?.ToString() ?? "";
+
+				if (!newContentSEOMetadata.Equals(oldContentSEOMetadata))
+				{
+					dynamic contentJson = JObject.Parse(newContentSEOMetadata);
+					string newContentUrlName = contentJson.urlName;
+
+					dynamic nodeJson = JObject.Parse(oldContentSEOMetadata);
+					string oldContentUrlName = nodeJson.urlName;
+
+					if (newContentUrlName != oldContentUrlName) // SEOMetadata UrlName property value added/changed
+						_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.UrlOverwrittenSEOMetadata, culture);
+				}
+			}
+		}
 	}
 
 	public class AddUrlTrackerTable : MigrationBase

@@ -10,7 +10,14 @@
 						<!-- #region Root node -->
 						<umb-control-group label="Root node" description="The root node defines for which domain this redirect is meant" required="true">
 							<select ng-model="vm.entry.RedirectRootNodeId" ng-disabled="!vm.advancedView">
-								<option ng-repeat="node in vm.allRootNodes" value="{{node.id}}" ng-value="{{node.id}}">{{node.name}}</option>
+								<option ng-repeat="node in vm.allRootNodes" ng-value="node.id">{{node.name}}</option>
+							</select>
+						</umb-control-group>
+						<!-- #endregion -->
+						<!-- #region Languages -->
+						<umb-control-group label="Language" description="Define for which language this redirect is meant" required="true" ng-if="vm.languages.length > 1">
+							<select ng-model="vm.entry.Culture" ng-disabled="!vm.advancedView">
+								<option ng-repeat="language in vm.languages" ng-value="language.IsoCode">{{language.CultureName}}</option>
 							</select>
 						</umb-control-group>
 						<!-- #endregion -->
@@ -78,6 +85,13 @@
 						<umb-control-group label="Force redirect" description="When enabled, the UrlTracker will ALWAYS redirect, even if a valid page exists at the specified Old URL">
 							<umb-toggle checked="vm.entry.ForceRedirect"
 										on-click="vm.entry.ForceRedirect = !vm.entry.ForceRedirect">
+							</umb-toggle>
+						</umb-control-group>
+						<!-- #endregion -->
+						<!-- #region Remove 404 -->
+						<umb-control-group label="Remove not found" description="When enabled, the related not found will be removed" ng-if="!vm.advancedView">
+							<umb-toggle checked="vm.entry.remove404"
+										on-click="vm.entry.remove404 = !vm.entry.remove404">
 							</umb-toggle>
 						</umb-control-group>
 						<!-- #endregion -->

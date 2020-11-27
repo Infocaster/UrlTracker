@@ -14,6 +14,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
         [Column("Id")]
         public int Id { get; set; }
 
+        [Column("Culture")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string Culture { get; set; }
+
         [Column("OldUrl")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string OldUrl { get; set; }

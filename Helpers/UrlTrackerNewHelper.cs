@@ -32,6 +32,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Helpers
 
 		public string ResolveShortestUrl(string url)
 		{
+			if (string.IsNullOrEmpty(url))
+				return url;
+
 			if (url.StartsWith("http://") || url.StartsWith("https://"))
 			{
 				Uri uri = new Uri(url);

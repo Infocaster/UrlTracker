@@ -20,7 +20,7 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 		UrlTrackerModel GetEntryById(int id);
 		UrlTrackerGetResult GetRedirects(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.CreatedDesc, string searchQuery = "", bool onlyForcedRedirects = false);
 		UrlTrackerGetResult GetNotFounds(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.LastOccurrenceDesc, string searchQuery = "");
-		bool RedirectExist(int redirectNodeId, string oldUrl);
+		bool RedirectExist(int redirectNodeId, string oldUrl, string culture = "");
 
 		#endregion
 

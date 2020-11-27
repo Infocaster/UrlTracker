@@ -42,10 +42,11 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
-				string query = "INSERT INTO icUrlTracker (OldUrl, OldRegex, RedirectRootNodeId, RedirectNodeId, RedirectUrl, RedirectHttpCode, RedirectPassThroughQueryString, ForceRedirect, Notes, Is404, Referrer) VALUES (@oldUrl, @oldRegex, @redirectRootNodeId, @redirectNodeId, @redirectUrl, @redirectHttpCode, @redirectPassThroughQueryString, @forceRedirect, @notes, @is404, @referrer)";
+				string query = "INSERT INTO icUrlTracker (Culture, OldUrl, OldRegex, RedirectRootNodeId, RedirectNodeId, RedirectUrl, RedirectHttpCode, RedirectPassThroughQueryString, ForceRedirect, Notes, Is404, Referrer) VALUES (@culture, @oldUrl, @oldRegex, @redirectRootNodeId, @redirectNodeId, @redirectUrl, @redirectHttpCode, @redirectPassThroughQueryString, @forceRedirect, @notes, @is404, @referrer)";
 
 				var parameters = new
 				{
+					culture = entry.Culture,
 					oldUrl = entry.OldUrl,
 					oldRegex = entry.OldRegex,
 					redirectRootNodeId = entry.RedirectRootNodeId,
@@ -179,13 +180,13 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 			}
 		}
 
-		public bool RedirectExist(int redirectNodeId, string oldUrl)
+		public bool RedirectExist(int redirectNodeId, string oldUrl, string culture)
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
 				return scope.Database.ExecuteScalar<bool>(
-					"SELECT 1 FROM icUrlTracker WHERE RedirectNodeId = @redirectNodeId AND OldUrl = @oldUrl",
-					new { redirectNodeId = redirectNodeId, oldUrl = oldUrl });
+					"SELECT 1 FROM icUrlTracker WHERE RedirectNodeId = @redirectNodeId AND OldUrl = @oldUrl AND Culture = @culture",
+					new { redirectNodeId = redirectNodeId, oldUrl = oldUrl, culture = culture });
 			}
 		}
 
@@ -205,10 +206,11 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
-				string query = "UPDATE icUrlTracker SET OldUrl = @oldUrl, OldRegex = @oldRegex, RedirectRootNodeId = @redirectRootNodeId, RedirectNodeId = @redirectNodeId, RedirectUrl = @redirectUrl, RedirectHttpCode = @redirectHttpCode, RedirectPassThroughQueryString = @redirectPassThroughQueryString, ForceRedirect = @forceRedirect, Notes = @notes, Is404 = @is404 WHERE Id = @id";
+				string query = "UPDATE icUrlTracker SET Culture = @culture, OldUrl = @oldUrl, OldRegex = @oldRegex, RedirectRootNodeId = @redirectRootNodeId, RedirectNodeId = @redirectNodeId, RedirectUrl = @redirectUrl, RedirectHttpCode = @redirectHttpCode, RedirectPassThroughQueryString = @redirectPassThroughQueryString, ForceRedirect = @forceRedirect, Notes = @notes, Is404 = @is404 WHERE Id = @id";
 
 				var parameters = new
 				{
+					culture = entry.Culture,
 					oldUrl = entry.OldUrl,
 					oldRegex = entry.OldRegex,
 					redirectRootNodeId = entry.RedirectRootNodeId,

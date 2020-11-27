@@ -1,6 +1,6 @@
 ﻿(function () {
 	"use strict";
-	angular.module("umbraco").controller("UrlTracker.OverviewController", ["$scope", "UrlTrackerEntryService", "editorService", "contentResource", "notificationsService", function ($scope, UrlTrackerEntryService, editorService, contentResource, notificationsService) {
+	angular.module("umbraco").controller("UrlTracker.OverviewController", ["$scope", "urlTrackerEntryService", "editorService", "notificationsService", "entityResource", function ($scope, urlTrackerEntryService, editorService, notificationsService, entityResource) {
 		//#region General
 		var vm = this;
 
@@ -46,9 +46,8 @@
 			loading: false
 		};
 
-		contentResource.getChildren(-1).then(function (rootNodes) {
-			vm.allRootNodes = rootNodes.items;
-			console.log(vm.allRootNodes);
+		entityResource.getChildren(-1, "Document").then(function (rootNodes) {
+			vm.allRootNodes = rootNodes;
 		});
 
 		UpdateDashboard();
@@ -91,9 +90,13 @@
 
 		vm.getSiteName = function (entry) {
 			if (vm.allRootNodes) {
-				return vm.allRootNodes.find(function (item) {
+				var rootNode = vm.allRootNodes.find(function (item) {
 					return item.id == entry.RedirectRootNodeId;
-				}).name;
+				});
+
+				if (rootNode) {
+					return rootNode.name;
+				}
 			}
 		}
 
@@ -102,7 +105,7 @@
 			if (scope.pagination.pageNumber > 1)
 				skip = (scope.pagination.pageNumber - 1) * scope.itemsPerPage;
 
-			UrlTrackerEntryService.getRedirects(scope, skip, scope.itemsPerPage);
+			urlTrackerEntryService.getRedirects(scope, skip, scope.itemsPerPage);
 		}
 
 		function GetNotFounds(scope) {
@@ -110,7 +113,7 @@
 			if (scope.pagination.pageNumber > 1)
 				skip = (scope.pagination.pageNumber - 1) * scope.itemsPerPage;
 
-			UrlTrackerEntryService.getNotFounds(scope, skip, scope.itemsPerPage);
+			urlTrackerEntryService.getNotFounds(scope, skip, scope.itemsPerPage);
 		}
 
 		function GetRedirectsByFilter(scope) {
@@ -118,7 +121,7 @@
 			if (scope.pagination.pageNumber > 1)
 				skip = (scope.pagination.pageNumber - 1) * scope.itemsPerPage;
 
-			UrlTrackerEntryService.getRedirectsByFilters(scope, skip, scope.itemsPerPage, scope.searchString);
+			urlTrackerEntryService.getRedirectsByFilters(scope, skip, scope.itemsPerPage, scope.searchString);
 		}
 
 		function GetNotFoundsByFilter(scope) {
@@ -126,12 +129,12 @@
 			if (scope.pagination.pageNumber > 1)
 				skip = (scope.pagination.pageNumber - 1) * scope.itemsPerPage;
 
-			UrlTrackerEntryService.getNotFoundsByFilters(scope, skip, scope.itemsPerPage, scope.searchString);
+			urlTrackerEntryService.getNotFoundsByFilters(scope, skip, scope.itemsPerPage, scope.searchString);
 		}
 
 		function UpdateDashboard() {
-			UrlTrackerEntryService.getRedirectsByFilters(vm.dashboard.redirects, 0, 10, "", "CreatedDesc");
-			UrlTrackerEntryService.getNotFoundsByFilters(vm.dashboard.notFounds, 0, 10, "", "OccurrencesDesc");
+			urlTrackerEntryService.getRedirectsByFilters(vm.dashboard.redirects, 0, 10, "", "CreatedDesc");
+			urlTrackerEntryService.getNotFoundsByFilters(vm.dashboard.notFounds, 0, 10, "", "OccurrencesDesc");
 		}
 
 		vm.entryDetailsOverlay = {
@@ -141,9 +144,9 @@
 			submit: function (model) {
 				var promise;
 				if (model.isNewEntry || model.entry.Is404) {
-					promise = UrlTrackerEntryService.addRedirect(vm, model.entry);
+					promise = urlTrackerEntryService.addRedirect(vm, model.entry);
 				} else {
-					promise = UrlTrackerEntryService.updateEntry(vm, model.entry);
+					promise = urlTrackerEntryService.updateEntry(vm, model.entry);
 				}
 
 				promise.then(function () {
@@ -196,7 +199,7 @@
 		vm.redirects.deleteItem = function (item) {
 			event.stopPropagation();
 
-			UrlTrackerEntryService.deleteEntry(item.Id).then(function () {
+			urlTrackerEntryService.deleteEntry(item.Id).then(function () {
 				if (vm.redirects.searchString)
 					GetRedirectsByFilter(vm.redirects);
 				else
@@ -238,7 +241,7 @@
 
 		vm.redirects.deleteSelected = function () {
 			vm.redirects.selectedItems.forEach(item => {
-				UrlTrackerEntryService.deleteEntry(item.Id);
+				urlTrackerEntryService.deleteEntry(item.Id);
 			});
 
 			vm.redirects.selectedItems = [];
@@ -301,7 +304,7 @@
 		vm.notFounds.deleteItem = function (item) {
 			event.stopPropagation();
 
-			UrlTrackerEntryService.deleteEntry(item.Id, true).then(function () {
+			urlTrackerEntryService.deleteEntry(item.Id, true).then(function () {
 				if (vm.notFounds.searchString)
 					GetNotFoundsByFilter(vm.notFounds);
 				else
@@ -343,7 +346,7 @@
 
 		vm.notFounds.deleteSelected = function () {
 			vm.notFounds.selectedItems.forEach(item => {
-				UrlTrackerEntryService.deleteEntry(item.Id, true);
+				urlTrackerEntryService.deleteEntry(item.Id, true);
 			});
 
 			vm.notFounds.selectedItems = [];

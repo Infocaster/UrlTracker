@@ -6,6 +6,7 @@ using InfoCaster.Umbraco.UrlTracker.Helpers;
 using InfoCaster.Umbraco.UrlTracker.Models;
 using InfoCaster.Umbraco.UrlTracker.NewRepositories;
 using InfoCaster.Umbraco.UrlTracker.Settings;
+using Lucene.Net.Util;
 using Umbraco.Core.Configuration;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
@@ -25,7 +26,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		private readonly IUrlTrackerNewLoggingHelper _urlTrackerLoggingHelper;
 		private readonly IContentService _contentService;
 		private readonly IDomainService _domainService;
+		private readonly ILocalizationService _localizationService;
 
+		private readonly string _forcedRedirectsCacheKey = "UrlTrackerForcedRedirects";
 		private readonly string _urlTrackerDomainsCacheKey = "UrlTrackerDomains";
 
 		public UrlTrackerService(
@@ -36,7 +39,8 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			IUrlTrackerNewHelper urlTrackerHelper,
 			IUrlTrackerNewRepository urlTrackerRepository,
 			IUrlTrackerNewLoggingHelper urlTrackerLoggingHelper,
-			IContentService contentService)
+			IContentService contentService,
+			ILocalizationService localizationService)
 		{
 			_umbracoContextFactory = umbracoContextFactory;
 			_urlTrackerCacheService = urlTrackerCacheService;
@@ -46,15 +50,14 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			_urlTrackerRepository = urlTrackerRepository;
 			_urlTrackerLoggingHelper = urlTrackerLoggingHelper;
 			_contentService = contentService;
+			_localizationService = localizationService;
 		}
-
-		private readonly string _forcedRedirectsCacheKey = "UrlTrackerForcedRedirects";
 
 		#region Add
 
 		public bool AddRedirect(UrlTrackerModel entry)
 		{
-			if (entry.Is404)
+			if (entry.Remove404)
 			{
 				_urlTrackerRepository.DeleteNotFounds(entry.OldUrl, entry.RedirectRootNodeId);
 				entry.Is404 = false;
@@ -63,15 +66,17 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			return _urlTrackerRepository.AddEntry(entry);
 		}
 
-		public bool AddRedirect(IContent newContent, IPublishedContent oldContent, UrlTrackerRedirectType redirectType, UrlTrackerReason reason, bool isChild = false)
+		public bool AddRedirect(IContent newContent, IPublishedContent oldContent, UrlTrackerRedirectType redirectType, UrlTrackerReason reason, string culture = "", bool isChild = false)
 		{
-			if (oldContent.Url == "#" || newContent.TemplateId <= 0)
+			var oldUrl = string.IsNullOrEmpty(culture) ? oldContent.Url : oldContent.Url(culture);
+
+			if (oldUrl == "#" || newContent.TemplateId <= 0)
 				return false;
 
 			var rootNodeId = oldContent.Root().Id;
-			var oldUrl = _urlTrackerHelper.ResolveShortestUrl(oldContent.Url);
+			var shortestOldUrl = _urlTrackerHelper.ResolveShortestUrl(oldUrl);
 
-			if (oldUrl == "/" || string.IsNullOrEmpty(oldUrl) || _urlTrackerRepository.RedirectExist(newContent.Id, oldUrl))
+			if (shortestOldUrl == "/" || string.IsNullOrEmpty(shortestOldUrl) || _urlTrackerRepository.RedirectExist(newContent.Id, shortestOldUrl, culture))
 				return false;
 
 			string notes = isChild ? "An ancestor" : "This page";
@@ -90,25 +95,27 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 				var rootUri = new Uri(GetUrlByNodeId(rootNodeId));
 				var shortRootUrl = _urlTrackerHelper.ResolveShortestUrl(rootUri.AbsolutePath);
 
-				if (oldUrl.StartsWith(shortRootUrl, StringComparison.OrdinalIgnoreCase))
-					oldUrl = _urlTrackerHelper.ResolveShortestUrl(oldUrl.Substring(shortRootUrl.Length));
+				if (shortestOldUrl.StartsWith(shortRootUrl, StringComparison.OrdinalIgnoreCase))
+					shortestOldUrl = _urlTrackerHelper.ResolveShortestUrl(shortestOldUrl.Substring(shortRootUrl.Length));
 			}
 
-			_urlTrackerLoggingHelper.LogInformation("UrlTracker Repository | Adding mapping for node id: {0} and url: {1}", oldContent.Id.ToString(), oldUrl);
+			_urlTrackerLoggingHelper.LogInformation("UrlTracker Repository | Adding mapping for node id: {0} and url: {1}", oldContent.Id.ToString(), shortestOldUrl);
 
 			var entry = new UrlTrackerModel
 			{
+				Culture = !string.IsNullOrEmpty(culture) ? culture.ToLower() : null,
 				RedirectHttpCode = (int)redirectType,
 				RedirectRootNodeId = rootNodeId,
 				RedirectNodeId = newContent.Id,
-				OldUrl = oldUrl,
+				OldUrl = shortestOldUrl,
 				Notes = notes
 			};
 
 			_urlTrackerRepository.AddEntry(entry);
 
+			//Werkt dit met verschillende cultures?
 			foreach (var child in oldContent.Children)
-				AddRedirect(_contentService.GetById(child.Id), child, redirectType, reason, true);
+				AddRedirect(_contentService.GetById(child.Id), child, redirectType, reason, culture, true);
 
 			return true;
 		}
@@ -176,7 +183,13 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 				foreach (var umbDomain in umbDomains)
 				{
-					urlTrackerDomains.Add(new UrlTrackerDomain(umbDomain.Id, umbDomain.RootContentId.Value, umbDomain.DomainName));
+					urlTrackerDomains.Add(new UrlTrackerDomain
+					{
+						Id = umbDomain.Id,
+						NodeId = umbDomain.RootContentId.Value,
+						Name = umbDomain.DomainName,
+						LanguageIsoCode = umbDomain.LanguageIsoCode
+					});
 				}
 
 				urlTrackerDomains = urlTrackerDomains.OrderBy(x => x.Name).ToList();
@@ -186,11 +199,11 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			return urlTrackerDomains;
 		}
 
-		public string GetUrlByNodeId(int nodeId)
+		public string GetUrlByNodeId(int nodeId, string culture = "")
 		{
 			using (var ctx = _umbracoContextFactory.EnsureUmbracoContext())
 			{
-				return ctx.UmbracoContext.Content.GetById(nodeId)?.Url;
+				return ctx.UmbracoContext.Content.GetById(nodeId)?.Url(!string.IsNullOrEmpty(culture) ? culture : null);
 			}
 		}
 
@@ -202,9 +215,19 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			}
 		}
 
-		public bool RedirectExist(int redirectNodeId, string oldUrl)
+		public bool RedirectExist(int redirectNodeId, string oldUrl, string culture = "")
 		{
-			return _urlTrackerRepository.RedirectExist(redirectNodeId, oldUrl);
+			return _urlTrackerRepository.RedirectExist(redirectNodeId, oldUrl, culture);
+		}
+
+		public IEnumerable<UrlTrackerLanguage> GetLanguages()
+		{
+			return _localizationService.GetAllLanguages().Select(x => new UrlTrackerLanguage
+			{
+				Id = x.Id,
+				IsoCode = x.IsoCode.ToLower(),
+				CultureName = x.CultureName
+			});
 		}
 
 		#endregion

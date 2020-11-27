@@ -10,7 +10,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		#region Create
 
 		bool AddRedirect(UrlTrackerModel entry);
-		bool AddRedirect(IContent newContent, IPublishedContent oldContent, UrlTrackerRedirectType redirectType, UrlTrackerReason reason, bool isChild = false);
+		bool AddRedirect(IContent newContent, IPublishedContent oldContent, UrlTrackerRedirectType redirectType, UrlTrackerReason reason, string culture = "", bool isChild = false);
 		bool AddNotFound(string url, int rootNodeId, string referrer);
 
 		#endregion
@@ -23,9 +23,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		UrlTrackerGetResult GetNotFoundsByFilter(int skip, int amount, UrlTrackerSortType sortType = UrlTrackerSortType.LastOccurrenceDesc, string searchQuery = "");
 		List<UrlTrackerModel> GetForcedRedirects();
 		List<UrlTrackerDomain> GetDomains();
-		string GetUrlByNodeId(int nodeId);
+		string GetUrlByNodeId(int nodeId, string culture = "");
 		IPublishedContent GetNodeById(int nodeId);
-		bool RedirectExist(int redirectNodeId, string oldUrl);
+		bool RedirectExist(int redirectNodeId, string oldUrl, string culture = "");
+		IEnumerable<UrlTrackerLanguage> GetLanguages();
 
 		#endregion
 

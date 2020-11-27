@@ -1,7 +1,8 @@
 ﻿(function () {
     "use strict";
-    angular.module("umbraco").factory("UrlTrackerEntryService", ["$http", "$log", function ($http, $log) {
+    angular.module("umbraco").factory("urlTrackerEntryService", ["$http", "$log", function ($http, $log) {
         var addRedirect = function (scope, entry) {
+	        entry.is404 = false;
             console.log(entry);
 		    return $http({
 			    url: "/umbraco/BackOffice/api/UrlTrackerManager/AddRedirect",
@@ -147,7 +148,7 @@
                     scope.getItems();
                 }
             }).catch(function (data) {
-                $log.log(data)
+	            $log.log(data);
             });
         }
 
@@ -162,30 +163,28 @@
             });
         }
 
-        var getEntryDetails = function (scope,entryId) {
-            return $http({
-                url: "api/UrlTrackerManager/Details",
-                method: "GET",
-                params: {
-                    id: entryId
-                }
-            }).then(function (data) {
-                scope.entry = data.response;
-            }).catch(function (data) {
-                $log.log(data)
-            });
+        var getLanguages = function (scope) {
+	        return $http({
+				url: "/umbraco/BackOffice/api/UrlTrackerManager/GetLanguages",
+		        method: "GET"
+			}).then(function (response) {
+		        scope.languages = response.data;
+			}).catch(function (response) {
+		        $log.log(response);
+	        });
         }
 
         var UrlTrackerEntryService = {
             getRedirects: getRedirects,
             getNotFounds: getNotFounds,
-            getEntryDetails: getEntryDetails,
             deleteEntry: deleteEntry,
             updateEntry: updateEntry,
             addRedirect: addRedirect,
             getRedirectsByFilters: getRedirectsByFilters,
-            getNotFoundsByFilters: getNotFoundsByFilters
-        };
+			getNotFoundsByFilters: getNotFoundsByFilters,
+			getLanguages: getLanguages
+		};
+
         return UrlTrackerEntryService;
     }]);
 })();
