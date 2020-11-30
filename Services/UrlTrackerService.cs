@@ -63,10 +63,13 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 				entry.Is404 = false;
 			}
 
+			entry.OldUrl = _urlTrackerHelper.ResolveShortestUrl(entry.OldUrl);
+			entry.RedirectUrl = _urlTrackerHelper.ResolveShortestUrl(entry.RedirectUrl);
+
 			return _urlTrackerRepository.AddEntry(entry);
 		}
 
-		public bool AddRedirect(IContent newContent, IPublishedContent oldContent, UrlTrackerRedirectType redirectType, UrlTrackerReason reason, string culture = "", bool isChild = false)
+		public bool AddRedirect(IContent newContent, IPublishedContent oldContent, UrlTrackerRedirectType redirectType, UrlTrackerReason reason, string culture = null, bool isChild = false)
 		{
 			var oldUrl = string.IsNullOrEmpty(culture) ? oldContent.Url : oldContent.Url(culture);
 
@@ -120,11 +123,12 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			return true;
 		}
 
-		public bool AddNotFound(string url, int rootNodeId, string referrer)
+		public bool AddNotFound(string url, int rootNodeId, string referrer, string culture = null)
 		{
 			return _urlTrackerRepository.AddEntry(
 				new UrlTrackerModel
 				{
+					Culture = culture,
 					RedirectRootNodeId = rootNodeId,
 					OldUrl = url,
 					Referrer = referrer,
@@ -220,14 +224,21 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			return _urlTrackerRepository.RedirectExist(redirectNodeId, oldUrl, culture);
 		}
 
-		public IEnumerable<UrlTrackerLanguage> GetLanguages()
+		public IEnumerable<UrlTrackerLanguage> GetLanguagesOutNodeDomains(int nodeId)
 		{
-			return _localizationService.GetAllLanguages().Select(x => new UrlTrackerLanguage
-			{
-				Id = x.Id,
-				IsoCode = x.IsoCode.ToLower(),
-				CultureName = x.CultureName
-			});
+			var availableLanguages = new List<UrlTrackerLanguage>();
+			var languages = _localizationService.GetAllLanguages();
+			var domains = _domainService.GetAssignedDomains(nodeId, _urlTrackerSettings.HasDomainOnChildNode());
+
+			foreach (var domain in domains)
+				availableLanguages.Add(languages.Where(x => x.IsoCode == domain.LanguageIsoCode).Select(x => new UrlTrackerLanguage
+				{
+					Id = x.Id,
+					IsoCode = x.IsoCode.ToLower(),
+					CultureName = x.CultureName
+				}).First());
+
+			return availableLanguages;
 		}
 
 		#endregion

@@ -36,9 +36,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 		}
 
 		[HttpGet]
-		public IHttpActionResult GetLanguages()
+		public IHttpActionResult GetLanguagesOutNodeDomains(int nodeId)
 		{
-			return Ok(_urlTrackerService.GetLanguages());
+			return Ok(_urlTrackerService.GetLanguagesOutNodeDomains(nodeId));
 		}
 
 		#endregion

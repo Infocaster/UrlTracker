@@ -8,17 +8,14 @@
 		vm.advancedView = false;
 		vm.redirectNode = null;
 
-		urlTrackerEntryService.getLanguages(vm);
-		
 		entityResource.getChildren(-1, 'Document')
 			.then(function (rootNodes) {
 				vm.allRootNodes = rootNodes;
 			});
 
 		if ($scope.model.entry != null) {
+			urlTrackerEntryService.getLanguagesOutNodeDomains(vm, $scope.model.entry.RedirectRootNodeId);
 			vm.entry = $scope.model.entry;
-
-			console.log(vm.entry.Culture);
 
 			if (vm.entry.Is404) {
 				vm.title = "Create redirect";
@@ -125,6 +122,13 @@
 		vm.sortable = false;
 
 		vm.nodes = null;
+
+		$scope.$watch('vm.entry.RedirectRootNodeId', function (e) {
+			if (vm.entry.RedirectRootNodeId == -1)
+				return;
+
+			urlTrackerEntryService.getLanguagesOutNodeDomains(vm, vm.entry.RedirectRootNodeId);
+		});
 
 		$scope.$watch('vm.entry.Culture', function (e) {
 			if ($location.search()["mculture"])

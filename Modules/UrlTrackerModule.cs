@@ -436,7 +436,8 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 								(request.UrlReferrer != null && !request.UrlReferrer.ToString()
 									.Contains(_urlTrackerSettings.GetReferrerToIgnore())
 									? request.UrlReferrer.ToString()
-									: "")
+									: ""),
+								domain?.LanguageIsoCode
 							);
 						}
 					}

@@ -163,13 +163,16 @@
             });
         }
 
-        var getLanguages = function (scope) {
+        var getLanguagesOutNodeDomains = function (scope, nodeId) {
 	        return $http({
-				url: "/umbraco/BackOffice/api/UrlTrackerManager/GetLanguages",
-		        method: "GET"
-			}).then(function (response) {
+		        url: "/umbraco/BackOffice/api/UrlTrackerManager/GetLanguagesOutNodeDomains",
+		        method: "GET",
+		        params: {
+			        nodeId: nodeId
+		        }
+	        }).then(function (response) {
 		        scope.languages = response.data;
-			}).catch(function (response) {
+	        }).catch(function (response) {
 		        $log.log(response);
 	        });
         }
@@ -182,7 +185,7 @@
             addRedirect: addRedirect,
             getRedirectsByFilters: getRedirectsByFilters,
 			getNotFoundsByFilters: getNotFoundsByFilters,
-			getLanguages: getLanguages
+            getLanguagesOutNodeDomains: getLanguagesOutNodeDomains
 		};
 
         return UrlTrackerEntryService;

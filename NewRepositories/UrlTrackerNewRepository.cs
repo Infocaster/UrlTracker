@@ -142,7 +142,7 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 				if (!string.IsNullOrEmpty(searchQuery))
 					query.Append(" AND (e.OldUrl LIKE @searchQuery)"); //ToDo: Search on referrer
 
-				query.Append(" GROUP BY e.OldUrl, e.RedirectRootNodeId, e.Is404) result");
+				query.Append(" GROUP BY e.Culture, e.OldUrl, e.RedirectRootNodeId, e.Is404) result");
 
 				var parameters = new
 				{
@@ -162,7 +162,7 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 				else if (sort == UrlTrackerSortType.OccurrencesAsc)
 					query.Append(" ORDER BY Occurrences ASC");
 
-				var newSelect = new StringBuilder("SELECT * FROM (SELECT MAX(e.Id) AS Id, e.OldUrl, e.RedirectRootNodeId, MAX(e.Inserted) as Inserted, COUNT(e.OldUrl) AS Occurrences, e.Is404");
+				var newSelect = new StringBuilder("SELECT * FROM (SELECT MAX(e.Id) AS Id, e.Culture, e.OldUrl, e.RedirectRootNodeId, MAX(e.Inserted) as Inserted, COUNT(e.OldUrl) AS Occurrences, e.Is404");
 				newSelect.Append(", Referrer = (SELECT TOP(1) r.Referrer AS Occurrenced FROM icUrlTracker AS r WHERE r.is404 = 1 AND r.OldUrl = e.OldUrl GROUP BY r.Referrer ORDER BY COUNT(r.Referrer) DESC)");
 
 				query.Replace("SELECT COUNT(*) FROM (SELECT e.OldUrl", newSelect.ToString());
@@ -171,8 +171,6 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 					query.Append(" OFFSET @skip ROWS");
 				if (amount != null)
 					query.Append(" FETCH NEXT @amount ROWS ONLY");
-
-				var test = query.ToString();
 
 				result.Records = scope.Database.Fetch<UrlTrackerModel>(query.ToString(), parameters);
 

@@ -1,4 +1,4 @@
-﻿<div ng-controller="UrlTracker.OverviewController as vm" class="urltracker-body">
+﻿----------<div ng-controller="UrlTracker.OverviewController as vm" class="urltracker-body">
 <umb-tabs-nav tabs="vm.tabs" on-tab-change="vm.changeTab(tab.alias)"></umb-tabs-nav>
 
 <umb-tab-content ng-repeat="tab in vm.tabs" tab="tab" ng-show="tab.active">
@@ -145,9 +145,10 @@
 		<div class="umb-table-head">
 			<div class="umb-table-row">
 				<div class="umb-table-cell col-select">
-					<input class="select-notfound" type="checkbox" ng-click="vm.notFounds.selectAll()"/>
+					<input class="select-notfound" type="checkbox" ng-click="vm.notFounds.selectAll()" />
 				</div>
 				<div class="umb-table-cell col-site">Site</div>
+				<div class="umb-table-cell col-culture">Culture</div>
 				<div class="umb-table-cell col-old-url">URL</div>
 				<div class="umb-table-cell col-referrer">Most important referrer</div>
 				<div class="umb-table-cell col-occurrences">Occurrences</div>
@@ -160,13 +161,18 @@
 		<div class="umb-table-body">
 			<div class="umb-table-row -selectable umb-outline" ng-repeat="item in vm.notFounds.items" ng-click="vm.notFounds.clickItem(item)">
 				<div class="umb-table-cell col-select">
-					<input class="select-notfound" type="checkbox" ng-checked="vm.notFounds.allItemsSelected" ng-click="vm.notFounds.toggleSelectItem($event, item)"/>
+					<input class="select-notfound" type="checkbox" ng-checked="vm.notFounds.allItemsSelected" ng-click="vm.notFounds.toggleSelectItem($event, item)" />
 				</div>
 
 				<div class="umb-table-cell col-site" title="{{vm.getSiteName(item)}}">
 					<span>
 						{{vm.getSiteName(item)}}
 					</span>
+				</div>
+
+				<div class="umb-table-cell col-culture" title="{{item.Culture}}">
+					<span ng-if="item.Culture != null">{{item.Culture}}</span>
+					<span ng-if="item.Culture == null">*</span>
 				</div>
 
 				<div class="umb-table-cell col-old-url" title="{{item.OldUrl}}">
