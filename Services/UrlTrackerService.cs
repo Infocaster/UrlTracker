@@ -168,31 +168,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 					urlWithoutQuery = urlWithoutQuery.Substring(0, urlWithoutQuery.Length - 1);
 				}
-				//do
-				//{
-				//	if (previousFullRawUrlTest.EndsWith("/"))
-				//	{
-				//		domain = domains.FirstOrDefault(x => (x.UrlWithDomain == fullRawUrlTest) || (x.UrlWithDomain == fullRawUrlTest + "/"));
-
-				//		if (domain != null)
-				//		{
-				//			rootNodeId = domain.NodeId;
-				//			urlWithoutQueryString = fullRawUrl.Replace(fullRawUrlTest, string.Empty);
-
-				//			if (urlWithoutQueryString.StartsWith("/"))
-				//				urlWithoutQueryString = urlWithoutQueryString.Substring(1);
-				//			if (urlWithoutQueryString.EndsWith("/"))
-				//				urlWithoutQueryString = urlWithoutQueryString.Substring(0, urlWithoutQueryString.Length - 1);
-
-				//			break;
-				//		}
-				//	}
-
-				//	previousFullRawUrlTest = fullRawUrlTest;
-				//	fullRawUrlTest = fullRawUrlTest.Substring(0, fullRawUrlTest.Length - 1);
-				//} while (urlWithoutQueryString.Length > 0);
 			}
 
+			urlWithoutDomain = url;
 			return null;
 		}
 
