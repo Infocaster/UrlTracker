@@ -105,8 +105,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 				return;
 			}
 			
-			var shortestUrl = _urlTrackerHelper.ResolveShortestUrl(request.RawUrl);
-			_urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Incoming URL is: {0}", shortestUrl);
+			_urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Incoming URL is: {0}", _urlTrackerHelper.ResolveShortestUrl(request.RawUrl));
 
 			if (_urlTrackerInstalled && (response.StatusCode == (int)HttpStatusCode.NotFound || ignoreHttpStatusCode))
 			{
@@ -115,78 +114,26 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 				else
 					_urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Checking for forced redirects (AcquireRequestState), continue URL matching");
 
+				var urlWithoutDomain = "";
+				var domain = _urlTrackerService.GetUmbracoDomainFromUrl(request.Url.ToString(), ref urlWithoutDomain);
+				var shortestUrl = _urlTrackerHelper.ResolveShortestUrl(urlWithoutDomain);
+
+				int rootNodeId = -1;
+				var urlHasQueryString = shortestUrl.Contains('?');
+				var urlWithoutQueryString = (urlHasQueryString ? shortestUrl.Substring(0, shortestUrl.IndexOf('?')) : shortestUrl);
+
 				if (_urlTrackerHelper.IsReservedPathOrUrl(shortestUrl))
 				{
 					_urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | URL is an umbraco reserved path or url, ignore request");
 					return;
 				}
 
-				int rootNodeId = -1;
-				var urlHasQueryString = shortestUrl.Contains('?');
-				var urlWithoutQueryString = (urlHasQueryString ? shortestUrl.Substring(0, shortestUrl.IndexOf('?')) : shortestUrl);
-				var domains = _urlTrackerService.GetDomains();
-				UrlTrackerDomain domain = null;
-
-				if (domains.Any())
-				{
-					string fullRawUrl, previousFullRawUrlTest, fullRawUrlTest;
-					fullRawUrl = previousFullRawUrlTest = fullRawUrlTest = string.Format("{0}{1}{2}{3}", request.Url.Scheme, Uri.SchemeDelimiter, request.Url.Host, request.Url.AbsolutePath);
-
-					do
-					{
-						if (previousFullRawUrlTest.EndsWith("/"))
-						{
-							domain = domains.FirstOrDefault(x => (x.UrlWithDomain == fullRawUrlTest) || (x.UrlWithDomain == fullRawUrlTest + "/"));
-
-							if (domain != null)
-							{
-								rootNodeId = domain.NodeId;
-								urlWithoutQueryString = fullRawUrl.Replace(fullRawUrlTest, string.Empty);
-
-								if (urlWithoutQueryString.StartsWith("/"))
-									urlWithoutQueryString = urlWithoutQueryString.Substring(1);
-								if (urlWithoutQueryString.EndsWith("/"))
-									urlWithoutQueryString = urlWithoutQueryString.Substring(0, urlWithoutQueryString.Length - 1);
-
-								break;
-							}
-						}
-
-						previousFullRawUrlTest = fullRawUrlTest;
-						fullRawUrlTest = fullRawUrlTest.Substring(0, fullRawUrlTest.Length - 1);
-					} while (fullRawUrlTest.Length > 0);
-				}
-
-				if (rootNodeId == -1)
-				{
-					if (Current.UmbracoContext == null)
-						return;
-
+				if (domain != null)
+					rootNodeId = domain.NodeId;
+				else if(Current.UmbracoContext != null)
 					rootNodeId = Current.UmbracoContext.Content.GetAtRoot().FirstOrDefault()?.Root()?.Id ?? -1;
-				}
-				else
-				{
-					var rootUrl = "/";
 
-					try
-					{
-						rootUrl = _urlTrackerService.GetUrlByNodeId(rootNodeId, domain.LanguageIsoCode);
-					}
-					catch (ArgumentNullException)
-					{
-						// could not get full url for path, so we keep / as the root... (no other way to check, happens for favicon.ico for example)
-					}
-
-					var rootFolder = rootUrl != @"/"
-						? new Uri(HttpContext.Current.Request.Url, rootUrl).AbsolutePath.TrimStart('/')
-						: string.Empty;
-
-					if (shortestUrl.StartsWith(rootFolder, StringComparison.OrdinalIgnoreCase))
-						shortestUrl = shortestUrl.Substring(rootFolder.Length);
-				}
-
-				_urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Current request's rootNodeId: {0}",
-					rootNodeId);
+				_urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Current request's rootNodeId: {0}", rootNodeId);
 
 				string redirectUrl = null;
 				int? redirectHttpCode = null;
@@ -344,18 +291,18 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 
 						if (redirectPassThroughQueryString)
 						{
-							NameValueCollection redirectQueryString =
-								HttpUtility.ParseQueryString(redirectUri.Query);
+							NameValueCollection redirectQueryString = HttpUtility.ParseQueryString(redirectUri.Query);
 							NameValueCollection newQueryString = HttpUtility.ParseQueryString(request.Url.Query);
 
 							if (redirectQueryString.HasKeys())
 								newQueryString = newQueryString.Merge(redirectQueryString);
 
-							string pathAndQuery =
-								Uri.UnescapeDataString(redirectUri.PathAndQuery) + redirectUri.Fragment;
-
-							redirectUri = new Uri(string.Format("{0}{1}{2}{3}/{4}{5}", redirectUri.Scheme,
-								Uri.SchemeDelimiter, redirectUri.Host,
+							string pathAndQuery = Uri.UnescapeDataString(redirectUri.PathAndQuery) + redirectUri.Fragment;
+							
+							redirectUri = new Uri(string.Format("{0}{1}{2}{3}/{4}{5}",
+								redirectUri.Scheme,
+								Uri.SchemeDelimiter,
+								redirectUri.Host,
 								redirectUri.Port != 80 && _urlTrackerSettings.AppendPortNumber()
 									? string.Concat(":", redirectUri.Port)
 									: string.Empty,
@@ -472,12 +419,12 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 		void LoadUrlTrackerMatchesFromDatabase(HttpRequest request, UrlTrackerDomain domain, string shortestUrl, string urlWithoutQueryString, bool urlHasQueryString, int rootNodeId, ref string redirectUrl, ref int? redirectHttpCode, ref bool redirectPassThroughQueryString)
 		{
 			var result = _urlTrackerRepository.FirstOrDefault<UrlTrackerModel>(
-				"SELECT * FROM icUrlTracker WHERE Is404 = 0 AND ForceRedirect = 0 AND (Culture = @culture OR Culture IS NULL) AND (RedirectRootNodeId = @redirectRootNodeId OR RedirectRootNodeId IS NULL OR RedirectRootNodeId = -1) AND (OldUrl = @url OR OldUrl = @shortestUrl) ORDER BY CASE WHEN RedirectHttpCode = 410 THEN 2 ELSE 1 END",
+				"SELECT * FROM icUrlTracker WHERE Is404 = 0 AND ForceRedirect = 0 AND (Culture = @culture OR Culture IS NULL) AND (RedirectRootNodeId = @redirectRootNodeId OR RedirectRootNodeId IS NULL OR RedirectRootNodeId = -1) AND (OldUrl = @urlWithoutQueryString OR OldUrl = @urlWithQueryString) ORDER BY CASE WHEN RedirectHttpCode = 410 THEN 2 ELSE 1 END",
 				new
 				{
 					redirectRootNodeId = rootNodeId,
-					url = urlWithoutQueryString,
-					shortestUrl = shortestUrl,
+					urlWithoutQueryString = urlWithoutQueryString,
+					urlWithQueryString = shortestUrl,
 					culture = domain?.LanguageIsoCode.ToLower() ?? ""
 				});
 

@@ -123,6 +123,12 @@
 
 		vm.nodes = null;
 
+		$scope.$watch('vm.languages', function (e) {
+			if (!vm.languages.find(x => x.IsoCode == vm.entry.Culture)) {
+				vm.entry.Culture = null;
+			}
+		});
+
 		$scope.$watch('vm.entry.RedirectRootNodeId', function (e) {
 			if (vm.entry.RedirectRootNodeId == -1)
 				return;

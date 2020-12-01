@@ -76,8 +76,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			if (oldUrl == "#" || newContent.TemplateId <= 0)
 				return false;
 
+			var urlWithoutDomain = "";
+			var domain = GetUmbracoDomainFromUrl(oldUrl, ref urlWithoutDomain);
 			var rootNodeId = oldContent.Root().Id;
-			var shortestOldUrl = _urlTrackerHelper.ResolveShortestUrl(oldUrl);
+			var shortestOldUrl = _urlTrackerHelper.ResolveShortestUrl(urlWithoutDomain);
 
 			if (shortestOldUrl == "/" || string.IsNullOrEmpty(shortestOldUrl) || _urlTrackerRepository.RedirectExist(newContent.Id, shortestOldUrl, culture))
 				return false;
@@ -135,6 +137,63 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 					Is404 = true
 				}
 			);
+		}
+
+		public UrlTrackerDomain GetUmbracoDomainFromUrl(string url, ref string urlWithoutDomain)
+		{
+			var domains = GetDomains();
+
+			if (domains.Any())
+			{
+				var urlWithoutQuery = (url.Contains("?") ? url.Substring(0, url.IndexOf('?')) : url);
+				urlWithoutQuery += !urlWithoutQuery.EndsWith("/") ? "/" : "";
+
+				while (!string.IsNullOrEmpty(urlWithoutQuery))
+				{
+					if (urlWithoutQuery.EndsWith("/"))
+					{
+						var domain = domains.FirstOrDefault(x =>
+							x.UrlWithDomain == urlWithoutQuery ||
+							x.UrlWithDomain == urlWithoutQuery.TrimEnd('/') ||
+							x.UrlWithDomain == urlWithoutQuery.Replace("http", "https") ||
+							x.UrlWithDomain == urlWithoutQuery.Replace("https", "http")
+						);
+
+						if (domain != null)
+						{
+							urlWithoutDomain = url.Replace(domain.UrlWithDomain.Replace("http://", "https://"), "").Replace(domain.UrlWithDomain.Replace("https://", "http://"), "");
+							return domain;
+						}
+					}
+
+					urlWithoutQuery = urlWithoutQuery.Substring(0, urlWithoutQuery.Length - 1);
+				}
+				//do
+				//{
+				//	if (previousFullRawUrlTest.EndsWith("/"))
+				//	{
+				//		domain = domains.FirstOrDefault(x => (x.UrlWithDomain == fullRawUrlTest) || (x.UrlWithDomain == fullRawUrlTest + "/"));
+
+				//		if (domain != null)
+				//		{
+				//			rootNodeId = domain.NodeId;
+				//			urlWithoutQueryString = fullRawUrl.Replace(fullRawUrlTest, string.Empty);
+
+				//			if (urlWithoutQueryString.StartsWith("/"))
+				//				urlWithoutQueryString = urlWithoutQueryString.Substring(1);
+				//			if (urlWithoutQueryString.EndsWith("/"))
+				//				urlWithoutQueryString = urlWithoutQueryString.Substring(0, urlWithoutQueryString.Length - 1);
+
+				//			break;
+				//		}
+				//	}
+
+				//	previousFullRawUrlTest = fullRawUrlTest;
+				//	fullRawUrlTest = fullRawUrlTest.Substring(0, fullRawUrlTest.Length - 1);
+				//} while (urlWithoutQueryString.Length > 0);
+			}
+
+			return null;
 		}
 
 		#endregion
@@ -231,14 +290,28 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			var domains = _domainService.GetAssignedDomains(nodeId, _urlTrackerSettings.HasDomainOnChildNode());
 
 			foreach (var domain in domains)
-				availableLanguages.Add(languages.Where(x => x.IsoCode == domain.LanguageIsoCode).Select(x => new UrlTrackerLanguage
+			{
+				if (!availableLanguages.Any(x => x.IsoCode == domain.LanguageIsoCode.ToLower()))
 				{
-					Id = x.Id,
-					IsoCode = x.IsoCode.ToLower(),
-					CultureName = x.CultureName
-				}).First());
+					availableLanguages.Add(languages.Where(x => x.IsoCode == domain.LanguageIsoCode)
+						.Select(x => new UrlTrackerLanguage
+						{
+							Id = x.Id,
+							IsoCode = x.IsoCode.ToLower(),
+							CultureName = x.CultureName
+						}).First());
+				}
+			}
 
 			return availableLanguages;
+		}
+
+		public int CountNotFoundsThisWeek()
+		{
+			var startDate = DateTime.Now.Date.AddDays(-((int)DateTime.Now.DayOfWeek - 1));
+			var endDate = DateTime.Now;
+
+			return _urlTrackerRepository.CountNotFoundsBetweenDates(startDate, endDate);
 		}
 
 		#endregion
@@ -285,7 +358,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			if (is404)
 			{
 				var entry = _urlTrackerRepository.GetEntryById(id);
-				_urlTrackerRepository.DeleteNotFounds(entry.OldUrl, entry.RedirectRootNodeId);
+
+				if(entry != null)
+					_urlTrackerRepository.DeleteNotFounds(entry.OldUrl, entry.RedirectRootNodeId);
 			}
 			else
 			{

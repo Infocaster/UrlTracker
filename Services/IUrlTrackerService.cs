@@ -27,6 +27,8 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		IPublishedContent GetNodeById(int nodeId);
 		bool RedirectExist(int redirectNodeId, string oldUrl, string culture = "");
 		IEnumerable<UrlTrackerLanguage> GetLanguagesOutNodeDomains(int nodeId);
+		int CountNotFoundsThisWeek();
+		UrlTrackerDomain GetUmbracoDomainFromUrl(string url, ref string urlWithoutDomain);
 		#endregion
 
 		#region Update

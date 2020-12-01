@@ -112,6 +112,12 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 			return Ok(model);
 		}
 
+		[HttpGet]
+		public IHttpActionResult CountNotFoundsThisWeek()
+		{
+			return Ok(_urlTrackerService.CountNotFoundsThisWeek());
+		}
+
 		#endregion
 	}
 }

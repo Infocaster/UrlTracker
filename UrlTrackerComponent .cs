@@ -152,7 +152,7 @@ namespace InfoCaster.Umbraco.UrlTracker
 			}
 		}
 
-		void ContentService_Published(IContentService sender, ContentPublishedEventArgs e) //Uitwerken
+		void ContentService_Published(IContentService sender, ContentPublishedEventArgs e)
 		{
 			foreach (IContent content in e.PublishedEntities)
 			{

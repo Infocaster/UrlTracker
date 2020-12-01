@@ -3,7 +3,6 @@
     angular.module("umbraco").factory("urlTrackerEntryService", ["$http", "$log", function ($http, $log) {
         var addRedirect = function (scope, entry) {
 	        entry.is404 = false;
-            console.log(entry);
 		    return $http({
 			    url: "/umbraco/BackOffice/api/UrlTrackerManager/AddRedirect",
 			    method: "POST",
@@ -57,7 +56,6 @@
 			        amount: amount
 		        }
             }).then(function (response) {
-                console.log(response.data.NumberOfEntries);
 		        scope.items = response.data.Entries;
 		        scope.numberOfItems = response.data.NumberOfEntries;
                 scope.pagination.totalPages = (response.data.NumberOfEntries / amount);
@@ -175,7 +173,18 @@
 	        }).catch(function (response) {
 		        $log.log(response);
 	        });
-        }
+		}
+
+		var countNotFoundsThisWeek = function(scope) {
+			return $http({
+				url: "/umbraco/BackOffice/api/UrlTrackerManager/CountNotFoundsThisWeek",
+				method: "GET",
+			}).then(function (response) {
+				scope.notFoundsThisWeek = response.data;
+			}).catch(function (response) {
+				$log.log(response);
+			});
+		}
 
         var UrlTrackerEntryService = {
             getRedirects: getRedirects,
@@ -185,7 +194,8 @@
             addRedirect: addRedirect,
             getRedirectsByFilters: getRedirectsByFilters,
 			getNotFoundsByFilters: getNotFoundsByFilters,
-            getLanguagesOutNodeDomains: getLanguagesOutNodeDomains
+			getLanguagesOutNodeDomains: getLanguagesOutNodeDomains,
+			countNotFoundsThisWeek: countNotFoundsThisWeek
 		};
 
         return UrlTrackerEntryService;

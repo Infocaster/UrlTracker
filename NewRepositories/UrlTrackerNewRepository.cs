@@ -188,6 +188,18 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 			}
 		}
 
+		public int CountNotFoundsBetweenDates(DateTime start, DateTime end)
+		{
+			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+			{
+				return scope.Database.ExecuteScalar<int>("SELECT COUNT(*) FROM (SELECT OldUrl FROM icUrlTracker WHERE Is404 = 1 AND Inserted BETWEEN @start AND @end GROUP BY Culture, OldUrl, RedirectRootNodeId, Is404) result", new
+				{
+					start = start,
+					end = end
+				});
+			}
+		}
+
 		#endregion
 
 		#region Update

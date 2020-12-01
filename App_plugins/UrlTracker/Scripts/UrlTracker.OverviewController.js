@@ -5,7 +5,7 @@
 		var vm = this;
 
 		vm.dashboard = {
-			notFoundsThisWeek: 0,
+			notFoundsThisWeek: null,
 			notFounds: {
 				loading: false,
 				items: [] //top 10
@@ -135,6 +135,7 @@
 		function UpdateDashboard() {
 			urlTrackerEntryService.getRedirectsByFilters(vm.dashboard.redirects, 0, 10, "", "CreatedDesc");
 			urlTrackerEntryService.getNotFoundsByFilters(vm.dashboard.notFounds, 0, 10, "", "OccurrencesDesc");
+			urlTrackerEntryService.countNotFoundsThisWeek(vm.dashboard);
 		}
 
 		vm.entryDetailsOverlay = {

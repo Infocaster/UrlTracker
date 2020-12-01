@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using InfoCaster.Umbraco.UrlTracker.Models;
 using Lucene.Net.Search;
 using Umbraco.Core.Models;
@@ -21,6 +22,7 @@ namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
 		UrlTrackerGetResult GetRedirects(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.CreatedDesc, string searchQuery = "", bool onlyForcedRedirects = false);
 		UrlTrackerGetResult GetNotFounds(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.LastOccurrenceDesc, string searchQuery = "");
 		bool RedirectExist(int redirectNodeId, string oldUrl, string culture = "");
+		int CountNotFoundsBetweenDates(DateTime start, DateTime end);
 
 		#endregion
 
