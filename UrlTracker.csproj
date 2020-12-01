@@ -286,32 +286,32 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\UrlTrackerManagerController.cs" />
-    <Compile Include="Helpers\UrlTrackerNewHelper.cs" />
-    <Compile Include="Helpers\IUrlTrackerNewHelper.cs" />
-    <Compile Include="Helpers\IUrlTrackerNewLoggingHelper.cs" />
-    <Compile Include="Helpers\UrlTrackerNewLoggingHelper.cs" />
+    <Compile Include="Helpers\UrlTrackerHelper.cs" />
+    <Compile Include="Helpers\IUrlTrackerHelper.cs" />
+    <Compile Include="Helpers\IUrlTrackerLoggingHelper.cs" />
+    <Compile Include="Helpers\UrlTrackerLoggingHelper.cs" />
     <Compile Include="Models\UrlTrackerGetResult.cs" />
     <Compile Include="Models\UrlTrackerLanguage.cs" />
     <Compile Include="Services\IUrlTrackerCacheService.cs" />
     <Compile Include="Services\UrlTrackerService.cs" />
     <Compile Include="Services\IUrlTrackerService.cs" />
     <Compile Include="Services\UrlTrackerCacheService.cs" />
-    <Compile Include="Settings\IUrlTrackerNewSettings.cs" />
+    <Compile Include="Settings\IUrlTrackerSettings.cs" />
     <Compile Include="UrlTrackerEnums.cs" />
     <Compile Include="Exceptions\DashboardAlreadyInstalledException.cs" />
     <Compile Include="Helpers\ContextHelper.cs" />
     <Compile Include="Models\UrlTrackerSchema.cs" />
-    <Compile Include="NewRepositories\UrlTrackerNewRepository.cs" />
+    <Compile Include="Repositories\UrlTrackerRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\EmbeddedResourcesVirtualPathProvider.cs" />
     <Compile Include="Models\UrlTrackerDomain.cs" />
     <Compile Include="Extensions\NameValueCollectionExtension.cs" />
     <Compile Include="Models\UrlTrackerModel.cs" />
     <Compile Include="Modules\UrlTrackerModule.cs" />
-    <Compile Include="NewRepositories\IUrlTrackerNewRepository.cs" />
+    <Compile Include="Repositories\IUrlTrackerRepository.cs" />
     <Compile Include="UrlTrackerComponent .cs" />
     <Compile Include="UrlTrackerPreApplicationStart.cs" />
-    <Compile Include="Settings\UrlTrackerNewSettings.cs" />
+    <Compile Include="Settings\UrlTrackerSettings.cs" />
     <Compile Include="ViewModels\UrlTrackerOverviewModel.cs" />
   </ItemGroup>
   <ItemGroup>

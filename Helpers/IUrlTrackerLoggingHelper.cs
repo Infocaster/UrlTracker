@@ -2,7 +2,7 @@
 
 namespace InfoCaster.Umbraco.UrlTracker.Helpers
 {
-	public interface IUrlTrackerNewLoggingHelper
+	public interface IUrlTrackerLoggingHelper
 	{
 		void LogException(Exception ex);
 		void LogInformation(string message, params object[] args);

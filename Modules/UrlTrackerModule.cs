@@ -1,21 +1,18 @@
 ﻿using InfoCaster.Umbraco.UrlTracker.Extensions;
 using InfoCaster.Umbraco.UrlTracker.Helpers;
 using InfoCaster.Umbraco.UrlTracker.Models;
+using InfoCaster.Umbraco.UrlTracker.Repositories;
+using InfoCaster.Umbraco.UrlTracker.Services;
+using InfoCaster.Umbraco.UrlTracker.Settings;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
-using InfoCaster.Umbraco.UrlTracker.NewRepositories;
-using InfoCaster.Umbraco.UrlTracker.Services;
-using InfoCaster.Umbraco.UrlTracker.Settings;
 using Umbraco.Core;
-using Umbraco.Core.Models.PublishedContent;
-using Umbraco.Core.Scoping;
 using Umbraco.Web;
 using Umbraco.Web.Composing;
 using Umbraco.Web.Routing;
@@ -24,11 +21,11 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 {
 	public class UrlTrackerModule : IHttpModule
 	{
-		private IUrlTrackerNewHelper _urlTrackerHelper => DependencyResolver.Current.GetService<IUrlTrackerNewHelper>();
+		private IUrlTrackerHelper _urlTrackerHelper => DependencyResolver.Current.GetService<IUrlTrackerHelper>();
 		private IUrlTrackerService _urlTrackerService => DependencyResolver.Current.GetService<IUrlTrackerService>();
-		private IUrlTrackerNewSettings _urlTrackerSettings => DependencyResolver.Current.GetService<IUrlTrackerNewSettings>();
-		private IUrlTrackerNewRepository _urlTrackerRepository => DependencyResolver.Current.GetService<IUrlTrackerNewRepository>();
-		private IUrlTrackerNewLoggingHelper _urlTrackerLoggingHelper => DependencyResolver.Current.GetService<IUrlTrackerNewLoggingHelper>();
+		private IUrlTrackerSettings _urlTrackerSettings => DependencyResolver.Current.GetService<IUrlTrackerSettings>();
+		private IUrlTrackerRepository _urlTrackerRepository => DependencyResolver.Current.GetService<IUrlTrackerRepository>();
+		private IUrlTrackerLoggingHelper _urlTrackerLoggingHelper => DependencyResolver.Current.GetService<IUrlTrackerLoggingHelper>();
 
 		static Regex _capturingGroupsRegex = new Regex("\\$\\d+");
 		static bool _urlTrackerInstalled;

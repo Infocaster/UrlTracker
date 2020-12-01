@@ -6,7 +6,7 @@ using umbraco;
 
 namespace InfoCaster.Umbraco.UrlTracker.Settings
 {
-	public class UrlTrackerNewSettings : IUrlTrackerNewSettings
+	public class UrlTrackerSettings : IUrlTrackerSettings
 	{
 		private string TableName => "icUrlTracker";
 		private string OldTableName => "infocaster301";

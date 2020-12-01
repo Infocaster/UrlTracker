@@ -1,34 +1,23 @@
-﻿using InfoCaster.Umbraco.UrlTracker.Extensions;
-using InfoCaster.Umbraco.UrlTracker.Helpers;
+﻿using InfoCaster.Umbraco.UrlTracker.Helpers;
+using InfoCaster.Umbraco.UrlTracker.Services;
+using InfoCaster.Umbraco.UrlTracker.Settings;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using InfoCaster.Umbraco.UrlTracker.Services;
-using InfoCaster.Umbraco.UrlTracker.Settings;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Web;
-using Umbraco.Web.Composing;
 
 namespace InfoCaster.Umbraco.UrlTracker.Models
 {
-	public enum UrlTrackerViewTypes
-	{
-		Custom,
-		Auto,
-		NotFound
-	}
-
 	[DebuggerDisplay("OUrl = {OldUrl} | Rgx = {OldRegex} | Qs = {OldUrlQuery} | Root = {RedirectRootNodeId}")]
 	public class UrlTrackerModel
 	{
-		private IUrlTrackerNewHelper _urlTrackerHelper => DependencyResolver.Current.GetService<IUrlTrackerNewHelper>();
+		private IUrlTrackerHelper _urlTrackerHelper => DependencyResolver.Current.GetService<IUrlTrackerHelper>();
 		private IUrlTrackerService _urlTrackerService => DependencyResolver.Current.GetService<IUrlTrackerService>();
-		private IUrlTrackerNewSettings _urlTrackerSettings => DependencyResolver.Current.GetService<IUrlTrackerNewSettings>();
+		private IUrlTrackerSettings _urlTrackerSettings => DependencyResolver.Current.GetService<IUrlTrackerSettings>();
 
 		private Lazy<string> _calculatedOldUrl => new Lazy<string>(() =>
 		{

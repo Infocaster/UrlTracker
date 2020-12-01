@@ -1,11 +1,10 @@
-﻿using System;
-using NPoco;
+﻿using NPoco;
+using System;
 using Umbraco.Core.Persistence.DatabaseAnnotations;
-using System.ComponentModel;
 
 namespace InfoCaster.Umbraco.UrlTracker.Models
 {
-    [TableName("icUrlTracker")]
+	[TableName("icUrlTracker")]
     [PrimaryKey("Id", AutoIncrement = true)]
     [ExplicitColumns]
     public class UrlTrackerSchema

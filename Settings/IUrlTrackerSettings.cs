@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace InfoCaster.Umbraco.UrlTracker.Settings
 {
-	public interface IUrlTrackerNewSettings
+	public interface IUrlTrackerSettings
 	{
 		string GetTableName();
 		string GetOldTableName();

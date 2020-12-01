@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using InfoCaster.Umbraco.UrlTracker.Models;
-using Lucene.Net.Search;
-using Umbraco.Core.Models;
-using Umbraco.Core.Models.PublishedContent;
 
-namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
+namespace InfoCaster.Umbraco.UrlTracker.Repositories
 {
-	public interface IUrlTrackerNewRepository
+	public interface IUrlTrackerRepository
 	{
 		#region Add
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace InfoCaster.Umbraco.UrlTracker.Models
+﻿namespace InfoCaster.Umbraco.UrlTracker.Models
 {
 	public class UrlTrackerLanguage
 	{

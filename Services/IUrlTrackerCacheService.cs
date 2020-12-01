@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using InfoCaster.Umbraco.UrlTracker.Models;
 
 namespace InfoCaster.Umbraco.UrlTracker.Services
 {

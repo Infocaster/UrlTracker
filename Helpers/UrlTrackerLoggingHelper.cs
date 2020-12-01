@@ -4,14 +4,14 @@ using Umbraco.Core.Logging;
 
 namespace InfoCaster.Umbraco.UrlTracker.Helpers
 {
-	public class UrlTrackerNewLoggingHelper : IUrlTrackerNewLoggingHelper
+	public class UrlTrackerLoggingHelper : IUrlTrackerLoggingHelper
 	{
 		private readonly ILogger _logger;
-		private readonly IUrlTrackerNewSettings _urlTrackerSettings;
+		private readonly IUrlTrackerSettings _urlTrackerSettings;
 
-		public UrlTrackerNewLoggingHelper(
+		public UrlTrackerLoggingHelper(
 			ILogger logger,
-			IUrlTrackerNewSettings urlTrackerSettings)
+			IUrlTrackerSettings urlTrackerSettings)
 		{
 			_logger = logger;
 			_urlTrackerSettings = urlTrackerSettings;

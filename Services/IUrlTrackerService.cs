@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using InfoCaster.Umbraco.UrlTracker.Models;
+﻿using InfoCaster.Umbraco.UrlTracker.Models;
+using System.Collections.Generic;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 

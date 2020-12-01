@@ -1,30 +1,20 @@
-﻿using System;
+﻿using InfoCaster.Umbraco.UrlTracker.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using InfoCaster.Umbraco.UrlTracker.Models;
-using InfoCaster.Umbraco.UrlTracker.Services;
-using InfoCaster.Umbraco.UrlTracker.Settings;
-using Lucene.Net.Util;
 using Umbraco.Core.Configuration;
 using Umbraco.Core.IO;
-using Umbraco.Core.Models;
-using Umbraco.Core.Models.PublishedContent;
-using Umbraco.Core.Services;
-using Umbraco.Web;
 
 namespace InfoCaster.Umbraco.UrlTracker.Helpers
 {
-	public class UrlTrackerNewHelper : IUrlTrackerNewHelper
+	public class UrlTrackerHelper : IUrlTrackerHelper
 	{
 		private readonly IUrlTrackerCacheService _urlTrackerCacheService;
 		private readonly IGlobalSettings _globalSettings;
 
 		private readonly string _reservedListCacheKey = "UrlTrackerReservedList";
 
-		public UrlTrackerNewHelper(IUrlTrackerCacheService urlTrackerCacheService, IGlobalSettings globalSettings)
+		public UrlTrackerHelper(IUrlTrackerCacheService urlTrackerCacheService, IGlobalSettings globalSettings)
 		{
 			_urlTrackerCacheService = urlTrackerCacheService;
 			_globalSettings = globalSettings;

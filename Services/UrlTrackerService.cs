@@ -1,18 +1,14 @@
-﻿using System;
+﻿using InfoCaster.Umbraco.UrlTracker.Helpers;
+using InfoCaster.Umbraco.UrlTracker.Models;
+using InfoCaster.Umbraco.UrlTracker.Settings;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using InfoCaster.Umbraco.UrlTracker.Helpers;
-using InfoCaster.Umbraco.UrlTracker.Models;
-using InfoCaster.Umbraco.UrlTracker.NewRepositories;
-using InfoCaster.Umbraco.UrlTracker.Settings;
-using Lucene.Net.Util;
-using Umbraco.Core.Configuration;
+using InfoCaster.Umbraco.UrlTracker.Repositories;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.Services;
 using Umbraco.Web;
-using Umbraco.Web.Security;
 
 namespace InfoCaster.Umbraco.UrlTracker.Services
 {
@@ -20,10 +16,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 	{
 		private readonly IUmbracoContextFactory _umbracoContextFactory;
 		private readonly IUrlTrackerCacheService _urlTrackerCacheService;
-		private readonly IUrlTrackerNewSettings _urlTrackerSettings;
-		private readonly IUrlTrackerNewHelper _urlTrackerHelper;
-		private readonly IUrlTrackerNewRepository _urlTrackerRepository;
-		private readonly IUrlTrackerNewLoggingHelper _urlTrackerLoggingHelper;
+		private readonly IUrlTrackerSettings _urlTrackerSettings;
+		private readonly IUrlTrackerHelper _urlTrackerHelper;
+		private readonly IUrlTrackerRepository _urlTrackerRepository;
+		private readonly IUrlTrackerLoggingHelper _urlTrackerLoggingHelper;
 		private readonly IContentService _contentService;
 		private readonly IDomainService _domainService;
 		private readonly ILocalizationService _localizationService;
@@ -34,11 +30,11 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		public UrlTrackerService(
 			IUmbracoContextFactory umbracoContextFactory,
 			IUrlTrackerCacheService urlTrackerCacheService,
-			IUrlTrackerNewSettings urlTrackerSettings,
+			IUrlTrackerSettings urlTrackerSettings,
 			IDomainService domainService,
-			IUrlTrackerNewHelper urlTrackerHelper,
-			IUrlTrackerNewRepository urlTrackerRepository,
-			IUrlTrackerNewLoggingHelper urlTrackerLoggingHelper,
+			IUrlTrackerHelper urlTrackerHelper,
+			IUrlTrackerRepository urlTrackerRepository,
+			IUrlTrackerLoggingHelper urlTrackerLoggingHelper,
 			IContentService contentService,
 			ILocalizationService localizationService)
 		{

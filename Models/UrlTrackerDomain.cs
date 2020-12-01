@@ -10,7 +10,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
 	public class UrlTrackerDomain
 	{
 		private IUrlTrackerService _urlTrackerService => DependencyResolver.Current.GetService<IUrlTrackerService>();
-		private IUrlTrackerNewSettings _urlTrackerSettings => DependencyResolver.Current.GetService<IUrlTrackerNewSettings>();
+		private IUrlTrackerSettings _urlTrackerSettings => DependencyResolver.Current.GetService<IUrlTrackerSettings>();
 
 		private Lazy<IPublishedContent> _node => new Lazy<IPublishedContent>(() =>
 		{

@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using InfoCaster.Umbraco.UrlTracker.Models;
-using InfoCaster.Umbraco.UrlTracker.NewRepositories;
 using Umbraco.Core.Cache;
-using Umbraco.Core.Scoping;
 
 namespace InfoCaster.Umbraco.UrlTracker.Services
 {

@@ -1,33 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using InfoCaster.Umbraco.UrlTracker.Extensions;
 using InfoCaster.Umbraco.UrlTracker.Helpers;
 using InfoCaster.Umbraco.UrlTracker.Models;
 using InfoCaster.Umbraco.UrlTracker.Services;
 using InfoCaster.Umbraco.UrlTracker.Settings;
-using Umbraco.Core.Cache;
-using Umbraco.Core.Models;
 using Umbraco.Core.Scoping;
-using Umbraco.Web;
 
-namespace InfoCaster.Umbraco.UrlTracker.NewRepositories
+namespace InfoCaster.Umbraco.UrlTracker.Repositories
 {
-	public class UrlTrackerNewRepository : IUrlTrackerNewRepository
+	public class UrlTrackerRepository : IUrlTrackerRepository
 	{
 		private readonly IScopeProvider _scopeProvider;
 		private readonly IUrlTrackerCacheService _urlTrackerCacheService;
-		private readonly IUrlTrackerNewSettings _urlTrackerSettings;
-		private readonly IUrlTrackerNewLoggingHelper _urlTrackerLoggingHelper;
+		private readonly IUrlTrackerSettings _urlTrackerSettings;
+		private readonly IUrlTrackerLoggingHelper _urlTrackerLoggingHelper;
 
 		private readonly string _forcedRedirectsCacheKey = "UrlTrackerForcedRedirects";
 
-		public UrlTrackerNewRepository(
+		public UrlTrackerRepository(
 			IScopeProvider scopeProvider,
 			IUrlTrackerCacheService urlTrackerCacheService,
-			IUrlTrackerNewSettings urlTrackerSettings,
-			IUrlTrackerNewLoggingHelper urlTrackerLoggingHelper
+			IUrlTrackerSettings urlTrackerSettings,
+			IUrlTrackerLoggingHelper urlTrackerLoggingHelper
 			)
 		{
 			_scopeProvider = scopeProvider;

@@ -1,10 +1,7 @@
-﻿using System;
-using InfoCaster.Umbraco.UrlTracker.Models;
-using InfoCaster.Umbraco.UrlTracker.ViewModels;
-using System.Linq;
-using System.Web.Http;
-using InfoCaster.Umbraco.UrlTracker.NewRepositories;
+﻿using InfoCaster.Umbraco.UrlTracker.Models;
 using InfoCaster.Umbraco.UrlTracker.Services;
+using InfoCaster.Umbraco.UrlTracker.ViewModels;
+using System.Web.Http;
 using Umbraco.Web.WebApi;
 
 namespace InfoCaster.Umbraco.UrlTracker.Controllers

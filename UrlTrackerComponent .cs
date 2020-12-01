@@ -1,10 +1,10 @@
 ﻿using InfoCaster.Umbraco.UrlTracker.Extensions;
 using InfoCaster.Umbraco.UrlTracker.Models;
-using InfoCaster.Umbraco.UrlTracker.NewRepositories;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using InfoCaster.Umbraco.UrlTracker.Helpers;
+using InfoCaster.Umbraco.UrlTracker.Repositories;
 using InfoCaster.Umbraco.UrlTracker.Services;
 using InfoCaster.Umbraco.UrlTracker.Settings;
 using Umbraco.Core;
@@ -30,13 +30,13 @@ namespace InfoCaster.Umbraco.UrlTracker
 		{
 			composition.Components().Append<UrlTrackerComponent>();
 
-			composition.Register<IUrlTrackerNewHelper, UrlTrackerNewHelper>();
-			composition.Register<IUrlTrackerNewLoggingHelper, UrlTrackerNewLoggingHelper>();
-			composition.Register<IUrlTrackerNewRepository, UrlTrackerNewRepository>();
+			composition.Register<IUrlTrackerHelper, UrlTrackerHelper>();
+			composition.Register<IUrlTrackerLoggingHelper, UrlTrackerLoggingHelper>();
+			composition.Register<IUrlTrackerRepository, UrlTrackerRepository>();
 			composition.Register<IUrlTrackerCacheService, UrlTrackerCacheService>();
 			composition.Register<IUrlTrackerService, UrlTrackerService>();
 
-			composition.Register<IUrlTrackerNewSettings, UrlTrackerNewSettings>(Lifetime.Singleton);
+			composition.Register<IUrlTrackerSettings, UrlTrackerSettings>(Lifetime.Singleton);
 		}
 	}
 
@@ -47,10 +47,10 @@ namespace InfoCaster.Umbraco.UrlTracker
 		private readonly IKeyValueService _keyValueService;
 		private readonly ILogger _logger;
 		private readonly IUrlTrackerService _urlTrackerService;
-		private readonly IUrlTrackerNewSettings _urlTrackerSettings;
+		private readonly IUrlTrackerSettings _urlTrackerSettings;
 
 		public UrlTrackerComponent(
-			IUrlTrackerNewSettings urlTrackerSettings,
+			IUrlTrackerSettings urlTrackerSettings,
 			IUrlTrackerService urlTrackerService,
 			IScopeProvider scopeProvider,
 			IMigrationBuilder migrationBuilder,
