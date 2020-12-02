@@ -45,6 +45,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 		[HttpPost]
 		public IHttpActionResult AddRedirect([FromBody] UrlTrackerModel model)
 		{
+			if (!ValidateRedirect(model))
+				return BadRequest("Not all fields are filled in correctly");
+
 			_urlTrackerService.AddRedirect(model);
 			return Ok();
 		}
@@ -116,5 +119,16 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 		}
 
 		#endregion
+
+		private bool ValidateRedirect(UrlTrackerModel model)
+		{
+			if ((string.IsNullOrEmpty(model.OldUrl) && string.IsNullOrEmpty(model.OldRegex)) ||
+				(model.RedirectRootNodeId == 0 || model.RedirectRootNodeId == null) ||
+				((model.RedirectNodeId == null || model.RedirectNodeId == 0) && string.IsNullOrEmpty(model.RedirectUrl)) ||
+				(model.RedirectHttpCode != 301 && model.RedirectHttpCode != 302))
+				return false;
+
+			return true;
+		}
 	}
 }

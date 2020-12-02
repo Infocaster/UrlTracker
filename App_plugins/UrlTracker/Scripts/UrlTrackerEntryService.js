@@ -7,12 +7,13 @@
 			    url: "/umbraco/BackOffice/api/UrlTrackerManager/AddRedirect",
 			    method: "POST",
 			    data: entry
-		    }).then(function () {
+			}).then(function () {
 			    if (scope.getItems != undefined) {
 				    scope.getItems();
 			    }
-		    }).catch(function (data) {
-			    $log.log(data);
+			}).catch(function (data) {
+				$log.log(data);
+				throw data.data.Message;
 		    });
 	    }
 
@@ -157,7 +158,7 @@
             }).then(function (data) {
                 return data;
             }).catch(function (data) {
-                $log.log(data)
+				$log.log(data);
             });
         }
 

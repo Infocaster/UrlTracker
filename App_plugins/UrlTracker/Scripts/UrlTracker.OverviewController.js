@@ -161,6 +161,8 @@
 					GetRedirects(vm.redirects);
 					GetNotFounds(vm.notFounds);
 					UpdateDashboard();
+				}).catch(function (message) {
+					notificationsService.error("Error", `An error occurred: ${message}`);
 				});
 			},
 			close: function (oldModel) {

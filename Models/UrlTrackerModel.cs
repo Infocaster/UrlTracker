@@ -74,6 +74,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
 		});
 		private Lazy<string> _redirectRootNodeName => new Lazy<string>(() =>
 		{
+			if (RedirectNode == null)
+				return "";
+
 			if (_urlTrackerSettings.HasDomainOnChildNode())
 				return RedirectRootNode.Parent == null
 					? RedirectRootNode.Name
