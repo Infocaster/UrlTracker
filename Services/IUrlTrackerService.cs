@@ -36,7 +36,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		void UpdateEntry(UrlTrackerModel entry);
 		void Convert410To301ByNodeId(int nodeId);
 		void ClearDomains();
-		List<UrlTrackerModel> ReloadForcedRedirectsCache();
+		void ClearForcedRedirectsCache();
 
 		#endregion
 

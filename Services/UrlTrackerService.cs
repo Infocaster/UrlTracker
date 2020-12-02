@@ -59,6 +59,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 				entry.Is404 = false;
 			}
 
+			if (entry.ForceRedirect)
+				ClearForcedRedirectsCache();
+
 			entry.OldUrl = _urlTrackerHelper.ResolveShortestUrl(entry.OldUrl);
 			entry.RedirectUrl = _urlTrackerHelper.ResolveShortestUrl(entry.RedirectUrl);
 
@@ -113,6 +116,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			};
 
 			_urlTrackerRepository.AddEntry(entry);
+
+			if (entry.ForceRedirect)
+				ClearForcedRedirectsCache();
 
 			//Werkt dit met verschillende cultures?
 			foreach (var child in oldContent.Children)
@@ -204,7 +210,17 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			var cachedForcedRedirects = _urlTrackerCacheService.Get<List<UrlTrackerModel>>(_forcedRedirectsCacheKey);
 
 			if (cachedForcedRedirects == null)
-				return ReloadForcedRedirectsCache();
+			{
+				var forcedRedirects = _urlTrackerRepository.GetRedirects(null, null, onlyForcedRedirects: true).Records;
+
+				_urlTrackerCacheService.Set(
+					_forcedRedirectsCacheKey,
+					forcedRedirects,
+					_urlTrackerSettings.IsForcedRedirectCacheTimeoutEnabled() ? _urlTrackerSettings.GetForcedRedirectCacheTimeoutSeconds() : (TimeSpan?)null
+				);
+
+				return forcedRedirects;
+			}
 
 			return cachedForcedRedirects;
 		}
@@ -297,7 +313,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			_urlTrackerRepository.UpdateEntry(entry);
 
 			if (entry.ForceRedirect)
-				ReloadForcedRedirectsCache();
+				ClearForcedRedirectsCache();
 		}
 
 		public void Convert410To301ByNodeId(int nodeId)
@@ -310,17 +326,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			_urlTrackerCacheService.Clear(_urlTrackerDomainsCacheKey);
 		}
 
-		public List<UrlTrackerModel> ReloadForcedRedirectsCache()
+		public void ClearForcedRedirectsCache()
 		{
-			var forcedRedirects = _urlTrackerRepository.GetRedirects(null, null, onlyForcedRedirects: true).Records;
-
-			_urlTrackerCacheService.Set(
-				_forcedRedirectsCacheKey,
-				forcedRedirects,
-				_urlTrackerSettings.IsForcedRedirectCacheTimeoutEnabled() ? _urlTrackerSettings.GetForcedRedirectCacheTimeoutSeconds() : (TimeSpan?)null
-			);
-
-			return forcedRedirects;
+			_urlTrackerCacheService.Clear(_forcedRedirectsCacheKey);
 		}
 
 		#endregion
@@ -333,19 +341,21 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			{
 				var entry = _urlTrackerRepository.GetEntryById(id);
 
-				if(entry != null)
+				if (entry != null)
 					_urlTrackerRepository.DeleteNotFounds(entry.OldUrl, entry.RedirectRootNodeId);
 			}
 			else
 			{
 				_urlTrackerRepository.DeleteEntryById(id);
 			}
+
+			ClearForcedRedirectsCache();
 		}
 
 		public void DeleteEntryByRedirectNodeId(int nodeId)
 		{
 			if (_urlTrackerRepository.DeleteEntryByRedirectNodeId(nodeId))
-				ReloadForcedRedirectsCache();
+				ClearForcedRedirectsCache();
 		}
 
 		#endregion
