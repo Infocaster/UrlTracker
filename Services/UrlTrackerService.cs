@@ -62,7 +62,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			if (entry.ForceRedirect)
 				ClearForcedRedirectsCache();
 
-			entry.OldUrl = _urlTrackerHelper.ResolveShortestUrl(entry.OldUrl);
+			entry.OldUrl = !string.IsNullOrEmpty(entry.OldUrl) ? _urlTrackerHelper.ResolveShortestUrl(entry.OldUrl) : null;
 			entry.RedirectUrl = _urlTrackerHelper.ResolveShortestUrl(entry.RedirectUrl);
 			entry.OldRegex = !string.IsNullOrEmpty(entry.OldRegex) ? entry.OldRegex : null;
 
@@ -311,6 +311,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 		public void UpdateEntry(UrlTrackerModel entry)
 		{
+			entry.OldUrl = !string.IsNullOrEmpty(entry.OldUrl) ? _urlTrackerHelper.ResolveShortestUrl(entry.OldUrl) : null;
+			entry.RedirectUrl = _urlTrackerHelper.ResolveShortestUrl(entry.RedirectUrl);
+			entry.OldRegex = !string.IsNullOrEmpty(entry.OldRegex) ? entry.OldRegex : null;
+
 			_urlTrackerRepository.UpdateEntry(entry);
 
 			if (entry.ForceRedirect)

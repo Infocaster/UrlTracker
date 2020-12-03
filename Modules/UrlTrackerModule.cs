@@ -437,7 +437,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 
 				_urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Redirect node id: {0}", redirectNodeId);
 
-				if (rootNode != null && rootNode.Name != null && rootNode.Id > 0)
+				if (rootNode != null && !string.IsNullOrEmpty(rootNode.Name) && rootNode.Id > 0)
 				{
 					var tempUrl = _urlTrackerService.GetUrlByNodeId(redirectNodeId, culture);
 					redirectUrl = tempUrl.StartsWith(Uri.UriSchemeHttp) ? tempUrl : string.Format("{0}{1}{2}{3}{4}", HttpContext.Current.Request.Url.Scheme, Uri.SchemeDelimiter, HttpContext.Current.Request.Url.Host, HttpContext.Current.Request.Url.Port != 80 && _urlTrackerSettings.AppendPortNumber() ? string.Concat(":", HttpContext.Current.Request.Url.Port) : string.Empty, tempUrl);
@@ -492,7 +492,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 				return;
 			
 			var redirects = forcedRedirects.Where(x =>
-					x.Culture == (domain.LanguageIsoCode?.ToLower() ?? "") &&
+					(x.Culture == (domain.LanguageIsoCode?.ToLower() ?? "") || x.Culture == null) &&
 					(x.RedirectRootNodeId == rootNodeId || x.RedirectRootNodeId == -1) &&
 					(string.Equals(x.OldUrl, urlWithoutQueryString, StringComparison.CurrentCultureIgnoreCase) || string.Equals(x.OldUrl, shortestUrl, StringComparison.CurrentCultureIgnoreCase))
 				)

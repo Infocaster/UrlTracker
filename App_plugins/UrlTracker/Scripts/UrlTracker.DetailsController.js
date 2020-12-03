@@ -48,7 +48,7 @@
 			vm.isNewEntry = true;
 			vm.advancedView = true;
 
-			if(vm.languages != null)
+			if (vm.languages != null)
 				vm.entry.Culture = vm.languages[0].IsoCode;
 
 			vm.entry = {
@@ -124,10 +124,12 @@
 		vm.nodes = null;
 
 		$scope.$watch('vm.languages', function (e) {
-			if (!vm.entry.Culture || !vm.languages)
+			if (!vm.languages)
 				return;
 			if (!vm.languages.find(x => x.IsoCode == vm.entry.Culture))
 				vm.entry.Culture = null;
+			if (vm.languages.length == 1)
+				vm.entry.Culture = vm.languages[0].IsoCode;
 		});
 
 		$scope.$watch('vm.entry.RedirectRootNodeId', function (e) {
