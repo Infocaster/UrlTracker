@@ -260,7 +260,7 @@
 				vm.redirects.selectedItems = [];
 				vm.redirects.allItemsSelected = false;
 
-				GetNotFounds(vm.redirects);
+				GetRedirects(vm.redirects);
 				UpdateDashboard();
 
 				notificationsService.success("Deleted", "Redirects succesfully deleted");
