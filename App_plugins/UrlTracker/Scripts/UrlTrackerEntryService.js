@@ -31,7 +31,7 @@
             }).then(function (response) {
                 scope.items = response.data.Entries;
                 scope.numberOfItems = response.data.NumberOfEntries;
-                scope.pagination.totalPages = (response.data.NumberOfEntries / amount);
+				scope.pagination.totalPages = Math.ceil(response.data.NumberOfEntries / amount);
 
                 if (scope.loading != undefined) {
                     scope.loading = false;
@@ -59,7 +59,7 @@
             }).then(function (response) {
 		        scope.items = response.data.Entries;
 		        scope.numberOfItems = response.data.NumberOfEntries;
-                scope.pagination.totalPages = (response.data.NumberOfEntries / amount);
+				scope.pagination.totalPages = Math.ceil(response.data.NumberOfEntries / amount);
 
 		        if (scope.loading != undefined) {
 			        scope.loading = false;
@@ -95,7 +95,7 @@
 
                 if (scope.pagination != null) {
                     scope.pagination.totalPages = response.data.NumberOfEntries;
-                    scope.pagination.totalPages = (response.data.NumberOfEntries / amount);
+					scope.pagination.totalPages = Math.ceil(response.data.NumberOfEntries / amount);
                 }
 	        }).catch(function (data) {
 		        if (scope.loading != undefined) {
@@ -127,7 +127,7 @@
 
 		        if (scope.pagination != null) {
 			        scope.pagination.totalPages = response.data.NumberOfEntries;
-			        scope.pagination.totalPages = (response.data.NumberOfEntries / amount);
+					scope.pagination.totalPages = Math.ceil(response.data.NumberOfEntries / amount);
 		        }
 	        }).catch(function (data) {
 		        if (scope.loading != undefined) {
