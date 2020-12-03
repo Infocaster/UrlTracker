@@ -502,31 +502,30 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 			foreach (var forcedRedirect in redirects)
 			{
 				_urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | URL match found");
+
 				if (forcedRedirect.RedirectNodeId.HasValue && forcedRedirect.RedirectHttpCode != (int)HttpStatusCode.Gone)
 				{
 					_urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Redirect node id: {0}", forcedRedirect.RedirectNodeId.Value);
 
-					if (forcedRedirect.RedirectRootNode != null && forcedRedirect.RedirectRootNode.Name != null && forcedRedirect.RedirectRootNode.Id > 0)
-					{
-						var culture = forcedRedirect.Culture ?? "";
-
-						string tempUrl = _urlTrackerService.GetUrlByNodeId(forcedRedirect.RedirectNodeId.Value, culture);
-						redirectUrl = tempUrl.StartsWith(Uri.UriSchemeHttp) ? tempUrl : string.Format("{0}{1}{2}{3}{4}", HttpContext.Current.Request.Url.Scheme, Uri.SchemeDelimiter, HttpContext.Current.Request.Url.Host, HttpContext.Current.Request.Url.Port != 80 && _urlTrackerSettings.AppendPortNumber() ? string.Concat(":", HttpContext.Current.Request.Url.Port) : string.Empty, tempUrl);
-
-						if (redirectUrl.StartsWith(Uri.UriSchemeHttp))
-						{
-							Uri redirectUri = new Uri(redirectUrl);
-							string pathAndQuery = Uri.UnescapeDataString(redirectUri.PathAndQuery);
-							redirectUrl = GetCorrectedUrl(redirectUri, forcedRedirect.RedirectRootNodeId, pathAndQuery);
-
-						}
-						_urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Redirect url set to: {0}", redirectUrl);
-					}
-					else
+					if (forcedRedirect.RedirectRootNode == null || forcedRedirect.RedirectRootNode.Name == null || forcedRedirect.RedirectRootNode.Id <= 0)
 					{
 						_urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Redirect node is invalid; node is null, name is null or id <= 0");
 						continue;
 					}
+
+					var culture = forcedRedirect.Culture ?? "";
+
+					string tempUrl = _urlTrackerService.GetUrlByNodeId(forcedRedirect.RedirectNodeId.Value, culture);
+					redirectUrl = tempUrl.StartsWith(Uri.UriSchemeHttp) ? tempUrl : string.Format("{0}{1}{2}{3}{4}", HttpContext.Current.Request.Url.Scheme, Uri.SchemeDelimiter, HttpContext.Current.Request.Url.Host, HttpContext.Current.Request.Url.Port != 80 && _urlTrackerSettings.AppendPortNumber() ? string.Concat(":", HttpContext.Current.Request.Url.Port) : string.Empty, tempUrl);
+
+					if (redirectUrl.StartsWith(Uri.UriSchemeHttp))
+					{
+						Uri redirectUri = new Uri(redirectUrl);
+						string pathAndQuery = Uri.UnescapeDataString(redirectUri.PathAndQuery);
+						redirectUrl = GetCorrectedUrl(redirectUri, forcedRedirect.RedirectRootNodeId, pathAndQuery);
+
+					}
+					_urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Redirect url set to: {0}", redirectUrl);
 				}
 				else if (!string.IsNullOrEmpty(forcedRedirect.RedirectUrl))
 				{
