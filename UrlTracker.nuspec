@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>UrlTracker-8</id>
-    <version>0.0.5</version>
-    <title>UrlTracker 8</title>
+    <id>UrlTracker.8</id>
+    <version>1.0.1</version>
+    <title>UrlTracker.8</title>
     <authors>Infocaster B.V.</authors>
     <owners>Infocaster B.V.</owners>
     <licenseUrl>https://opensource.org/licenses/mit-license.php</licenseUrl>

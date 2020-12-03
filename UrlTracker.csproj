@@ -292,6 +292,7 @@
     <Compile Include="Helpers\UrlTrackerLoggingHelper.cs" />
     <Compile Include="Models\UrlTrackerGetResult.cs" />
     <Compile Include="Models\UrlTrackerLanguage.cs" />
+    <Compile Include="Models\UrlTrackerNodeModel.cs" />
     <Compile Include="Services\IUrlTrackerCacheService.cs" />
     <Compile Include="Services\UrlTrackerService.cs" />
     <Compile Include="Services\IUrlTrackerService.cs" />

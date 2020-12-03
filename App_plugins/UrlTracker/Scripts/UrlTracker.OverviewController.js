@@ -147,7 +147,7 @@
 				if (model.isNewEntry || model.entry.Is404) {
 					promise = urlTrackerEntryService.addRedirect(vm, model.entry);
 				} else {
-					promise = urlTrackerEntryService.updateEntry(vm, model.entry);
+					promise = urlTrackerEntryService.updateRedirect(vm, model.entry);
 				}
 
 				promise.then(function () {

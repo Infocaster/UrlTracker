@@ -1,7 +1,11 @@
-﻿using InfoCaster.Umbraco.UrlTracker.Models;
+﻿using System;
+using System.Linq;
+using InfoCaster.Umbraco.UrlTracker.Models;
 using InfoCaster.Umbraco.UrlTracker.Services;
 using InfoCaster.Umbraco.UrlTracker.ViewModels;
 using System.Web.Http;
+using Newtonsoft.Json;
+using Umbraco.Web;
 using Umbraco.Web.WebApi;
 
 namespace InfoCaster.Umbraco.UrlTracker.Controllers
@@ -16,14 +20,6 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 		}
 
 		#region General
-
-		[HttpPost]
-		public IHttpActionResult UpdateEntry(UrlTrackerModel model)
-		{
-			_urlTrackerService.UpdateEntry(model);
-			return Ok();
-		}
-
 
 		[HttpPost]
 		public IHttpActionResult DeleteEntry(int id, bool is404 = false)
@@ -45,10 +41,20 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 		[HttpPost]
 		public IHttpActionResult AddRedirect([FromBody] UrlTrackerModel model)
 		{
-			if (!ValidateRedirect(model))
+			if (!RedirectIsValid(model))
 				return BadRequest("Not all fields are filled in correctly");
 
 			_urlTrackerService.AddRedirect(model);
+			return Ok();
+		}
+
+		[HttpPost]
+		public IHttpActionResult UpdateRedirect(UrlTrackerModel model)
+		{
+			if (RedirectIsValid(model))
+				return BadRequest("Not all fields are filled in correctly");
+
+			_urlTrackerService.UpdateEntry(model);
 			return Ok();
 		}
 
@@ -120,12 +126,12 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 
 		#endregion
 
-		private bool ValidateRedirect(UrlTrackerModel model)
+		private bool RedirectIsValid(UrlTrackerModel redirect)
 		{
-			if ((string.IsNullOrEmpty(model.OldUrl) && string.IsNullOrEmpty(model.OldRegex)) ||
-				(model.RedirectRootNodeId == 0 || model.RedirectRootNodeId == null) ||
-				((model.RedirectNodeId == null || model.RedirectNodeId == 0) && string.IsNullOrEmpty(model.RedirectUrl)) ||
-				(model.RedirectHttpCode != 301 && model.RedirectHttpCode != 302))
+			if ((string.IsNullOrEmpty(redirect.OldUrl) && string.IsNullOrEmpty(redirect.OldRegex)) ||
+				(redirect.RedirectRootNodeId == 0 || redirect.RedirectRootNodeId == null) ||
+				((redirect.RedirectNodeId == null || redirect.RedirectNodeId == 0) && string.IsNullOrEmpty(redirect.RedirectUrl)) ||
+				(redirect.RedirectHttpCode != 301 && redirect.RedirectHttpCode != 302))
 				return false;
 
 			return true;

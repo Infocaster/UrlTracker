@@ -137,9 +137,9 @@
 	        });
         }
 
-        var updateEntry = function (scope, entry) {
+        var updateRedirect = function (scope, entry) {
             return $http({
-                url: "/umbraco/BackOffice/api/UrlTrackerManager/UpdateEntry",
+                url: "/umbraco/BackOffice/api/UrlTrackerManager/UpdateRedirect",
                 method: "POST",
                 data: entry
             }).then(function () {

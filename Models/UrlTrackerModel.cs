@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Web;
 using System.Web.Mvc;
 using Umbraco.Core.Models.PublishedContent;
@@ -21,73 +22,119 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
 
 		private Lazy<string> _calculatedOldUrl => new Lazy<string>(() =>
 		{
-			if (CalculatedOldUrlWithDomain.StartsWith("Regex:"))
-				return CalculatedOldUrlWithDomain;
+			if (!string.IsNullOrEmpty(CalculatedOldUrlWithDomain))
+			{
+				if (CalculatedOldUrlWithDomain.StartsWith("Regex:"))
+					return CalculatedOldUrlWithDomain;
 
-			Uri calculatedOldUrlWithDomain = new Uri(CalculatedOldUrlWithDomain);
-			string pathAndQuery = Uri.UnescapeDataString(calculatedOldUrlWithDomain.PathAndQuery);
+				Uri calculatedOldUrlWithDomain = new Uri(CalculatedOldUrlWithDomain);
+				string pathAndQuery = Uri.UnescapeDataString(calculatedOldUrlWithDomain.PathAndQuery);
 
-			return !pathAndQuery.StartsWith("/") ? string.Concat("/", pathAndQuery.Substring(1)) : pathAndQuery;
+				return !pathAndQuery.StartsWith("/") ? string.Concat("/", pathAndQuery.Substring(1)) : pathAndQuery;
+			}
+
+			return string.Empty;
 		});
 		private Lazy<string> _calculatedOldUrlWithDomain => new Lazy<string>(() =>
 		{
-			if (string.IsNullOrEmpty(OldRegex) && string.IsNullOrEmpty(OldUrl))
-				throw new InvalidOperationException("Both OldRegex and OldUrl are empty, which is invalid. Please correct this by removing any entries where the OldUrl and OldRegex columns are empty.");
-			if (!string.IsNullOrEmpty(OldRegex) && string.IsNullOrEmpty(OldUrl))
-				return string.Concat("Regex: ", OldRegex);
-
-			var domain = _urlTrackerService.GetDomains().FirstOrDefault(x => x.NodeId == RedirectRootNodeId);
-
-			if (domain == null)
+			try
 			{
-				domain = new UrlTrackerDomain
+				if (string.IsNullOrEmpty(OldRegex) && string.IsNullOrEmpty(OldUrl))
+					throw new InvalidOperationException("Both OldRegex and OldUrl are empty, which is invalid. Please correct this by removing any entries where the OldUrl and OldRegex columns are empty.");
+				if (!string.IsNullOrEmpty(OldRegex) && string.IsNullOrEmpty(OldUrl))
+					return string.Concat("Regex: ", OldRegex);
+
+				var domain = _urlTrackerService.GetDomains()
+					.FirstOrDefault(x => x.NodeId == RedirectRootNodeId);
+
+				if (domain == null)
 				{
-					Id = -1,
-					NodeId = RedirectRootNodeId,
-					Name = string.Concat(HttpContext.Current.Request.Url.Host,
-						HttpContext.Current.Request.Url.IsDefaultPort && !_urlTrackerSettings.AppendPortNumber()
-							? string.Empty
-							: string.Concat(":", HttpContext.Current.Request.Url.Port))
-				};
+					domain = new UrlTrackerDomain
+					{
+						Id = -1,
+						NodeId = RedirectRootNodeId,
+						Name = string.Concat(HttpContext.Current.Request.Url.Host,
+							HttpContext.Current.Request.Url.IsDefaultPort && !_urlTrackerSettings.AppendPortNumber()
+								? string.Empty
+								: string.Concat(":", HttpContext.Current.Request.Url.Port))
+					};
+				}
+
+				Uri domainUri = new Uri(domain.UrlWithDomain);
+				string domainOnly = string.Format("{0}{1}{2}{3}", domainUri.Scheme, Uri.SchemeDelimiter, domainUri.Host, domainUri.IsDefaultPort && !_urlTrackerSettings.AppendPortNumber() ? string.Empty : string.Concat(":", domainUri.Port));
+
+				if (_urlTrackerSettings.HasDomainOnChildNode())
+					return string.Format("{0}{1}{2}", new Uri(string.Concat(domain.UrlWithDomain, !domain.UrlWithDomain.EndsWith("/") && !OldUrl.StartsWith("/") ? "/" : string.Empty, _urlTrackerHelper.ResolveUmbracoUrl(OldUrl))), !string.IsNullOrEmpty(OldUrlQuery) ? "?" : string.Empty, OldUrlQuery);
+
+				return string.Format("{0}{1}{2}", new Uri(string.Concat(domainOnly, !domainOnly.EndsWith("/") && !OldUrl.StartsWith("/") ? "/" : string.Empty, _urlTrackerHelper.ResolveUmbracoUrl(OldUrl))), !string.IsNullOrEmpty(OldUrlQuery) ? "?" : string.Empty, OldUrlQuery);
 			}
-
-			Uri domainUri = new Uri(domain.UrlWithDomain);
-			string domainOnly = string.Format("{0}{1}{2}{3}", domainUri.Scheme, Uri.SchemeDelimiter, domainUri.Host, domainUri.IsDefaultPort && !_urlTrackerSettings.AppendPortNumber() ? string.Empty : string.Concat(":", domainUri.Port));
-
-			if (_urlTrackerSettings.HasDomainOnChildNode())
-				return string.Format("{0}{1}{2}", new Uri(string.Concat(domain.UrlWithDomain, !domain.UrlWithDomain.EndsWith("/") && !OldUrl.StartsWith("/") ? "/" : string.Empty, _urlTrackerHelper.ResolveUmbracoUrl(OldUrl))), !string.IsNullOrEmpty(OldUrlQuery) ? "?" : string.Empty, OldUrlQuery);
-
-			return string.Format("{0}{1}{2}", new Uri(string.Concat(domainOnly, !domainOnly.EndsWith("/") && !OldUrl.StartsWith("/") ? "/" : string.Empty, _urlTrackerHelper.ResolveUmbracoUrl(OldUrl))), !string.IsNullOrEmpty(OldUrlQuery) ? "?" : string.Empty, OldUrlQuery);
+			catch (Exception e)
+			{
+				return string.Empty;
+			}
 		});
-		private Lazy<IPublishedContent> _redirectRootNode => new Lazy<IPublishedContent>(() =>
+		private Lazy<UrlTrackerNodeModel> _redirectRootNode => new Lazy<UrlTrackerNodeModel>(() =>
 		{
 			var redirectRootNode = _urlTrackerService.GetNodeById(RedirectRootNodeId);
 
-			if (redirectRootNode != null && redirectRootNode.Id == 0)
+			if (redirectRootNode != null)
 			{
-				var rootNode = _urlTrackerService.GetNodeById(-1).Children.FirstOrDefault();
-				if (rootNode != null && rootNode.Id > 0)
-					redirectRootNode = rootNode;
+				if (redirectRootNode.Id == 0)
+				{
+					var rootNode = _urlTrackerService.GetNodeById(-1).Children.FirstOrDefault();
+					if (rootNode != null && rootNode.Id > 0)
+						redirectRootNode = rootNode;
+				}
+
+				return new UrlTrackerNodeModel
+				{
+					Id = RedirectRootNodeId,
+					Url = redirectRootNode.Url,
+					Name = redirectRootNode.Name,
+					Parent = new UrlTrackerNodeModel
+					{
+						Id = redirectRootNode.Parent?.Id ?? 0,
+						Name = redirectRootNode.Parent?.Name ?? "",
+						Url = redirectRootNode.Parent?.Url ?? ""
+					}
+				};
 			}
 
-			return redirectRootNode;
+			return null;
 		});
 		private Lazy<string> _redirectRootNodeName => new Lazy<string>(() =>
 		{
-			if (RedirectNode == null)
-				return "";
+			if (RedirectNode != null)
+			{
+				if (_urlTrackerSettings.HasDomainOnChildNode())
+					return RedirectRootNode.Parent == null
+						? RedirectRootNode.Name
+						: RedirectRootNode.Parent.Name + "/" + RedirectRootNode.Name;
 
-			if (_urlTrackerSettings.HasDomainOnChildNode())
-				return RedirectRootNode.Parent == null
-					? RedirectRootNode.Name
-					: RedirectRootNode.Parent.Name + "/" + RedirectRootNode.Name;
+				return RedirectRootNode.Name;
+			}
 
-			return RedirectRootNode.Name;
+			return string.Empty;
 		});
-		private Lazy<IPublishedContent> _redirectNode => new Lazy<IPublishedContent>(() =>
+		private Lazy<UrlTrackerNodeModel> _redirectNode => new Lazy<UrlTrackerNodeModel>(() =>
 		{
 			if (RedirectNodeId.HasValue)
-				return _urlTrackerService.GetNodeById(RedirectNodeId.Value);
+			{
+				var node = _urlTrackerService.GetNodeById(RedirectNodeId.Value);
+
+				return new UrlTrackerNodeModel
+				{
+					Id = node.Id,
+					Name = node.Name,
+					Url = node.Url,
+					Parent = new UrlTrackerNodeModel
+					{
+						Id = node.Parent?.Id ?? 0,
+						Name = node.Parent?.Name ?? "",
+						Url = node.Parent?.Url ?? ""
+					}
+				};
+			}
 
 			return null;
 		});
@@ -96,7 +143,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
 			if (OldUrl.Contains("?"))
 				return OldUrl.Substring(OldUrl.IndexOf('?') + 1);
 
-			return "";
+			return string.Empty;
 		});
 		private Lazy<string> _calculatedRedirectUrl => new Lazy<string>(() =>
 		{
@@ -110,7 +157,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
 				return _urlTrackerHelper.ResolveShortestUrl(calculatedRedirectUri);
 			}
 
-			if (RedirectRootNode != null && RedirectNodeId.HasValue && !RedirectRootNode.Url(Culture).EndsWith("#"))
+			if (RedirectRootNode != null && RedirectNodeId.HasValue && _urlTrackerService.GetUrlByNodeId(RedirectRootNode.Id, Culture).EndsWith("#")) //ToDo
 			{
 				var siteDomains = _urlTrackerService.GetDomains().Where(x => x.NodeId == RedirectRootNode.Id).ToList();
 				var hosts = siteDomains.Select(n => new Uri(n.UrlWithDomain).Host).ToList();
@@ -154,6 +201,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
 		{
 			if (CalculatedOldUrl.StartsWith("Regex:"))
 				return CalculatedOldUrl;
+
 			return CalculatedOldUrl.Contains('?') ? CalculatedOldUrl.Substring(0, CalculatedOldUrl.IndexOf('?')) : CalculatedOldUrl;
 		});
 
@@ -161,9 +209,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
 
 		[JsonIgnore] public string CalculatedOldUrl => _calculatedOldUrl.Value;
 		[JsonIgnore] public string CalculatedOldUrlWithDomain => _calculatedOldUrlWithDomain.Value;
-		[JsonIgnore] public IPublishedContent RedirectRootNode => _redirectRootNode.Value;
+		[JsonIgnore] public UrlTrackerNodeModel RedirectRootNode => _redirectRootNode.Value;
 		[JsonIgnore] public string RedirectRootNodeName => _redirectRootNodeName.Value;
-		[JsonIgnore] public IPublishedContent RedirectNode => _redirectNode.Value;
+		[JsonIgnore] public UrlTrackerNodeModel RedirectNode => _redirectNode.Value;
 		[JsonIgnore] public string OldUrlQuery => _oldUrlQuery.Value;
 		public string CalculatedRedirectUrl => _calculatedRedirectUrl.Value;
 		public string OldUrlWithoutQuery => _oldUrlWithoutQuery.Value;
