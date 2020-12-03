@@ -105,7 +105,7 @@
 
 								<div class="umb-table-cell" title="{{item.OldUrl || item.OldRegex}}">
 									<span ng-if="item.OldUrl">{{item.OldUrl}}</span>
-									<span ng-if="item.OldRegex">{{item.OldRegex}}</span>
+									<span class="regex" ng-if="item.OldRegex">{{item.OldRegex}}</span>
 								</div>
 
 								<div class="umb-table-cell" title="{{item.CalculatedRedirectUrl}}">
@@ -293,7 +293,7 @@
 						<div class="umb-table-cell col-old-url" title="{{item.OldUrl || item.OldRegex}}">
 							<!--<a class="umb-table-body__link" href="/{{item.OldUrl}}" target="_blank" ng-click="$event.stopPropagation();">{{item.OldUrl}}</a>-->
 							<span ng-if="item.OldUrl">{{item.OldUrl}}</span>
-							<span ng-if="item.OldRegex">{{item.OldRegex}}</span>
+							<span class="regex" ng-if="item.OldRegex">{{item.OldRegex}}</span>
 						</div>
 
 						<div class="umb-table-cell col-new-url" title="{{item.CalculatedRedirectUrl}}">
