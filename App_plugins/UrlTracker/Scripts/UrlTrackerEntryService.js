@@ -94,7 +94,7 @@
                 scope.items = response.data.Entries;
 
                 if (scope.pagination != null) {
-                    scope.pagination.totalPages = response.data.NumberOfEntries;
+					scope.numberOfItems = response.data.NumberOfEntries;
 					scope.pagination.totalPages = Math.ceil(response.data.NumberOfEntries / amount);
                 }
 	        }).catch(function (data) {
@@ -126,7 +126,7 @@
 		        scope.items = response.data.Entries;
 
 		        if (scope.pagination != null) {
-			        scope.pagination.totalPages = response.data.NumberOfEntries;
+					scope.numberOfItems = response.data.NumberOfEntries;
 					scope.pagination.totalPages = Math.ceil(response.data.NumberOfEntries / amount);
 		        }
 	        }).catch(function (data) {
