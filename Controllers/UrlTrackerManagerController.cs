@@ -49,9 +49,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 		}
 
 		[HttpPost]
-		public IHttpActionResult UpdateRedirect(UrlTrackerModel model)
+		public IHttpActionResult UpdateRedirect([FromBody] UrlTrackerModel model)
 		{
-			if (RedirectIsValid(model))
+			if (!RedirectIsValid(model))
 				return BadRequest("Not all fields are filled in correctly");
 
 			_urlTrackerService.UpdateEntry(model);

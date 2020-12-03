@@ -191,7 +191,7 @@
             getRedirects: getRedirects,
             getNotFounds: getNotFounds,
             deleteEntry: deleteEntry,
-            updateEntry: updateEntry,
+			updateRedirect: updateRedirect,
             addRedirect: addRedirect,
             getRedirectsByFilters: getRedirectsByFilters,
 			getNotFoundsByFilters: getNotFoundsByFilters,
