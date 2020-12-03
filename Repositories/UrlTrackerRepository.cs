@@ -246,10 +246,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 
 		public void DeleteEntryById(int id)
 		{
-			using (var scope = _scopeProvider.CreateScope())
+			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
 				scope.Database.Execute("DELETE FROM icUrlTracker WHERE Id = @id", new { id = id });
-				scope.Complete();
 			}
 		}
 
@@ -276,18 +275,18 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 			}
 		}
 
-		public bool DeleteNotFounds(string url, int rootNodeId)
+		public void DeleteNotFounds(string url, int rootNodeId)
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
-				return scope.Database.Execute(
+				scope.Database.Execute(
 					"DELETE FROM icUrlTracker WHERE OldUrl = @url AND RedirectRootNodeId = @rootNodeId AND Is404 = 1",
 					new
 					{
 						url = url,
 						rootNodeId = rootNodeId
 					}
-				) == 1;
+				);
 			}
 		}
 

@@ -34,7 +34,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 
 		void DeleteEntryById(int id);
 		bool DeleteEntryByRedirectNodeId(int nodeId);
-		bool DeleteNotFounds(string url, int rootNodeId);
+		void DeleteNotFounds(string url, int rootNodeId);
 
 		#endregion
 

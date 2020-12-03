@@ -188,7 +188,11 @@
 				return;
 
 			vm.redirects.pagination.pageNumber = pageNumber;
-			GetRedirects(vm.redirects);
+
+			if (vm.redirects.searchString)
+				GetRedirectsByFilter(vm.redirects);
+			else
+				GetRedirects(vm.redirects);
 		}
 
 		vm.redirects.nextPage = function (pageNumber) {
@@ -214,7 +218,10 @@
 		}
 
 		vm.redirects.pageSizeChanged = function () {
-			GetRedirects(vm.redirects);
+			if (vm.redirects.searchString)
+				GetRedirectsByFilter(vm.redirects);
+			else
+				GetRedirects(vm.redirects);
 		}
 
 		vm.redirects.selectAll = function () {
@@ -243,17 +250,21 @@
 		}
 
 		vm.redirects.deleteSelected = function () {
+			var promises = [];
+
 			vm.redirects.selectedItems.forEach(item => {
-				urlTrackerEntryService.deleteEntry(item.Id);
+				promises.push(urlTrackerEntryService.deleteEntry(item.Id));
 			});
 
-			vm.redirects.selectedItems = [];
+			Promise.all(promises).then(() => {
+				vm.redirects.selectedItems = [];
+				vm.redirects.allItemsSelected = false;
 
-			setTimeout(function () {
-				notificationsService.success("Deleted", "Redirects succesfully deleted");
-				GetRedirects(vm.redirects);
+				GetNotFounds(vm.redirects);
 				UpdateDashboard();
-			}, 100);
+
+				notificationsService.success("Deleted", "Redirects succesfully deleted");
+			});
 		}
 
 		vm.redirects.clearSelection = function () {
@@ -289,7 +300,11 @@
 				return;
 
 			vm.notFounds.pagination.pageNumber = pageNumber;
-			GetNotFounds(vm.notFounds);
+
+			if (vm.notFounds.searchString)
+				GetNotFoundsByFilter(vm.notFounds);
+			else
+				GetNotFounds(vm.notFounds);
 		}
 
 		vm.notFounds.nextPage = function (pageNumber) {
@@ -319,7 +334,10 @@
 		}
 
 		vm.notFounds.pageSizeChanged = function () {
-			GetNotFounds(vm.notFounds);
+			if (vm.notFounds.searchString)
+				GetNotFoundsByFilter(vm.notFounds);
+			else
+				GetNotFounds(vm.notFounds);
 		}
 
 		vm.notFounds.selectAll = function () {
@@ -348,17 +366,25 @@
 		}
 
 		vm.notFounds.deleteSelected = function () {
+			var promises = [];
+
 			vm.notFounds.selectedItems.forEach(item => {
-				urlTrackerEntryService.deleteEntry(item.Id, true);
+				promises.push(urlTrackerEntryService.deleteEntry(item.Id, true));
 			});
 
-			vm.notFounds.selectedItems = [];
+			Promise.all(promises).then(() => {
+				vm.notFounds.selectedItems = [];
+				vm.notFounds.allItemsSelected = false;
 
-			setTimeout(function () {
-				notificationsService.success("Deleted", "Not founds succesfully deleted");
-				GetNotFounds(vm.notFounds);
+				if (vm.notFounds.searchString)
+					GetNotFoundsByFilter(vm.notFounds);
+				else
+					GetNotFounds(vm.notFounds);
+
 				UpdateDashboard();
-			}, 100);
+
+				notificationsService.success("Deleted", "Not founds succesfully deleted");
+			});
 		}
 
 		vm.notFounds.clearSelection = function () {

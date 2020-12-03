@@ -165,11 +165,6 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 	flex: 3.5 3.5 5%!important;
 }
 
-.urltracker-body .umb-table-body .col-old-url > span:not(.regex),
-.urltracker-body .umb-table-body .col-new-url > span {
-	direction: rtl;
-}
-
 .urltracker-body .col-icons > i {
 	font-size: 18px;
 	padding: 5px;

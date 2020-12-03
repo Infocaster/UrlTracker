@@ -64,6 +64,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 			entry.OldUrl = _urlTrackerHelper.ResolveShortestUrl(entry.OldUrl);
 			entry.RedirectUrl = _urlTrackerHelper.ResolveShortestUrl(entry.RedirectUrl);
+			entry.OldRegex = !string.IsNullOrEmpty(entry.OldRegex) ? entry.OldRegex : null;
 
 			return _urlTrackerRepository.AddEntry(entry);
 		}
@@ -335,21 +336,21 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 		#region Delete
 
-		public void DeleteEntryById(int id, bool is404)
+		public bool DeleteEntryById(int id, bool is404)
 		{
 			if (is404)
 			{
 				var entry = _urlTrackerRepository.GetEntryById(id);
-
 				if (entry != null)
 					_urlTrackerRepository.DeleteNotFounds(entry.OldUrl, entry.RedirectRootNodeId);
 			}
 			else
 			{
 				_urlTrackerRepository.DeleteEntryById(id);
+				ClearForcedRedirectsCache();
 			}
 
-			ClearForcedRedirectsCache();
+			return true;
 		}
 
 		public void DeleteEntryByRedirectNodeId(int nodeId)

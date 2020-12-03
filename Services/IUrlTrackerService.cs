@@ -42,7 +42,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 		#region Delete
 
-		void DeleteEntryById(int id, bool is404 = false);
+		bool DeleteEntryById(int id, bool is404 = false);
 		void DeleteEntryByRedirectNodeId(int nodeId);
 
 		#endregion

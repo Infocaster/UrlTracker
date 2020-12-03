@@ -24,7 +24,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 		[HttpPost]
 		public IHttpActionResult DeleteEntry(int id, bool is404 = false)
 		{
-			_urlTrackerService.DeleteEntryById(id, is404);
+			if(!_urlTrackerService.DeleteEntryById(id, is404))
+				return BadRequest();
+
 			return Ok();
 		}
 
