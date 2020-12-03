@@ -507,7 +507,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 				{
 					_urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Redirect node id: {0}", forcedRedirect.RedirectNodeId.Value);
 
-					if (forcedRedirect.RedirectRootNode == null || forcedRedirect.RedirectRootNode.Name == null || forcedRedirect.RedirectRootNode.Id <= 0)
+					if (forcedRedirect.RedirectNode == null || string.IsNullOrEmpty(forcedRedirect.RedirectNode.Name) || forcedRedirect.RedirectNode.Id <= 0))
 					{
 						_urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Redirect node is invalid; node is null, name is null or id <= 0");
 						continue;
