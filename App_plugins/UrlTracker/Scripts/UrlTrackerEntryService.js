@@ -146,8 +146,9 @@
                 if (scope.getItems != undefined) {
                     scope.getItems();
                 }
-            }).catch(function (data) {
+			}).catch(function (data) {
 	            $log.log(data);
+	            throw data.data.Message;
             });
         }
 
@@ -170,7 +171,7 @@
 			        nodeId: nodeId
 		        }
 	        }).then(function (response) {
-		        scope.languages = response.data;
+		        scope.domainLanguages = response.data;
 	        }).catch(function (response) {
 		        $log.log(response);
 	        });

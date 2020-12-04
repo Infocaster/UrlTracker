@@ -142,6 +142,7 @@
 			view: "/App_Plugins/UrlTracker/Views/UrlTrackerDetails.html",
 			size: "small",
 			entry: null,
+			rootNodes: null,
 			submit: function (model) {
 				var promise;
 				if (model.isNewEntry || model.entry.Is404) {
@@ -164,8 +165,16 @@
 				}).catch(function (message) {
 					notificationsService.error("Error", `An error occurred: ${message}`);
 				});
+
+				if (model.rootNodes != null && vm.entryDetailsOverlay.rootNodes != null) {
+					vm.entryDetailsOverlay.rootNodes = model.rootNodes;
+				}
 			},
-			close: function (oldModel) {
+			close: function (model) {
+				if (model.rootNodes != null && vm.entryDetailsOverlay.rootNodes != null) {
+					vm.entryDetailsOverlay.rootNodes = model.rootNodes;
+				}
+
 				editorService.close();
 			}
 		}

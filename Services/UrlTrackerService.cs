@@ -56,15 +56,14 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			if (entry.Remove404)
 			{
 				_urlTrackerRepository.DeleteNotFounds(entry.OldUrl, entry.RedirectRootNodeId);
-				entry.Is404 = false;
 			}
+
+			entry.OldUrl = !string.IsNullOrEmpty(entry.OldUrl) ? _urlTrackerHelper.ResolveShortestUrl(entry.OldUrl) : null;
+			entry.RedirectUrl = !string.IsNullOrEmpty(entry.RedirectUrl) ? _urlTrackerHelper.ResolveShortestUrl(entry.RedirectUrl) : null;
+			entry.OldRegex = !string.IsNullOrEmpty(entry.OldRegex) ? entry.OldRegex : null;
 
 			if (entry.ForceRedirect)
 				ClearForcedRedirectsCache();
-
-			entry.OldUrl = !string.IsNullOrEmpty(entry.OldUrl) ? _urlTrackerHelper.ResolveShortestUrl(entry.OldUrl) : null;
-			entry.RedirectUrl = _urlTrackerHelper.ResolveShortestUrl(entry.RedirectUrl);
-			entry.OldRegex = !string.IsNullOrEmpty(entry.OldRegex) ? entry.OldRegex : null;
 
 			return _urlTrackerRepository.AddEntry(entry);
 		}
@@ -312,7 +311,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		public void UpdateEntry(UrlTrackerModel entry)
 		{
 			entry.OldUrl = !string.IsNullOrEmpty(entry.OldUrl) ? _urlTrackerHelper.ResolveShortestUrl(entry.OldUrl) : null;
-			entry.RedirectUrl = _urlTrackerHelper.ResolveShortestUrl(entry.RedirectUrl);
+			entry.RedirectUrl = !string.IsNullOrEmpty(entry.RedirectUrl) ? _urlTrackerHelper.ResolveShortestUrl(entry.RedirectUrl) : null;
 			entry.OldRegex = !string.IsNullOrEmpty(entry.OldRegex) ? entry.OldRegex : null;
 
 			_urlTrackerRepository.UpdateEntry(entry);

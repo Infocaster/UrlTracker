@@ -1,69 +1,18 @@
 ﻿(function () {
 	"use strict";
-	angular.module("umbraco").controller("UrlTracker.DetailsController", ["$scope", "$location", "urlTrackerEntryService", "contentResource", "editorService", "entityResource", function ($scope, $location, urlTrackerEntryService, contentResource, editorService, entityResource) {
+	angular.module("umbraco").controller("UrlTracker.DetailsController", ["$scope", "$location", "$q", "urlTrackerEntryService", "contentResource", "editorService", "entityResource", function ($scope, $location, $q, urlTrackerEntryService, contentResource, editorService, entityResource) {
 		var vm = this;
+		var isLoaded = false;
 
 		vm.previousCulture = null;
 		vm.isNewEntry = false;
 		vm.advancedView = false;
 		vm.redirectNode = null;
+		vm.loading = true;
 
-		entityResource.getChildren(-1, 'Document')
-			.then(function (rootNodes) {
-				vm.allRootNodes = rootNodes;
-			});
-
-		if ($scope.model.entry != null) {
-			urlTrackerEntryService.getLanguagesOutNodeDomains(vm, $scope.model.entry.RedirectRootNodeId);
-			vm.entry = $scope.model.entry;
-
-			if (vm.entry.Is404) {
-				vm.title = "Create redirect";
-				vm.entry.remove404 = true;
-				vm.entry.RedirectHttpCode = 301;
-				vm.entry.Notes = "Redirect created to prevent 404";
-			} else {
-				vm.title = "Edit redirect";
-				vm.advancedView = true;
-			}
-
-			if (vm.entry.RedirectNodeId && vm.entry.RedirectNodeId != 0) {
-				entityResource.getUrl(vm.entry.RedirectNodeId, 'Document', vm.entry.Culture).then(
-					function (url) {
-						console.log(url);
-						vm.entry.RedirectNodeUrl = url;
-					}
-				);
-
-				entityResource.getById(vm.entry.RedirectNodeId, 'Document', vm.entry.Culture)
-					.then(function (redirectNode) {
-						vm.entry.RedirectNodeName = redirectNode.name;
-						vm.entry.RedirectNodeIcon = redirectNode.icon;
-					});
-			}
-		}
-		else {
-			vm.title = "Create redirect";
-
-			vm.isNewEntry = true;
-			vm.advancedView = true;
-
-			if (vm.languages != null)
-				vm.entry.Culture = vm.languages[0].IsoCode;
-
-			vm.entry = {
-				OldUrl: "",
-				RedirectNodeId: null,
-				OldRexEx: "",
-				RedirectUrl: "",
-				Refferer: "",
-				ForceRedirect: false,
-				RedirectPassThroughQueryString: false,
-				RedirectHttpCode: 301,
-				Notes: "",
-				RedirectRootNodeId: -1
-			};
-		}
+		LoadDomains().then(() => {
+			LoadEntry();
+		});
 
 		vm.setRootNode = function (node) {
 			vm.entry.RedirectRootNodeId = node;
@@ -101,6 +50,8 @@
 			if ($scope.model.submit) {
 				$scope.model.isNewEntry = vm.isNewEntry;
 				$scope.model.entry = vm.entry;
+				$scope.model.rootNodes = vm.rootNodes;
+
 				$location.search('mculture', vm.previousCulture);
 
 				$scope.model.submit($scope.model);
@@ -109,8 +60,11 @@
 
 		function close() {
 			if ($scope.model.close) {
+				$scope.model.rootNodes = vm.rootNodes;
+
 				$location.search('mculture', vm.previousCulture);
-				$scope.model.close();
+
+				$scope.model.close($scope.model);
 			}
 		}
 
@@ -123,26 +77,114 @@
 
 		vm.nodes = null;
 
-		$scope.$watch('vm.languages', function (e) {
-			if (!vm.languages)
-				return;
-			if (!vm.languages.find(x => x.IsoCode == vm.entry.Culture))
+		vm.updateLanguages = function () {
+			if (vm.entry.RedirectRootNodeId == 0 || vm.entry.RedirectRootNodeId == -1 || vm.rootNodes == null) {
+				vm.languages = null;
 				vm.entry.Culture = null;
-			if (vm.languages.length == 1)
-				vm.entry.Culture = vm.languages[0].IsoCode;
-		});
+			} else {
+				var domain = vm.rootNodes.find(n => n.id == vm.entry.RedirectRootNodeId);
 
-		$scope.$watch('vm.entry.RedirectRootNodeId', function (e) {
-			if (vm.entry.RedirectRootNodeId == -1)
-				return;
+				if (domain != null && domain.domainLanguages != null) {
+					vm.languages = domain.domainLanguages;
 
-			urlTrackerEntryService.getLanguagesOutNodeDomains(vm, vm.entry.RedirectRootNodeId);
-		});
+					if (vm.entry.Culture == null || !vm.languages.find(x => x.IsoCode == vm.entry.Culture))
+						vm.entry.Culture = vm.languages[0].IsoCode;
+				} else {
+					vm.languages = null;
+					vm.entry.Culture = null;
+				}
+			}
+		}
+
+		function LoadDomains() {
+			if ($scope.model.rootNodes != null) {
+				return $q((resolve, reject) => {
+					vm.rootNodes = $scope.model.rootNodes;
+					resolve();
+				});
+			} else {
+				return $q((resolve, reject) => {
+					entityResource.getChildren(-1, 'Document')
+						.then(function (rootNodes) {
+							var languagesPromise = [];
+							vm.rootNodes = rootNodes;
+
+							if (vm.rootNodes != null) {
+								vm.rootNodes.forEach(function (n) {
+									languagesPromise.push(urlTrackerEntryService.getLanguagesOutNodeDomains(n, n.id));
+								});
+							}
+
+							$q.all(languagesPromise).then(() => {
+								resolve();
+							});
+						});
+				});
+			}
+		}
+
+		function LoadEntry() {
+			if ($scope.model.entry != null) {
+				vm.entry = $scope.model.entry;
+
+				if (vm.entry.Is404) {
+					vm.title = "Create redirect";
+					vm.entry.remove404 = true;
+					vm.entry.RedirectHttpCode = 301;
+					vm.entry.Notes = "Redirect created to prevent 404";
+				} else {
+					vm.title = "Edit redirect";
+					vm.advancedView = true;
+				}
+
+				if (vm.entry.RedirectNodeId && vm.entry.RedirectNodeId != 0) {
+					entityResource.getUrl(vm.entry.RedirectNodeId, 'Document', vm.entry.Culture).then(
+						function (url) {
+							vm.entry.RedirectNodeUrl = url;
+						}
+					);
+
+					entityResource.getById(vm.entry.RedirectNodeId, 'Document', vm.entry.Culture)
+						.then(function (redirectNode) {
+							vm.entry.RedirectNodeName = redirectNode.name;
+							vm.entry.RedirectNodeIcon = redirectNode.icon;
+						});
+				}
+			}
+			else {
+				vm.title = "Create redirect";
+
+				vm.isNewEntry = true;
+				vm.advancedView = true;
+
+				vm.entry = {
+					OldUrl: "",
+					RedirectNodeId: null,
+					OldRexEx: "",
+					RedirectUrl: "",
+					Refferer: "",
+					ForceRedirect: false,
+					RedirectPassThroughQueryString: false,
+					RedirectHttpCode: 301,
+					Notes: "",
+					RedirectRootNodeId: -1
+				};
+
+				if (vm.rootNodes != null) {
+					vm.entry.RedirectRootNodeId = vm.rootNodes[0].id;
+				}
+			}
+
+			vm.updateLanguages();
+			vm.loading = false;
+		}
 
 		$scope.$watch('vm.entry.Culture', function (e) {
-			if ($location.search()["mculture"])
-				vm.previousCulture = $location.search()["mculture"];
-			$location.search('mculture', e);
+			if (!vm.loading) {
+				if ($location.search()["mculture"])
+					vm.previousCulture = $location.search()["mculture"];
+				$location.search('mculture', e);
+			}
 		});
 	}]);
 })();

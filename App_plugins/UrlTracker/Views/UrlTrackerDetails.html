@@ -1,5 +1,5 @@
 ﻿<div ng-controller="UrlTracker.DetailsController as vm">
-	<form name="UrlTrackerEntryForm">
+	<form name="UrlTrackerEntryForm" ng-if="!vm.loading">
 		<umb-editor-view>
 			<umb-editor-header name="vm.title" name-locked="true" hide-alias="true" hide-description="true" hide-icon="true">
 			</umb-editor-header>
@@ -9,8 +9,8 @@
 					<umb-box-content>
 						<!-- #region Root node -->
 						<umb-control-group label="Root node" description="The root node defines for which domain this redirect is meant" required="true">
-							<select ng-model="vm.entry.RedirectRootNodeId" ng-disabled="!vm.advancedView">
-								<option ng-repeat="node in vm.allRootNodes" ng-value="node.id">{{node.name}}</option>
+							<select ng-model="vm.entry.RedirectRootNodeId" ng-disabled="!vm.advancedView" ng-change="vm.updateLanguages()">
+								<option ng-repeat="node in vm.rootNodes" ng-value="node.id">{{node.name}}</option>
 							</select>
 						</umb-control-group>
 						<!-- #endregion -->
@@ -22,18 +22,16 @@
 						</umb-control-group>
 						<!-- #endregion -->
 						<!-- #region Old url/regex -->
-						<umb-control-group label="Old Url" description="The URL path and query string, which you'd like to redirect" required="!vm.advancedView">
+						<umb-control-group label="Old Url" description="The URL path and query string, which you'd like to redirect">
 							<input type="text" value="{{vm.entry.OldUrl}}" ng-model="vm.entry.OldUrl" ng-disabled="!vm.advancedView" />
 						</umb-control-group>
-						<umb-control-group label="Or Regex" description="The input for Regex matching is the path AND query string, without leading slash." ng-if="vm.advancedView">
+						<umb-control-group label="Regex" description="The input for Regex matching is the path AND query string, without leading slash." ng-if="vm.advancedView">
 							<input type="text" value="{{vm.entry.OldRegex}}" ng-model="vm.entry.OldRegex" />
 						</umb-control-group>
 						<!-- #endregion -->
 						<!-- #region Redirect node/url -->
 						<umb-control-group label="Redirect node" description="The node to redirect to">
 							<umb-node-preview icon="vm.entry.RedirectNodeIcon" name="vm.entry.RedirectNodeName" description="vm.entry.RedirectNodeUrl" sortable="false" allow-remove="true" on-remove="vm.removeRedirectNode()" on-open="vm.openNodePicker()" ng-if="vm.entry.RedirectNodeId != null"></umb-node-preview>
-							<!--<a href="" ng-if="vm.entry.RedirectNodeId != null" ng-click="vm.openNodePicker()">{{vm.entry.RedirectNodeName}} </a>
-							<a href="" ng-if="vm.entry.RedirectNodeId == null" ng-click="vm.openNodePicker()"> Pick a node</a>-->
 							<button type="button" class="umb-node-preview-add" ng-click="vm.openNodePicker()" ng-if="vm.entry.RedirectNodeId == null">
 								Add...
 							</button>
