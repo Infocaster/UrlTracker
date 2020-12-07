@@ -199,3 +199,12 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 .urltracker-large-table.urltracker-notfounds-table .col-occurrences {
 	flex: .55;
 }
+
+.urltracker_radio_checked~.umb-form-check__state .umb-form-check__check {
+	border-color: #1b264f!important;
+}
+
+.urltracker_radio_checked~.umb-form-check__state .umb-form-check__check:before {
+	opacity: 1;
+	transform: scale(1);
+}

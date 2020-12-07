@@ -41,10 +41,11 @@
 						</umb-control-group>
 						<!-- #endregion -->
 						<!--#region Redirect type-->
+
 						<umb-control-group label="Redirect type" description="Permanent redirects will be cached by browsers and search engines will update old entries with the new URL" required="true">
-							<label class="radio umb-form-check umb-form-check--radiobutton" style="padding-top: 0;">
+							<label class="radio umb-form-check umb-form-check--radiobutton d-block" style="padding-top: 0;">
 								<span class="umb-form-check__symbol">
-									<input type="radio" name="redirectHttpCode" value="301" class="umb-form-check__input" ng-model="vm.entry.RedirectHttpCode" ng-checked="vm.entry.RedirectHttpCode == '301'">
+									<input type="radio" ng-model="vm.entry.RedirectHttpCode" name="redirectHttpCode" value="301" class="umb-form-check__input" ng-class="{urltracker_radio_checked: vm.entry.RedirectHttpCode == 301}" ng-checked="vm.entry.RedirectHttpCode == 301">
 									<span class="umb-form-check__state">
 										<span class="umb-form-check__check"></span>
 									</span>
@@ -53,9 +54,9 @@
 									<span class="umb-form-check__text ng-binding ng-scope">Permanent (301)</span>
 								</span>
 							</label>
-							<label class="radio umb-form-check umb-form-check--radiobutton" style="padding-top: 0;">
+							<label class="radio umb-form-check umb-form-check--radiobutton d-block" style="padding-top: 0;">
 								<span class="umb-form-check__symbol">
-									<input type="radio" name="redirectHttpCode" value="302" class="umb-form-check__input" ng-model="vm.entry.RedirectHttpCode" ng-checked="vm.entry.RedirectHttpCode == '302'">
+									<input type="radio" ng-model="vm.entry.RedirectHttpCode" name="redirectHttpCode" value="302" class="umb-form-check__input" ng-class="{urltracker_radio_checked: vm.entry.RedirectHttpCode == 302}" ng-checked="vm.entry.RedirectHttpCode == 302">
 									<span class="umb-form-check__state">
 										<span class="umb-form-check__check"></span>
 									</span>
