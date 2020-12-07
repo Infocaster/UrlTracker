@@ -288,6 +288,8 @@
 		}
 
 		vm.redirects.search = function () {
+			vm.redirects.pagination.pageNumber = 1;
+
 			if (vm.redirects.searchString !== "")
 				GetRedirectsByFilter(vm.redirects);
 			else
@@ -298,8 +300,7 @@
 
 		//#region Not founds
 
-		vm.notFounds.createRedirect = function(item)
-		{
+		vm.notFounds.createRedirect = function (item) {
 			vm.entryDetailsOverlay.entry = Object.assign({}, item);
 			editorService.open(vm.entryDetailsOverlay);
 		}
@@ -408,6 +409,8 @@
 		}
 
 		vm.notFounds.search = function () {
+			vm.notFounds.pagination.pageNumber = 1;
+
 			if (vm.notFounds.searchString !== "")
 				GetNotFoundsByFilter(vm.notFounds);
 			else
