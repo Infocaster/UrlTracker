@@ -64,9 +64,9 @@
 										{{item.Occurrences}}x
 									</span>
 								</div>
-								<div class="umb-table-cell col-date" title="{{item.Inserted | date: 'EEEE, yyyy-MM-dd HH:mm'}}">
+								<div class="umb-table-cell col-date" title="{{item.Inserted | date: 'EEEE, yyyy-MM-dd HH:mm' : 'UTC'}}">
 									<span>
-										{{item.Inserted | date: 'yyyy-MM-dd HH:mm'}}
+										{{item.Inserted | date: 'yyyy-MM-dd HH:mm' : 'UTC'}}
 									</span>
 								</div>
 								<div class="umb-table-cell col-icons">
@@ -189,9 +189,9 @@
 								{{item.Occurrences}}x
 							</span>
 						</div>
-						<div class="umb-table-cell col-date" title="{{item.Inserted | date: 'EEEE, yyyy-MM-dd HH:mm'}}">
+						<div class="umb-table-cell col-date" title="{{item.Inserted | date: 'EEEE, yyyy-MM-dd HH:mm' : 'UTC'}}">
 							<span>
-								{{item.Inserted | date: 'yyyy-MM-dd HH:mm'}}
+								{{item.Inserted | date: 'yyyy-MM-dd HH:mm' : 'UTC'}}
 							</span>
 						</div>
 						<div class="umb-table-cell col-icons">
@@ -303,8 +303,8 @@
 						<div class="umb-table-cell col-notes" title="{{item.Notes}}">
 							<span>{{item.Notes}}</span>
 						</div>
-						<div class="umb-table-cell col-date" title="{{item.Inserted | date: 'EEEE, yyyy-MM-dd HH:mm'}}">
-							<span>{{item.Inserted | date: 'yyyy-MM-dd HH:mm'}}</span>
+						<div class="umb-table-cell col-date" title="{{item.Inserted | date: 'EEEE, yyyy-MM-dd HH:mm' : 'UTC'}}">
+							<span>{{item.Inserted | date: 'yyyy-MM-dd HH:mm' : 'UTC'}}</span>
 						</div>
 						<div class="umb-table-cell col-icons">
 							<i ng-click="vm.redirects.deleteItem(item)" class="icon-trash"></i>

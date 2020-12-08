@@ -224,20 +224,6 @@ namespace InfoCaster.Umbraco.UrlTracker
 						_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.UrlOverwrittenSEOMetadata, culture);
 				}
 			}
-			//if ((!string.IsNullOrEmpty(oldContentName) && newContentName != oldContentName && string.IsNullOrEmpty(oldContentUmbracoUrlName)) ||
-			//    newContentUmbracoUrlName != oldContentUmbracoUrlName)
-
-			//if (newContent.HasProperty("umbracoUrlName"))
-			//{
-			//	if (newContentUmbracoUrlName != oldContentUmbracoUrlName)  // 'umbracoUrlName' property value added/changed
-			//		_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.UrlOverwritten, culture);
-			//}
-			//else if(!string.IsNullOrEmpty(oldContentName) && newContentName != oldContentName) // 'Name' changed
-			//{
-			//	_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.Renamed, culture);
-			//}
-
-
 		}
 	}
 

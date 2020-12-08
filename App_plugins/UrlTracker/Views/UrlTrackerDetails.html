@@ -101,7 +101,7 @@
 						<!-- #endregion -->
 						<!-- #region Created -->
 						<umb-control-group label="Created" ng-if="!vm.isNewEntry && vm.advancedView">
-							{{vm.entry.Inserted | date: 'EEEE, dd LLLL yyyy HH:mm'}}
+							{{vm.entry.Inserted | date: 'EEEE, dd LLLL yyyy HH:mm' : 'UTC'}}
 						</umb-control-group>
 						<!-- #endregion -->
 					</umb-box-content>
