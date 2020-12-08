@@ -198,20 +198,16 @@ namespace InfoCaster.Umbraco.UrlTracker
 		private void MatchNodes(IContent newContent, IPublishedContent oldContent, string culture = "")
 		{
 			var newContentName = string.IsNullOrEmpty(culture) ? newContent.Name : newContent.CultureInfos[culture].Name;
+			var oldContentName = oldContent.Name(culture);
 
-			if (!string.IsNullOrEmpty(oldContent.Name(culture)) && newContentName != oldContent.Name(culture)) // 'Name' changed
+			var newContentUmbracoUrlName = newContent.GetValue("umbracoUrlName", culture)?.ToString() ?? "";
+			var oldContentUmbracoUrlName = oldContent.Value("umbracoUrlName", culture)?.ToString() ?? "";
+
+			if(newContentUmbracoUrlName != oldContentUmbracoUrlName)
+				_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.UrlOverwritten, culture);
+			else if (!string.IsNullOrEmpty(oldContentName) && newContentName != oldContentName)
 				_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.Renamed, culture);
-
-			if (newContent.HasProperty("umbracoUrlName"))
-			{
-				var newContentUmbracoUrlName = newContent.GetValue("umbracoUrlName", culture)?.ToString() ?? "";
-				var oldContentUmbracoUrlName = oldContent.Value("umbracoUrlName", culture)?.ToString() ?? "";
-
-				if (!newContentUmbracoUrlName.Equals(oldContentUmbracoUrlName))  // 'umbracoUrlName' property value added/changed
-					_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.UrlOverwritten, culture);
-			}
-
-			if (_urlTrackerSettings.IsSEOMetadataInstalled() && newContent.HasProperty(_urlTrackerSettings.GetSEOMetadataPropertyName()))
+			else if (_urlTrackerSettings.IsSEOMetadataInstalled() && newContent.HasProperty(_urlTrackerSettings.GetSEOMetadataPropertyName()))
 			{
 				var newContentSEOMetadata = newContent.GetValue(_urlTrackerSettings.GetSEOMetadataPropertyName(), culture)?.ToString() ?? "";
 				var oldContentSEOMetadata = oldContent.Value(_urlTrackerSettings.GetSEOMetadataPropertyName(), culture)?.ToString() ?? "";
@@ -228,6 +224,20 @@ namespace InfoCaster.Umbraco.UrlTracker
 						_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.UrlOverwrittenSEOMetadata, culture);
 				}
 			}
+			//if ((!string.IsNullOrEmpty(oldContentName) && newContentName != oldContentName && string.IsNullOrEmpty(oldContentUmbracoUrlName)) ||
+			//    newContentUmbracoUrlName != oldContentUmbracoUrlName)
+
+			//if (newContent.HasProperty("umbracoUrlName"))
+			//{
+			//	if (newContentUmbracoUrlName != oldContentUmbracoUrlName)  // 'umbracoUrlName' property value added/changed
+			//		_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.UrlOverwritten, culture);
+			//}
+			//else if(!string.IsNullOrEmpty(oldContentName) && newContentName != oldContentName) // 'Name' changed
+			//{
+			//	_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.Renamed, culture);
+			//}
+
+
 		}
 	}
 
