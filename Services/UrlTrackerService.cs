@@ -68,7 +68,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			return _urlTrackerRepository.AddEntry(entry);
 		}
 
-		public bool AddRedirect(IContent newContent, IPublishedContent oldContent, UrlTrackerRedirectType redirectType, UrlTrackerReason reason, string culture = null, bool isChild = false)
+		public bool AddRedirect(IContent newContent, IPublishedContent oldContent, UrlTrackerHttpCode redirectType, UrlTrackerReason reason, string culture = null, bool isChild = false)
 		{
 			var oldUrl = string.IsNullOrEmpty(culture) ? oldContent.Url : oldContent.Url(culture);
 
@@ -323,6 +323,11 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		public void Convert410To301ByNodeId(int nodeId)
 		{
 			_urlTrackerRepository.Convert410To301ByNodeId(nodeId);
+		}
+
+		public void ConvertRedirectTo410ByNodeId(int nodeId)
+		{
+			_urlTrackerRepository.ConvertRedirectTo410ByNodeId(nodeId);
 		}
 
 		public void ClearDomains()

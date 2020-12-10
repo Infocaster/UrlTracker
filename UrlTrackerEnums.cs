@@ -6,10 +6,11 @@
 		NotFound
 	}
 
-	public enum UrlTrackerRedirectType
+	public enum UrlTrackerHttpCode
 	{
 		MovedPermanently = 301,
-		TemporaryRedirect = 302
+		TemporaryRedirect = 302,
+		Gone = 410
 	}
 
 	public enum UrlTrackerSortType

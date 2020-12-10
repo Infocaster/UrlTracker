@@ -27,6 +27,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 		void Execute(string query, object parameters = null);
 		void UpdateEntry(UrlTrackerModel entry);
 		void Convert410To301ByNodeId(int nodeId);
+		void ConvertRedirectTo410ByNodeId(int nodeId); 
 
 		#endregion
 

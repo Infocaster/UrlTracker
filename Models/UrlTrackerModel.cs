@@ -5,11 +5,8 @@ using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Web;
 using System.Web.Mvc;
-using Umbraco.Core.Models.PublishedContent;
-using Umbraco.Web;
 
 namespace InfoCaster.Umbraco.UrlTracker.Models
 {

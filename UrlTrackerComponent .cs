@@ -73,7 +73,6 @@ namespace InfoCaster.Umbraco.UrlTracker
 			var upgrader = new Upgrader(migrationPlan);
 			upgrader.Execute(_scopeProvider, _migrationBuilder, _keyValueService, _logger);
 
-
 			if (!_urlTrackerSettings.IsDisabled() && !_urlTrackerSettings.IsTrackingDisabled())
 			{
 				//todo: resolve check from migration and execute this
@@ -81,8 +80,8 @@ namespace InfoCaster.Umbraco.UrlTracker
 				ContentService.Moving += ContentService_Moving;
 				ContentService.Publishing += ContentService_Publishing;
 				ContentService.Published += ContentService_Published;
+				ContentService.Trashed += ContentService_Trashed;
 
-				ContentService.Deleting += ContentService_Deleting;
 				DomainService.Deleted += DomainService_Deleted;
 				DomainService.Saved += DomainService_Saved;
 			}
@@ -100,26 +99,29 @@ namespace InfoCaster.Umbraco.UrlTracker
 			_urlTrackerService.ClearDomains();
 		}
 
-		void ContentService_Deleting(IContentService sender, DeleteEventArgs<IContent> e)
+		private void ContentService_Trashed(IContentService sender, MoveEventArgs<IContent> e)
 		{
-			foreach (IContent content in e.DeletedEntities)
+#if !DEBUG
+            try
+#endif
+			foreach (var moved in e.MoveInfoCollection)
 			{
-#if !DEBUG
-                try
-#endif
-				{
-					_urlTrackerService.DeleteEntryByRedirectNodeId(content.Id);
-				}
-#if !DEBUG
-                catch (Exception ex)
-                {
-                    ex.LogException();
-                }
-#endif
+				IContent movedContent = moved.Entity;
+
+				if (movedContent == null)
+					return;
+
+				_urlTrackerService.ConvertRedirectTo410ByNodeId(movedContent.Id);
 			}
+#if !DEBUG
+            catch (Exception ex)
+            {
+                ex.LogException();
+            }
+#endif
 		}
 
-		void ContentService_Publishing(IContentService sender, ContentPublishingEventArgs e)
+		private void ContentService_Publishing(IContentService sender, ContentPublishingEventArgs e)
 		{
 			// When content is renamed or 'umbracoUrlName' property value is added/updated
 			foreach (IContent newContent in e.PublishedEntities)
@@ -152,7 +154,7 @@ namespace InfoCaster.Umbraco.UrlTracker
 			}
 		}
 
-		void ContentService_Published(IContentService sender, ContentPublishedEventArgs e)
+		private void ContentService_Published(IContentService sender, ContentPublishedEventArgs e)
 		{
 			foreach (IContent content in e.PublishedEntities)
 			{
@@ -160,7 +162,7 @@ namespace InfoCaster.Umbraco.UrlTracker
 			}
 		}
 
-		void ContentService_Moving(IContentService sender, MoveEventArgs<IContent> e)
+		private void ContentService_Moving(IContentService sender, MoveEventArgs<IContent> e)
 		{
 #if !DEBUG
             try
@@ -179,11 +181,11 @@ namespace InfoCaster.Umbraco.UrlTracker
 					if (newContent.AvailableCultures.Any())
 					{
 						foreach (var culture in newContent.AvailableCultures)
-							_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.Moved, culture);
+							_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerHttpCode.MovedPermanently, UrlTrackerReason.Moved, culture);
 					}
 					else
 					{
-						_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.Moved);
+						_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerHttpCode.MovedPermanently, UrlTrackerReason.Moved);
 					}
 				}
 			}
@@ -204,9 +206,9 @@ namespace InfoCaster.Umbraco.UrlTracker
 			var oldContentUmbracoUrlName = oldContent.Value("umbracoUrlName", culture)?.ToString() ?? "";
 
 			if(newContentUmbracoUrlName != oldContentUmbracoUrlName)
-				_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.UrlOverwritten, culture);
+				_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerHttpCode.MovedPermanently, UrlTrackerReason.UrlOverwritten, culture);
 			else if (!string.IsNullOrEmpty(oldContentName) && newContentName != oldContentName)
-				_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.Renamed, culture);
+				_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerHttpCode.MovedPermanently, UrlTrackerReason.Renamed, culture);
 			else if (_urlTrackerSettings.IsSEOMetadataInstalled() && newContent.HasProperty(_urlTrackerSettings.GetSEOMetadataPropertyName()))
 			{
 				var newContentSEOMetadata = newContent.GetValue(_urlTrackerSettings.GetSEOMetadataPropertyName(), culture)?.ToString() ?? "";
@@ -221,7 +223,7 @@ namespace InfoCaster.Umbraco.UrlTracker
 					string oldContentUrlName = nodeJson.urlName;
 
 					if (newContentUrlName != oldContentUrlName) // SEOMetadata UrlName property value added/changed
-						_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerRedirectType.MovedPermanently, UrlTrackerReason.UrlOverwrittenSEOMetadata, culture);
+						_urlTrackerService.AddRedirect(newContent, oldContent, UrlTrackerHttpCode.MovedPermanently, UrlTrackerReason.UrlOverwrittenSEOMetadata, culture);
 				}
 			}
 		}

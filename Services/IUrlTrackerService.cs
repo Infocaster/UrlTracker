@@ -10,7 +10,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		#region Create
 
 		bool AddRedirect(UrlTrackerModel entry);
-		bool AddRedirect(IContent newContent, IPublishedContent oldContent, UrlTrackerRedirectType redirectType, UrlTrackerReason reason, string culture = null, bool isChild = false);
+		bool AddRedirect(IContent newContent, IPublishedContent oldContent, UrlTrackerHttpCode redirectType, UrlTrackerReason reason, string culture = null, bool isChild = false);
 		bool AddNotFound(string url, int rootNodeId, string referrer, string culture = null);
 
 		#endregion
@@ -35,6 +35,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 		void UpdateEntry(UrlTrackerModel entry);
 		void Convert410To301ByNodeId(int nodeId);
+		void ConvertRedirectTo410ByNodeId(int nodeId);
 		void ClearDomains();
 		void ClearForcedRedirectsCache();
 

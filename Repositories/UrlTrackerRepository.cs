@@ -236,7 +236,25 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
-				scope.Database.Execute("UPDATE icUrlTracker SET RedirectHttpCode = 301 WHERE RedirectHttpCode = 410 AND RedirectNodeId = @redirectNodeId", new { redirectNodeId = nodeId });
+				scope.Database.Execute(
+					"UPDATE icUrlTracker SET RedirectHttpCode = 301 WHERE RedirectHttpCode = 410 AND RedirectNodeId = @redirectNodeId",
+					new
+					{
+						redirectNodeId = nodeId
+					});
+			}
+		}
+
+		public void ConvertRedirectTo410ByNodeId(int nodeId)
+		{
+			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+			{
+				scope.Database.Execute(
+					"UPDATE icUrlTracker SET RedirectHttpCode = 410 WHERE (RedirectHttpCode = 301 OR RedirectHttpCode = 302) AND RedirectNodeId = @redirectNodeId",
+					new
+					{
+						redirectNodeId = nodeId
+					});
 			}
 		}
 
