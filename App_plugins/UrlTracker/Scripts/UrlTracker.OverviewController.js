@@ -46,6 +46,7 @@
 			loading: false
 		};
 
+		urlTrackerEntryService.getSettings(vm);
 		entityResource.getChildren(-1, "Document").then(function (rootNodes) {
 			vm.allRootNodes = rootNodes;
 		});
@@ -188,8 +189,10 @@
 		}
 
 		vm.redirects.clickItem = function (item) {
-			vm.entryDetailsOverlay.entry = Object.assign({}, item);
-			editorService.open(vm.entryDetailsOverlay);
+			if (item.RedirectHttpCode != 410) {
+				vm.entryDetailsOverlay.entry = Object.assign({}, item);
+				editorService.open(vm.entryDetailsOverlay);
+			}
 		}
 
 		vm.redirects.goToPage = function (pageNumber) {

@@ -96,8 +96,8 @@
 							</div>
 						</div>
 						<div class="umb-table-body">
-							<div class="umb-table-row" ng-repeat="item in vm.dashboard.redirects.items">
-								<div class="umb-table-cell col-site" ng-if="vm.allRootNodes.length > 1">
+							<div class="umb-table-row" ng-repeat="item in vm.dashboard.redirects.items" ng-click="vm.redirects.clickItem(item)" ng-class="{'-selectable umb-outline': item.RedirectHttpCode != 410}">
+								<div class="umb-table-cell col-site" ng-if="vm.allRootNodes.length > 1" title="{{vm.getSiteName(item)}}">
 									<span>
 										{{vm.getSiteName(item)}}
 									</span>
@@ -108,8 +108,10 @@
 									<span class="regex" ng-if="item.OldRegex">{{item.OldRegex}}</span>
 								</div>
 
-								<div class="umb-table-cell" title="{{item.CalculatedRedirectUrl}}">
+								<div class="umb-table-cell col-new-url" title="{{item.CalculatedRedirectUrl}}">
 									<span ng-if="item.CalculatedRedirectUrl != null">{{item.CalculatedRedirectUrl}}</span>
+									<span ng-if="item.CalculatedRedirectUrl == null">-</span>
+									<div class="ut-redirect-http-code">{{item.RedirectHttpCode}}</div>
 								</div>
 							</div>
 						</div>
@@ -159,7 +161,7 @@
 					</div>
 				</div>
 				<div class="umb-table-body">
-					<div class="umb-table-row -selectable umb-outline" ng-repeat="item in vm.notFounds.items" ng-click="vm.notFounds.clickItem(item)">
+					<div class="umb-table-row" ng-repeat="item in vm.notFounds.items" ng-click="vm.notFounds.clickItem(item)">
 						<div class="umb-table-cell col-select">
 							<input class="select-notfound" type="checkbox" ng-checked="vm.notFounds.allItemsSelected" ng-click="vm.notFounds.toggleSelectItem($event, item)" />
 						</div>
@@ -274,12 +276,12 @@
 					</div>
 				</div>
 				<div class="umb-table-body">
-					<div class="umb-table-row -selectable umb-outline" ng-repeat="item in vm.redirects.items" ng-click="vm.redirects.clickItem(item)">
+					<div class="umb-table-row" ng-repeat="item in vm.redirects.items" ng-click="vm.redirects.clickItem(item)" ng-class="{'-selectable umb-outline': item.RedirectHttpCode != 410}">
 						<div class="umb-table-cell col-select">
 							<input class="select-redirect" type="checkbox" ng-checked="vm.redirects.allItemsSelected" ng-click="vm.redirects.toggleSelectItem($event, item)" />
 						</div>
 
-						<div class="umb-table-cell col-site">
+						<div class="umb-table-cell col-site" title="{{vm.getSiteName(item)}}">
 							<span>
 								{{vm.getSiteName(item)}}
 							</span>
@@ -291,14 +293,14 @@
 						</div>
 
 						<div class="umb-table-cell col-old-url" title="{{item.OldUrl || item.OldRegex}}">
-							<!--<a class="umb-table-body__link" href="/{{item.OldUrl}}" target="_blank" ng-click="$event.stopPropagation();">{{item.OldUrl}}</a>-->
 							<span ng-if="item.OldUrl">{{item.OldUrl}}</span>
 							<span class="regex" ng-if="item.OldRegex">{{item.OldRegex}}</span>
 						</div>
 
 						<div class="umb-table-cell col-new-url" title="{{item.CalculatedRedirectUrl}}">
-							<!--<a class="umb-table-body__link" href="/{{item.CalculatedRedirectUrl}}" target="_blank" ng-click="$event.stopPropagation();">{{item.CalculatedRedirectUrl}}</a>-->
 							<span ng-if="item.CalculatedRedirectUrl != null">{{item.CalculatedRedirectUrl}}</span>
+							<span ng-if="item.CalculatedRedirectUrl == null">-</span>
+							<div class="ut-redirect-http-code">{{item.RedirectHttpCode}}</div>
 						</div>
 						<div class="umb-table-cell col-notes" title="{{item.Notes}}">
 							<span>{{item.Notes}}</span>

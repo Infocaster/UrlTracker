@@ -4,7 +4,7 @@
         var addRedirect = function (scope, entry) {
 	        entry.is404 = false;
 		    return $http({
-			    url: "/umbraco/BackOffice/api/UrlTrackerManager/AddRedirect",
+			    url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/AddRedirect",
 			    method: "POST",
 			    data: entry
 			}).then(function () {
@@ -22,7 +22,7 @@
                 scope.loading = true;
             }
             return $http({
-                url: "/umbraco/BackOffice/api/UrlTrackerManager/GetRedirects",
+				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/GetRedirects",
                 method: "GET",
                 params: {
                     skip: skip,
@@ -50,7 +50,7 @@
 		        scope.loading = true;
 	        }
 	        return $http({
-		        url: "/umbraco/BackOffice/api/UrlTrackerManager/GetNotFounds",
+				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/GetNotFounds",
 		        method: "GET",
 		        params: {
 			        skip: skip,
@@ -78,7 +78,7 @@
 		        scope.loading = true;
 	        }
 	        return $http({
-                url: "/umbraco/BackOffice/api/UrlTrackerManager/GetRedirectsByFilter",
+				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/GetRedirectsByFilter",
 		        method: "GET",
 		        params: {
 			        skip: skip,
@@ -110,7 +110,7 @@
 		        scope.loading = true;
 	        }
 	        return $http({
-                url: "/umbraco/BackOffice/api/UrlTrackerManager/GetNotFoundsByFilter",
+				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/GetNotFoundsByFilter",
 		        method: "GET",
 		        params: {
 			        skip: skip,
@@ -139,7 +139,7 @@
 
         var updateRedirect = function (scope, entry) {
             return $http({
-                url: "/umbraco/BackOffice/api/UrlTrackerManager/UpdateRedirect",
+				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/UpdateRedirect",
                 method: "POST",
                 data: entry
             }).then(function () {
@@ -154,7 +154,7 @@
 
         var deleteEntry = function (entryId, is404 = false) {
             return $http({
-                url: "/umbraco/BackOffice/api/UrlTrackerManager/DeleteEntry?id=" + entryId + "&is404=" + is404,
+				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/DeleteEntry?id=" + entryId + "&is404=" + is404,
                 method: "POST"
             }).then(function (data) {
                 return data;
@@ -165,7 +165,7 @@
 
         var getLanguagesOutNodeDomains = function (scope, nodeId) {
 	        return $http({
-		        url: "/umbraco/BackOffice/api/UrlTrackerManager/GetLanguagesOutNodeDomains",
+				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/GetLanguagesOutNodeDomains",
 		        method: "GET",
 		        params: {
 			        nodeId: nodeId
@@ -179,10 +179,21 @@
 
 		var countNotFoundsThisWeek = function(scope) {
 			return $http({
-				url: "/umbraco/BackOffice/api/UrlTrackerManager/CountNotFoundsThisWeek",
+				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/CountNotFoundsThisWeek",
 				method: "GET",
 			}).then(function (response) {
 				scope.notFoundsThisWeek = response.data;
+			}).catch(function (response) {
+				$log.log(response);
+			});
+		}
+
+		var getSettings = function (scope) {
+			return $http({
+				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/GetSettings",
+				method: "GET",
+			}).then(function (response) {
+				scope.settings = response.data;
 			}).catch(function (response) {
 				$log.log(response);
 			});
@@ -197,7 +208,8 @@
             getRedirectsByFilters: getRedirectsByFilters,
 			getNotFoundsByFilters: getNotFoundsByFilters,
 			getLanguagesOutNodeDomains: getLanguagesOutNodeDomains,
-			countNotFoundsThisWeek: countNotFoundsThisWeek
+			countNotFoundsThisWeek: countNotFoundsThisWeek,
+			getSettings: getSettings
 		};
 
         return UrlTrackerEntryService;
