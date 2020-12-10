@@ -1,22 +1,26 @@
-﻿using System;
-using System.Linq;
-using InfoCaster.Umbraco.UrlTracker.Models;
+﻿using InfoCaster.Umbraco.UrlTracker.Models;
 using InfoCaster.Umbraco.UrlTracker.Services;
+using InfoCaster.Umbraco.UrlTracker.Settings;
 using InfoCaster.Umbraco.UrlTracker.ViewModels;
 using System.Web.Http;
-using Newtonsoft.Json;
-using Umbraco.Web;
+using Umbraco.Web.Mvc;
 using Umbraco.Web.WebApi;
 
 namespace InfoCaster.Umbraco.UrlTracker.Controllers
 {
+	[PluginController("UrlTracker")]
 	public class UrlTrackerManagerController : UmbracoAuthorizedApiController
 	{
 		private readonly IUrlTrackerService _urlTrackerService;
+		private readonly IUrlTrackerSettings _urlTrackerSettings;
 
-		public UrlTrackerManagerController(IUrlTrackerService urlTrackerService)
+		public UrlTrackerManagerController(
+			IUrlTrackerService urlTrackerService,
+			IUrlTrackerSettings urlTrackerSettings
+			)
 		{
 			_urlTrackerService = urlTrackerService;
+			_urlTrackerSettings = urlTrackerSettings;
 		}
 
 		#region General
@@ -24,7 +28,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 		[HttpPost]
 		public IHttpActionResult DeleteEntry(int id, bool is404 = false)
 		{
-			if(!_urlTrackerService.DeleteEntryById(id, is404))
+			if (!_urlTrackerService.DeleteEntryById(id, is404))
 				return BadRequest();
 
 			return Ok();
@@ -34,6 +38,16 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 		public IHttpActionResult GetLanguagesOutNodeDomains(int nodeId)
 		{
 			return Ok(_urlTrackerService.GetLanguagesOutNodeDomains(nodeId));
+		}
+
+		[HttpGet]
+		public IHttpActionResult GetSettings()
+		{
+			return Ok(new
+			{
+				IsDisabled = _urlTrackerSettings.IsDisabled(),
+				IsNotFoundTrackingDisabled = _urlTrackerSettings.IsNotFoundTrackingDisabled()
+			});
 		}
 
 		#endregion
