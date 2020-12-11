@@ -235,3 +235,12 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 	color: white;
 	font-size: 12px;
 }
+
+.urltracker-disabled-text {
+	text-align: center;
+}
+
+.urltracker-disabled-text h1 {
+	font-weight: bold;
+	padding-top: 100px;
+}

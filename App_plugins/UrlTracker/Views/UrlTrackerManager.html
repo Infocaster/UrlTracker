@@ -12,12 +12,6 @@
 							<span class="circle-subtitle">Not founds this week</span>
 						</div>
 					</div>
-					<!--<div class="circle ml-4">
-						<div class="circle-content">
-							<span class="circle-title">128</span>
-							<span class="circle-subtitle">Redirects</span>
-						</div>
-					</div>-->
 				</div>
 			</div>
 			<div class="row mt-5 mb-5">
@@ -121,101 +115,107 @@
 		</div>
 
 		<div ng-if="tab.alias == 'notFounds'">
-			<umb-editor-sub-header ng-if="vm.notFounds.selectedItems.length == 0">
-				<!-- ToDo: filters -->
-				<umb-editor-sub-header-content-right>
-					<umb-editor-sub-header-section>
-						<div class="urltracker-form-box search-box">
-							<i class="icon-search"></i>
-							<input type="text" ng-model="vm.notFounds.searchString" ng-enter="vm.notFounds.search()" placeholder="Search..." />
-						</div>
-					</umb-editor-sub-header-section>
-				</umb-editor-sub-header-content-right>
-			</umb-editor-sub-header>
+			<div ng-if="!vm.settings.IsNotFoundTrackingDisabled || vm.notFounds.items.length != 0">
+				<umb-editor-sub-header ng-if="vm.notFounds.selectedItems.length == 0">
+					<!-- ToDo: filters -->
+					<umb-editor-sub-header-content-right>
+						<umb-editor-sub-header-section>
+							<div class="urltracker-form-box search-box">
+								<i class="icon-search"></i>
+								<input type="text" ng-model="vm.notFounds.searchString" ng-enter="vm.notFounds.search()" placeholder="Search..." />
+							</div>
+						</umb-editor-sub-header-section>
+					</umb-editor-sub-header-content-right>
+				</umb-editor-sub-header>
 
-			<umb-editor-sub-header ng-if="vm.notFounds.selectedItems.length > 0" class="--state-selection">
-				<umb-editor-sub-header-content-left>
-					<umb-button action="vm.notFounds.clearSelection()" type="button" button-style="white" state="" label="Clear selection"></umb-button>
-				</umb-editor-sub-header-content-left>
-				<umb-editor-sub-header-content-right>
-					<umb-button action="vm.notFounds.deleteSelected()" type="button" button-style="white" label="Delete" icon="icon-trash"></umb-button>
-				</umb-editor-sub-header-content-right>
-			</umb-editor-sub-header>
+				<umb-editor-sub-header ng-if="vm.notFounds.selectedItems.length > 0" class="--state-selection">
+					<umb-editor-sub-header-content-left>
+						<umb-button action="vm.notFounds.clearSelection()" type="button" button-style="white" state="" label="Clear selection"></umb-button>
+					</umb-editor-sub-header-content-left>
+					<umb-editor-sub-header-content-right>
+						<umb-button action="vm.notFounds.deleteSelected()" type="button" button-style="white" label="Delete" icon="icon-trash"></umb-button>
+					</umb-editor-sub-header-content-right>
+				</umb-editor-sub-header>
 
-			<div class="umb-table urltracker-large-table urltracker-notfounds-table">
-				<umb-load-indicator ng-if="vm.notFounds.loading"></umb-load-indicator>
-				<div class="umb-table-head">
-					<div class="umb-table-row">
-						<div class="umb-table-cell col-select">
-							<input class="select-notfound" type="checkbox" ng-checked="vm.notFounds.allItemsSelected" ng-click="vm.notFounds.selectAll()" />
+				<div class="umb-table urltracker-large-table urltracker-notfounds-table">
+					<umb-load-indicator ng-if="vm.notFounds.loading"></umb-load-indicator>
+					<div class="umb-table-head">
+						<div class="umb-table-row">
+							<div class="umb-table-cell col-select">
+								<input class="select-notfound" type="checkbox" ng-checked="vm.notFounds.allItemsSelected" ng-click="vm.notFounds.selectAll()" />
+							</div>
+							<div class="umb-table-cell col-site">Site</div>
+							<div class="umb-table-cell col-culture">Culture</div>
+							<div class="umb-table-cell col-old-url">URL</div>
+							<div class="umb-table-cell col-referrer">Most important referrer</div>
+							<div class="umb-table-cell col-occurrences">Occurrences</div>
+							<div class="umb-table-cell col-date">
+								Last occurred
+							</div>
+							<div class="umb-table-cell col-icons"></div>
 						</div>
-						<div class="umb-table-cell col-site">Site</div>
-						<div class="umb-table-cell col-culture">Culture</div>
-						<div class="umb-table-cell col-old-url">URL</div>
-						<div class="umb-table-cell col-referrer">Most important referrer</div>
-						<div class="umb-table-cell col-occurrences">Occurrences</div>
-						<div class="umb-table-cell col-date">
-							Last occurred
+					</div>
+					<div class="umb-table-body">
+						<div class="umb-table-row" ng-repeat="item in vm.notFounds.items" ng-click="vm.notFounds.clickItem(item)">
+							<div class="umb-table-cell col-select">
+								<input class="select-notfound" type="checkbox" ng-checked="vm.notFounds.allItemsSelected" ng-click="vm.notFounds.toggleSelectItem($event, item)" />
+							</div>
+
+							<div class="umb-table-cell col-site" title="{{vm.getSiteName(item)}}">
+								<span>
+									{{vm.getSiteName(item)}}
+								</span>
+							</div>
+
+							<div class="umb-table-cell col-culture" title="{{item.Culture}}">
+								<span ng-if="item.Culture != null">{{item.Culture}}</span>
+								<span ng-if="item.Culture == null">*</span>
+							</div>
+
+							<div class="umb-table-cell col-old-url" title="{{item.OldUrl}}">
+								<span>
+									{{item.OldUrl}}
+								</span>
+							</div>
+							<div class="umb-table-cell col-referrer" title="{{item.Referrer}}">
+								<span ng-if="item.Referrer">{{item.Referrer}}</span>
+								<span ng-if="!item.Referrer">-</span>
+							</div>
+							<div class="umb-table-cell col-occurrences" title="{{item.Occurrences}}x">
+								<span>
+									{{item.Occurrences}}x
+								</span>
+							</div>
+							<div class="umb-table-cell col-date" title="{{item.Inserted | date: 'EEEE, yyyy-MM-dd HH:mm' : 'UTC'}}">
+								<span>
+									{{item.Inserted | date: 'yyyy-MM-dd HH:mm' : 'UTC'}}
+								</span>
+							</div>
+							<div class="umb-table-cell col-icons">
+								<umb-button action="vm.notFounds.createRedirect(item)" type="button" button-style="primary" label="Create Redirect" class="urltracker-table-button mr-2 mt-1"></umb-button>
+								<i ng-click="vm.notFounds.deleteItem(item)" class="icon-trash"></i>
+							</div>
 						</div>
-						<div class="umb-table-cell col-icons"></div>
 					</div>
 				</div>
-				<div class="umb-table-body">
-					<div class="umb-table-row" ng-repeat="item in vm.notFounds.items" ng-click="vm.notFounds.clickItem(item)">
-						<div class="umb-table-cell col-select">
-							<input class="select-notfound" type="checkbox" ng-checked="vm.notFounds.allItemsSelected" ng-click="vm.notFounds.toggleSelectItem($event, item)" />
-						</div>
-
-						<div class="umb-table-cell col-site" title="{{vm.getSiteName(item)}}">
-							<span>
-								{{vm.getSiteName(item)}}
-							</span>
-						</div>
-
-						<div class="umb-table-cell col-culture" title="{{item.Culture}}">
-							<span ng-if="item.Culture != null">{{item.Culture}}</span>
-							<span ng-if="item.Culture == null">*</span>
-						</div>
-
-						<div class="umb-table-cell col-old-url" title="{{item.OldUrl}}">
-							<span>
-								{{item.OldUrl}}
-							</span>
-						</div>
-						<div class="umb-table-cell col-referrer" title="{{item.Referrer}}">
-							<span ng-if="item.Referrer">{{item.Referrer}}</span>
-							<span ng-if="!item.Referrer">-</span>
-						</div>
-						<div class="umb-table-cell col-occurrences" title="{{item.Occurrences}}x">
-							<span>
-								{{item.Occurrences}}x
-							</span>
-						</div>
-						<div class="umb-table-cell col-date" title="{{item.Inserted | date: 'EEEE, yyyy-MM-dd HH:mm' : 'UTC'}}">
-							<span>
-								{{item.Inserted | date: 'yyyy-MM-dd HH:mm' : 'UTC'}}
-							</span>
-						</div>
-						<div class="umb-table-cell col-icons">
-							<umb-button action="vm.notFounds.createRedirect(item)" type="button" button-style="primary" label="Create Redirect" class="urltracker-table-button mr-2 mt-1"></umb-button>
-							<i ng-click="vm.notFounds.deleteItem(item)" class="icon-trash"></i>
-						</div>
-					</div>
+				<umb-pagination page-number="vm.notFounds.pagination.pageNumber"
+								total-pages="vm.notFounds.pagination.totalPages"
+								on-next="vm.notFounds.nextPage"
+								on-prev="vm.notFounds.prevPage"
+								on-go-to-page="vm.notFounds.goToPage"
+								class="urltracker-pagination">
+				</umb-pagination>
+				<div class="urltracker-page-size">
+					<select ng-model="vm.notFounds.itemsPerPage" ng-change="vm.notFounds.pageSizeChanged()" class="urltracker-checkbox-page-size">
+						<option ng-repeat="option in vm.pageSizeOptions" value="{{option.value}}" ng-value="{{option.value}}">{{option.value}}</option>
+					</select>
 				</div>
 			</div>
-			<umb-pagination page-number="vm.notFounds.pagination.pageNumber"
-							total-pages="vm.notFounds.pagination.totalPages"
-							on-next="vm.notFounds.nextPage"
-							on-prev="vm.notFounds.prevPage"
-							on-go-to-page="vm.notFounds.goToPage"
-							class="urltracker-pagination">
-			</umb-pagination>
-			<div class="urltracker-page-size">
-				<select ng-model="vm.notFounds.itemsPerPage" ng-change="vm.notFounds.pageSizeChanged()" class="urltracker-checkbox-page-size">
-					<option ng-repeat="option in vm.pageSizeOptions" value="{{option.value}}" ng-value="{{option.value}}">{{option.value}}</option>
-				</select>
+			<div ng-if="vm.settings.IsNotFoundTrackingDisabled && vm.notFounds.items.length == 0" class="urltracker-disabled-text">
+				<h1>Tracking not founds<br /> is disabled</h1>
 			</div>
 		</div>
+
 
 		<div ng-if="tab.alias == 'redirects'">
 			<umb-editor-sub-header ng-if="vm.redirects.selectedItems.length == 0">

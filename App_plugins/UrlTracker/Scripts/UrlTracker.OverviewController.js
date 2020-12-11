@@ -243,7 +243,7 @@
 			}
 			else {
 				vm.redirects.allItemsSelected = true;
-				vm.redirects.selectedItems = vm.redirects.items;
+				vm.redirects.selectedItems = angular.copy(vm.redirects.items);
 			}
 		}
 
@@ -360,22 +360,21 @@
 			}
 			else {
 				vm.notFounds.allItemsSelected = true;
-				vm.notFounds.selectedItems = vm.notFounds.items;
+				vm.notFounds.selectedItems = angular.copy(vm.notFounds.items);
 			}
 		}
 
 		vm.notFounds.toggleSelectItem = function (event, item) {
 			event.stopPropagation();
-			var isAlreadySelected = vm.notFounds.selectedItems.findIndex(function (i) {
+
+			var index = vm.notFounds.selectedItems.findIndex(function (i) {
 				return i.Id == item.Id;
 			});
 
-			if (isAlreadySelected != -1) {
-				vm.notFounds.selectedItems.splice(isAlreadySelected, 1);
-			}
-			else {
+			if (index != -1) 
+				vm.notFounds.selectedItems.splice(index, 1);
+			else 
 				vm.notFounds.selectedItems.push(item);
-			}
 		}
 
 		vm.notFounds.deleteSelected = function () {
