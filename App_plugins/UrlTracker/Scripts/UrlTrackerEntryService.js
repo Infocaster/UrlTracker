@@ -15,7 +15,18 @@
 				$log.log(data);
 				throw data.data.Message;
 		    });
-	    }
+		}
+
+		var addIgnore404 = function (id) {
+	        return $http({
+		        url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/AddIgnore404",
+		        method: "POST",
+		        data: id
+	        }).catch(function (data) {
+		        $log.log(data);
+		        throw data.data.Message;
+	        });
+        }
 
         var getRedirects = function (scope, skip, amount) {
             if (scope.loading != undefined) {
@@ -200,7 +211,8 @@
 		}
 
         var UrlTrackerEntryService = {
-            getRedirects: getRedirects,
+			getRedirects: getRedirects,
+			addIgnore404: addIgnore404,
             getNotFounds: getNotFounds,
             deleteEntry: deleteEntry,
 			updateRedirect: updateRedirect,

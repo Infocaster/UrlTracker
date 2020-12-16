@@ -84,7 +84,7 @@
 			} else {
 				var domain = vm.rootNodes.find(n => n.id == vm.entry.RedirectRootNodeId);
 
-				if (domain != null && domain.domainLanguages && domain.domainLanguages.length > 0) {
+				if (domain != null && domain.domainLanguages != null) {
 					vm.languages = domain.domainLanguages;
 
 					if (vm.entry.Culture == null || !vm.languages.find(x => x.IsoCode == vm.entry.Culture))

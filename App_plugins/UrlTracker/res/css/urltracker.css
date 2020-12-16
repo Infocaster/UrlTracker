@@ -152,12 +152,15 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 .urltracker-table-button button {
 	font-size: 12px;
 	padding: 0 5px;
+}
+
+.urltracker-table-button.ic-color button {
 	background-color: #ff0069;
 }
 
-.urltracker-table-button button:hover,
-.urltracker-table-button button:focus,
-.urltracker-table-button button:active {
+.urltracker-table-button.ic-color button:hover,
+.urltracker-table-button.ic-color button:focus,
+.urltracker-table-button.ic-color button:active {
 	background-color: #d6065c;
 }
 
@@ -194,7 +197,7 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 }
 
 .urltracker-large-table.urltracker-notfounds-table .col-icons {
-	flex: .3 .3 5%;
+	flex: .7 .7 5%;
 }
 
 .urltracker-large-table .col-date,

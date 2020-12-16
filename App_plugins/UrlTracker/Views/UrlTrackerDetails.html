@@ -1,5 +1,5 @@
 ﻿<div ng-controller="UrlTracker.DetailsController as vm">
-	<form name="UrlTrackerEntryForm" ng-if="!vm.loading">
+	<form name="UrlTrackerEntryForm" ng-if="!vm.loading" ng-submit="vm.saveChanges()">
 		<umb-editor-view>
 			<umb-editor-header name="vm.title" name-locked="true" hide-alias="true" hide-description="true" hide-icon="true">
 			</umb-editor-header>
@@ -23,7 +23,7 @@
 						<!-- #endregion -->
 						<!-- #region Old url/regex -->
 						<umb-control-group label="Old Url" description="The URL path and query string, which you'd like to redirect">
-							<input type="text" value="{{vm.entry.OldUrl}}" ng-model="vm.entry.OldUrl" ng-disabled="!vm.advancedView" />
+							<input type="text" value="{{vm.entry.OldUrl}}" ng-model="vm.entry.OldUrl" ng-disabled="!vm.advancedView" required="required" />
 						</umb-control-group>
 						<umb-control-group label="Regex" description="The input for Regex matching is the path AND query string, without leading slash." ng-if="vm.advancedView">
 							<input type="text" value="{{vm.entry.OldRegex}}" ng-model="vm.entry.OldRegex" />
@@ -108,22 +108,21 @@
 				</umb-box>
 			</umb-editor-container>
 		</umb-editor-view>
+		<umb-editor-footer>
+			<umb-editor-footer-content-left>
+				<!-- #region Close/submit -->
+				<umb-button type="button"
+				            button-style="link"
+				            label-key="general_close"
+				            shortcut="esc"
+				            action="vm.close()">
+				</umb-button>
+				<umb-button type="submit"
+				            button-style="action"
+				            label-key="general_submit">
+				</umb-button>
+				<!-- #endregion -->
+			</umb-editor-footer-content-left>
+		</umb-editor-footer>
 	</form>
-	<umb-editor-footer>
-		<umb-editor-footer-content-left>
-			<!-- #region Close/submit -->
-			<umb-button type="button"
-						button-style="link"
-						label-key="general_close"
-						shortcut="esc"
-						action="vm.close()">
-			</umb-button>
-			<umb-button type="button"
-						button-style="action"
-						label-key="general_submit"
-						action="vm.saveChanges()">
-			</umb-button>
-			<!-- #endregion -->
-		</umb-editor-footer-content-left>
-	</umb-editor-footer>
 </div>

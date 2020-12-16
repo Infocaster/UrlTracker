@@ -4,6 +4,8 @@
 		//#region General
 		var vm = this;
 
+		urlTrackerEntryService.getSettings(vm);
+
 		vm.dashboard = {
 			notFoundsThisWeek: null,
 			notFounds: {
@@ -46,7 +48,6 @@
 			loading: false
 		};
 
-		urlTrackerEntryService.getSettings(vm);
 		entityResource.getChildren(-1, "Document").then(function (rootNodes) {
 			vm.allRootNodes = rootNodes;
 		});
@@ -419,7 +420,16 @@
 				GetNotFounds(vm.notFounds);
 		}
 
+		vm.notFounds.addIgnore = function(id) {
+			urlTrackerEntryService.addIgnore404(id).then(() => {
+				if (vm.notFounds.searchString !== "")
+					GetNotFoundsByFilter(vm.notFounds);
+				else
+					GetNotFounds(vm.notFounds);
 
+				UpdateDashboard();
+			});
+		}
 		//#endregion
 
 		//#region Watchers

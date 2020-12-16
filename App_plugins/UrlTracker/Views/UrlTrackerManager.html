@@ -64,7 +64,7 @@
 									</span>
 								</div>
 								<div class="umb-table-cell col-icons">
-									<umb-button action="vm.notFounds.createRedirect(item)" type="button" button-style="primary" label="Create Redirect" class="urltracker-table-button"></umb-button>
+									<umb-button action="vm.notFounds.createRedirect(item)" type="button" button-style="primary" label="Create Redirect" class="urltracker-table-button ic-color"></umb-button>
 								</div>
 							</div>
 						</div>
@@ -192,7 +192,8 @@
 								</span>
 							</div>
 							<div class="umb-table-cell col-icons">
-								<umb-button action="vm.notFounds.createRedirect(item)" type="button" button-style="primary" label="Create Redirect" class="urltracker-table-button mr-2 mt-1"></umb-button>
+								<umb-button action="vm.notFounds.addIgnore(item.Id)" type="button" button-style="outline" label="Ignore" class="urltracker-table-button mr-2 mt-1"></umb-button>
+								<umb-button action="vm.notFounds.createRedirect(item)" type="button" button-style="primary" label="Create Redirect" class="urltracker-table-button ic-color mr-2 mt-1"></umb-button>
 								<i ng-click="vm.notFounds.deleteItem(item)" class="icon-trash"></i>
 							</div>
 						</div>
