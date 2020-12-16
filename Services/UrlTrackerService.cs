@@ -105,7 +105,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 			var entry = new UrlTrackerModel
 			{
-				Culture = !string.IsNullOrEmpty(culture) ? culture.ToLower() : null,
+				Culture = !string.IsNullOrEmpty(culture) ? culture : null,
 				RedirectHttpCode = (int)redirectType,
 				RedirectRootNodeId = rootNodeId,
 				RedirectNodeId = newContent.Id,
