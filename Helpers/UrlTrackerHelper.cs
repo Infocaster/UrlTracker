@@ -25,12 +25,6 @@ namespace InfoCaster.Umbraco.UrlTracker.Helpers
 			if (string.IsNullOrEmpty(url))
 				return url;
 
-			if (url.StartsWith("http://") || url.StartsWith("https://"))
-			{
-				Uri uri = new Uri(url);
-				url = Uri.UnescapeDataString(uri.PathAndQuery);
-			}
-
 			if (url != "/")
 			{
 				// The URL should be stored as short as possible (e.g.: /page.aspx -> page | /page/ -> page)
