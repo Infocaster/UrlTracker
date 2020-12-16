@@ -58,6 +58,23 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 			}
 		}
 
+		public bool AddIgnore(UrlTrackerIgnore404Schema ignore)
+		{
+			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+			{
+				string query = "INSERT INTO icUrlTrackerIgnore404 (RootNodeId, Culture, Url) VALUES (@rootNodeId, @culture, @url)";
+
+				var parameters = new
+				{
+					rootNodeId = ignore.RootNodeId,
+					culture = ignore.Culture,
+					url = ignore.Url
+				};
+
+				return scope.Database.Execute(query, parameters) == 1;
+			}
+		}
+
 		#endregion
 
 		#region Get
@@ -182,6 +199,21 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 			}
 		}
 
+		public bool IgnoreExist(string url, int rootNodeId, string culture)
+		{
+			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+			{
+				return scope.Database.ExecuteScalar<bool>(
+					"SELECT 1 FROM icUrlTrackerIgnore404 WHERE Url = @url AND RootNodeId = @rootNodeId AND (Culture = @culture OR Culture IS NULL)",
+					new
+					{
+						url = url,
+						rootNodeId = rootNodeId,
+						culture = culture
+					});
+			}
+		}
+
 		public int CountNotFoundsBetweenDates(DateTime start, DateTime end)
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
@@ -293,14 +325,20 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 			}
 		}
 
-		public void DeleteNotFounds(string url, int rootNodeId)
+		public void DeleteNotFounds(string culture, string url, int rootNodeId)
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
+				var query = "DELETE FROM icUrlTracker WHERE Culture = @culture AND OldUrl = @url AND RedirectRootNodeId = @rootNodeId AND Is404 = 1";
+
+				if (string.IsNullOrEmpty(culture))
+					query = query.Replace("Culture = @culture", "Culture IS NULL");
+
 				scope.Database.Execute(
-					"DELETE FROM icUrlTracker WHERE OldUrl = @url AND RedirectRootNodeId = @rootNodeId AND Is404 = 1",
+					query,
 					new
 					{
+						culture = culture,
 						url = url,
 						rootNodeId = rootNodeId
 					}

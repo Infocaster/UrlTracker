@@ -36,14 +36,6 @@ namespace InfoCaster.Umbraco.UrlTracker.Settings
 		bool LoggingEnabled();
 
 		/// <summary>
-		/// Returns the URLs to ignore for 404 Not Found logging
-		/// </summary>
-		/// <remarks>
-		/// appSetting: 'urlTracker:404UrlsToIgnore'
-		/// </remarks>
-		string[] GetNotFoundUrlsToIgnore();
-
-		/// <summary>
 		/// Returns the regex patterns for NotFound urls to ignore
 		/// </summary>
 		Regex[] GetRegexNotFoundUrlsToIgnore();

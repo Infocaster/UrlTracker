@@ -46,14 +46,6 @@ namespace InfoCaster.Umbraco.UrlTracker.Settings
 			return false;
 		});
 
-		private Lazy<string[]> _notFoundUrlsToIgnore => new Lazy<string[]>(() =>
-		{
-			var result = new[] { "favicon.ico" };
-			if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["urlTracker:404UrlsToIgnore"]))
-				result.Union(ConfigurationManager.AppSettings["urlTracker:404UrlsToIgnore"].Split(','));
-			return result;
-		});
-
 		private Lazy<Regex[]> _regexNotFoundUrlsToIgnore => new Lazy<Regex[]>(() =>
 		{
 			return new[] { new Regex("__browserLink/requestData/.*", RegexOptions.Compiled), new Regex("[^/]/arterySignalR/ping", RegexOptions.Compiled) };
@@ -167,11 +159,6 @@ namespace InfoCaster.Umbraco.UrlTracker.Settings
 		public bool LoggingEnabled()
 		{
 			return _enableLogging.Value;
-		}
-
-		public string[] GetNotFoundUrlsToIgnore()
-		{
-			return _notFoundUrlsToIgnore.Value;
 		}
 
 		public Regex[] GetRegexNotFoundUrlsToIgnore()

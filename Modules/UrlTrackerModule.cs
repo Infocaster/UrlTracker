@@ -352,16 +352,17 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 				}
 				else if (!ignoreHttpStatusCode)
 				{
+					var ignoreExist = _urlTrackerService.IgnoreExist(shortestUrl, rootNodeId, domain?.LanguageIsoCode);
+
 					// Log 404
-					if (!_urlTrackerSettings.IsNotFoundTrackingDisabled() &&
-						!_urlTrackerSettings.GetNotFoundUrlsToIgnore().Contains(urlWithoutQueryString) &&
-						!_urlTrackerHelper.IsReservedPathOrUrl(urlWithoutQueryString) &&
-						request.Headers["X-UrlTracker-Ignore404"] != "1")
+					if (!ignoreExist && 
+					    !_urlTrackerSettings.IsNotFoundTrackingDisabled() &&
+					    !_urlTrackerHelper.IsReservedPathOrUrl(urlWithoutQueryString) &&
+					    request.Headers["X-UrlTracker-Ignore404"] != "1")
 					{
 						bool ignoreNotFoundBasedOnRegexPatterns = false;
 
-						foreach (Regex regexNotFoundUrlToIgnore in
-							_urlTrackerSettings.GetRegexNotFoundUrlsToIgnore())
+						foreach (Regex regexNotFoundUrlToIgnore in _urlTrackerSettings.GetRegexNotFoundUrlsToIgnore())
 						{
 							if (regexNotFoundUrlToIgnore.IsMatch(urlWithoutQueryString))
 							{
@@ -390,7 +391,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 					if (_urlTrackerSettings.IsNotFoundTrackingDisabled())
 						_urlTrackerLoggingHelper.LogInformation(
 							"UrlTracker HttpModule | No match found and not found (404) tracking is disabled");
-					else if (_urlTrackerSettings.GetNotFoundUrlsToIgnore().Contains(urlWithoutQueryString))
+					else if (ignoreExist)
 						_urlTrackerLoggingHelper.LogInformation(
 							"UrlTracker HttpModule | No match found, url is configured to be ignored: {0}",
 							urlWithoutQueryString);

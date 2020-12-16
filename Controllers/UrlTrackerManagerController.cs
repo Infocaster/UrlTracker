@@ -142,6 +142,19 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 
 		#endregion
 
+		#region Ignore list
+
+		[HttpPost]
+		public IHttpActionResult AddIgnore404([FromBody] int id)
+		{
+			if (!_urlTrackerService.AddIgnore404(id))
+				return BadRequest();
+
+			return Ok();
+		}
+
+		#endregion
+
 		private bool RedirectIsValid(UrlTrackerModel redirect)
 		{
 			if ((string.IsNullOrEmpty(redirect.OldUrl) && string.IsNullOrEmpty(redirect.OldRegex)) ||

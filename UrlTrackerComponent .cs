@@ -68,7 +68,7 @@ namespace InfoCaster.Umbraco.UrlTracker
 		public void Initialize()
 		{
 			var migrationPlan = new MigrationPlan("UrlTracker");
-			migrationPlan.From(string.Empty).To<AddUrlTrackerTable>("urlTracker");
+			migrationPlan.From(string.Empty).To<AddUrlTrackerTables>("urlTracker");
 
 			var upgrader = new Upgrader(migrationPlan);
 			upgrader.Execute(_scopeProvider, _migrationBuilder, _keyValueService, _logger);
@@ -229,18 +229,23 @@ namespace InfoCaster.Umbraco.UrlTracker
 		}
 	}
 
-	public class AddUrlTrackerTable : MigrationBase
+	public class AddUrlTrackerTables : MigrationBase
 	{
-		public AddUrlTrackerTable(IMigrationContext context) : base(context) { }
+		public AddUrlTrackerTables(IMigrationContext context) : base(context) { }
 
 		public override void Migrate()
 		{
-			Logger.Debug<AddUrlTrackerTable>("Running migration {MigrationStep}", "AddUrlTrackerTable");
+			Logger.Debug<AddUrlTrackerTables>("Running migration {MigrationStep}", "AddUrlTrackerTables");
 
 			if (!TableExists("icUrlTracker"))
 				Create.Table<UrlTrackerSchema>().Do();
 			else
-				Logger.Debug<AddUrlTrackerTable>("The database table {DbTable} already exists, skipping", "icUrlTracker");
+				Logger.Debug<AddUrlTrackerTables>("The database table {DbTable} already exists, skipping", "icUrlTracker");
+
+			if (!TableExists("icUrlTrackerIgnore404"))
+				Create.Table<UrlTrackerIgnore404Schema>().Do();
+			else
+				Logger.Debug<AddUrlTrackerTables>("The database table {DbTable} already exists, skipping", "icUrlTrackerIgnore404");
 		}
 
 	}

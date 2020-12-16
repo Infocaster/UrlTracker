@@ -54,9 +54,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		public bool AddRedirect(UrlTrackerModel entry)
 		{
 			if (entry.Remove404)
-			{
-				_urlTrackerRepository.DeleteNotFounds(entry.OldUrl, entry.RedirectRootNodeId);
-			}
+				_urlTrackerRepository.DeleteNotFounds(entry.Culture, entry.OldUrl, entry.RedirectRootNodeId);
 
 			entry.OldUrl = !string.IsNullOrEmpty(entry.OldUrl) ? _urlTrackerHelper.ResolveShortestUrl(entry.OldUrl) : null;
 			entry.RedirectUrl = !string.IsNullOrEmpty(entry.RedirectUrl) ? _urlTrackerHelper.ResolveShortestUrl(entry.RedirectUrl) : null;
@@ -174,6 +172,26 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 			urlWithoutDomain = url;
 			return null;
+		}
+
+		public bool AddIgnore404(int id)
+		{
+			var entry = _urlTrackerRepository.GetEntryById(id);
+
+			if (entry == null || !entry.Is404)
+				return false;
+
+			var result = _urlTrackerRepository.AddIgnore(new UrlTrackerIgnore404Schema
+			{
+				RootNodeId = entry.RedirectRootNodeId,
+				Culture = entry.Culture,
+				Url = entry.OldUrl
+			});
+
+			if (result)
+				_urlTrackerRepository.DeleteNotFounds(entry.Culture, entry.OldUrl, entry.RedirectRootNodeId);
+
+			return result;
 		}
 
 		#endregion
@@ -304,6 +322,11 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			return _urlTrackerRepository.CountNotFoundsBetweenDates(startDate, endDate);
 		}
 
+		public bool IgnoreExist(string url, int RootNodeId, string culture)
+		{
+			return _urlTrackerRepository.IgnoreExist(url, RootNodeId, culture);
+		}
+
 		#endregion
 
 		#region Update
@@ -350,7 +373,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			{
 				var entry = _urlTrackerRepository.GetEntryById(id);
 				if (entry != null)
-					_urlTrackerRepository.DeleteNotFounds(entry.OldUrl, entry.RedirectRootNodeId);
+					_urlTrackerRepository.DeleteNotFounds(entry.Culture, entry.OldUrl, entry.RedirectRootNodeId);
 			}
 			else
 			{

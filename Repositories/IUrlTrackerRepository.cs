@@ -8,6 +8,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 		#region Add
 
 		bool AddEntry(UrlTrackerModel entry);
+		bool AddIgnore(UrlTrackerIgnore404Schema ignore);
 
 		#endregion
 
@@ -18,6 +19,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 		UrlTrackerGetResult GetRedirects(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.CreatedDesc, string searchQuery = "", bool onlyForcedRedirects = false);
 		UrlTrackerGetResult GetNotFounds(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.LastOccurrenceDesc, string searchQuery = "");
 		bool RedirectExist(int redirectNodeId, string oldUrl, string culture = "");
+		bool IgnoreExist(string url, int rootNodeId, string culture);
 		int CountNotFoundsBetweenDates(DateTime start, DateTime end);
 
 		#endregion
@@ -35,7 +37,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 
 		void DeleteEntryById(int id);
 		bool DeleteEntryByRedirectNodeId(int nodeId);
-		void DeleteNotFounds(string url, int rootNodeId);
+		void DeleteNotFounds(string culture, string url, int rootNodeId);
 
 		#endregion
 
