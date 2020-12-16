@@ -7,6 +7,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Umbraco.Core.Models.PublishedContent;
+using Umbraco.Web;
 
 namespace InfoCaster.Umbraco.UrlTracker.Models
 {
@@ -86,13 +88,13 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
 				return new UrlTrackerNodeModel
 				{
 					Id = RedirectRootNodeId,
-					Url = redirectRootNode.Url,
+					Url = _urlTrackerService.GetUrlByNodeId(RedirectRootNodeId, !string.IsNullOrEmpty(Culture) ? Culture : null),
 					Name = redirectRootNode.Name,
 					Parent = new UrlTrackerNodeModel
 					{
 						Id = redirectRootNode.Parent?.Id ?? 0,
 						Name = redirectRootNode.Parent?.Name ?? "",
-						Url = redirectRootNode.Parent?.Url ?? ""
+						Url = redirectRootNode.Parent?.Url(!string.IsNullOrEmpty(Culture) ? Culture : null) ?? ""
 					}
 				};
 			}
@@ -119,18 +121,29 @@ namespace InfoCaster.Umbraco.UrlTracker.Models
 			{
 				var node = _urlTrackerService.GetNodeById(RedirectNodeId.Value);
 
-				return new UrlTrackerNodeModel
+				if (node != null)
 				{
-					Id = node.Id,
-					Name = node.Name,
-					Url = node.Url,
-					Parent = new UrlTrackerNodeModel
+					IPublishedContent parent = null;
+
+					try //Retrieving 'Parent' can cause a 'System.NullReferenceException'
 					{
-						Id = node.Parent?.Id ?? 0,
-						Name = node.Parent?.Name ?? "",
-						Url = node.Parent?.Url ?? ""
+						parent = node.Parent;
 					}
-				};
+					catch { }
+
+					return new UrlTrackerNodeModel
+					{
+						Id = node.Id,
+						Name = node.Name,
+						Url = _urlTrackerService.GetUrlByNodeId(node.Id, !string.IsNullOrEmpty(Culture) ? Culture : null),
+						Parent = new UrlTrackerNodeModel
+						{
+							Id = parent?.Id ?? 0,
+							Name = parent?.Name ?? "",
+							Url = parent != null ? _urlTrackerService.GetUrlByNodeId(parent.Id, !string.IsNullOrEmpty(Culture) ? Culture : null) : ""
+						}
+					};
+				}
 			}
 
 			return null;
