@@ -1,6 +1,6 @@
 ﻿(function () {
 	"use strict";
-	angular.module("umbraco").controller("UrlTracker.OverviewController", ["$scope", "urlTrackerEntryService", "editorService", "notificationsService", "entityResource", function ($scope, urlTrackerEntryService, editorService, notificationsService, entityResource) {
+	angular.module("umbraco").controller("UrlTracker.OverviewController", ["$scope", "urlTrackerEntryService", "editorService", "notificationsService", "entityResource", "overlayService", function ($scope, urlTrackerEntryService, editorService, notificationsService, entityResource, overlayService) {
 		//#region General
 		var vm = this;
 
@@ -420,15 +420,27 @@
 				GetNotFounds(vm.notFounds);
 		}
 
-		vm.notFounds.addIgnore = function(id) {
-			urlTrackerEntryService.addIgnore404(id).then(() => {
-				if (vm.notFounds.searchString !== "")
-					GetNotFoundsByFilter(vm.notFounds);
-				else
-					GetNotFounds(vm.notFounds);
+		vm.notFounds.addIgnore = function (id) {
+			overlayService.open({
+				content: 'Are you sure you want to permanently ignore this not found?',
+				submit: function () {
+					urlTrackerEntryService.addIgnore404(id).then(() => {
+						if (vm.notFounds.searchString !== "")
+							GetNotFoundsByFilter(vm.notFounds);
+						else
+							GetNotFounds(vm.notFounds);
 
-				UpdateDashboard();
+						notificationsService.success("Ignored", "Not found succesfully added to ignore list");
+						UpdateDashboard();
+					});
+
+					overlayService.close();
+				},
+				close: function () {
+					overlayService.close();
+				}
 			});
+
 		}
 		//#endregion
 
