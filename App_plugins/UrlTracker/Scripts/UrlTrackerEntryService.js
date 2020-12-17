@@ -116,7 +116,7 @@
 	        });
         }
 
-        var getNotFoundsByFilters = function (scope, skip, amount, query, sortType = "LastOccurrenceDesc") {
+        var getNotFoundsByFilters = function (scope, skip, amount, query, sortType = "LastOccurredDesc") {
 	        if (scope.loading != undefined) {
 		        scope.loading = true;
 	        }

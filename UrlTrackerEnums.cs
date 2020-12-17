@@ -19,8 +19,10 @@
 		CreatedAsc,
 		OccurrencesDesc,
 		OccurrencesAsc,
-		LastOccurrenceDesc,
-		LastOccurrenceAsc
+		LastOccurredDesc,
+		LastOccurredAsc,
+		CultureDesc,
+		CultureAsc
 	}
 
 	public enum UrlTrackerReason

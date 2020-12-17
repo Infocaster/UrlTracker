@@ -75,23 +75,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 		}
 
 		[HttpGet]
-		public IHttpActionResult GetRedirects(int skip, int amount)
+		public IHttpActionResult GetRedirects(int skip, int amount, string query = "", UrlTrackerSortType sortType = UrlTrackerSortType.CreatedDesc)
 		{
-			var entriesResult = _urlTrackerService.GetRedirects(skip, amount);
-
-			var model = new UrlTrackerOverviewModel
-			{
-				Entries = entriesResult.Records,
-				NumberOfEntries = entriesResult.TotalRecords
-			};
-
-			return Ok(model);
-		}
-
-		[HttpGet]
-		public IHttpActionResult GetRedirectsByFilter(int skip, int amount, string query, UrlTrackerSortType sortType)
-		{
-			var entriesResult = _urlTrackerService.GetRedirectsByFilter(skip, amount, sortType, query);
+			var entriesResult = _urlTrackerService.GetRedirects(skip, amount, sortType, query);
 
 			var model = new UrlTrackerOverviewModel
 			{
@@ -107,23 +93,9 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 		#region Not founds
 
 		[HttpGet]
-		public IHttpActionResult GetNotFounds(int skip, int amount)
+		public IHttpActionResult GetNotFounds(int skip, int amount, string query = "", UrlTrackerSortType sortType = UrlTrackerSortType.LastOccurredDesc)
 		{
-			var entriesResult = _urlTrackerService.GetNotFounds(skip, amount);
-
-			var model = new UrlTrackerOverviewModel
-			{
-				Entries = entriesResult.Records,
-				NumberOfEntries = entriesResult.TotalRecords
-			};
-
-			return Ok(model);
-		}
-
-		[HttpGet]
-		public IHttpActionResult GetNotFoundsByFilter(int skip, int amount, string query, UrlTrackerSortType sortType)
-		{
-			var entriesResult = _urlTrackerService.GetNotFoundsByFilter(skip, amount, sortType, query);
+			var entriesResult = _urlTrackerService.GetNotFounds(skip, amount, sortType, query);
 
 			var model = new UrlTrackerOverviewModel
 			{

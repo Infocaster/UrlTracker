@@ -203,22 +203,12 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			return _urlTrackerRepository.GetEntryById(id);
 		}
 
-		public UrlTrackerGetResult GetRedirects(int skip, int amount)
-		{
-			return _urlTrackerRepository.GetRedirects(skip, amount);
-		}
-
-		public UrlTrackerGetResult GetRedirectsByFilter(int skip, int amount, UrlTrackerSortType sortType = UrlTrackerSortType.CreatedDesc, string searchQuery = "")
+		public UrlTrackerGetResult GetRedirects(int skip, int amount, UrlTrackerSortType sortType = UrlTrackerSortType.CreatedDesc, string searchQuery = "")
 		{
 			return _urlTrackerRepository.GetRedirects(skip, amount, sortType, searchQuery);
 		}
 
-		public UrlTrackerGetResult GetNotFounds(int skip, int amount)
-		{
-			return _urlTrackerRepository.GetNotFounds(skip, amount);
-		}
-
-		public UrlTrackerGetResult GetNotFoundsByFilter(int skip, int amount, UrlTrackerSortType sortType = UrlTrackerSortType.LastOccurrenceDesc, string searchQuery = "")
+		public UrlTrackerGetResult GetNotFounds(int skip, int amount, UrlTrackerSortType sortType = UrlTrackerSortType.LastOccurredDesc, string searchQuery = "")
 		{
 			return _urlTrackerRepository.GetNotFounds(skip, amount, sortType, searchQuery);
 		}

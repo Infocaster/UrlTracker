@@ -129,6 +129,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 					query.Append(" ORDER BY Inserted DESC");
 				else if (sort == UrlTrackerSortType.CreatedAsc)
 					query.Append(" ORDER BY Inserted ASC");
+				else if (sort == UrlTrackerSortType.CultureDesc)
+					query.Append(" ORDER BY Culture DESC");
+				else if (sort == UrlTrackerSortType.CultureAsc)
+					query.Append(" ORDER BY Culture ASC");
 
 				query.Replace("SELECT COUNT(*)", "SELECT *");
 
@@ -143,7 +147,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 			}
 		}
 
-		public UrlTrackerGetResult GetNotFounds(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.LastOccurrenceDesc, string searchQuery = "")
+		public UrlTrackerGetResult GetNotFounds(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.LastOccurredDesc, string searchQuery = "")
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
 			{
@@ -164,14 +168,18 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 
 				result.TotalRecords = scope.Database.ExecuteScalar<int>(query.ToString(), parameters);
 
-				if (sort == UrlTrackerSortType.LastOccurrenceDesc)
+				if (sort == UrlTrackerSortType.LastOccurredDesc)
 					query.Append(" ORDER BY Inserted DESC");
-				else if (sort == UrlTrackerSortType.LastOccurrenceAsc)
+				else if (sort == UrlTrackerSortType.LastOccurredAsc)
 					query.Append(" ORDER BY Inserted ASC");
 				else if (sort == UrlTrackerSortType.OccurrencesDesc)
 					query.Append(" ORDER BY Occurrences DESC");
 				else if (sort == UrlTrackerSortType.OccurrencesAsc)
 					query.Append(" ORDER BY Occurrences ASC");
+				else if (sort == UrlTrackerSortType.CultureDesc)
+					query.Append(" ORDER BY Culture DESC");
+				else if (sort == UrlTrackerSortType.CultureAsc)
+					query.Append(" ORDER BY Culture ASC");
 
 				var newSelect = new StringBuilder("SELECT * FROM (SELECT MAX(e.Id) AS Id, e.Culture, e.OldUrl, e.RedirectRootNodeId, MAX(e.Inserted) as Inserted, COUNT(e.OldUrl) AS Occurrences, e.Is404");
 				newSelect.Append(", Referrer = (SELECT TOP(1) r.Referrer AS Occurrenced FROM icUrlTracker AS r WHERE r.is404 = 1 AND r.OldUrl = e.OldUrl GROUP BY r.Referrer ORDER BY COUNT(r.Referrer) DESC)");

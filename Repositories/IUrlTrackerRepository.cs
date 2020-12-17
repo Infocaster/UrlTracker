@@ -17,7 +17,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 		T FirstOrDefault<T>(string query, object parameters = null);
 		UrlTrackerModel GetEntryById(int id);
 		UrlTrackerGetResult GetRedirects(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.CreatedDesc, string searchQuery = "", bool onlyForcedRedirects = false);
-		UrlTrackerGetResult GetNotFounds(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.LastOccurrenceDesc, string searchQuery = "");
+		UrlTrackerGetResult GetNotFounds(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.LastOccurredDesc, string searchQuery = "");
 		bool RedirectExist(int redirectNodeId, string oldUrl, string culture = "");
 		bool IgnoreExist(string url, int rootNodeId, string culture);
 		int CountNotFoundsBetweenDates(DateTime start, DateTime end);

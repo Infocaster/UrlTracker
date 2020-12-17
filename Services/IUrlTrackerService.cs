@@ -18,10 +18,8 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 		#region Get
 		UrlTrackerModel GetEntryById(int id);
-		UrlTrackerGetResult GetRedirects(int skip, int amount);
-		UrlTrackerGetResult GetNotFounds(int skip, int amount);
-		UrlTrackerGetResult GetRedirectsByFilter(int skip, int amount, UrlTrackerSortType sortType = UrlTrackerSortType.CreatedDesc, string searchQuery = "");
-		UrlTrackerGetResult GetNotFoundsByFilter(int skip, int amount, UrlTrackerSortType sortType = UrlTrackerSortType.LastOccurrenceDesc, string searchQuery = "");
+		UrlTrackerGetResult GetRedirects(int skip, int amount, UrlTrackerSortType sortType = UrlTrackerSortType.CreatedDesc, string searchQuery = "");
+		UrlTrackerGetResult GetNotFounds(int skip, int amount, UrlTrackerSortType sortType = UrlTrackerSortType.LastOccurredDesc, string searchQuery = "");
 		List<UrlTrackerModel> GetForcedRedirects();
 		List<UrlTrackerDomain> GetDomains();
 		string GetUrlByNodeId(int nodeId, string culture = "");
