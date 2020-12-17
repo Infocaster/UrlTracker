@@ -27,6 +27,7 @@
 			itemsPerPage: 20,
 			createButtonState: "init",
 			searchString: "",
+			filter: "CreatedDesc",
 			pagination: {
 				pageNumber: 1,
 				totalPages: 1
@@ -41,6 +42,7 @@
 			allSelected: false,
 			itemsPerPage: 20,
 			searchString: "",
+			filter: "LastOccurredDesc",
 			pagination: {
 				pageNumber: 1,
 				totalPages: 1
@@ -104,10 +106,11 @@
 
 		function GetRedirects(scope) {
 			var skip = 0;
+
 			if (scope.pagination.pageNumber > 1)
 				skip = (scope.pagination.pageNumber - 1) * scope.itemsPerPage;
 
-			urlTrackerEntryService.getRedirects(scope, skip, scope.itemsPerPage);
+			urlTrackerEntryService.getRedirects(scope, skip, scope.itemsPerPage, scope.searchString, scope.filter);
 		}
 
 		function GetNotFounds(scope) {
@@ -115,28 +118,12 @@
 			if (scope.pagination.pageNumber > 1)
 				skip = (scope.pagination.pageNumber - 1) * scope.itemsPerPage;
 
-			urlTrackerEntryService.getNotFounds(scope, skip, scope.itemsPerPage);
-		}
-
-		function GetRedirectsByFilter(scope) {
-			var skip = 0;
-			if (scope.pagination.pageNumber > 1)
-				skip = (scope.pagination.pageNumber - 1) * scope.itemsPerPage;
-
-			urlTrackerEntryService.getRedirectsByFilters(scope, skip, scope.itemsPerPage, scope.searchString);
-		}
-
-		function GetNotFoundsByFilter(scope) {
-			var skip = 0;
-			if (scope.pagination.pageNumber > 1)
-				skip = (scope.pagination.pageNumber - 1) * scope.itemsPerPage;
-
-			urlTrackerEntryService.getNotFoundsByFilters(scope, skip, scope.itemsPerPage, scope.searchString);
+			urlTrackerEntryService.getNotFounds(scope, skip, scope.itemsPerPage, scope.searchString, scope.filter);
 		}
 
 		function UpdateDashboard() {
-			urlTrackerEntryService.getRedirectsByFilters(vm.dashboard.redirects, 0, 10, "", "CreatedDesc");
-			urlTrackerEntryService.getNotFoundsByFilters(vm.dashboard.notFounds, 0, 10, "", "OccurrencesDesc");
+			urlTrackerEntryService.getRedirects(vm.dashboard.redirects, 0, 10, "", "CreatedDesc");
+			urlTrackerEntryService.getNotFounds(vm.dashboard.notFounds, 0, 10, "", "OccurrencesDesc");
 			urlTrackerEntryService.countNotFoundsThisWeek(vm.dashboard);
 		}
 
@@ -201,11 +188,7 @@
 				return;
 
 			vm.redirects.pagination.pageNumber = pageNumber;
-
-			if (vm.redirects.searchString)
-				GetRedirectsByFilter(vm.redirects);
-			else
-				GetRedirects(vm.redirects);
+			GetRedirects(vm.redirects);
 		}
 
 		vm.redirects.nextPage = function (pageNumber) {
@@ -220,10 +203,7 @@
 			event.stopPropagation();
 
 			urlTrackerEntryService.deleteEntry(item.Id).then(function () {
-				if (vm.redirects.searchString)
-					GetRedirectsByFilter(vm.redirects);
-				else
-					GetRedirects(vm.redirects);
+				GetRedirects(vm.redirects);
 
 				notificationsService.success("Deleted", "Redirect succesfully deleted");
 				UpdateDashboard();
@@ -231,10 +211,7 @@
 		}
 
 		vm.redirects.pageSizeChanged = function () {
-			if (vm.redirects.searchString)
-				GetRedirectsByFilter(vm.redirects);
-			else
-				GetRedirects(vm.redirects);
+			GetRedirects(vm.redirects);
 		}
 
 		vm.redirects.selectAll = function () {
@@ -293,11 +270,25 @@
 
 		vm.redirects.search = function () {
 			vm.redirects.pagination.pageNumber = 1;
+			GetRedirects(vm.redirects);
+		}
 
-			if (vm.redirects.searchString !== "")
-				GetRedirectsByFilter(vm.redirects);
-			else
-				GetRedirects(vm.redirects);
+		vm.redirects.setFilter = function (column) {
+			if (vm.redirects.filter) {
+				var currentColumn = vm.redirects.filter.replace('Asc', '').replace('Desc', '');
+
+				if (currentColumn == column) {
+					var currentIsDesc = vm.redirects.filter.includes('Desc');
+
+					if (currentIsDesc) {
+						vm.redirects.filter = `${column}Asc`;
+						return GetRedirects(vm.redirects);
+					}
+				}
+			} 
+
+			vm.redirects.filter = `${column}Desc`;
+			GetRedirects(vm.redirects);
 		}
 
 		//#endregion
@@ -314,11 +305,7 @@
 				return;
 
 			vm.notFounds.pagination.pageNumber = pageNumber;
-
-			if (vm.notFounds.searchString)
-				GetNotFoundsByFilter(vm.notFounds);
-			else
-				GetNotFounds(vm.notFounds);
+			GetNotFounds(vm.notFounds);
 		}
 
 		vm.notFounds.nextPage = function (pageNumber) {
@@ -337,21 +324,14 @@
 			event.stopPropagation();
 
 			urlTrackerEntryService.deleteEntry(item.Id, true).then(function () {
-				if (vm.notFounds.searchString)
-					GetNotFoundsByFilter(vm.notFounds);
-				else
-					GetNotFounds(vm.notFounds);
-
 				notificationsService.success("Deleted", "Not found succesfully deleted");
+				GetNotFounds(vm.notFounds);
 				UpdateDashboard();
 			});
 		}
 
 		vm.notFounds.pageSizeChanged = function () {
-			if (vm.notFounds.searchString)
-				GetNotFoundsByFilter(vm.notFounds);
-			else
-				GetNotFounds(vm.notFounds);
+			GetNotFounds(vm.notFounds);
 		}
 
 		vm.notFounds.selectAll = function () {
@@ -389,11 +369,7 @@
 				vm.notFounds.selectedItems = [];
 				vm.notFounds.allItemsSelected = false;
 
-				if (vm.notFounds.searchString)
-					GetNotFoundsByFilter(vm.notFounds);
-				else
-					GetNotFounds(vm.notFounds);
-
+				GetNotFounds(vm.notFounds);
 				UpdateDashboard();
 
 				notificationsService.success("Deleted", "Not founds succesfully deleted");
@@ -413,11 +389,7 @@
 
 		vm.notFounds.search = function () {
 			vm.notFounds.pagination.pageNumber = 1;
-
-			if (vm.notFounds.searchString !== "")
-				GetNotFoundsByFilter(vm.notFounds);
-			else
-				GetNotFounds(vm.notFounds);
+			GetNotFounds(vm.notFounds);
 		}
 
 		vm.notFounds.addIgnore = function (id) {
@@ -425,10 +397,7 @@
 				content: 'Are you sure you want to permanently ignore this not found?',
 				submit: function () {
 					urlTrackerEntryService.addIgnore404(id).then(() => {
-						if (vm.notFounds.searchString !== "")
-							GetNotFoundsByFilter(vm.notFounds);
-						else
-							GetNotFounds(vm.notFounds);
+						GetNotFounds(vm.notFounds);
 
 						notificationsService.success("Ignored", "Not found succesfully added to ignore list");
 						UpdateDashboard();
@@ -440,7 +409,24 @@
 					overlayService.close();
 				}
 			});
+		}
 
+		vm.notFounds.setFilter = function (column) {
+			if (vm.notFounds.filter) {
+				var currentColumn = vm.notFounds.filter.replace('Asc', '').replace('Desc', '');
+
+				if (currentColumn == column) {
+					var currentIsDesc = vm.notFounds.filter.includes('Desc');
+
+					if (currentIsDesc) {
+						vm.notFounds.filter = `${column}Asc`;
+						return GetNotFounds(vm.notFounds);
+					}
+				}
+			}
+
+			vm.notFounds.filter = `${column}Desc`;
+			GetNotFounds(vm.notFounds);
 		}
 		//#endregion
 

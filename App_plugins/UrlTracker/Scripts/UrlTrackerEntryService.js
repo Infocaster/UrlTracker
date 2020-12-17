@@ -28,23 +28,30 @@
 	        });
         }
 
-        var getRedirects = function (scope, skip, amount) {
-            if (scope.loading != undefined) {
+		var getRedirects = function (scope, skip, amount, query, sortType = "CreatedDesc") {
+            if (scope.loading != undefined)
                 scope.loading = true;
-            }
+            if (!sortType)
+	            sortType = "CreatedDesc";
+
             return $http({
 				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/GetRedirects",
                 method: "GET",
                 params: {
                     skip: skip,
-                    amount: amount
+					amount: amount,
+					query: query,
+					sortType: sortType
                 }
             }).then(function (response) {
-                scope.items = response.data.Entries;
-                scope.numberOfItems = response.data.NumberOfEntries;
-				scope.pagination.totalPages = Math.ceil(response.data.NumberOfEntries / amount);
+				scope.items = response.data.Entries;
 
-                if (scope.loading != undefined) {
+				if (scope.pagination != null) {
+					scope.numberOfItems = response.data.NumberOfEntries;
+					scope.pagination.totalPages = Math.ceil(response.data.NumberOfEntries / amount);
+				}
+
+				if (scope.loading != undefined) {
                     scope.loading = false;
                 }
             }).catch(function (data) {
@@ -56,72 +63,15 @@
             });
         }
 
-        var getNotFounds = function (scope, skip, amount) {
-	        if (scope.loading != undefined) {
+		var getNotFounds = function (scope, skip, amount, query, sortType = "LastOccurredDesc") {
+	        if (scope.loading != undefined) 
 		        scope.loading = true;
-	        }
+	        if (!sortType)
+				sortType = "LastOccurredDesc";
+
+
 	        return $http({
 				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/GetNotFounds",
-		        method: "GET",
-		        params: {
-			        skip: skip,
-			        amount: amount
-		        }
-            }).then(function (response) {
-		        scope.items = response.data.Entries;
-		        scope.numberOfItems = response.data.NumberOfEntries;
-				scope.pagination.totalPages = Math.ceil(response.data.NumberOfEntries / amount);
-
-		        if (scope.loading != undefined) {
-			        scope.loading = false;
-		        }
-	        }).catch(function (data) {
-		        $log.log(data);
-
-		        if (scope.loading != undefined) {
-			        scope.loading = false;
-		        }
-	        });
-        }
-
-        var getRedirectsByFilters = function (scope, skip, amount, query, sortType = "CreatedDesc") {
-	        if (scope.loading != undefined) {
-		        scope.loading = true;
-	        }
-	        return $http({
-				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/GetRedirectsByFilter",
-		        method: "GET",
-		        params: {
-			        skip: skip,
-                    amount: amount,
-                    query: query,
-                    sortType: sortType
-		        }
-	        }).then(function (response) {
-		        if (scope.loading != undefined) {
-			        scope.loading = false;
-                }
-                
-                scope.items = response.data.Entries;
-
-                if (scope.pagination != null) {
-					scope.numberOfItems = response.data.NumberOfEntries;
-					scope.pagination.totalPages = Math.ceil(response.data.NumberOfEntries / amount);
-                }
-	        }).catch(function (data) {
-		        if (scope.loading != undefined) {
-			        scope.loading = false;
-		        }
-		        $log.log(data);
-	        });
-        }
-
-        var getNotFoundsByFilters = function (scope, skip, amount, query, sortType = "LastOccurredDesc") {
-	        if (scope.loading != undefined) {
-		        scope.loading = true;
-	        }
-	        return $http({
-				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/GetNotFoundsByFilter",
 		        method: "GET",
 		        params: {
 			        skip: skip,
@@ -129,24 +79,25 @@
 			        query: query,
 			        sortType: sortType
 		        }
-	        }).then(function (response) {
-		        if (scope.loading != undefined) {
-			        scope.loading = false;
-		        }
+            }).then(function (response) {
+				scope.items = response.data.Entries
 
-		        scope.items = response.data.Entries;
-
-		        if (scope.pagination != null) {
+				if (scope.pagination != null) {
 					scope.numberOfItems = response.data.NumberOfEntries;
 					scope.pagination.totalPages = Math.ceil(response.data.NumberOfEntries / amount);
-		        }
-	        }).catch(function (data) {
+				}
+
 		        if (scope.loading != undefined) {
 			        scope.loading = false;
 		        }
+	        }).catch(function (data) {
 		        $log.log(data);
+
+		        if (scope.loading != undefined) {
+			        scope.loading = false;
+		        }
 	        });
-        }
+		}
 
         var updateRedirect = function (scope, entry) {
             return $http({
@@ -217,8 +168,6 @@
             deleteEntry: deleteEntry,
 			updateRedirect: updateRedirect,
             addRedirect: addRedirect,
-            getRedirectsByFilters: getRedirectsByFilters,
-			getNotFoundsByFilters: getNotFoundsByFilters,
 			getLanguagesOutNodeDomains: getLanguagesOutNodeDomains,
 			countNotFoundsThisWeek: countNotFoundsThisWeek,
 			getSettings: getSettings

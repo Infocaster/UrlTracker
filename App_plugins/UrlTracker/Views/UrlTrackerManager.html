@@ -145,12 +145,25 @@
 								<input class="select-notfound" type="checkbox" ng-checked="vm.notFounds.allItemsSelected" ng-click="vm.notFounds.selectAll()" />
 							</div>
 							<div class="umb-table-cell col-site">Site</div>
-							<div class="umb-table-cell col-culture">Culture</div>
+							<div class="umb-table-cell col-culture">
+								<button class="umb-table-head__link sortable" ng-click="vm.notFounds.setFilter('Culture')">
+									Culture
+									<i class="umb-table-head__icon icon" ng-class="{'icon-navigation-up': vm.notFounds.filter == 'CultureAsc', 'icon-navigation-down': vm.notFounds.filter == 'CultureDesc'}"></i>
+								</button>
+							</div>
 							<div class="umb-table-cell col-old-url">URL</div>
 							<div class="umb-table-cell col-referrer">Most important referrer</div>
-							<div class="umb-table-cell col-occurrences">Occurrences</div>
+							<div class="umb-table-cell col-occurrences">
+								<button class="umb-table-head__link sortable" ng-click="vm.notFounds.setFilter('Occurrences')">
+									Occurrences
+									<i class="umb-table-head__icon icon" ng-class="{'icon-navigation-up': vm.notFounds.filter == 'OccurrencesAsc', 'icon-navigation-down': vm.notFounds.filter == 'OccurrencesDesc'}"></i>
+								</button>
+							</div>
 							<div class="umb-table-cell col-date">
-								Last occurred
+								<button class="umb-table-head__link sortable" ng-click="vm.notFounds.setFilter('LastOccurred')">
+									Last occurred
+									<i class="umb-table-head__icon icon" ng-class="{'icon-navigation-up': vm.notFounds.filter == 'LastOccurredAsc', 'icon-navigation-down': vm.notFounds.filter == 'LastOccurredDesc'}"></i>
+								</button>
 							</div>
 							<div class="umb-table-cell col-icons"></div>
 						</div>
@@ -217,7 +230,6 @@
 			</div>
 		</div>
 
-
 		<div ng-if="tab.alias == 'redirects'">
 			<umb-editor-sub-header ng-if="vm.redirects.selectedItems.length == 0">
 				<umb-editor-sub-header-content-left>
@@ -226,20 +238,6 @@
 
 				<!-- ToDo: filters -->
 				<umb-editor-sub-header-content-right>
-					<!--<umb-editor-sub-header-section class="urltracker-filters">
-						<div class="urltracker-form-box">
-							<input id="automatic" type="checkbox" value="Automatic entries" />
-							<label for="automatic">Automatic entries</label>
-						</div>
-						<div class="urltracker-form-box">
-							<input id="customUrl" type="checkbox" value="Custom Url entries" />
-							<label for="customUrl">Custom Url entries</label>
-						</div>
-						<div class="urltracker-form-box">
-							<input id="customRegex" type="checkbox" value="Custom Regex entries" />
-							<label for="customRegex">Custom Regex entries</label>
-						</div>
-					</umb-editor-sub-header-section>-->
 					<umb-editor-sub-header-section>
 						<div class="urltracker-form-box search-box">
 							<i class="icon-search"></i>
@@ -266,12 +264,20 @@
 							<input class="select-redirect" type="checkbox" ng-checked="vm.redirects.allItemsSelected" ng-click="vm.redirects.selectAll()" />
 						</div>
 						<div class="umb-table-cell col-site">Site</div>
-						<div class="umb-table-cell col-culture">Culture</div>
+						<div class="umb-table-cell col-culture">
+							<button class="umb-table-head__link sortable" ng-click="vm.redirects.setFilter('Culture')">
+								Culture
+								<i class="umb-table-head__icon icon" ng-class="{'icon-navigation-up': vm.redirects.filter == 'CultureAsc', 'icon-navigation-down': vm.redirects.filter == 'CultureDesc'}"></i>
+							</button>
+						</div>
 						<div class="umb-table-cell col-old-url">Old URL/RegEx</div>
 						<div class="umb-table-cell col-new-url">New URL</div>
 						<div class="umb-table-cell col-notes">Notes</div>
 						<div class="umb-table-cell col-date">
-							<button class="umb-table-head__link sortable">Created</button>
+							<button class="umb-table-head__link sortable" ng-click="vm.redirects.setFilter('Created')">
+								Created
+								<i class="umb-table-head__icon icon" ng-class="{'icon-navigation-up': vm.redirects.filter == 'CreatedAsc', 'icon-navigation-down': vm.redirects.filter == 'CreatedDesc'}"></i>
+							</button>
 						</div>
 						<div class="umb-table-cell col-icons"></div>
 					</div>
