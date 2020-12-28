@@ -234,7 +234,9 @@
 			<umb-editor-sub-header ng-if="vm.redirects.selectedItems.length == 0">
 				<umb-editor-sub-header-content-left>
 					<umb-button action="vm.redirects.create()" type="button" button-style="primary" label="Create Redirect" class="urltracker-sub-header-button ic-color"></umb-button>
-					<umb-button action="vm.redirects.importExport()" type="button" button-style="outline" label="Import/export"></umb-button>
+					<button type="button" ng-click="vm.redirects.importExport()" class="btn umb-button__button btn-outline umb-button-- umb-outline urltracker-import-export-button ml-2">
+						<img src="/App_Plugins/UrlTracker/res/img/import-export-icon.svg" title="Import/export" alt="Import/export"/>
+					</button>
 				</umb-editor-sub-header-content-left>
 
 				<!-- ToDo: filters -->
