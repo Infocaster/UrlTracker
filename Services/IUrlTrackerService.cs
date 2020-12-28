@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
+using System.Web;
 
 namespace InfoCaster.Umbraco.UrlTracker.Services
 {
@@ -13,6 +14,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		bool AddRedirect(IContent newContent, IPublishedContent oldContent, UrlTrackerHttpCode redirectType, UrlTrackerReason reason, string culture = null, bool isChild = false);
 		bool AddNotFound(string url, int rootNodeId, string referrer, string culture = null);
 		bool AddIgnore404(int id);
+		int ImportRedirects(HttpPostedFile file);
 
 		#endregion
 
@@ -29,6 +31,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		int CountNotFoundsThisWeek();
 		UrlTrackerDomain GetUmbracoDomainFromUrl(string url, ref string urlWithoutDomain);
 		bool IgnoreExist(string url, int RootNodeId, string culture);
+		string GetRedirectsCsv();
 
 		#endregion
 
@@ -48,5 +51,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		void DeleteEntryByRedirectNodeId(int nodeId);
 
 		#endregion
+
+		bool ValidateRedirect(UrlTrackerModel redirect);
 	}
 }

@@ -291,6 +291,24 @@
 			GetRedirects(vm.redirects);
 		}
 
+		vm.redirects.importExport = function() {
+			overlayService.open({
+				name: 'urltracker-import-export-overlay',
+				view: '/App_Plugins/UrlTracker/Views/UrlTrackerImportExportOverlay.html',
+				class: 'testest',
+				hideSubmitButton: true,
+				position: 'center',
+				style: 'width:400px',
+				refreshRedirects: function () {
+					UpdateDashboard();
+					GetRedirects(vm.redirects);
+				},
+				close: function () {
+					overlayService.close();
+				}
+			});
+		};
+
 		//#endregion
 
 		//#region Not founds

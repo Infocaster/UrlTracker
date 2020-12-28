@@ -9,6 +9,9 @@ using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Core.Services;
 using Umbraco.Web;
+using System.Web;
+using System.IO;
+using System.Text;
 
 namespace InfoCaster.Umbraco.UrlTracker.Services
 {
@@ -194,6 +197,89 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			return result;
 		}
 
+		public int ImportRedirects(HttpPostedFile file)
+		{
+			if(!file.FileName.EndsWith(".csv"))
+				throw new Exception($"Is not a .csv file");
+
+			var csvReader = new StreamReader(file.InputStream);
+			var redirects = new List<UrlTrackerModel>();
+
+			var columns = "RootNodeId;Culture;Old URL;Regex;Redirect URL;Redirect node ID;Redirect HTTP Code;Forward query;Force redirect;Notes";
+			var lineNumber = 1;
+
+			while (!csvReader.EndOfStream)
+			{
+				var line = csvReader.ReadLine();
+				var values = line.Split(';');
+
+				if (lineNumber == 1)
+				{
+					if (line == columns || line == columns.ToLower())
+					{
+						lineNumber++;
+						continue;
+					}
+					else
+					{
+						throw new Exception($"Columns are incorrect");
+					}
+				}
+
+				if (values.Count() != 10)
+					throw new Exception($"Values on line: {lineNumber} are incomplete");
+
+				int rootNodeId;
+				int redirectNodeId = 0;
+				int redirectHttpCode;
+				bool forwardQuery = false;
+				bool forceRedirect = false;
+
+				string culture = values[1];
+				string oldUrl = values[2];
+				string regex = values[3];
+				string redirectUrl = values[4];
+				string notes = values[9];
+
+				if (!Int32.TryParse(values[0], out rootNodeId))
+					throw new Exception($"'RootNodeId' on line: {lineNumber} is not an integer");
+				if (!string.IsNullOrWhiteSpace(values[5]) && !Int32.TryParse(values[5], out redirectNodeId))
+					throw new Exception($"'Redirect node ID' on line: {lineNumber} is not a integer");
+				if (!Int32.TryParse(values[6], out redirectHttpCode) || (redirectHttpCode != 301 && redirectHttpCode != 302 && redirectHttpCode != 410))
+					throw new Exception($"'Redirect HTTP Code' on line: {lineNumber} is invalid");
+				if (!string.IsNullOrWhiteSpace(values[7]) && !Boolean.TryParse(values[7], out forwardQuery))
+					throw new Exception($"'Forward query' on line: {lineNumber} is invalid");
+				if (!string.IsNullOrWhiteSpace(values[8]) && !Boolean.TryParse(values[8], out forceRedirect))
+					throw new Exception($"'Force redirect' on line: {lineNumber} is invalid");
+
+				var redirect = new UrlTrackerModel
+				{
+					RedirectRootNodeId = rootNodeId,
+					Culture = culture,
+					OldUrl = oldUrl,
+					OldRegex = regex,
+					RedirectUrl = redirectUrl,
+					RedirectNodeId = redirectNodeId == 0 ? (int?)null : redirectNodeId,
+					RedirectHttpCode = redirectHttpCode,
+					RedirectPassThroughQueryString = forwardQuery,
+					ForceRedirect = forceRedirect,
+					Notes = notes
+				};
+
+				if (!ValidateRedirect(redirect))
+					throw new Exception($"Missing required values on line: {lineNumber}");
+
+				redirects.Add(redirect);
+
+				lineNumber++;
+			}
+
+			foreach (var redirect in redirects)
+				AddRedirect(redirect);
+
+			return redirects.Count;
+		}
+
 		#endregion
 
 		#region Get
@@ -317,6 +403,20 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			return _urlTrackerRepository.IgnoreExist(url, RootNodeId, culture);
 		}
 
+		public string GetRedirectsCsv()
+		{
+			var redirects = _urlTrackerRepository.GetRedirects(null, null);
+			var csv = new StringBuilder();
+
+			csv.AppendLine("RootNodeId;Culture;Old URL;Regex;Redirect URL;Redirect node ID;Redirect HTTP Code;Forward query;Force redirect;Notes");
+
+			foreach (var redirect in redirects.Records)
+				csv.AppendLine($"{redirect.RedirectRootNodeId};{redirect.Culture};{redirect.OldUrl};{redirect.OldRegex};{redirect.RedirectUrl};{redirect.RedirectNodeId};{redirect.RedirectHttpCode};{redirect.RedirectPassThroughQueryString};{redirect.ForceRedirect};{redirect.Notes}");
+
+
+			return csv.ToString();
+		}
+
 		#endregion
 
 		#region Update
@@ -381,5 +481,16 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		}
 
 		#endregion
+
+		public bool ValidateRedirect(UrlTrackerModel redirect)
+		{
+			if ((string.IsNullOrEmpty(redirect.OldUrl) && string.IsNullOrEmpty(redirect.OldRegex)) ||
+				(redirect.RedirectRootNodeId == 0 || redirect.RedirectRootNodeId == null) ||
+				((redirect.RedirectNodeId == null || redirect.RedirectNodeId == 0) && string.IsNullOrEmpty(redirect.RedirectUrl)) ||
+				(redirect.RedirectHttpCode != 301 && redirect.RedirectHttpCode != 302 && redirect.RedirectHttpCode != 410))
+				return false;
+
+			return true;
+		}
 	}
 }

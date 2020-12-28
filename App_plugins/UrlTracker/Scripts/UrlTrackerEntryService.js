@@ -1,6 +1,6 @@
 ﻿(function () {
     "use strict";
-    angular.module("umbraco").factory("urlTrackerEntryService", ["$http", "$log", function ($http, $log) {
+    angular.module("umbraco").factory("urlTrackerEntryService", ["$http", "$log", "Upload", function ($http, $log, Upload) {
         var addRedirect = function (scope, entry) {
 	        entry.is404 = false;
 		    return $http({
@@ -68,7 +68,6 @@
 		        scope.loading = true;
 	        if (!sortType)
 				sortType = "LastOccurredDesc";
-
 
 	        return $http({
 				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/GetNotFounds",
@@ -161,6 +160,31 @@
 			});
 		}
 
+		var importRedirects = function (file) {
+			return Upload.upload({
+				url: '/umbraco/BackOffice/UrlTracker/UrlTrackerManager/ImportRedirects',
+				file: file
+			})
+		}
+
+		var exportRedirects = function () {
+			return $http({
+				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/ExportRedirects",
+				method: "GET",
+			}).then(function (response) {
+				var anchor = angular.element('<a/>').css({ display: 'none' });
+				angular.element(document.body).append(anchor);
+				anchor.attr({
+					href: 'data:attachment/csv;charset=utf-8,' + encodeURI(response.data),
+					target: '_blank',
+					download: `urltracker-redirects-${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}-${new Date().getHours()}-${new Date().getMinutes()}.csv`
+				})[0].click();
+				anchor.remove();
+			}).catch(function (response) {
+				$log.log(response);
+			});
+		}
+
         var UrlTrackerEntryService = {
 			getRedirects: getRedirects,
 			addIgnore404: addIgnore404,
@@ -170,7 +194,9 @@
             addRedirect: addRedirect,
 			getLanguagesOutNodeDomains: getLanguagesOutNodeDomains,
 			countNotFoundsThisWeek: countNotFoundsThisWeek,
-			getSettings: getSettings
+			getSettings: getSettings,
+			importRedirects: importRedirects,
+			exportRedirects: exportRedirects
 		};
 
         return UrlTrackerEntryService;

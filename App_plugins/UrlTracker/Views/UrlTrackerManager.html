@@ -233,7 +233,8 @@
 		<div ng-if="tab.alias == 'redirects'">
 			<umb-editor-sub-header ng-if="vm.redirects.selectedItems.length == 0">
 				<umb-editor-sub-header-content-left>
-					<umb-button action="vm.redirects.create()" type="button" button-style="outline" label="Create Redirect" class="urltracker-sub-header-button"></umb-button>
+					<umb-button action="vm.redirects.create()" type="button" button-style="primary" label="Create Redirect" class="urltracker-sub-header-button ic-color"></umb-button>
+					<umb-button action="vm.redirects.importExport()" type="button" button-style="outline" label="Import/export"></umb-button>
 				</umb-editor-sub-header-content-left>
 
 				<!-- ToDo: filters -->

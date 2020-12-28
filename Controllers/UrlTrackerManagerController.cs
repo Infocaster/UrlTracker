@@ -2,6 +2,12 @@
 using InfoCaster.Umbraco.UrlTracker.Services;
 using InfoCaster.Umbraco.UrlTracker.Settings;
 using InfoCaster.Umbraco.UrlTracker.ViewModels;
+using System;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Web;
 using System.Web.Http;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.WebApi;
@@ -57,7 +63,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 		[HttpPost]
 		public IHttpActionResult AddRedirect([FromBody] UrlTrackerModel model)
 		{
-			if (!RedirectIsValid(model))
+			if (!_urlTrackerService.ValidateRedirect(model))
 				return BadRequest("Not all fields are filled in correctly");
 
 			_urlTrackerService.AddRedirect(model);
@@ -67,7 +73,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 		[HttpPost]
 		public IHttpActionResult UpdateRedirect([FromBody] UrlTrackerModel model)
 		{
-			if (!RedirectIsValid(model))
+			if (!_urlTrackerService.ValidateRedirect(model))
 				return BadRequest("Not all fields are filled in correctly");
 
 			_urlTrackerService.UpdateEntry(model);
@@ -127,15 +133,43 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 
 		#endregion
 
-		private bool RedirectIsValid(UrlTrackerModel redirect)
-		{
-			if ((string.IsNullOrEmpty(redirect.OldUrl) && string.IsNullOrEmpty(redirect.OldRegex)) ||
-				(redirect.RedirectRootNodeId == 0 || redirect.RedirectRootNodeId == null) ||
-				((redirect.RedirectNodeId == null || redirect.RedirectNodeId == 0) && string.IsNullOrEmpty(redirect.RedirectUrl)) ||
-				(redirect.RedirectHttpCode != 301 && redirect.RedirectHttpCode != 302))
-				return false;
+		#region Import/export
 
-			return true;
+		[HttpPost]
+		public IHttpActionResult ImportRedirects()
+		{
+			var file = HttpContext.Current.Request.Files.Count > 0 ?
+				HttpContext.Current.Request.Files[0] : null;
+
+			if (file == null || !file.FileName.EndsWith(".csv"))
+				return BadRequest("A .csv file is required");
+
+			try
+			{
+				var result = _urlTrackerService.ImportRedirects(file);
+				return Ok(result);
+			}
+			catch (Exception e)
+			{
+				return BadRequest(e.Message);
+			}
 		}
+
+		[HttpGet]
+		public HttpResponseMessage ExportRedirects()
+		{
+			var csv = _urlTrackerService.GetRedirectsCsv();
+
+			var result = Request.CreateResponse(HttpStatusCode.OK);
+			result.Content = new StringContent(csv, Encoding.UTF8, "text/csv");
+			result.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+			{
+				FileName = $"urltracker-redirects-{DateTime.Now.Year}-{DateTime.Now.Month}-{DateTime.Now.Day}.csv"
+			};
+
+			return result;
+		}
+
+		#endregion
 	}
 }
