@@ -126,7 +126,7 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 }
 
 /*Last tab item (info tab)*/
-.urltracker-body .umb-tabs-nav > li:nth-child(4) { 
+.urltracker-body .umb-tabs-nav > li:nth-child(4) {
 	float: right;
 }
 
@@ -158,6 +158,10 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 	background-color: #ff0069;
 }
 
+.urltracker-sub-header-button.ic-color button {
+	background-color: #ff0069;
+}
+
 .urltracker-table-button.ic-color button:hover,
 .urltracker-table-button.ic-color button:focus,
 .urltracker-table-button.ic-color button:active {
@@ -169,7 +173,7 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 }
 
 .urltracker-dashboard-table .col-old-url {
-	flex: 3.5 3.5 5%!important;
+	flex: 3.5 3.5 5% !important;
 }
 
 .urltracker-body .col-icons > i {
@@ -183,7 +187,7 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 }
 
 .urltracker-large-table .umb-table-row:focus,
-.urltracker-dashboard-table .umb-table-row:focus{
+.urltracker-dashboard-table .umb-table-row:focus {
 	outline: none;
 }
 
@@ -204,6 +208,7 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 .urltracker-large-table .col-site {
 	flex: .3 .3 5%;
 }
+
 .urltracker-large-table .col-notes {
 	flex: .6 .6 5%;
 }
@@ -212,11 +217,11 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 	flex: .55;
 }
 
-.urltracker_radio_checked~.umb-form-check__state .umb-form-check__check {
-	border-color: #1b264f!important;
+.urltracker_radio_checked ~ .umb-form-check__state .umb-form-check__check {
+	border-color: #1b264f !important;
 }
 
-.urltracker_radio_checked~.umb-form-check__state .umb-form-check__check:before {
+.urltracker_radio_checked ~ .umb-form-check__state .umb-form-check__check:before {
 	opacity: 1;
 	transform: scale(1);
 }
@@ -246,4 +251,89 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 .urltracker-disabled-text h1 {
 	font-weight: bold;
 	padding-top: 100px;
+}
+
+[data-element="urltracker-import-export-overlay"] {
+	width: 400px !important;
+}
+
+[data-element="urltracker-import-export-overlay"] .umb-overlay-header,
+[data-element="urltracker-import-export-overlay"] .umb-overlay-drawer {
+	display: none;
+}
+
+[data-element="urltracker-import-export-overlay"] .urltracker-submit-import {
+	margin-top: 15px;
+	float: left;
+	background-color: #ff0069;
+}
+
+[data-element="urltracker-import-export-overlay"] .umb-card-grid.-two-in-row li {
+	flex: 0 0 50%;
+	max-width: 50%;
+}
+
+[data-element="urltracker-import-export-overlay"] .urltracker-import-export-title {
+	padding: 10px 0 20px 0;
+	font-weight: bold;
+}
+
+.urltracker-import-file {
+	margin-top: 15px;
+	height: 100px;
+}
+
+.urltracker-import-file:hover:disabled {
+	border: 1px dashed #bbbabf;
+	color: inherit;
+}
+
+[data-element="urltracker-import-export-overlay"] .umb-load-indicator {
+	z-index: 1;
+}
+
+.urltracker-loading-ring {
+	display: inline-block;
+	position: relative;
+	width: 28px;
+	height: 28px;
+}
+
+.urltracker-loading-ring div {
+	box-sizing: border-box;
+	display: block;
+	position: absolute;
+	width: 22px;
+	height: 22px;
+	margin: 3px;
+	border: 3px solid #ff0069;
+	border-radius: 50%;
+	animation: urltracker-loading-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+	border-color: #ff0069 transparent transparent transparent;
+}
+
+.urltracker-loading-ring div:nth-child(1) {
+	animation-delay: -0.45s;
+}
+
+.urltracker-loading-ring div:nth-child(2) {
+	animation-delay: -0.3s;
+}
+
+.urltracker-loading-ring div:nth-child(3) {
+	animation-delay: -0.15s;
+}
+
+@keyframes urltracker-loading-ring {
+	0% {
+		transform: rotate(0deg);
+	}
+
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+.urltracker-import .urltracker-loading-ring {
+	margin: 18px 0 0 10px;
 }
