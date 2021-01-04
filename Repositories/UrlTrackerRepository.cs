@@ -41,7 +41,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 
 				var parameters = new
 				{
-					culture = entry.Culture.ToLower(),
+					culture = entry.Culture?.ToLower(),
 					oldUrl = entry.OldUrl,
 					oldRegex = entry.OldRegex,
 					redirectRootNodeId = entry.RedirectRootNodeId,
@@ -68,7 +68,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 				var parameters = new
 				{
 					rootNodeId = ignore.RootNodeId,
-					culture = ignore.Culture.ToLower(),
+					culture = ignore.Culture?.ToLower(),
 					url = ignore.Url
 				};
 
@@ -208,7 +208,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 					{
 						redirectNodeId = redirectNodeId,
 						oldUrl = oldUrl, 
-						culture = culture.ToLower()
+						culture = culture?.ToLower()
 					});
 			}
 		}
@@ -223,7 +223,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 					{
 						url = url,
 						rootNodeId = rootNodeId,
-						culture = culture.ToLower()
+						culture = culture?.ToLower()
 					});
 			}
 		}
@@ -260,7 +260,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 
 				var parameters = new
 				{
-					culture = entry.Culture.ToLower(),
+					culture = entry.Culture?.ToLower(),
 					oldUrl = entry.OldUrl,
 					oldRegex = entry.OldRegex,
 					redirectRootNodeId = entry.RedirectRootNodeId,
@@ -352,7 +352,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 					query,
 					new
 					{
-						culture = culture.ToLower(),
+						culture = culture?.ToLower(),
 						url = url,
 						rootNodeId = rootNodeId
 					}

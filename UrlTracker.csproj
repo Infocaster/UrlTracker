@@ -351,6 +351,7 @@
     <Content Include="App_Plugins\UrlTracker\res\img\glyphicons-halflings.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="App_Plugins\UrlTracker\res\img\import-export-icon.svg" />
     <Content Include="App_Plugins\UrlTracker\res\img\info.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
