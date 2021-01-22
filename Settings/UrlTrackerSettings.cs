@@ -77,10 +77,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Settings
 		{
 			if (!string.IsNullOrEmpty(ConfigurationManager.AppSettings["urlTracker:appendPortNumber"]))
 			{
-				bool parsedAppSetting;
-				if (bool.TryParse(ConfigurationManager.AppSettings["urlTracker:appendPortNumber"], out parsedAppSetting))
+				if (bool.TryParse(ConfigurationManager.AppSettings["urlTracker:appendPortNumber"], out bool parsedAppSetting))
 					return parsedAppSetting;
 			}
+
 			return true;
 		});
 

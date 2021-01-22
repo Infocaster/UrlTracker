@@ -413,7 +413,6 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 			foreach (var redirect in redirects.Records)
 				csv.AppendLine($"{redirect.RedirectRootNodeId};{redirect.Culture};{redirect.OldUrl};{redirect.OldRegex};{redirect.RedirectUrl};{redirect.RedirectNodeId};{redirect.RedirectHttpCode};{redirect.RedirectPassThroughQueryString};{redirect.ForceRedirect};{redirect.Notes}");
 
-
 			return csv.ToString();
 		}
 
@@ -459,16 +458,21 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 
 		public bool DeleteEntryById(int id, bool is404)
 		{
-			if (is404)
+			var entry = _urlTrackerRepository.GetEntryById(id);
+
+			if(entry != null)
 			{
-				var entry = _urlTrackerRepository.GetEntryById(id);
-				if (entry != null)
+				if (is404)
+				{
 					_urlTrackerRepository.DeleteNotFounds(entry.Culture, entry.OldUrl, entry.RedirectRootNodeId);
-			}
-			else
-			{
+				}
+
 				_urlTrackerRepository.DeleteEntryById(id);
-				ClearForcedRedirectsCache();
+
+				if(entry.ForceRedirect)
+				{
+					ClearForcedRedirectsCache();
+				}
 			}
 
 			return true;

@@ -235,7 +235,7 @@
 				<umb-editor-sub-header-content-left>
 					<umb-button action="vm.redirects.create()" type="button" button-style="primary" label="Create Redirect" class="urltracker-sub-header-button ic-color"></umb-button>
 					<button type="button" ng-click="vm.redirects.importExport()" class="btn umb-button__button btn-outline umb-button-- umb-outline urltracker-import-export-button ml-2">
-						<img src="/App_Plugins/UrlTracker/res/img/import-export-icon.svg" title="Import/export" alt="Import/export"/>
+						<img src="/App_Plugins/UrlTracker/res/img/import-export-icon.svg" title="Import/export" alt="Import/export" />
 					</button>
 				</umb-editor-sub-header-content-left>
 
@@ -335,6 +335,246 @@
 				<select ng-model="vm.redirects.itemsPerPage" ng-change="vm.redirects.pageSizeChanged()" class="urltracker-checkbox-page-size">
 					<option ng-repeat="option in vm.pageSizeOptions" value="{{option.value}}" ng-value="{{option.value}}">{{option.value}}</option>
 				</select>
+			</div>
+		</div>
+
+		<div ng-if="tab.alias == 'info'">
+			<div class="row">
+				<div class="col-7">
+					<div class="umb-group-panel p-3">
+						<h3 class="mt-0">UrlTracker</h3>
+						<p>
+							The Url Tracker is used to manage URLs within Umbraco. It automatically tracks 404 occurences and URL changes, for instance when a node is renamed or moved, and makes sure the old URL will redirect to the new location. This is great for SEO and great for people visiting your website via this old URL. Search engines will update the indexed URL and people won't visit the old, broken URL.
+							You can also create your own redirects, based on a simple URL or using a Regex pattern. You can redirect to an existing node or a manually entered URL. This is great for migrating existing indexed URLs to your new website!
+						</p>
+					</div>
+
+					<div class="umb-group-panel px-3 py-2">
+						<h3 class="mt-0">Settings</h3>
+						<p class="mb-4">
+							The Url Tracker supports a few settings, which can be configured in the appSettings section of your web.config. Below you'll find these settings, with the setting name, type, default value and current value (top right corner) mentioned
+						</p>
+						<div class="row mt-3">
+							<div class="col-12">
+								<div class="umb-box urltracker-setting-box p-3">
+									<div class="row">
+										<div class="col">
+											<h4 class="m-0">UrlTracker:disabled</h4>
+										</div>
+										<div class="col-auto">
+											<span class="urltracker-label" ng-class="vm.settings.IsDisabled ? 'urltracker-green-label' : 'urltracker-red-label'">{{vm.settings.IsDisabled}}</span>
+										</div>
+									</div>
+									
+									<small>boolean (false)</small>
+									<p class="mt-2">Set to true to disable the HTTP Module of the Url Tracker, so it won't redirect requests</p>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="umb-box urltracker-setting-box p-3">
+									<div class="row">
+										<div class="col">
+											<h4 class="m-0">urlTracker:enableLogging</h4>
+										</div>
+										<div class="col-auto">
+											<span class="urltracker-label" ng-class="vm.settings.EnableLogging ? 'urltracker-green-label' : 'urltracker-red-label'">{{vm.settings.EnableLogging}}</span>
+										</div>
+									</div>
+									<small>boolean (false)</small>
+									<p class="mt-2">Set to true to enable logging debug information of the Url Tracker. Uses umbraco's built-in logging mechanism with LogType set to 'debug'.</p>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="umb-box urltracker-setting-box p-3">
+									<div class="row">
+										<div class="col">
+											<h4 class="m-0">urlTracker:trackingDisabled</h4>
+										</div>
+										<div class="col-auto">
+											<span class="urltracker-label" ng-class="vm.settings.TrackingDisabled ? 'urltracker-green-label' : 'urltracker-red-label'">{{vm.settings.TrackingDisabled}}</span>
+										</div>
+									</div>
+									<small>boolean (false)</small>
+									<p class="mt-2">Set to true to disable tracking URL changes</p>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="umb-box urltracker-setting-box p-3">
+									<div class="row">
+										<div class="col">
+											<h4 class="m-0">urlTracker:notFoundTrackingDisabled</h4>
+										</div>
+										<div class="col-auto">
+											<span class="urltracker-label" ng-class="vm.settings.IsNotFoundTrackingDisabled ? 'urltracker-green-label' : 'urltracker-red-label'">{{vm.settings.IsNotFoundTrackingDisabled}}</span>
+										</div>
+									</div>
+									<small>boolean (false)</small>
+									<p class="mt-2">Set to true to disable tracking not found (404) requests</p>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="umb-box urltracker-setting-box p-3">
+									<div class="row">
+										<div class="col">
+											<h4 class="m-0">urlTracker:appendPortNumber</h4>
+										</div>
+										<div class="col-auto">
+											<span class="urltracker-label" ng-class="vm.settings.AppendPortNumber ? 'urltracker-green-label' : 'urltracker-red-label'">{{vm.settings.AppendPortNumber}}</span>
+										</div>
+									</div>
+									<small>boolean (true)</small>
+									<p class="mt-2">Set to false to disable appending a port number to redirect URLs</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-4 ml-auto">
+					<!--#region Timeline-->
+					<ul class="urltracker-timeline">
+						<li class="urltracker-timeline-item">
+							<div class="urltracker-timeline-figure">
+								<span class="urltracker-timeline-dot">•</span>
+							</div>
+							<div class="urltracker-timeline-body">
+								<div class="urltracker-timeline-header">
+									<h5>V. 3.11</h5>
+									<div class="urltracker-timeline-date">
+										2021/01/01
+									</div>
+								</div>
+								<div class="urltracker-timeline-content">
+									<ul>
+										<li>
+											Happy new year! \o/
+										</li>
+										<li>
+											<span class="urltracker-pink-label urltracker-label">Improvement</span>
+											Added support for the excellent (SEO Metadata for Umbraco plug-in by Epiphany) (altering a URL gets tracked)
+										</li>
+									</ul>
+								</div>
+							</div>
+						</li>
+						<li class="urltracker-timeline-item">
+							<div class="urltracker-timeline-figure">
+								<span class="urltracker-timeline-dot">•</span>
+							</div>
+							<div class="urltracker-timeline-body">
+								<div class="urltracker-timeline-header">
+									<h5>V. 3.2</h5>
+									<div class="urltracker-timeline-date">
+										2020/11/22
+									</div>
+								</div>
+								<div class="urltracker-timeline-content">
+									<ul>
+										<li>
+											<span class="urltracker-green-label urltracker-label">Feature</span>
+											Added new setting for appending the port number. Useful for when the site is running on a non-standard port number thanks to Greg Fyans
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											Fixed paths to relative paths, so it works in root and virtual folders thanks to Sandro Mastronardi
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											410 Gone response wasn't working anymore
+										</li>
+									</ul>
+								</div>
+							</div>
+						</li>
+						<li class="urltracker-timeline-item">
+							<div class="urltracker-timeline-figure">
+								<span class="urltracker-timeline-dot">•</span>
+							</div>
+							<div class="urltracker-timeline-body">
+								<div class="urltracker-timeline-header">
+									<h5>V. 3.2</h5>
+									<div class="urltracker-timeline-date">
+										2020/10/02
+									</div>
+								</div>
+								<div class="urltracker-timeline-content">
+									<ul>
+										<li>
+											<span class="urltracker-green-label urltracker-label">Feature</span>
+											Added new setting for appending the port number. Useful for when the site is running on a non-standard port number thanks to Greg Fyans
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											Fixed paths to relative paths, so it works in root and virtual folders thanks to Sandro Mastronardi
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											410 Gone response wasn't working anymore
+										</li>
+									</ul>
+								</div>
+							</div>
+						</li>
+						<li class="urltracker-timeline-item">
+							<div class="urltracker-timeline-figure">
+								<span class="urltracker-timeline-dot">•</span>
+							</div>
+							<div class="urltracker-timeline-body">
+								<div class="urltracker-timeline-header">
+									<h5>V. 3.2</h5>
+									<div class="urltracker-timeline-date">
+										2020/09/14
+									</div>
+								</div>
+								<div class="urltracker-timeline-content">
+									<ul>
+										<li>
+											<span class="urltracker-green-label urltracker-label">Feature</span>
+											Added new setting for appending the port number. Useful for when the site is running on a non-standard port number thanks to Greg Fyans
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											Fixed paths to relative paths, so it works in root and virtual folders thanks to Sandro Mastronardi
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											410 Gone response wasn't working anymore
+										</li>
+									</ul>
+								</div>
+							</div>
+						</li>
+						<li class="urltracker-timeline-item">
+							<div class="urltracker-timeline-figure">
+								<span class="urltracker-timeline-dot">•</span>
+							</div>
+							<div class="urltracker-timeline-body">
+								<div class="urltracker-timeline-header">
+									<h5>V. 3.2</h5>
+									<div class="urltracker-timeline-date">
+										2020/08/15
+									</div>
+								</div>
+								<div class="urltracker-timeline-content">
+									<ul>
+										<li>
+											<span class="urltracker-green-label urltracker-label">Feature</span>
+											Added new setting for appending the port number. Useful for when the site is running on a non-standard port number thanks to Greg Fyans
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											Fixed paths to relative paths, so it works in root and virtual folders thanks to Sandro Mastronardi
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											410 Gone response wasn't working anymore
+										</li>
+									</ul>
+								</div>
+							</div>
+						</li>
+					</ul>
+					<!--#endregion-->
+				</div>
 			</div>
 		</div>
 

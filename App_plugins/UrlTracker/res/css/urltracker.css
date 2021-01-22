@@ -345,3 +345,90 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 .urltracker-import-export-button > img {
 	width: 26px;
 }
+
+.urltracker-timeline {
+	padding: 0 15px 0 0;
+}
+
+.urltracker-timeline .urltracker-timeline-item {
+	position: relative;
+	display: flex;
+}
+
+.urltracker-timeline .urltracker-timeline-figure {
+	position: relative;
+	padding: .5rem 0;
+	font-size: 18px;
+	color: #ff0069;
+}
+
+.urltracker-timeline .urltracker-timeline-figure:before {
+	content: "";
+	position: absolute;
+	display: block;
+	height: 100%;
+	top: 1rem;
+	left: 50%;
+	margin-left: -1px;
+	border-left: 2px solid rgba(34,34,48,.1);
+}
+
+.urltracker-timeline .urltracker-timeline-body {
+	width: 100%;
+	margin-left: 1.25rem;
+	padding: .5rem 0;
+}
+
+.urltracker-timeline .urltracker-timeline-body ul {
+	margin-left: 16px;
+}
+
+.urltracker-timeline .urltracker-timeline-body li {
+	margin-bottom: 5px;
+}
+
+.urltracker-timeline .urltracker-timeline-header {
+	display: flex;
+	align-items: flex-start;
+}
+
+.urltracker-timeline .urltracker-timeline-header > h5 {
+	flex: 1;
+	margin: 0 0 5px 0;
+}
+
+.urltracker-timeline .urltracker-timeline-date {
+	color: #68676b;
+}
+
+.urltracker-label {
+	padding: 2px 7px;
+	border-radius: 12px;
+	font-size: 14px;
+	color: #fff;
+	margin-right: 2px;
+}
+
+.urltracker-pink-label {
+	background-color: #ff0069;
+}
+
+.urltracker-green-label {
+	background-color: #299a29;
+}
+
+.urltracker-orange-label {
+	background-color: #e88836;
+}
+
+.urltracker-red-label {
+	background-color: #d42054;
+}
+
+.urltracker-setting-box {
+	box-shadow: 0 1px 3px 1px rgb(0 0 0 / 11%);
+}
+
+.urltracker-setting-box p {
+	margin-bottom: 0;
+}

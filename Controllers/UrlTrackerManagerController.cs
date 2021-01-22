@@ -52,7 +52,10 @@ namespace InfoCaster.Umbraco.UrlTracker.Controllers
 			return Ok(new
 			{
 				IsDisabled = _urlTrackerSettings.IsDisabled(),
-				IsNotFoundTrackingDisabled = _urlTrackerSettings.IsNotFoundTrackingDisabled()
+				EnableLogging = _urlTrackerSettings.LoggingEnabled(),
+				TrackingDisabled = _urlTrackerSettings.IsTrackingDisabled(),
+				IsNotFoundTrackingDisabled = _urlTrackerSettings.IsNotFoundTrackingDisabled(),
+				AppendPortNumber = _urlTrackerSettings.AppendPortNumber()
 			});
 		}
 
