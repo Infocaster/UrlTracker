@@ -294,6 +294,7 @@
     <Compile Include="Models\UrlTrackerIgnore404Schema.cs" />
     <Compile Include="Models\UrlTrackerLanguage.cs" />
     <Compile Include="Models\UrlTrackerNodeModel.cs" />
+    <Compile Include="Modules\UrlTrackerModule.cs" />
     <Compile Include="Services\IUrlTrackerCacheService.cs" />
     <Compile Include="Services\UrlTrackerService.cs" />
     <Compile Include="Services\IUrlTrackerService.cs" />
@@ -309,11 +310,10 @@
     <Compile Include="Models\UrlTrackerDomain.cs" />
     <Compile Include="Extensions\NameValueCollectionExtension.cs" />
     <Compile Include="Models\UrlTrackerModel.cs" />
-    <Compile Include="Modules\UrlTrackerModule.cs" />
     <Compile Include="Repositories\IUrlTrackerRepository.cs" />
     <Compile Include="UrlTrackerComponent .cs" />
-    <Compile Include="UrlTrackerPreApplicationStart.cs" />
     <Compile Include="Settings\UrlTrackerSettings.cs" />
+    <Compile Include="UrlTrackerPreApplicationStart.cs" />
     <Compile Include="ViewModels\UrlTrackerOverviewModel.cs" />
   </ItemGroup>
   <ItemGroup>
