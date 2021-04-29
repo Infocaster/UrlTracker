@@ -21,6 +21,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 {
     public class UrlTrackerModule : IHttpModule
     {
+        private IRuntimeState _runtime => DependencyResolver.Current.GetService<IRuntimeState>();
         private IUrlTrackerHelper _urlTrackerHelper => DependencyResolver.Current.GetService<IUrlTrackerHelper>();
         private IUrlTrackerService _urlTrackerService => DependencyResolver.Current.GetService<IUrlTrackerService>();
         private IUrlTrackerSettings _urlTrackerSettings => DependencyResolver.Current.GetService<IUrlTrackerSettings>();
@@ -41,28 +42,30 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 
         public void Init(HttpApplication app)
         {
-            if (_urlTrackerLoggingHelper != null)
+            if (_runtime == null || _runtime.Level != RuntimeLevel.Run)
             {
-                _urlTrackerInstalled = true;
-
-                if (!_urlTrackerSubscribed)
-                {
-                    lock (_urlTrackerSubscribeLock)
-                    {
-                        UmbracoModule.EndRequest += UmbracoModule_EndRequest;
-
-                        _urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Subscribed to EndRequest events");
-                        _urlTrackerSubscribed = true;
-                    }
-                }
-
-                // Prevent YSOD crash
-                // https://stackoverflow.com/questions/3712598/httpmodule-init-safely-add-httpapplication-beginrequest-handler-in-iis7-integr
-                app.PostResolveRequestCache -= Context_PostResolveRequestCache;
-                app.PostResolveRequestCache += Context_PostResolveRequestCache;
-
-                _urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Subscribed to AcquireRequestState events");
+                return;
             }
+
+            _urlTrackerInstalled = true;
+
+            if (!_urlTrackerSubscribed)
+            {
+                lock (_urlTrackerSubscribeLock)
+                {
+                    UmbracoModule.EndRequest += UmbracoModule_EndRequest;
+
+                    _urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Subscribed to EndRequest events");
+                    _urlTrackerSubscribed = true;
+                }
+            }
+
+            // Prevent YSOD crash
+            // https://stackoverflow.com/questions/3712598/httpmodule-init-safely-add-httpapplication-beginrequest-handler-in-iis7-integr
+            app.PostResolveRequestCache -= Context_PostResolveRequestCache;
+            app.PostResolveRequestCache += Context_PostResolveRequestCache;
+
+            _urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Subscribed to AcquireRequestState events");
         }
 
         void Context_PostResolveRequestCache(object sender, EventArgs e)
