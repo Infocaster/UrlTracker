@@ -70,12 +70,26 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
 
         void Context_PostResolveRequestCache(object sender, EventArgs e)
         {
-            UrlTrackerDo("AcquireRequestState", ignoreHttpStatusCode: true, context: HttpContext.Current);
+            try
+            {
+                UrlTrackerDo("AcquireRequestState", ignoreHttpStatusCode: true, context: HttpContext.Current);
+            }
+            catch (Exception ex)
+            {
+                _urlTrackerLoggingHelper.LogException(ex);
+            }
         }
 
         void UmbracoModule_EndRequest(object sender, UmbracoRequestEventArgs args)
         {
-            UrlTrackerDo("EndRequest", context: args.HttpContext.ApplicationInstance.Context);
+            try
+            {
+                UrlTrackerDo("EndRequest", context: args.HttpContext.ApplicationInstance.Context);
+            }
+            catch (Exception ex)
+            {
+                _urlTrackerLoggingHelper.LogException(ex);
+            }
         }
         #endregion
 
