@@ -489,7 +489,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Services
 		public bool ValidateRedirect(UrlTrackerModel redirect)
 		{
 			if ((string.IsNullOrEmpty(redirect.OldUrl) && string.IsNullOrEmpty(redirect.OldRegex)) ||
-				(redirect.RedirectRootNodeId == 0 || redirect.RedirectRootNodeId == null) ||
+				redirect.RedirectRootNodeId == 0 ||
 				((redirect.RedirectNodeId == null || redirect.RedirectNodeId == 0) && string.IsNullOrEmpty(redirect.RedirectUrl)) ||
 				(redirect.RedirectHttpCode != 301 && redirect.RedirectHttpCode != 302 && redirect.RedirectHttpCode != 410))
 				return false;
