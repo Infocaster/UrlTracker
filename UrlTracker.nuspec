@@ -2,13 +2,13 @@
 <package >
   <metadata>
     <id>UrlTracker.8</id>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
     <title>UrlTracker.8</title>
     <authors>Infocaster B.V.</authors>
     <owners>Infocaster B.V.</owners>
-    <licenseUrl>https://opensource.org/licenses/mit-license.php</licenseUrl>
+    <license type="expression">MIT</license>
     <projectUrl>https://github.com/kipusoep/UrlTracker</projectUrl>
-    <iconUrl>http://our.umbraco.org/media/wiki/8046/635072564424992426_urltracker.png</iconUrl>
+    <icon>content\App_plugins\UrlTracker\res\img\urltracker.png</icon>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
 	<summary>The Url Tracker is used to manage URLs within Umbraco</summary>
     <description>The Url Tracker is used to manage URLs within umbraco. It automatically tracks URL changes, for instance when a node is renamed, and makes sure the old URL will redirect to the new location. This is great for SEO and great for people visiting your website via this old URL. Search engines will update the indexed URL and people won't visit the old, broken URL.
