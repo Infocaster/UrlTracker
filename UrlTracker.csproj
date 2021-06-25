@@ -416,11 +416,15 @@
     <Content Include="App_Plugins\UrlTracker\Views\UrlTrackerManager.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="readme.txt" />
     <Content Include="UrlTracker.nuspec" />
     <Content Include="App_Plugins\UrlTracker\package.manifest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="App_Plugins\UrlTracker\res\urltracker-redirects-import.csv" />
+    <Content Include="GitVersion.yml" />
+    <Content Include="nuget.config" />
+    <Content Include="README.md" />
     <None Include="web.config" />
   </ItemGroup>
   <ItemGroup>
