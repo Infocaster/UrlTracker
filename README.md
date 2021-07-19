@@ -1,14 +1,14 @@
-UrlTracker
+URL Tracker
 ==========
 [![Build status](https://ci.appveyor.com/api/projects/status/wi5qr3gepwjiyeeh?svg=true)](https://ci.appveyor.com/project/granthughes/urltracker)
 [![Nuget](https://img.shields.io/nuget/v/UrlTracker.svg)](https://www.nuget.org/packages/UrlTracker/)
 [![MyGet](https://img.shields.io/myget/urltracker-ci/v/UrlTracker.svg?maxAge=2592000)](https://www.myget.org/feed/urltracker-ci/package/nuget/UrlTracker)
 
-The Url Tracker is used to manage URLs within umbraco. It automatically tracks URL changes, for instance when a node is renamed, and makes sure the old URL will redirect to the new location. This is great for SEO and great for people visiting your website via this old URL. Search engines will update the indexed URL and people won't visit the old, broken URL.<br />
+The URL Tracker is used to manage URLs within umbraco. It automatically tracks URL changes, for instance when a node is renamed, and makes sure the old URL will redirect to the new location. This is great for SEO and great for people visiting your website via this old URL. Search engines will update the indexed URL and people won't visit the old, broken URL.<br />
 You can also create your own redirects, based on a simple URL or using a Regex pattern. You can redirect to an existing node or a manually entered URL. This is great for migrating existing indexed URLs to your new website!
 
 ## Umbraco 7.3.0 - 7.3.5 ##
-**Umbraco 7.3.0 - 7.3.5** have known issues with the Url Tracker. These are resolved in Umbraco 7.3.6 and 7.4, so please don't use 7.3.0 - 7.3.5 in combination with the Url Tracker.
+**Umbraco 7.3.0 - 7.3.5** have known issues with the URL Tracker. These are resolved in Umbraco 7.3.6 and 7.4, so please don't use 7.3.0 - 7.3.5 in combination with the URL Tracker.
 
 ## Versioning ##
 **Version 2** has reached it's end-of-life status and won't be supported anymore. For umbraco versions **4.6 - 6.0** version 2 will remain available as well as the source of v2.  
@@ -29,17 +29,17 @@ If you'd like to report a bug or request a new feature, please use [the Github i
 *   Supports **multiple websites** in a single umbraco instance
 
 ## Settings ##
-The Url Tracker supports a few settings, which you can use in the [appSettings section of your web.config](http://msdn.microsoft.com/en-us/library/aa903313(v=vs.71).aspx). Below you'll find these settings, with the type and default value mentioned below the setting name:
+The URL Tracker supports a few settings, which you can use in the [appSettings section of your web.config](http://msdn.microsoft.com/en-us/library/aa903313(v=vs.71).aspx). Below you'll find these settings, with the type and default value mentioned below the setting name:
 ### urlTracker:disabled ###
 #### boolean (false) ####
-Set to true to disable the HTTP Module of the Url Tracker, so it won't redirect requests anymore.
+Set to true to disable the HTTP Module of the URL Tracker, so it won't redirect requests anymore.
 ### urlTracker:enableLogging ###
 #### boolean (false) ####
-Set to true to enable logging debug information of the Url Tracker. Uses umbraco's built-in logging mechanism with LogType set to 'debug'.  
+Set to true to enable logging debug information of the URL Tracker. Uses umbraco's built-in logging mechanism with LogType set to 'debug'.  
 **umbracoDebugMode** needs to be enabled too.
 ### urlTracker:404UrlsToIgnore ###
 #### comma-seperated string (empty) ####
-The Url Tracker logs requests resulting in a 404 Not Found status. Some URLs shouldn't be logged and can be set here. One URL is always ignored by default: 'favicon.ico'.  
+The URL Tracker logs requests resulting in a 404 Not Found status. Some URLs shouldn't be logged and can be set here. One URL is always ignored by default: 'favicon.ico'.  
 You can also ignore logging a 404 Not Found entry for certain requests, by adding an HTTP header 'X-UrlTracker-Ignore404' with value '1'
 ### urlTracker:trackingDisabled ###
 #### boolean (false) ####
@@ -60,7 +60,7 @@ Amount of time, in seconds, that the forced redirects will be cached for. Defaul
 This setting does nothing unless **urlTracker:forcedRedirectCacheTimeoutEnabled** is true.
 
 ## Events ##
-You can customise the HttpResponse object from the Url Tracker, should you need to change the status code or other types of output.
+You can customise the HttpResponse object from the URL Tracker, should you need to change the status code or other types of output.
 
 The following code sample will detect if we're a 410 response, and if so attempt to render the 404 template as defined in [umbracoSettings](https://our.umbraco.org/documentation/reference/config/umbracosettings/#errors). If it fails it will simply return a 404 status code.
 This code should be placed within the [Umbraco startup events](https://our.umbraco.org/documentation/reference/events/application-startup#application-startup-events-event-registration)
@@ -139,7 +139,7 @@ public void OnApplicationStarted(UmbracoApplicationBase umbracoApplication, Appl
     * [BugFix] JavaScripts errors in backend in IE11 ([#31](https://github.com/kipusoep/UrlTracker/issues/31), updated jQuery)
     * [Feature] Domain on child node with cross site/host redirects ([#40](https://github.com/kipusoep/UrlTracker/issues/40))
 *	3.3 [2014/12/11]
-    * [BugFix] The UrlTracker dashboard wasn't working in some cases since v3.2
+    * [BugFix] The URL Tracker dashboard wasn't working in some cases since v3.2
 *	3.2 [2014/11/14]
     * [Feature] Added new setting for appending the port number. Useful for when the site is running on a non-standard port number thanks to Greg Fyans
     * [BugFix] Fixed paths to relative paths, so it works in root and virtual folders thanks to Sandro Mastronardi
@@ -177,7 +177,7 @@ public void OnApplicationStarted(UmbracoApplicationBase umbracoApplication, Appl
     * [Feature] Added support for Umbraco Belle (v7) thanks to Tim Geyssens (there's only an issue with scrollbars, but it's umbraco related: http://issues.umbraco.org/issue/U4-3940)
 *   2.4.7 [2014/01/15]
     * [Bugfix] Fixed an issue with the Old URL field in the Not Found create redirect view
-    * [Feature] Added the option to disable logging 404 Not Found to the UrlTracker by adding an HTTP header 'X-UrlTracker-Ignore404' with value '1' for a certain request
+    * [Feature] Added the option to disable logging 404 Not Found to the URL Tracker by adding an HTTP header 'X-UrlTracker-Ignore404' with value '1' for a certain request
 *   2.4.6 [2014/01/15]
     * [Bugfix] Fixed a small issue which occurred if the umbracoDbDSN isn't set
 *   2.4.5 [2014/01/10]
@@ -191,10 +191,10 @@ public void OnApplicationStarted(UmbracoApplicationBase umbracoApplication, Appl
     * [Improvement] Decreased the general font-size of the UI to 12px to match umbraco
     * [Improvement] Performance improvements
 *	2.4.2 [2013/12/12]
-    * [Bugfix] Fixed a bug when doing a clean install of the Url Tracker (2.4.1 fix wasn't complete)
+    * [Bugfix] Fixed a bug when doing a clean install of the URL Tracker (2.4.1 fix wasn't complete)
     * [Bugfix] Fixed a bug which occurred when umbraco is running on a different port than 80
 *   2.4.1 [2013/12/11]
-    * [Bugfix] Fixed a bug when doing a clean install of the Url Tracker
+    * [Bugfix] Fixed a bug when doing a clean install of the URL Tracker
     * [Bugfix] The database columns were too small in some situations
 *   2.4.0 [2013/12/11]
     * [Bugfix] In some situations an exception would occur with umbraco v6 (Value cannot be null. Parameter name: umbracoContext)
@@ -216,12 +216,12 @@ public void OnApplicationStarted(UmbracoApplicationBase umbracoApplication, Appl
     * [Improvement] UI handles unpublished nodes better
 *   2.2.7 [2013/11/08]
     * [Bugfix] Fixed a UI issue when the rootnode is 0
-    * [Improvement] Better 404 handling; ignores referrer if it's value is the Url Tracker UI, ignores 404 entry if the URL is a BrowserLink URL (VS 2013)
+    * [Improvement] Better 404 handling; ignores referrer if it's value is the URL Tracker UI, ignores 404 entry if the URL is a BrowserLink URL (VS 2013)
 *	2.2.6 [2013/10/21]
     * [Bugfix] There were some issues with umbraco 6.1.x and static file extensions (like .html)
 *	2.2.5 [2013/10/16]
     * [Bugfix] There was an issue with multiple entries with the same old url, but different querystrings
-    * [Bugfix] When multiple versions of log4net exist in the bin folder, the UrlTracker would crash
+    * [Bugfix] When multiple versions of log4net exist in the bin folder, the URL Tracker would crash
 *	2.2.3 [2013/08/30]
     * [Bugfix] Sometimes the installer was stuck at "Installing database table" (VirtualPathProvider issue)
 *	2.2.2 [2013/08/23]
@@ -266,7 +266,7 @@ public void OnApplicationStarted(UmbracoApplicationBase umbracoApplication, Appl
 1.   Back-up the existing infocaster301 database table (schema **and** data)
 2.   Uninstall the old package
 3.   When the database table is removed, restore it by using the script from step 1
-4.   Install version 2; the Url Tracker
+4.   Install version 2; the URL Tracker
 5.   The installation wizard will be able to migrate the existing data
 6.   If the migration succeeded, you can delete the old infocaster301 database
 
@@ -275,7 +275,7 @@ public void OnApplicationStarted(UmbracoApplicationBase umbracoApplication, Appl
 2.   Install the new version
 
 ## Uninstalling ##
-You can uninstall the Url Tracker by removing the package. The database table will not get deleted! If you'd like to remove the database table too, you should do it manually.
+You can uninstall the URL Tracker by removing the package. The database table will not get deleted! If you'd like to remove the database table too, you should do it manually.
 
 ## Tested with ##
 *   IIS 7 and up
