@@ -9,7 +9,7 @@
 ===============================================================================
 
 When you install this package, only the assembly is being copied to the bin folder.
-To complete the installation, open umbraco and the UrlTracker's final install steps will be executed.
+To complete the installation, open umbraco and the URL Tracker's final install steps will be executed.
 Also remember to build the project.
 
 For more information, check out the links below:
