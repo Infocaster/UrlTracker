@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -7,7 +6,7 @@ using System.Web;
 
 namespace InfoCaster.Umbraco.UrlTracker.Helpers
 {
-    public static class ContextHelper
+	public static class ContextHelper
     {
         public static IDisposable EnsureHttpContext()
         {

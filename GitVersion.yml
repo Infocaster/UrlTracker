@@ -1,0 +1,11 @@
+mode: Mainline
+next-version: 4.0.0
+branches:
+  feature:
+    tag: alpha
+  develop: 
+    tag: beta
+  master:
+    tag: ''
+ignore:
+  sha: []

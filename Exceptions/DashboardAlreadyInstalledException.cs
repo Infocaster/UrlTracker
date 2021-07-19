@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace InfoCaster.Umbraco.UrlTracker.Exceptions
 {
-    public class DashboardAlreadyInstalledException : Exception
+	public class DashboardAlreadyInstalledException : Exception
     {
         public DashboardAlreadyInstalledException()
         {
