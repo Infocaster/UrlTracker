@@ -115,7 +115,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
                 response.Clear();
                 response.Write(_urlTrackerSettings.GetHttpModuleCheck());
                 response.StatusCode = 200;
-                response.End();
+                context.ApplicationInstance.CompleteRequest();
                 return;
             }
 
@@ -367,7 +367,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
                     if (!string.IsNullOrEmpty(redirectLocation))
                         response.RedirectLocation = redirectLocation;
 
-                    response.End();
+                    context.ApplicationInstance.CompleteRequest();
                 }
                 else if (!ignoreHttpStatusCode)
                 {
