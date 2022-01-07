@@ -4,6 +4,8 @@ URL Tracker
 [![Nuget](https://img.shields.io/nuget/v/UrlTracker.svg)](https://www.nuget.org/packages/UrlTracker/)
 [![MyGet](https://img.shields.io/myget/urltracker-ci/v/UrlTracker.svg?maxAge=2592000)](https://www.myget.org/feed/urltracker-ci/package/nuget/UrlTracker)
 
+This project has been taken over from [Kipusoep](https://github.com/kipusoep/UrlTracker).
+
 The URL Tracker is used to manage URLs within umbraco. It automatically tracks URL changes, for instance when a node is renamed, and makes sure the old URL will redirect to the new location. This is great for SEO and great for people visiting your website via this old URL. Search engines will update the indexed URL and people won't visit the old, broken URL.<br />
 You can also create your own redirects, based on a simple URL or using a Regex pattern. You can redirect to an existing node or a manually entered URL. This is great for migrating existing indexed URLs to your new website!
 
@@ -12,10 +14,8 @@ You can also create your own redirects, based on a simple URL or using a Regex p
 
 ## Versioning ##
 **Version 2** has reached it's end-of-life status and won't be supported anymore. For umbraco versions **4.6 - 6.0** version 2 will remain available as well as the source of v2.  
-**Version 3** is the current version and supports umbraco versions **6.1, 7.0, 7.1 and up** if possible. 
-
-## Issues / feature requests ##
-If you'd like to report a bug or request a new feature, please use [the Github issue tracker](https://github.com/kipusoep/UrlTracker/issues), please don't use Twitter for example, because I won't be able to deal with requests outside Github (will become a mess sooner or later).
+**Version 3** supports umbraco versions **6.1, 7.0, 7.1 and up** if possible.  
+**Version 4** supports umbraco versions 8.6+
 
 ## Features ##
 *   Keeps track of **URL changes** (node gets renamed, moved or the umbracoUrlName property changes)
@@ -288,7 +288,3 @@ You can uninstall the URL Tracker by removing the package. The database table wi
 *   **InfoCaster** | Being able to combine 'work' with package development and thanks to colleagues for inspiration.
 *   **Richard Soeteman** | Richard came up with the idea for a package which keeps track of URLs of umbraco nodes.
 *   **The uComponents project** | For inspiring me to create a single-assembly package solution.
-
-## Donate ##
-Please follow this link if you would like to donate: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VKGMKM3NN8MSQ  
-Thanks in advance!
