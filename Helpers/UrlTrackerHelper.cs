@@ -1,105 +1,72 @@
-﻿using InfoCaster.Umbraco.UrlTracker.Services;
+﻿using InfoCaster.Umbraco.UrlTracker.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Umbraco.Core.Configuration;
-using Umbraco.Core.IO;
+using System.Text.RegularExpressions;
+using System.Web;
+using umbraco;
 
 namespace InfoCaster.Umbraco.UrlTracker.Helpers
 {
-	public class UrlTrackerHelper : IUrlTrackerHelper
-	{
-		private readonly IUrlTrackerCacheService _urlTrackerCacheService;
-		private readonly IGlobalSettings _globalSettings;
+    public static class UrlTrackerHelper
+    {
+        static readonly Regex _urlWithDotRegex = new Regex("\\S+\\.\\S+");
 
-		private readonly string _reservedListCacheKey = "UrlTrackerReservedList";
+        public static string ResolveShortestUrl(string url)
+        {
+            if (url.StartsWith("http://") || url.StartsWith("https://"))
+            {
+                Uri uri = new Uri(url);
+                url = Uri.UnescapeDataString(uri.PathAndQuery);
+            }
 
-		public UrlTrackerHelper(IUrlTrackerCacheService urlTrackerCacheService, IGlobalSettings globalSettings)
-		{
-			_urlTrackerCacheService = urlTrackerCacheService;
-			_globalSettings = globalSettings;
-		}
+            if (url != "/")
+            {
+                // The URL should be stored as short as possible (e.g.: /page.aspx -> page | /page/ -> page)
+                if (url.StartsWith("/"))
+                    url = url.Substring(1);
+                if (url.EndsWith("/"))
+                    url = url.Substring(0, url.Length - "/".Length);
+                if (url.EndsWith(".aspx"))
+                    url = url.Substring(0, url.Length - ".aspx".Length);
+            }
+            return url;
+        }
 
-		public string ResolveShortestUrl(string url)
-		{
-			if (string.IsNullOrEmpty(url))
-				return url;
+        public static string ResolveUmbracoUrl(string url)
+        {
+            if (url.StartsWith("http://") || url.StartsWith("https://"))
+            {
+                Uri uri = new Uri(url);
+                url = Uri.UnescapeDataString(uri.PathAndQuery);
+            }
 
-			if (url != "/")
-			{
-				// The URL should be stored as short as possible (e.g.: /page.aspx -> page | /page/ -> page)
-				if (url.StartsWith("/"))
-					url = url.Substring(1);
-				if (url.EndsWith("/"))
-					url = url.Substring(0, url.Length - "/".Length);
-			}
+            if (url != "/" && !_urlWithDotRegex.IsMatch(url))
+            {
+                if (!GlobalSettings.UseDirectoryUrls && !url.EndsWith(".aspx"))
+                    url += ".aspx";
+                else if (UmbracoSettings.AddTrailingSlash && !url.EndsWith("/"))
+                    url += "/";
+            }
 
-			return url;
-		}
+            return url;
+        }
 
-		public string ResolveUmbracoUrl(string url)
-		{
-			if (url.StartsWith("http://") || url.StartsWith("https://"))
-			{
-				Uri uri = new Uri(url);
-				url = Uri.UnescapeDataString(uri.PathAndQuery);
-			}
-
-			return url;
-		}
-
-		public bool IsReservedPathOrUrl(string url)
-		{
-			var reservedList = _urlTrackerCacheService.Get<List<string>>(_reservedListCacheKey);
-
-			if (reservedList == null)
-			{
-				reservedList = new List<string>();
-
-				var reservedUrls = _globalSettings.ReservedUrls;
-				var reservedPaths = _globalSettings.ReservedPaths;
-
-				foreach (var reservedUrl in reservedUrls.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries))
-				{
-					if(string.IsNullOrWhiteSpace(reservedUrl))
-						continue;
-
-					//Resolves the url to support tilde chars
-					string reservedUrlTrimmed = IOHelper.ResolveUrl(reservedUrl).Trim().ToLower();
-
-					if (reservedUrlTrimmed.Length > 0)
-						reservedList.Add(reservedUrlTrimmed);
-				}
-
-				foreach (string reservedPath in reservedPaths.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries))
-				{
-					if (string.IsNullOrWhiteSpace(reservedPath)) 
-						continue;
-
-					bool trimEnd = !reservedPath.EndsWith("/");
-
-					//Resolves the url to support tilde chars
-					string reservedPathTrimmed = IOHelper.ResolveUrl(reservedPath).Trim().ToLower();
-
-					if (reservedPathTrimmed.Length > 0)
-						reservedList.Add(reservedPathTrimmed + (reservedPathTrimmed.EndsWith("/") ? "" : "/"));
-				}
-
-				_urlTrackerCacheService.Set(_reservedListCacheKey, reservedList);
-			}
-
-			//The url should be cleaned up before checking:
-			// * If it doesn't contain an '.' in the path then we assume it is a path based URL, if that is the case we should add an trailing '/' because all of our reservedPaths use a trailing '/'
-			// * We shouldn't be comparing the query at all
-			var pathPart = url.Split('?')[0];
-			if (!pathPart.Contains(".") && !pathPart.EndsWith("/"))
-				pathPart += "/";
-
-			// check if path is longer than one character, then if it does not start with / then add a /
-			if (pathPart.Length > 1 && pathPart[0] != '/')
-				pathPart = '/' + pathPart; // fix because sometimes there is no leading /... depends on browser...
-
-			return reservedList.Any(u => u.StartsWith(pathPart.ToLowerInvariant()));
-		}
-	}
+        public static string GetName(UrlTrackerDomain domain)
+        {
+            if (UrlTrackerSettings.HasDomainOnChildNode)
+            {
+                var result = string.Format("{0}", domain.Node.Parent == null ? domain.Node.Name : domain.Node.Parent.Name + "/" + domain.Node.Name);
+                if (string.IsNullOrEmpty(result))
+                {
+                    result = "(root)";
+                }
+                return result;
+            }
+            else
+            {
+                return string.Format("{0} ({1})", domain.Node.Name, domain.Name);
+            }
+        }
+    }
 }

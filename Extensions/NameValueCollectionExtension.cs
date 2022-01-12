@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Web;
 
 namespace InfoCaster.Umbraco.UrlTracker.Extensions
 {
