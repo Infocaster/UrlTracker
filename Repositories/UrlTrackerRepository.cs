@@ -88,6 +88,13 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 			}
 		}
 
+		public IEnumerable<T> GetAll<T>(string query, object parameters = null)
+		{
+			using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+			{
+				return scope.Database.Query<T>(query, parameters);
+			}
+		}
 		public UrlTrackerModel GetEntryById(int id)
 		{
 			using (var scope = _scopeProvider.CreateScope(autoComplete: true))

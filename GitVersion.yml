@@ -1,11 +1,19 @@
 mode: Mainline
-next-version: 4.0.0
+next-version: 4.1.0
 branches:
   feature:
     tag: alpha
-  develop: 
+    regex: ^v8/feature/
+    source-branches: [ 'v8/develop' ]
+  develop:
     tag: beta
+    regex: ^v8/develop$
   master:
     tag: ''
+    regex: ^v8/main$
+  hotfix:
+    tag: 'beta'
+    regex: ^v8/hotfix
+    source-branches: [ 'v8/main' ]
 ignore:
   sha: []

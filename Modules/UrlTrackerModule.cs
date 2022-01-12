@@ -168,24 +168,22 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
                         // Regex matching
 
                         var query = "SELECT * FROM icUrlTracker WHERE Is404 = 0 AND ForceRedirect = @forceRedirect AND (RedirectRootNodeId = @redirectRootNodeId OR RedirectRootNodeId = -1) AND OldRegex IS NOT NULL ORDER BY Inserted DESC";
-                        UrlTrackerModel result = _urlTrackerRepository.FirstOrDefault<UrlTrackerModel>(query,
-                            new
-                            {
-                                forceRedirect = ignoreHttpStatusCode ? 1 : 0,
-                                redirectRootNodeId = rootNodeId
-                            });
 
-                        if (result != null)
+                        var redirects = _urlTrackerRepository.GetAll<UrlTrackerModel>(query, new
                         {
-                            var regex = new Regex(result.OldRegex);
+                            forceRedirect = ignoreHttpStatusCode ? 1 : 0,
+                            redirectRootNodeId = rootNodeId
+                        });
 
-                            if (regex.IsMatch(shortestUrl))
-                            {
-                                _urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Regex match found");
+                        var matches = redirects.Select(x => new { UrlTrackerModel = x, Regex = new Regex(x.OldRegex) }).Where(x => x.Regex.IsMatch(shortestUrl));
 
-                                if (result.RedirectNodeId.HasValue)
+                        foreach (var result in matches)
+                        {
+                            _urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Regex match found");
+
+                                if (result.UrlTrackerModel.RedirectNodeId.HasValue)
                                 {
-                                    int redirectNodeId = result.RedirectNodeId.Value;
+                                    int redirectNodeId = result.UrlTrackerModel.RedirectNodeId.Value;
                                     _urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Redirect node id: {0}", redirectNodeId);
 
                                     var rootNode = _urlTrackerService.GetNodeById(rootNodeId);
@@ -197,28 +195,27 @@ namespace InfoCaster.Umbraco.UrlTracker.Modules
                                     else
                                         _urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Redirect node is invalid; node is null, name is null or id <= 0");
                                 }
-                                else if (!string.IsNullOrWhiteSpace(result.RedirectUrl))
+                                else if (!string.IsNullOrWhiteSpace(result.UrlTrackerModel.RedirectUrl))
                                 {
-                                    redirectUrl = result.RedirectUrl;
+                                    redirectUrl = result.UrlTrackerModel.RedirectUrl;
                                     _urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Redirect url set to: {0}", redirectUrl);
 
                                     if (_capturingGroupsRegex.IsMatch(redirectUrl))
                                     {
                                         _urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Found regex capturing groups in the redirect url");
-                                        redirectUrl = regex.Replace(shortestUrl, redirectUrl);
+                                        redirectUrl = result.Regex.Replace(shortestUrl, redirectUrl);
 
                                         _urlTrackerLoggingHelper.LogInformation("UrlTracker HttpModule | Redirect url changed to: {0} (because of regex capturing groups)", redirectUrl);
                                     }
                                 }
 
-                                redirectPassThroughQueryString = result.RedirectPassThroughQueryString;
+                                redirectPassThroughQueryString = result.UrlTrackerModel.RedirectPassThroughQueryString;
                                 _urlTrackerLoggingHelper.LogInformation(
                                     "UrlTracker HttpModule | PassThroughQueryString is enabled");
 
-                                redirectHttpCode = result.RedirectHttpCode;
+                                redirectHttpCode = result.UrlTrackerModel.RedirectHttpCode;
                                 _urlTrackerLoggingHelper.LogInformation(
                                     "UrlTracker HttpModule | Redirect http code set to: {0}", redirectHttpCode);
-                            }
                         }
                     }
                     else

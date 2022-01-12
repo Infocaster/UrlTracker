@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using InfoCaster.Umbraco.UrlTracker.Models;
 
 namespace InfoCaster.Umbraco.UrlTracker.Repositories
@@ -15,6 +16,7 @@ namespace InfoCaster.Umbraco.UrlTracker.Repositories
 		#region Get
 
 		T FirstOrDefault<T>(string query, object parameters = null);
+		IEnumerable<T> GetAll<T>(string query, object parameters = null);
 		UrlTrackerModel GetEntryById(int id);
 		UrlTrackerGetResult GetRedirects(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.CreatedDesc, string searchQuery = "", bool onlyForcedRedirects = false);
 		UrlTrackerGetResult GetNotFounds(int? skip, int? amount, UrlTrackerSortType sort = UrlTrackerSortType.LastOccurredDesc, string searchQuery = "");
