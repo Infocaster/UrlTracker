@@ -1,0 +1,582 @@
+﻿<div ng-controller="UrlTracker.OverviewController as vm" class="urltracker-body">
+	<umb-tabs-nav tabs="vm.tabs" on-tab-change="vm.changeTab(tab.alias)"></umb-tabs-nav>
+
+	<umb-tab-content ng-repeat="tab in vm.tabs" tab="tab" ng-show="tab.active">
+
+		<div class="container" ng-if="tab.alias == 'dashboard'">
+			<div class="row pt-2 top-bar">
+				<div class="col-12 text-center">
+					<div class="circle">
+						<div class="circle-content" ng-if="vm.dashboard.notFoundsThisWeek != null">
+							<span class="circle-title">{{vm.dashboard.notFoundsThisWeek}}</span>
+							<span class="circle-subtitle">Not founds this week</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row mt-5 mb-5">
+				<div class="col-7 pr-5">
+					<div class="row align-items-center">
+						<div class="col">
+							<h4><b>Most common not founds</b></h4>
+							<small>Create a redirect to increase SEO performance</small>
+						</div>
+						<div class="col-auto">
+							<a ng-click="vm.changeTab('notFounds')">Show all <i class="icon-eye ml-1"></i></a>
+						</div>
+					</div>
+					<div class="umb-table urltracker-dashboard-table mt-4">
+						<umb-load-indicator ng-if="vm.dashboard.notFounds.loading"></umb-load-indicator>
+						<div class="umb-table-head">
+							<div class="umb-table-row">
+								<div class="umb-table-cell col-site" ng-if="vm.allRootNodes.length > 1">Site</div>
+								<div class="umb-table-cell col-old-url">URL</div>
+								<!--<div class="umb-table-cell col-referrer">Referrer</div>-->
+								<div class="umb-table-cell col-occurrences">Occurrences</div>
+								<div class="umb-table-cell col-date">Last occurred</div>
+								<div class="umb-table-cell col-icons"></div>
+							</div>
+						</div>
+						<div class="umb-table-body">
+							<div class="umb-table-row" ng-repeat="item in vm.dashboard.notFounds.items">
+								<div class="umb-table-cell col-site" title="{{vm.getSiteName(item)}}" ng-if="vm.allRootNodes.length > 1">
+									<span>
+										{{vm.getSiteName(item)}}
+									</span>
+								</div>
+								<div class="umb-table-cell col-old-url" title="{{item.OldUrl}}">
+									<span>
+										{{item.OldUrl}}
+									</span>
+								</div>
+								<!--<div class="umb-table-cell col-referrer" title="{{item.Referrer}}">
+									<span ng-if="item.Referrer != null">{{item.Referrer}}</span>
+									<span ng-if="item.Referrer == null">-</span>
+								</div>-->
+								<div class="umb-table-cell col-occurrences" title="{{item.Occurrences}}x">
+									<span>
+										{{item.Occurrences}}x
+									</span>
+								</div>
+								<div class="umb-table-cell col-date" title="{{item.Inserted | date: 'EEEE, yyyy-MM-dd HH:mm' : 'UTC'}}">
+									<span>
+										{{item.Inserted | date: 'yyyy-MM-dd HH:mm' : 'UTC'}}
+									</span>
+								</div>
+								<div class="umb-table-cell col-icons">
+									<umb-button action="vm.notFounds.createRedirect(item)" type="button" button-style="primary" label="Create Redirect" class="urltracker-table-button ic-color"></umb-button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-5">
+					<div class="row align-items-center">
+						<div class="col">
+							<h4><b>Newest redirects</b></h4>
+							<small>Newest added redirects</small>
+						</div>
+						<div class="col-auto">
+							<a ng-click="vm.changeTab('redirects')">Show all <i class="icon-eye ml-1"></i></a>
+						</div>
+					</div>
+					<div class="umb-table urltracker-dashboard-table redirects-table mt-4">
+						<umb-load-indicator ng-if="vm.dashboard.redirects.loading"></umb-load-indicator>
+						<div class="umb-table-head">
+							<div class="umb-table-row">
+								<div class="umb-table-cell col-site" ng-if="vm.allRootNodes.length > 1">Site</div>
+								<div class="umb-table-cell">Old URL</div>
+								<div class="umb-table-cell">New URL</div>
+							</div>
+						</div>
+						<div class="umb-table-body">
+							<div class="umb-table-row" ng-repeat="item in vm.dashboard.redirects.items" ng-click="vm.redirects.clickItem(item)" ng-class="{'-selectable umb-outline': item.RedirectHttpCode != 410}">
+								<div class="umb-table-cell col-site" ng-if="vm.allRootNodes.length > 1" title="{{vm.getSiteName(item)}}">
+									<span>
+										{{vm.getSiteName(item)}}
+									</span>
+								</div>
+
+								<div class="umb-table-cell" title="{{item.OldUrl || item.OldRegex}}">
+									<span ng-if="item.OldUrl">{{item.OldUrl}}</span>
+									<span class="regex" ng-if="item.OldRegex">{{item.OldRegex}}</span>
+								</div>
+
+								<div class="umb-table-cell col-new-url" title="{{item.CalculatedRedirectUrl}}">
+									<span ng-if="item.CalculatedRedirectUrl != null">{{item.CalculatedRedirectUrl}}</span>
+									<span ng-if="item.CalculatedRedirectUrl == null">-</span>
+									<div class="ut-redirect-http-code">{{item.RedirectHttpCode}}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div ng-if="tab.alias == 'notFounds'">
+			<div ng-if="!vm.settings.IsNotFoundTrackingDisabled || vm.notFounds.items.length != 0">
+				<umb-editor-sub-header ng-if="vm.notFounds.selectedItems.length == 0">
+					<!-- ToDo: filters -->
+					<umb-editor-sub-header-content-right>
+						<umb-editor-sub-header-section>
+							<div class="urltracker-form-box search-box">
+								<i class="icon-search"></i>
+								<input type="text" ng-model="vm.notFounds.searchString" ng-enter="vm.notFounds.search()" placeholder="Search..." />
+							</div>
+						</umb-editor-sub-header-section>
+					</umb-editor-sub-header-content-right>
+				</umb-editor-sub-header>
+
+				<umb-editor-sub-header ng-if="vm.notFounds.selectedItems.length > 0" class="--state-selection">
+					<umb-editor-sub-header-content-left>
+						<umb-button action="vm.notFounds.clearSelection()" type="button" button-style="white" state="" label="Clear selection"></umb-button>
+					</umb-editor-sub-header-content-left>
+					<umb-editor-sub-header-content-right>
+						<umb-button action="vm.notFounds.deleteSelected()" type="button" button-style="white" label="Delete" icon="icon-trash"></umb-button>
+					</umb-editor-sub-header-content-right>
+				</umb-editor-sub-header>
+
+				<div class="umb-table urltracker-large-table urltracker-notfounds-table">
+					<umb-load-indicator ng-if="vm.notFounds.loading"></umb-load-indicator>
+					<div class="umb-table-head">
+						<div class="umb-table-row">
+							<div class="umb-table-cell col-select">
+								<input class="select-notfound" type="checkbox" ng-checked="vm.notFounds.allItemsSelected" ng-click="vm.notFounds.selectAll()" />
+							</div>
+							<div class="umb-table-cell col-site">Site</div>
+							<div class="umb-table-cell col-culture">
+								<button class="umb-table-head__link sortable" ng-click="vm.notFounds.setFilter('Culture')">
+									Culture
+									<i class="umb-table-head__icon icon" ng-class="{'icon-navigation-up': vm.notFounds.filter == 'CultureAsc', 'icon-navigation-down': vm.notFounds.filter == 'CultureDesc'}"></i>
+								</button>
+							</div>
+							<div class="umb-table-cell col-old-url">URL</div>
+							<div class="umb-table-cell col-referrer">Most important referrer</div>
+							<div class="umb-table-cell col-occurrences">
+								<button class="umb-table-head__link sortable" ng-click="vm.notFounds.setFilter('Occurrences')">
+									Occurrences
+									<i class="umb-table-head__icon icon" ng-class="{'icon-navigation-up': vm.notFounds.filter == 'OccurrencesAsc', 'icon-navigation-down': vm.notFounds.filter == 'OccurrencesDesc'}"></i>
+								</button>
+							</div>
+							<div class="umb-table-cell col-date">
+								<button class="umb-table-head__link sortable" ng-click="vm.notFounds.setFilter('LastOccurred')">
+									Last occurred
+									<i class="umb-table-head__icon icon" ng-class="{'icon-navigation-up': vm.notFounds.filter == 'LastOccurredAsc', 'icon-navigation-down': vm.notFounds.filter == 'LastOccurredDesc'}"></i>
+								</button>
+							</div>
+							<div class="umb-table-cell col-icons"></div>
+						</div>
+					</div>
+					<div class="umb-table-body">
+						<div class="umb-table-row" ng-repeat="item in vm.notFounds.items" ng-click="vm.notFounds.clickItem(item)">
+							<div class="umb-table-cell col-select">
+								<input class="select-notfound" type="checkbox" ng-checked="vm.notFounds.allItemsSelected" ng-click="vm.notFounds.toggleSelectItem($event, item)" />
+							</div>
+
+							<div class="umb-table-cell col-site" title="{{vm.getSiteName(item)}}">
+								<span>
+									{{vm.getSiteName(item)}}
+								</span>
+							</div>
+
+							<div class="umb-table-cell col-culture" title="{{item.Culture}}">
+								<span ng-if="item.Culture != null">{{item.Culture}}</span>
+								<span ng-if="item.Culture == null">*</span>
+							</div>
+
+							<div class="umb-table-cell col-old-url" title="{{item.OldUrl}}">
+								<span>
+									{{item.OldUrl}}
+								</span>
+							</div>
+							<div class="umb-table-cell col-referrer" title="{{item.Referrer}}">
+								<span ng-if="item.Referrer">{{item.Referrer}}</span>
+								<span ng-if="!item.Referrer">-</span>
+							</div>
+							<div class="umb-table-cell col-occurrences" title="{{item.Occurrences}}x">
+								<span>
+									{{item.Occurrences}}x
+								</span>
+							</div>
+							<div class="umb-table-cell col-date" title="{{item.Inserted | date: 'EEEE, yyyy-MM-dd HH:mm' : 'UTC'}}">
+								<span>
+									{{item.Inserted | date: 'yyyy-MM-dd HH:mm' : 'UTC'}}
+								</span>
+							</div>
+							<div class="umb-table-cell col-icons">
+								<umb-button action="vm.notFounds.addIgnore(item.Id)" type="button" button-style="outline" label="Ignore" class="urltracker-table-button mr-2 mt-1"></umb-button>
+								<umb-button action="vm.notFounds.createRedirect(item)" type="button" button-style="primary" label="Create Redirect" class="urltracker-table-button ic-color mr-2 mt-1"></umb-button>
+								<i ng-click="vm.notFounds.deleteItem(item)" class="icon-trash"></i>
+							</div>
+						</div>
+					</div>
+				</div>
+				<umb-pagination page-number="vm.notFounds.pagination.pageNumber"
+								total-pages="vm.notFounds.pagination.totalPages"
+								on-next="vm.notFounds.nextPage"
+								on-prev="vm.notFounds.prevPage"
+								on-go-to-page="vm.notFounds.goToPage"
+								class="urltracker-pagination">
+				</umb-pagination>
+				<div class="urltracker-page-size">
+					<select ng-model="vm.notFounds.itemsPerPage" ng-change="vm.notFounds.pageSizeChanged()" class="urltracker-checkbox-page-size">
+						<option ng-repeat="option in vm.pageSizeOptions" value="{{option.value}}" ng-value="{{option.value}}">{{option.value}}</option>
+					</select>
+				</div>
+			</div>
+			<div ng-if="vm.settings.IsNotFoundTrackingDisabled && vm.notFounds.items.length == 0" class="urltracker-disabled-text">
+				<h1>Tracking not founds<br /> is disabled</h1>
+			</div>
+		</div>
+
+		<div ng-if="tab.alias == 'redirects'">
+			<umb-editor-sub-header ng-if="vm.redirects.selectedItems.length == 0">
+				<umb-editor-sub-header-content-left>
+					<umb-button action="vm.redirects.create()" type="button" button-style="primary" label="Create Redirect" class="urltracker-sub-header-button ic-color"></umb-button>
+					<button type="button" ng-click="vm.redirects.importExport()" class="btn umb-button__button btn-outline umb-button-- umb-outline urltracker-import-export-button ml-2">
+						<img src="/App_Plugins/UrlTracker/res/img/import-export-icon.svg" title="Import/export" alt="Import/export" />
+					</button>
+				</umb-editor-sub-header-content-left>
+
+				<!-- ToDo: filters -->
+				<umb-editor-sub-header-content-right>
+					<umb-editor-sub-header-section>
+						<div class="urltracker-form-box search-box">
+							<i class="icon-search"></i>
+							<input type="text" ng-model="vm.redirects.searchString" ng-enter="vm.redirects.search()" placeholder="Search..." />
+						</div>
+					</umb-editor-sub-header-section>
+				</umb-editor-sub-header-content-right>
+			</umb-editor-sub-header>
+
+			<umb-editor-sub-header ng-if="vm.redirects.selectedItems.length > 0" class="--state-selection">
+				<umb-editor-sub-header-content-left>
+					<umb-button action="vm.redirects.clearSelection()" type="button" button-style="white" state="" label="Clear selection"></umb-button>
+				</umb-editor-sub-header-content-left>
+				<umb-editor-sub-header-content-right>
+					<umb-button action="vm.redirects.deleteSelected()" type="button" button-style="white" label="Delete" icon="icon-trash"></umb-button>
+				</umb-editor-sub-header-content-right>
+			</umb-editor-sub-header>
+
+			<div class="umb-table urltracker-large-table">
+				<umb-load-indicator ng-if="vm.redirects.loading"></umb-load-indicator>
+				<div class="umb-table-head">
+					<div class="umb-table-row">
+						<div class="umb-table-cell col-select">
+							<input class="select-redirect" type="checkbox" ng-checked="vm.redirects.allItemsSelected" ng-click="vm.redirects.selectAll()" />
+						</div>
+						<div class="umb-table-cell col-site">Site</div>
+						<div class="umb-table-cell col-culture">
+							<button class="umb-table-head__link sortable" ng-click="vm.redirects.setFilter('Culture')">
+								Culture
+								<i class="umb-table-head__icon icon" ng-class="{'icon-navigation-up': vm.redirects.filter == 'CultureAsc', 'icon-navigation-down': vm.redirects.filter == 'CultureDesc'}"></i>
+							</button>
+						</div>
+						<div class="umb-table-cell col-old-url">Old URL/RegEx</div>
+						<div class="umb-table-cell col-new-url">New URL</div>
+						<div class="umb-table-cell col-notes">Notes</div>
+						<div class="umb-table-cell col-date">
+							<button class="umb-table-head__link sortable" ng-click="vm.redirects.setFilter('Created')">
+								Created
+								<i class="umb-table-head__icon icon" ng-class="{'icon-navigation-up': vm.redirects.filter == 'CreatedAsc', 'icon-navigation-down': vm.redirects.filter == 'CreatedDesc'}"></i>
+							</button>
+						</div>
+						<div class="umb-table-cell col-icons"></div>
+					</div>
+				</div>
+				<div class="umb-table-body">
+					<div class="umb-table-row" ng-repeat="item in vm.redirects.items" ng-click="vm.redirects.clickItem(item)" ng-class="{'-selectable umb-outline': item.RedirectHttpCode != 410}">
+						<div class="umb-table-cell col-select">
+							<input class="select-redirect" type="checkbox" ng-checked="vm.redirects.allItemsSelected" ng-click="vm.redirects.toggleSelectItem($event, item)" />
+						</div>
+
+						<div class="umb-table-cell col-site" title="{{vm.getSiteName(item)}}">
+							<span>
+								{{vm.getSiteName(item)}}
+							</span>
+						</div>
+
+						<div class="umb-table-cell col-culture" title="{{item.Culture}}">
+							<span ng-if="item.Culture != null">{{item.Culture}}</span>
+							<span ng-if="item.Culture == null">*</span>
+						</div>
+
+						<div class="umb-table-cell col-old-url" title="{{item.OldUrl || item.OldRegex}}">
+							<span ng-if="item.OldUrl">{{item.OldUrl}}</span>
+							<span class="regex" ng-if="item.OldRegex">{{item.OldRegex}}</span>
+						</div>
+
+						<div class="umb-table-cell col-new-url" title="{{item.CalculatedRedirectUrl}}">
+							<span ng-if="item.CalculatedRedirectUrl != null">{{item.CalculatedRedirectUrl}}</span>
+							<span ng-if="item.CalculatedRedirectUrl == null">-</span>
+							<div class="ut-redirect-http-code">{{item.RedirectHttpCode}}</div>
+						</div>
+						<div class="umb-table-cell col-notes" title="{{item.Notes}}">
+							<span>{{item.Notes}}</span>
+						</div>
+						<div class="umb-table-cell col-date" title="{{item.Inserted | date: 'EEEE, yyyy-MM-dd HH:mm' : 'UTC'}}">
+							<span>{{item.Inserted | date: 'yyyy-MM-dd HH:mm' : 'UTC'}}</span>
+						</div>
+						<div class="umb-table-cell col-icons">
+							<i ng-click="vm.redirects.deleteItem(item)" class="icon-trash"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+			<umb-pagination page-number="vm.redirects.pagination.pageNumber"
+							total-pages="vm.redirects.pagination.totalPages"
+							on-next="vm.redirects.nextPage"
+							on-prev="vm.redirects.prevPage"
+							on-go-to-page="vm.redirects.goToPage"
+							class="urltracker-pagination">
+			</umb-pagination>
+			<div class="urltracker-page-size">
+				<select ng-model="vm.redirects.itemsPerPage" ng-change="vm.redirects.pageSizeChanged()" class="urltracker-checkbox-page-size">
+					<option ng-repeat="option in vm.pageSizeOptions" value="{{option.value}}" ng-value="{{option.value}}">{{option.value}}</option>
+				</select>
+			</div>
+		</div>
+
+		<div ng-if="tab.alias == 'info'">
+			<div class="row">
+				<div class="col-7">
+					<div class="umb-group-panel p-3">
+						<h3 class="mt-0">UrlTracker</h3>
+						<p>
+							The Url Tracker is used to manage URLs within Umbraco. It automatically tracks 404 occurences and URL changes, for instance when a node is renamed or moved, and makes sure the old URL will redirect to the new location. This is great for SEO and great for people visiting your website via this old URL. Search engines will update the indexed URL and people won't visit the old, broken URL.
+							You can also create your own redirects, based on a simple URL or using a Regex pattern. You can redirect to an existing node or a manually entered URL. This is great for migrating existing indexed URLs to your new website!
+						</p>
+					</div>
+
+					<div class="umb-group-panel px-3 py-2">
+						<h3 class="mt-0">Settings</h3>
+						<p class="mb-4">
+							The Url Tracker supports a few settings, which can be configured in the appSettings section of your web.config. Below you'll find these settings, with the setting name, type, default value and current value (top right corner) mentioned
+						</p>
+						<div class="row mt-3">
+							<div class="col-12">
+								<div class="umb-box urltracker-setting-box p-3">
+									<div class="row">
+										<div class="col">
+											<h4 class="m-0">UrlTracker:disabled</h4>
+										</div>
+										<div class="col-auto">
+											<span class="urltracker-label" ng-class="vm.settings.IsDisabled ? 'urltracker-green-label' : 'urltracker-red-label'">{{vm.settings.IsDisabled}}</span>
+										</div>
+									</div>
+									
+									<small>boolean (false)</small>
+									<p class="mt-2">Set to true to disable the HTTP Module of the Url Tracker, so it won't redirect requests</p>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="umb-box urltracker-setting-box p-3">
+									<div class="row">
+										<div class="col">
+											<h4 class="m-0">urlTracker:enableLogging</h4>
+										</div>
+										<div class="col-auto">
+											<span class="urltracker-label" ng-class="vm.settings.EnableLogging ? 'urltracker-green-label' : 'urltracker-red-label'">{{vm.settings.EnableLogging}}</span>
+										</div>
+									</div>
+									<small>boolean (false)</small>
+									<p class="mt-2">Set to true to enable logging debug information of the Url Tracker. Uses umbraco's built-in logging mechanism with LogType set to 'debug'.</p>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="umb-box urltracker-setting-box p-3">
+									<div class="row">
+										<div class="col">
+											<h4 class="m-0">urlTracker:trackingDisabled</h4>
+										</div>
+										<div class="col-auto">
+											<span class="urltracker-label" ng-class="vm.settings.TrackingDisabled ? 'urltracker-green-label' : 'urltracker-red-label'">{{vm.settings.TrackingDisabled}}</span>
+										</div>
+									</div>
+									<small>boolean (false)</small>
+									<p class="mt-2">Set to true to disable tracking URL changes</p>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="umb-box urltracker-setting-box p-3">
+									<div class="row">
+										<div class="col">
+											<h4 class="m-0">urlTracker:notFoundTrackingDisabled</h4>
+										</div>
+										<div class="col-auto">
+											<span class="urltracker-label" ng-class="vm.settings.IsNotFoundTrackingDisabled ? 'urltracker-green-label' : 'urltracker-red-label'">{{vm.settings.IsNotFoundTrackingDisabled}}</span>
+										</div>
+									</div>
+									<small>boolean (false)</small>
+									<p class="mt-2">Set to true to disable tracking not found (404) requests</p>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="umb-box urltracker-setting-box p-3">
+									<div class="row">
+										<div class="col">
+											<h4 class="m-0">urlTracker:appendPortNumber</h4>
+										</div>
+										<div class="col-auto">
+											<span class="urltracker-label" ng-class="vm.settings.AppendPortNumber ? 'urltracker-green-label' : 'urltracker-red-label'">{{vm.settings.AppendPortNumber}}</span>
+										</div>
+									</div>
+									<small>boolean (true)</small>
+									<p class="mt-2">Set to false to disable appending a port number to redirect URLs</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-4 ml-auto">
+					<!--#region Timeline-->
+					<ul class="urltracker-timeline">
+						<li class="urltracker-timeline-item">
+							<div class="urltracker-timeline-figure">
+								<span class="urltracker-timeline-dot">•</span>
+							</div>
+							<div class="urltracker-timeline-body">
+								<div class="urltracker-timeline-header">
+									<h5>V. 3.11</h5>
+									<div class="urltracker-timeline-date">
+										2021/01/01
+									</div>
+								</div>
+								<div class="urltracker-timeline-content">
+									<ul>
+										<li>
+											Happy new year! \o/
+										</li>
+										<li>
+											<span class="urltracker-pink-label urltracker-label">Improvement</span>
+											Added support for the excellent (SEO Metadata for Umbraco plug-in by Epiphany) (altering a URL gets tracked)
+										</li>
+									</ul>
+								</div>
+							</div>
+						</li>
+						<li class="urltracker-timeline-item">
+							<div class="urltracker-timeline-figure">
+								<span class="urltracker-timeline-dot">•</span>
+							</div>
+							<div class="urltracker-timeline-body">
+								<div class="urltracker-timeline-header">
+									<h5>V. 3.2</h5>
+									<div class="urltracker-timeline-date">
+										2020/11/22
+									</div>
+								</div>
+								<div class="urltracker-timeline-content">
+									<ul>
+										<li>
+											<span class="urltracker-green-label urltracker-label">Feature</span>
+											Added new setting for appending the port number. Useful for when the site is running on a non-standard port number thanks to Greg Fyans
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											Fixed paths to relative paths, so it works in root and virtual folders thanks to Sandro Mastronardi
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											410 Gone response wasn't working anymore
+										</li>
+									</ul>
+								</div>
+							</div>
+						</li>
+						<li class="urltracker-timeline-item">
+							<div class="urltracker-timeline-figure">
+								<span class="urltracker-timeline-dot">•</span>
+							</div>
+							<div class="urltracker-timeline-body">
+								<div class="urltracker-timeline-header">
+									<h5>V. 3.2</h5>
+									<div class="urltracker-timeline-date">
+										2020/10/02
+									</div>
+								</div>
+								<div class="urltracker-timeline-content">
+									<ul>
+										<li>
+											<span class="urltracker-green-label urltracker-label">Feature</span>
+											Added new setting for appending the port number. Useful for when the site is running on a non-standard port number thanks to Greg Fyans
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											Fixed paths to relative paths, so it works in root and virtual folders thanks to Sandro Mastronardi
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											410 Gone response wasn't working anymore
+										</li>
+									</ul>
+								</div>
+							</div>
+						</li>
+						<li class="urltracker-timeline-item">
+							<div class="urltracker-timeline-figure">
+								<span class="urltracker-timeline-dot">•</span>
+							</div>
+							<div class="urltracker-timeline-body">
+								<div class="urltracker-timeline-header">
+									<h5>V. 3.2</h5>
+									<div class="urltracker-timeline-date">
+										2020/09/14
+									</div>
+								</div>
+								<div class="urltracker-timeline-content">
+									<ul>
+										<li>
+											<span class="urltracker-green-label urltracker-label">Feature</span>
+											Added new setting for appending the port number. Useful for when the site is running on a non-standard port number thanks to Greg Fyans
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											Fixed paths to relative paths, so it works in root and virtual folders thanks to Sandro Mastronardi
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											410 Gone response wasn't working anymore
+										</li>
+									</ul>
+								</div>
+							</div>
+						</li>
+						<li class="urltracker-timeline-item">
+							<div class="urltracker-timeline-figure">
+								<span class="urltracker-timeline-dot">•</span>
+							</div>
+							<div class="urltracker-timeline-body">
+								<div class="urltracker-timeline-header">
+									<h5>V. 3.2</h5>
+									<div class="urltracker-timeline-date">
+										2020/08/15
+									</div>
+								</div>
+								<div class="urltracker-timeline-content">
+									<ul>
+										<li>
+											<span class="urltracker-green-label urltracker-label">Feature</span>
+											Added new setting for appending the port number. Useful for when the site is running on a non-standard port number thanks to Greg Fyans
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											Fixed paths to relative paths, so it works in root and virtual folders thanks to Sandro Mastronardi
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											410 Gone response wasn't working anymore
+										</li>
+									</ul>
+								</div>
+							</div>
+						</li>
+					</ul>
+					<!--#endregion-->
+				</div>
+			</div>
+		</div>
+
+	</umb-tab-content>
+</div>
