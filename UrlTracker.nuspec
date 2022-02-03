@@ -12,8 +12,8 @@
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <summary>The URL Tracker is used to manage URLs within Umbraco</summary>
     <description>
-      The URL Tracker is used to manage URLs within umbraco. It automatically tracks URL changes, for instance when a node is renamed, and makes sure the old URL will redirect to the new location. This is great for SEO and great for people visiting your website via this old URL. Search engines will update the indexed URL and people won't visit the old, broken URL.
-      You can also create your own redirects, based on a simple URL or using a Regex pattern. You can redirect to an existing node or a manually entered URL. This is great for migrating existing indexed URLs to your new website!
+      The URL Tracker makes url management easy. Your visitors will no longer be lost on your website as the URL Tracker watches how your website changes. Page moved or renamed? No problem! The URL Tracker knows this and directs your visitors to the right page. Not only does this provide a nice experience for your visitors, it also helps you maintain your rightful spot at the top in Google (and other search engines).
+      The URL Tracker puts you in control by giving you the means to manage your own redirects. It can be as simple as a redirect from a url to an umbraco page, but you can make it as sophisticated as you like using Regular Expressions. The URL Tracker is an essential tool for content editors who want to migrate to a new Umbraco website, so they can guide their users to the right place.
 
       Use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </description>
@@ -29,11 +29,14 @@
         <dependency id="CsvHelper" version="27.2.1" />
       </group>
     </dependencies>
+    <readme>docs\readme.txt</readme>
   </metadata>
   <files>
     <file src="infocaster_nuget_yellow.png" target="images\" />
     <file src="src\UrlTracker.Web\bin\Release\UrlTracker.Web.dll" target="lib\net472" />
     <file src="src\UrlTracker.Web\bin\Release\UrlTracker.Core.dll" target="lib\net472" />
     <file src="App_plugins\UrlTracker\**\*" target="content\App_plugins\UrlTracker" />
+    <file src="src\UrlTracker.Web\Web.config.transform" target="content\Web.config.transform" />
+    <file src="readme.txt" target="docs\" />
   </files>
 </package>

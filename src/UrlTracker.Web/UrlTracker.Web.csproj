@@ -340,6 +340,7 @@
     <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Readme.md" />
+    <None Include="Web.config.transform" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj">

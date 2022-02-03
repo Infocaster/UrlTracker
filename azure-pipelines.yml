@@ -1,8 +1,13 @@
 trigger:
-- v8/main
-- v8/develop
-- v8/release/*
-- v8/hotfix
+  branches:
+    include:
+    - v8/main
+    - v8/develop
+    - v8/release/*
+    - v8/hotfix
+  tags:
+    include:
+    - 5.*
 
 pool:
   name: Default
@@ -74,7 +79,7 @@ stages:
 - stage: release
   displayName: Release
   dependsOn: build
-  condition: and(succeeded(), in(variables['build.sourcebranch'], 'refs/heads/v8/main', 'refs/heads/v8/develop'))
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   jobs:
   - job: release
     displayName: Push to artifacts
