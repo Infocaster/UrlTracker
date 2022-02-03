@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <appSettings>
-    <Add key="urlTracker:disabled" value="false" />
-    <Add key="urlTracker:trackingDisabled" value="false" />
-    <Add key="urlTracker:notFoundTrackingDisabled" value="false" />
-    <Add key="urlTracker:enableLogging" value="false" />
-    <Add key="urlTracker:appendPortNumber" value="false" />
-    <Add key="urlTracker:hasDomainOnChildNode" value="false" />
+    <add key="urlTracker:disabled" value="false" />
+    <add key="urlTracker:trackingDisabled" value="false" />
+    <add key="urlTracker:notFoundTrackingDisabled" value="false" />
+    <add key="urlTracker:enableLogging" value="false" />
+    <add key="urlTracker:appendPortNumber" value="false" />
+    <add key="urlTracker:hasDomainOnChildNode" value="false" />
   </appSettings>
 </configuration>
