@@ -26,12 +26,12 @@ Once installed, build your project and you're ready to make your visitors happy.
 Upon installation, the URL Tracker will have added several configurations in your Web.config file in the AppSettings section:
 
 ```xml
-<Add key="urlTracker:disabled" value="false" />
-<Add key="urlTracker:trackingDisabled" value="false" />
-<Add key="urlTracker:notFoundTrackingDisabled" value="false" />
-<Add key="urlTracker:enableLogging" value="false" />
-<Add key="urlTracker:appendPortNumber" value="false" />
-<Add key="urlTracker:hasDomainOnChildNode" value="false" />
+<add key="urlTracker:disabled" value="false" />
+<add key="urlTracker:trackingDisabled" value="false" />
+<add key="urlTracker:notFoundTrackingDisabled" value="false" />
+<add key="urlTracker:enableLogging" value="false" />
+<add key="urlTracker:appendPortNumber" value="false" />
+<add key="urlTracker:hasDomainOnChildNode" value="false" />
 ```
 
 - **Disabled** | Set this value to `true` to completely disable the URL Tracker. The URL Tracker will not intercept any requests nor track any content updates
