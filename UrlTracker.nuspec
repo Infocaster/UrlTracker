@@ -29,7 +29,6 @@
         <dependency id="CsvHelper" version="27.2.1" />
       </group>
     </dependencies>
-    <readme>docs\readme.txt</readme>
   </metadata>
   <files>
     <file src="infocaster_nuget_yellow.png" target="images\" />
@@ -37,6 +36,5 @@
     <file src="src\UrlTracker.Web\bin\Release\UrlTracker.Core.dll" target="lib\net472" />
     <file src="App_plugins\UrlTracker\**\*" target="content\App_plugins\UrlTracker" />
     <file src="src\UrlTracker.Web\Web.config.transform" target="content\Web.config.transform" />
-    <file src="readme.txt" target="docs\" />
   </files>
 </package>
