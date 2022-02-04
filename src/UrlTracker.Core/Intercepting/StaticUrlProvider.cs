@@ -20,6 +20,10 @@ namespace UrlTracker.Core.Intercepting
                 url.ToString(UrlType.Relative, true, false),
                 url.ToString(UrlType.Relative, false, true),
                 url.ToString(UrlType.Relative, false, false),
+                url.ToString(UrlType.Relative, true, true).TrimStart('/'),
+                url.ToString(UrlType.Relative, true, false).TrimStart('/'),
+                url.ToString(UrlType.Relative, false, true).TrimStart('/'),
+                url.ToString(UrlType.Relative, false, false).TrimStart('/'),
             };
         }
     }

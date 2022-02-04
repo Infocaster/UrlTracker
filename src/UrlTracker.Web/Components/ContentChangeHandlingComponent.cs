@@ -150,7 +150,7 @@ namespace UrlTracker.Web.Components
                 Notes = notes,
                 PassThroughQueryString = true,
                 SourceRegex = null,
-                SourceUrl = Url.Parse(item.Url(culture, UrlMode.Absolute)),
+                SourceUrl = item.Url(culture, UrlMode.Absolute),
                 TargetNode = item,
                 TargetRootNode = root,
                 TargetStatusCode = HttpStatusCode.MovedPermanently,

@@ -18,7 +18,7 @@ namespace UrlTracker.Core.Tests.Models
                 {
                     TargetRootNode = new TestPublishedContent(),
                     TargetStatusCode = HttpStatusCode.Redirect,
-                    SourceUrl = Url.Parse("http://example.com"),
+                    SourceUrl = "http://example.com",
                     TargetUrl = "http://example.com/lorem"
                 },
                 true,
@@ -39,7 +39,7 @@ namespace UrlTracker.Core.Tests.Models
                     TargetRootNode = new TestPublishedContent(),
                     TargetStatusCode = HttpStatusCode.OK,
                     TargetNode = new TestPublishedContent(),
-                    SourceUrl = Url.Parse("http://example.com")
+                    SourceUrl = "http://example.com"
                 },
                 false,
                 new[] { "TargetStatusCode" }).SetName("Model is invalid if the http status code is out of range");
@@ -49,7 +49,7 @@ namespace UrlTracker.Core.Tests.Models
                     TargetRootNode = null,
                     TargetStatusCode = HttpStatusCode.Redirect,
                     TargetNode = new TestPublishedContent(),
-                    SourceUrl = Url.Parse("http://example.com")
+                    SourceUrl = "http://example.com"
                 },
                 false,
                 new[] { "TargetRootNode" }).SetName("Model is invalid if the root node is not defined");
@@ -58,7 +58,7 @@ namespace UrlTracker.Core.Tests.Models
                 {
                     TargetRootNode = new TestPublishedContent(),
                     TargetStatusCode = HttpStatusCode.Redirect,
-                    SourceUrl = Url.Parse("http://example.com")
+                    SourceUrl = "http://example.com"
                 },
                 false,
                 new[] { "TargetNode", "TargetUrl" }).SetName("Model is invalid if no target is specified");

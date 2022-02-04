@@ -66,7 +66,7 @@ namespace UrlTracker.Web.Tests.Map
                 Assert.That(result.Notes, Is.EqualTo(input.Notes));
                 Assert.That(result.PassThroughQueryString, Is.EqualTo(input.RedirectPassThroughQueryString));
                 Assert.That(result.SourceRegex, Is.EqualTo(input.OldRegex));
-                Assert.That(result.SourceUrl, Is.EqualTo(Url.Parse("http://example.com")));
+                Assert.That(result.SourceUrl, Is.EqualTo("http://example.com"));
                 Assert.That(result.TargetNode, Is.Not.Null);
                 Assert.That(result.TargetRootNode, Is.Not.Null);
                 Assert.That(result.TargetStatusCode, Is.EqualTo(HttpStatusCode.Redirect));

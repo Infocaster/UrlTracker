@@ -87,7 +87,7 @@ namespace UrlTracker.Core.Map
             target.Notes = source.Notes;
             target.PassThroughQueryString = source.PassThroughQueryString;
             target.SourceRegex = source.SourceRegex;
-            target.SourceUrl = source.SourceUrl?.ToString();
+            target.SourceUrl = source.SourceUrl;
             target.TargetNodeId = source.TargetNode?.Id;
             target.TargetRootNodeId = source.TargetRootNode?.Id;
             target.TargetStatusCode = source.TargetStatusCode;
@@ -109,7 +109,7 @@ namespace UrlTracker.Core.Map
                 target.Id = source.Id;
                 target.PassThroughQueryString = source.PassThroughQueryString;
                 target.SourceRegex = source.SourceRegex;
-                target.SourceUrl = !string.IsNullOrWhiteSpace(source.SourceUrl) ? Url.Parse(source.SourceUrl) : null;
+                target.SourceUrl = source.SourceUrl;
                 target.TargetNode = source.TargetNodeId.HasValue ? cref.GetContentById(source.TargetNodeId.Value) : null;
                 target.TargetRootNode = source.TargetRootNodeId.HasValue ? cref.GetContentById(source.TargetRootNodeId.Value) : null;
                 target.TargetStatusCode = source.TargetStatusCode;

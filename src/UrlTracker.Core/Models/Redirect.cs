@@ -31,7 +31,7 @@ namespace UrlTracker.Core.Models
 
         public string TargetUrl { get; set; }
 
-        public Url SourceUrl { get; set; }
+        public string SourceUrl { get; set; }
 
         public string SourceRegex { get; set; }
 
@@ -44,7 +44,7 @@ namespace UrlTracker.Core.Models
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (SourceUrl is null && string.IsNullOrWhiteSpace(SourceRegex))
+            if (string.IsNullOrWhiteSpace(SourceUrl) && string.IsNullOrWhiteSpace(SourceRegex))
             {
                 yield return new ValidationResult(Defaults.Validation.SourceConditionNotDefined, new[] { nameof(SourceUrl), nameof(SourceRegex) });
             }

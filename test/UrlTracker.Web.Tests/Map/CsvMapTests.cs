@@ -42,7 +42,7 @@ namespace UrlTracker.Web.Tests.Map
                 Notes = "lorem ipsum",
                 PassThroughQueryString = true,
                 SourceRegex = "dolor sit",
-                SourceUrl = Url.Parse("http://example.com"),
+                SourceUrl = "http://example.com",
                 TargetNode = new TestPublishedContent { Id = 1001 },
                 TargetRootNode = new TestPublishedContent { Id = 1002 },
                 TargetStatusCode = HttpStatusCode.Redirect,
@@ -60,7 +60,7 @@ namespace UrlTracker.Web.Tests.Map
                 Assert.That(result.Notes, Is.EqualTo(input.Notes));
                 Assert.That(result.PassThroughQueryString, Is.EqualTo(input.PassThroughQueryString));
                 Assert.That(result.SourceRegex, Is.EqualTo(input.SourceRegex));
-                Assert.That(result.SourceUrl, Is.EqualTo(input.SourceUrl.ToString()));
+                Assert.That(result.SourceUrl, Is.EqualTo(input.SourceUrl));
                 Assert.That(result.TargetNodeId, Is.EqualTo(input.TargetNode.Id));
                 Assert.That(result.TargetRootNodeId, Is.EqualTo(input.TargetRootNode.Id));
                 Assert.That(result.TargetStatusCode, Is.EqualTo(302));
@@ -117,7 +117,7 @@ namespace UrlTracker.Web.Tests.Map
                 Assert.That(result.Notes, Is.EqualTo(input.Notes));
                 Assert.That(result.PassThroughQueryString, Is.EqualTo(input.PassThroughQueryString));
                 Assert.That(result.SourceRegex, Is.EqualTo(input.SourceRegex));
-                Assert.That(result.SourceUrl, Is.EqualTo(Url.Parse("http://example.com")));
+                Assert.That(result.SourceUrl, Is.EqualTo("http://example.com"));
                 Assert.That(result.TargetNode, Is.Not.Null);
                 Assert.That(result.TargetRootNode, Is.Not.Null);
                 Assert.That(result.TargetStatusCode, Is.EqualTo(HttpStatusCode.Redirect));

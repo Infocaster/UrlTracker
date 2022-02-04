@@ -37,7 +37,7 @@ namespace UrlTracker.Web.Map
                 target.Notes = source.Notes;
                 target.PassThroughQueryString = source.PassThroughQueryString;
                 target.SourceRegex = source.SourceRegex;
-                target.SourceUrl = !string.IsNullOrWhiteSpace(source.SourceUrl) ? Url.Parse(source.SourceUrl) : null;
+                target.SourceUrl = source.SourceUrl;
                 target.TargetNode = source.TargetNodeId.HasValue ? cref.GetContentById(source.TargetNodeId.Value) : null;
                 target.TargetRootNode = source.TargetRootNodeId.HasValue ? cref.GetContentById(source.TargetRootNodeId.Value) : null;
                 target.TargetStatusCode = (HttpStatusCode)source.TargetStatusCode;
@@ -54,7 +54,7 @@ namespace UrlTracker.Web.Map
             target.PassThroughQueryString = source.PassThroughQueryString;
             target.SourceRegex = source.SourceRegex;
             target.TargetRootNodeId = source.TargetRootNode?.Id;
-            target.SourceUrl = source.SourceUrl?.ToString();
+            target.SourceUrl = source.SourceUrl;
             target.TargetStatusCode = ((int)source.TargetStatusCode);
             target.TargetUrl = source.TargetUrl;
         }

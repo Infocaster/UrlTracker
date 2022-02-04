@@ -35,8 +35,8 @@ namespace UrlTracker.Web.Tests.Map
             HttpContextAccessorAbstractionMock.Setup(obj => obj.HttpContext).Returns(HttpContextMock.Context);
         }
 
-        [TestCase(TestName = "Map Redirect to RedirectViewModel")]
-        public void Map_Redirect_RedirectViewModel()
+        [TestCase(TestName = "Map Redirect to RedirectViewModel with content")]
+        public void Map_Redirect_RedirectViewModel_Content()
         {
             // arrange
             var input = new Redirect
@@ -48,7 +48,7 @@ namespace UrlTracker.Web.Tests.Map
                 Notes = "lorem ipsum",
                 PassThroughQueryString = true,
                 SourceRegex = "dolor sit",
-                SourceUrl = Url.Parse("http://example.com/ipsum"),
+                SourceUrl = "http://example.com/ipsum",
                 TargetNode = new TestPublishedContent { Id = 1001 },
                 TargetRootNode = new TestPublishedContent { Id = 1002 },
                 TargetStatusCode = HttpStatusCode.Redirect,
@@ -80,6 +80,23 @@ namespace UrlTracker.Web.Tests.Map
                 Assert.That(result.Referrer, Is.Null);
                 Assert.That(result.Remove404, Is.False);
             });
+        }
+
+        [TestCase(TestName = "Map Redirect to RedirectViewModel without content")]
+        public void Map_Redirect_RedirectViewModel_NoContent()
+        {
+            // arrange
+            var input = new Redirect
+            {
+                Id = 1,
+                SourceUrl = "http://example.com/?lorem=ipsum"
+            };
+
+            // act
+            var result = Mapper.Map<RedirectViewModel>(input);
+
+            // assert
+            Assert.That(result.OldUrlWithoutQuery, Is.EqualTo("http://example.com/"));
         }
 
         [TestCase(TestName = "Map RichNotFound to RedirectViewModel")]

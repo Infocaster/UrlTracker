@@ -40,7 +40,7 @@ namespace UrlTracker.Web.Map
             target.Notes = source.Notes;
             target.PassThroughQueryString = source.RedirectPassThroughQueryString;
             target.SourceRegex = source.OldRegex;
-            target.SourceUrl = !string.IsNullOrWhiteSpace(source.OldUrl) ? Url.Parse(source.OldUrl) : null;
+            target.SourceUrl = source.OldUrl;
             target.TargetStatusCode = (HttpStatusCode)source.RedirectHttpCode;
             target.TargetUrl = source.RedirectUrl;
             target.Inserted = source.Inserted;

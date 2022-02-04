@@ -333,7 +333,25 @@ namespace UrlTracker.E2eTests.Redirect
                     RequestUrl = new Uri(baseAddress, "/lorem"),
                     ExpectedResponseStatusCode = 200,
                     ExpectedResponseUri = null
-                }.ToTestCase("No longer exists entry does not touch 200 responses", "When an entry in the url tracker is present for a 410 and the original response is a 200, then the url tracker does nothing")
+                }.ToTestCase("No longer exists entry does not touch 200 responses", "When an entry in the url tracker is present for a 410 and the original response is a 200, then the url tracker does nothing"),
+
+                new RedirectTestCase()
+                {
+                    Redirects = new List<RedirectTestModelsRedirect>
+                    {
+                        new RedirectTestModelsRedirect
+                        {
+                            Culture = null,
+                            SourceUrl = "lorem/ipsum",
+                            TargetRootNodeName= "root",
+                            TargetNodeName = "lorem",
+                            TargetStatusCode = 302
+                        }
+                    },
+                    RequestUrl = new Uri(baseAddress, "/lorem/ipsum"),
+                    ExpectedResponseStatusCode = 302,
+                    ExpectedResponseUri = new Uri(baseAddress, "/lorem")
+                }.ToTestCase("Redirect with relative redirect without leading slash redirects correctly", "Users might enter relative urls without leading slash. Redirects should still work properly for them")
             };
         }
     }

@@ -97,8 +97,10 @@ namespace UrlTracker.Web.Map
             target.Notes = source.Notes;
             target.Occurrences = null;
             target.OldRegex = source.SourceRegex;
-            target.OldUrl = source.SourceUrl?.ToString(source.SourceUrl.AvailableUrlTypes.First(), excludeQuery: false);
-            target.OldUrlWithoutQuery = source.SourceUrl?.ToString(source.SourceUrl.AvailableUrlTypes.First(), excludeQuery: true);
+            target.OldUrl = source.SourceUrl;
+
+            int queryIndex = target.OldUrl?.IndexOf("?") ?? -1;
+            target.OldUrlWithoutQuery = queryIndex >= 0 ? target.OldUrl.Substring(0, queryIndex) : target.OldUrl;
             target.RedirectHttpCode = ((int)source.TargetStatusCode);
             target.RedirectNodeId = source.TargetNode?.Id;
             target.RedirectPassThroughQueryString = source.PassThroughQueryString;
