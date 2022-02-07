@@ -5,6 +5,7 @@ using System.Net;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Core.Mapping;
+using Umbraco.Core.Models.PublishedContent;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
@@ -22,8 +23,7 @@ namespace UrlTracker.Web.Tests.Map
         {
             return new IMapDefinition[]
             {
-                CreateTestMap<Redirect, Url>(Url.Parse("http://example.com/lorem")),
-                new ResponseMap(LocalizationService, HttpContextAccessorAbstraction)
+                new ResponseMap(LocalizationService, UmbracoContextFactoryAbstractionMock.UmbracoContextFactory)
             };
         }
 
@@ -32,7 +32,8 @@ namespace UrlTracker.Web.Tests.Map
 
         public override void SetUp()
         {
-            HttpContextAccessorAbstractionMock.Setup(obj => obj.HttpContext).Returns(HttpContextMock.Context);
+            UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetUrl(It.IsAny<IPublishedContent>(), It.IsAny<UrlMode>(), It.IsAny<string>()))
+                .Returns("http://example.com/lorem");
         }
 
         [TestCase(TestName = "Map Redirect to RedirectViewModel with content")]
@@ -49,8 +50,8 @@ namespace UrlTracker.Web.Tests.Map
                 PassThroughQueryString = true,
                 SourceRegex = "dolor sit",
                 SourceUrl = "http://example.com/ipsum",
-                TargetNode = new TestPublishedContent { Id = 1001 },
-                TargetRootNode = new TestPublishedContent { Id = 1002 },
+                TargetNode = new TestPublishedContent { Id = 1001, ItemType = PublishedItemType.Content },
+                TargetRootNode = new TestPublishedContent { Id = 1002, ItemType = PublishedItemType.Content },
                 TargetStatusCode = HttpStatusCode.Redirect,
                 TargetUrl = "http://example.com/dolor"
             };

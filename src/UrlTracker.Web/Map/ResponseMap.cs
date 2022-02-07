@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using Umbraco.Core.Mapping;
+﻿using Umbraco.Core.Mapping;
 using Umbraco.Core.Services;
+using Umbraco.Web;
+using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
-using UrlTracker.Web.Abstractions;
 using UrlTracker.Web.Controllers.Models;
 
 namespace UrlTracker.Web.Map
@@ -13,13 +13,12 @@ namespace UrlTracker.Web.Map
         : IMapDefinition
     {
         private readonly ILocalizationService _localizationService;
-        private readonly IHttpContextAccessorAbstraction _httpContextAccessor;
+        private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactoryAbstraction;
 
-        public ResponseMap(ILocalizationService localizationService,
-                           IHttpContextAccessorAbstraction httpContextAccessor)
+        public ResponseMap(ILocalizationService localizationService, IUmbracoContextFactoryAbstraction umbracoContextFactoryAbstraction)
         {
             _localizationService = localizationService;
-            _httpContextAccessor = httpContextAccessor;
+            _umbracoContextFactoryAbstraction = umbracoContextFactoryAbstraction;
         }
 
         public void DefineMaps(UmbracoMapper mapper)
@@ -88,7 +87,7 @@ namespace UrlTracker.Web.Map
 
         private void Map(Redirect source, RedirectViewModel target, MapperContext context)
         {
-            target.CalculatedRedirectUrl = context.MapToUrl(source, _httpContextAccessor.HttpContext).ToString();
+            target.CalculatedRedirectUrl = source.TargetNode?.Url(_umbracoContextFactoryAbstraction) ?? source.TargetUrl;
             target.Culture = source.Culture;
             target.ForceRedirect = source.Force;
             target.Id = source.Id.Value;
