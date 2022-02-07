@@ -284,6 +284,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\ReservedPathSettingsProviderTests.cs" />
+    <Compile Include="Controllers\ActionFilters\PatchModelAttributeTests.cs" />
     <Compile Include="Controllers\ActionFilters\ValidateModelAttributeTests.cs" />
     <Compile Include="Controllers\ControllerTestsBase.cs" />
     <Compile Include="Controllers\Models\AssemblyScanTestBase.cs" />

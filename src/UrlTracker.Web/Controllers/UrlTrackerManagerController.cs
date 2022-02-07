@@ -34,6 +34,7 @@ namespace UrlTracker.Web.Controllers
 {
     // FIXME: This controller is for so many things at once. Separate into redirect, notfound and dashboard or something
     [PluginController("urltracker")]
+    [PatchModel]
     [ValidateModel]
     public class UrlTrackerManagerController
         : UmbracoAuthorizedApiController

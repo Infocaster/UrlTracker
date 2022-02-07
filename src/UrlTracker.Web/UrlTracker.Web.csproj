@@ -286,6 +286,7 @@
     <Compile Include="Components\IncomingUrlHandlingComponent.cs" />
     <Compile Include="Configuration\Models\ReservedPathSettings.cs" />
     <Compile Include="Configuration\ReservedPathSettingsProvider.cs" />
+    <Compile Include="Controllers\ActionFilters\PatchModelAttribute.cs" />
     <Compile Include="Controllers\ActionFilters\ValidateModelAttribute.cs" />
     <Compile Include="Controllers\Models\AddIgnore404Request.cs" />
     <Compile Include="Controllers\Models\AddRedirectRequest.cs" />

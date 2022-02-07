@@ -143,8 +143,7 @@ namespace UrlTracker.Core.Database
                     .SelectAll()
                     .From<UrlTrackerEntry>()
                     .Where<UrlTrackerEntry>(entry => urlsAndPaths.Contains(entry.OldUrl))
-                    .Where<UrlTrackerEntry>(entry => entry.RedirectHttpCode >= 300 && entry.RedirectHttpCode < 400)
-                    .OrderBy<UrlTrackerEntry>(true, e => e.ForceRedirect, e => e.Inserted);
+                    .Where<UrlTrackerEntry>(entry => entry.RedirectHttpCode >= 300 && entry.RedirectHttpCode < 400);
 
                 if (rootNodeId.HasValue)
                 {
@@ -156,6 +155,8 @@ namespace UrlTracker.Core.Database
                     // intercept on culture if it has been given. Rows without culture should also be returned
                     query = query.Where<UrlTrackerEntry>(entry => entry.Culture == culture || entry.Culture == null);
                 }
+
+                query = query.OrderBy<UrlTrackerEntry>(true, e => e.ForceRedirect, e => e.Inserted);
 
                 // return entries as redirects
                 var entries = await scope.Database.FetchAsync<UrlTrackerEntry>(query).ConfigureAwait(false);

@@ -76,7 +76,7 @@ namespace UrlTracker.Web.Components
                     foreach (var c in cultures)
                     {
                         if (entity.GetCultureName(c).Equals(content.Name(c)) &&
-                            entity.GetValue<string>(Constants.Conventions.Content.UrlName, c).Equals(content.Value(Constants.Conventions.Content.UrlName, c))) continue;
+                            entity.GetValue<string>(Constants.Conventions.Content.UrlName, c) == content.Value<string>(Constants.Conventions.Content.UrlName, c)) continue;
 
                         // this entity has changed, so a new redirect for it and its descendants must be created
                         var root = content.Root();
@@ -161,7 +161,7 @@ namespace UrlTracker.Web.Components
         private static List<string> GetCulturesFromContent(IPublishedContent item)
         {
             List<string> cultures = new List<string>();
-            if (item.Cultures.Any()) cultures.AddRange(from c in item.Cultures.Values select c.Culture);
+            if (item.Cultures.Any(c => !string.IsNullOrWhiteSpace(c.Value.Culture))) cultures.AddRange(from c in item.Cultures.Values select c.Culture);
             else cultures.Add(null);
             return cultures;
         }
