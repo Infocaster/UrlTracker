@@ -5,8 +5,9 @@
 <h1 align="center">
 URL Tracker
 
-![License](https://img.shields.io/github/license/Infocaster/UrlTracker)
-[![Nuget](https://img.shields.io/nuget/v/UrlTracker.svg)](https://www.nuget.org/packages/UrlTracker/)
+[![Downloads](https://img.shields.io/nuget/dt/UrlTracker?color=ff0069)](https://www.nuget.org/packages/UrlTracker/)
+[![Nuget (with prereleases)](https://img.shields.io/nuget/vpre/UrlTracker?color=ffc800)](https://www.nuget.org/packages/UrlTracker/)
+![GitHub](https://img.shields.io/github/license/Infocaster/UrlTracker?color=ff0069)
 
 </h1>
 
