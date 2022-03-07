@@ -1,13 +1,13 @@
 trigger:
   branches:
     include:
-    - v8/main
-    - v8/develop
-    - v8/release/*
-    - v8/hotfix
+    - v9/main
+    - v9/develop
+    - v9/release/*
+    - v9/hotfix
   tags:
     include:
-    - 5.*
+    - 9.*
 
 pool:
   name: Default
@@ -24,15 +24,10 @@ stages:
   - job: build
     displayName: Build
     steps:
-    - task: NuGetToolInstaller@0
-      displayName: 'Use NuGet 5.8'
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet restore'
       inputs:
-        versionSpec: 5.8
-
-    - task: NuGetCommand@2
-      displayName: 'NuGet restore'
-      inputs:
-        restoreSolution: '$(Solution)'
+        command: restore
         feedsToUse: config
         nugetConfigPath: nuget.config
                 
@@ -42,32 +37,27 @@ stages:
         configFilePath: GitVersion.yml
         updateAssemblyInfo: true
 
-    - task: VSBuild@1
-      displayName: 'Build solution **\*.sln'
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet build'
       inputs:
-        solution: '$(Solution)'
-        platform: '$(BuildPlatform)'
-        configuration: '$(BuildConfiguration)'
+        projects: src/UrlTracker.Web/UrlTracker.Web.csproj
+        arguments: '--configuration $(BuildConfiguration)  /p:Version=$(GitVersion.NuGetVersion)'
+        versioningScheme: byBuildNumber
 
-    - task: VSTest@2
+    - task: DotNetCoreCLI@2
       displayName: 'Run tests'
       inputs:
-        testAssemblyVer2: |
-         **\$(BuildConfiguration)\*.tests.dll
-         !**\obj\**
-        codeCoverageEnabled: true
-        platform: '$(BuildPlatform)'
-        configuration: '$(BuildConfiguration)'
-        runSettingsFile: '.runsettings'
+        command: 'test'
+        arguments: '.\UrlTracker.sln'
 
-    - task: NuGetCommand@2
-      displayName: 'NuGet pack'
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet pack'
       inputs:
         command: pack
-        packagesToPack: UrlTracker.nuspec
-        packDestination: $(build.artifactstagingdirectory)
-        versioningScheme: 'byEnvVar'
-        versionEnvVar: 'Gitversion.NuGetVersion'
+        packagesToPack: src/UrlTracker.Web/UrlTracker.Web.csproj
+        nobuild: true
+        versioningScheme: byEnvVar
+        versionEnvVar: GitVersion.NuGetVersion
 
     - task: PublishBuildArtifacts@1
       displayName: 'Publish build artifacts'
@@ -87,12 +77,15 @@ stages:
       clean: all
     steps:
     - checkout: none
+    
     - download: current
       patterns: '**/*.nupkg'
       displayName: Download build artifact
-    - task: NuGetCommand@2
-      displayName: 'NuGet push'
+    
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet push'
       inputs:
         command: push
         publishVstsFeed: '3356baca-d7d8-497c-a5fa-ebd93f79f7c7'
-        packagesToPush: '$(Pipeline.Workspace)/drop/*.nupkg'
+        versioningScheme: byBuildNumber
+        packagesToPush: '$(Pipeline.Workspace)/**/UrlTracker*.nupkg'

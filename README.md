@@ -24,20 +24,24 @@ The URL Tracker is available via NuGet. Visit [the URL Tracker on NuGet](https:/
 Once installed, build your project and you're ready to make your visitors happy.
 
 ## Configuration
-Upon installation, the URL Tracker will have added several configurations in your Web.config file in the AppSettings section:
+The URL Tracker has several configurable properties that can be changed in appsettings.json:
 
-```xml
-<add key="urlTracker:disabled" value="false" />
-<add key="urlTracker:trackingDisabled" value="false" />
-<add key="urlTracker:notFoundTrackingDisabled" value="false" />
-<add key="urlTracker:enableLogging" value="false" />
-<add key="urlTracker:appendPortNumber" value="false" />
-<add key="urlTracker:hasDomainOnChildNode" value="false" />
+```json
+{
+    "UrlTracker": {
+        "IsDisabled": false,
+        "IsTrackingDisabled": false,
+        "LoggingEnabled": false,
+        "IsNotFoundTrackingDisabled": false,
+        "AppendPortNumber": false,
+        "HasDomainOnChildNode": false
+    }
+}
 ```
 
-- **Disabled** | Set this value to `true` to completely disable the URL Tracker. The URL Tracker will not intercept any requests nor track any content updates
-- **Tracking disabled** | Set this value to `true` to disable tracking of content changes. The URL Tracker will not automatically create redirects when content is updated
-- **Not found tracking disabled** | Set this value to `true` to disable tracking of Not Found responses.
+- **Is disabled** | Set this value to `true` to completely disable the URL Tracker. The URL Tracker will not intercept any requests nor track any content updates
+- **Is tracking disabled** | Set this value to `true` to disable tracking of content changes. The URL Tracker will not automatically create redirects when content is updated
+- **Is not found tracking disabled** | Set this value to `true` to disable tracking of Not Found responses.
 - **Enable logging** | Set this value to `true` to allow the URL Tracker to write logs to the Umbraco native logger. Most logs from the URL Tracker are written at Debug or Verbose level.
 - **Append port number** | Set this value to `true` to add a port number behind the host component of a redirect url. This setting is ignored when the application is hosted on the default port 80.
 - **Has domain on child node** | Set this value to `true` if your website has domains configured on pages that are not in the root of the website.
