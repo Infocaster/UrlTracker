@@ -44,11 +44,11 @@ stages:
         arguments: '--configuration $(BuildConfiguration)  /p:Version=$(GitVersion.NuGetVersion)'
         versioningScheme: byBuildNumber
 
-    - task: DotNetCoreCLI@2
-      displayName: 'Run tests'
-      inputs:
-        command: 'test'
-        arguments: '.\UrlTracker.sln'
+    #- task: DotNetCoreCLI@2
+    #  displayName: 'Run tests'
+    #  inputs:
+    #    command: 'test'
+    #    arguments: '.\UrlTracker.sln'
 
     - task: DotNetCoreCLI@2
       displayName: 'dotnet pack'
