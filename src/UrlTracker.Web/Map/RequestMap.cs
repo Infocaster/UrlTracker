@@ -1,7 +1,6 @@
 ﻿using System.Net;
-using Umbraco.Core.Mapping;
+using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Abstractions;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
 using UrlTracker.Web.Controllers.Models;
 
@@ -17,7 +16,7 @@ namespace UrlTracker.Web.Map
             _umbracoContextFactory = umbracoContextFactory;
         }
 
-        public void DefineMaps(UmbracoMapper mapper)
+        public void DefineMaps(IUmbracoMapper mapper)
         {
             mapper.Define<RedirectRequestBase, Redirect>(
                 (source, context) => new Redirect(),

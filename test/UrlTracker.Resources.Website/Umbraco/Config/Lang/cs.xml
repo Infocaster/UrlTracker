@@ -33,7 +33,6 @@
     <key alias="rights">Práva</key>
     <key alias="rename" version="7.3.0">Přejmenovat</key>
     <key alias="restore" version="7.3.0">Obnovit</key>
-    <key alias="SetPermissionsForThePage">Nastavit oprávnění pro stránku %0%</key>
     <key alias="chooseWhereToCopy">Kam zkopírovat</key>
     <key alias="chooseWhereToMove">Kam přesunout</key>
     <key alias="toInTheTreeStructureBelow">do struktury stromu pod</key>
@@ -61,7 +60,7 @@
     <key alias="other">Ostatní</key>
   </area>
   <area alias="actionDescriptions">
-    <key alias="assignDomain">Povolit přístup k přiřazování kultury a názvů hostitelů</key>
+    <key alias="assigndomain">Povolit přístup k přiřazování kultury a názvů hostitelů</key>
     <key alias="auditTrail">Povolit přístup k zobrazení protokolu historie uzlu</key>
     <key alias="browse">Povolit přístup k zobrazení uzlu</key>
     <key alias="changeDocType">Povolit přístup ke změně typu dokumentu daného uzlu</key>
@@ -100,7 +99,7 @@
     <key alias="domainUpdated">Doména '%0%' byla aktualizována</key>
     <key alias="orEdit">Editace aktuálních domén</key>
     <key alias="domainHelpWithVariants">
-    	<![CDATA[Povolené názvy domén jsou: "example.com", "www.example.com", "example.com:8080", nebo "https://www.example.com/".
+      <![CDATA[Povolené názvy domén jsou: "example.com", "www.example.com", "example.com:8080", nebo "https://www.example.com/".
      Dále jsou podporovány také jednoúrovňové cesty v doménách, např. "example.com/en" nebo "/en".]]></key>
     <key alias="inherit">Dědit</key>
     <key alias="setLanguage">Kultura</key>
@@ -135,12 +134,10 @@
     <key alias="save">Uložit</key>
     <key alias="saveAndClose">Uložit a zavřít</key>
     <key alias="saveAndPublish">Uložit a publikovat</key>
-    <key alias="saveAndSchedule">Uložit a naplánovat</key>
     <key alias="saveToPublish">Uložit a odeslat ke schválení</key>
     <key alias="saveAndPreview">Náhled</key>
     <key alias="saveListView">Uložit zobrazení seznamu</key>
     <key alias="schedulePublish">Naplánovat</key>
-    <key alias="showPage">Náhled</key>
     <key alias="showPageDisabled">Náhled je deaktivován, protože není přiřazena žádná šablona</key>
     <key alias="styleChoose">Vybrat styl</key>
     <key alias="styleShow">Zobrazit styly</key>
@@ -149,11 +146,10 @@
     <key alias="saveAndGenerateModels">Uložit a generovat modely</key>
     <key alias="undo">Zpět</key>
     <key alias="redo">Znovu</key>
-    <key alias="rollback">Obnovit</key>
     <key alias="deleteTag">Smazat štítek</key>
     <key alias="confirmActionCancel">Zrušit</key>
     <key alias="confirmActionConfirm">Potvrdit</key>
-	  <key alias="morePublishingOptions">Další možnosti publikování</key>
+    <key alias="morePublishingOptions">Další možnosti publikování</key>
   </area>
   <area alias="auditTrails">
     <key alias="atViewingFor">Zobrazení pro</key>
@@ -186,8 +182,6 @@
     <key alias="historyIncludingVariants">Historie (všechny jazyky)</key>
   </area>
   <area alias="codefile">
-    <key alias="createFolderFailedById">Nepodařilo se vytvořit složku pod rodičem s ID %0%</key>
-    <key alias="createFolderFailedByName">Nepodařilo se vytvořit složku pod rodičem s názvem %0%</key>
     <key alias="createFolderIllegalChars">Název složky nesmí obsahovat nepovolené znaky.</key>
     <key alias="deleteItemFailed">Odstranění položky se nezdařilo: %0%</key>
   </area>
@@ -252,7 +246,7 @@
     <key alias="updateDate">Naposledy změněno</key>
     <key alias="updateDateDesc" version="7.0">Datum/čas poslední změny dokumentu</key>
     <key alias="uploadClear">Odebrat soubor(y)</key>
-	  <key alias="uploadClearImageContext">Click here to remove the image from the media item</key>
+    <key alias="uploadClearImageContext">Click here to remove the image from the media item</key>
     <key alias="uploadClearFileContext">Click here to remove the file from the media item</key>
     <key alias="urls">URL adresa dokumentu</key>
     <key alias="memberof">Člen skupin(y)</key>
@@ -276,17 +270,10 @@
     <key alias="includeUnpublished">Include drafts: also publish unpublished content items.</key>
     <key alias="isSensitiveValue">This value is hidden. If you need access to view this value please contact your website administrator.</key>
     <key alias="isSensitiveValue_short">This value is hidden.</key>
-    <key alias="languagesToPublishForFirstTime">What languages would you like to publish? All languages with content are saved!</key>
     <key alias="languagesToPublish">What languages would you like to publish?</key>
-    <key alias="languagesToSave">What languages would you like to save?</key>
-    <key alias="languagesToSaveForFirstTime">All languages with content are saved on creation!</key>
     <key alias="languagesToSendForApproval">What languages would you like to send for approval?</key>
     <key alias="languagesToSchedule">What languages would you like to schedule?</key>
     <key alias="languagesToUnpublish">Select the languages to unpublish. Unpublishing a mandatory language will unpublish all languages.</key>
-    <key alias="publishedLanguages">Published Languages</key>
-    <key alias="unpublishedLanguages">Unpublished Languages</key>
-    <key alias="unmodifiedLanguages">Unmodified Languages</key>
-    <key alias="untouchedLanguagesForFirstTime">These languages haven't been created</key>
     <key alias="readyToPublish">Ready to Publish?</key>
     <key alias="readyToSave">Ready to Save?</key>
     <key alias="sendForApproval">Send for approval</key>
@@ -296,7 +283,7 @@
     <key alias="nodeIsInTrash">This item is in the Recycle Bin</key>
   </area>
   <area alias="blueprints">
-    <key alias="createBlueprintFrom">Vytvořit novou šablonu obsahu z '%0%'</key>
+    <key alias="createBlueprintFrom"><![CDATA[Vytvořit novou šablonu obsahu z <em>%0%</em>]]></key>
     <key alias="blankBlueprint">Prázdná</key>
     <key alias="selectBlueprint">Vybrat obsahovou šablonu</key>
     <key alias="createdBlueprintHeading">Šablona obsahu byla vytvořena</key>
@@ -307,13 +294,10 @@
   <area alias="media">
     <key alias="clickToUpload">Klikněte pro nahrání</key>
     <key alias="orClickHereToUpload">nebo kliknutím sem vyberte soubory</key>
-        <key alias="dragFilesHereToUpload">Sem můžete přetáhnout a nahrát soubory.</key>
     <key alias="disallowedFileType">Tento soubor nelze nahrát, nemá povolený typ souboru</key>
     <key alias="maxFileSize">Maximální velikost souboru je</key>
     <key alias="mediaRoot">Nejvyšší složka médií</key>
-    <key alias="moveFailed">Nepodařilo se přesunout média</key>
     <key alias="moveToSameFolderFailed">Nadřazené a cílové složky nemohou být stejné</key>
-    <key alias="copyFailed">Médium se nepodařilo zkopírovat</key>
     <key alias="createFolderFailed">Nepodařilo se vytvořit složku pod nadřazeným id %0%</key>
     <key alias="renameFolderFailed">Nepodařilo se přejmenovat složku s id %0%</key>
     <key alias="dragAndDropYourFilesIntoTheArea">Přetáhněte své soubory do oblasti</key>
@@ -337,7 +321,7 @@
     <key alias="noDocumentTypesAllowedAtRoot"><![CDATA[Nejsou zde k dispozici žádné povolené typy dokumentů pro vytváření obsahu. Musíte je povolit v sekci <strong>Typy dokumentů</strong> v části <strong>Nastavení</strong> změnou možnosti <strong>Povolit jako root</strong> v části <strong>Oprávnění</strong>.]]></key>
     <key alias="noMediaTypes" version="7.0"><![CDATA[Nejsou dostupné žádné povolené typy medií. Tyto musíte povolit v sekci nastavení pod <strong>"typy medií"</strong>.]]></key>
     <key alias="noMediaTypesWithNoSettingsAccess">Vybraná média ve stromu neumožňuje vytváření pod nimi žádná další média.</key>
-    <key alias="noMediaTypesEditPermissions">Upravit oprávnění pro tento typ média</key>    
+    <key alias="noMediaTypesEditPermissions">Upravit oprávnění pro tento typ média</key>
     <key alias="documentTypeWithoutTemplate">Typ dokumentu bez šablony</key>
     <key alias="newFolder">Nová složka</key>
     <key alias="newDataType">Nový datový typ</key>
@@ -421,7 +405,6 @@
     <key alias="linkinternal">Místní odkaz:</key>
     <key alias="linklocaltip">Při používání místních odkazů vložte znak "#" před odkaz</key>
     <key alias="linknewwindow">Otevřít v novém okně?</key>
-	<key alias="macroContainerSettings">Nastavení makra</key>
     <key alias="macroDoesNotHaveProperties">Toto makro nemá žádné vlastnosti, které by bylo možno editovat</key>
     <key alias="paste">Vložit</key>
     <key alias="permissionsEdit">Editovat oprávnění pro</key>
@@ -559,10 +542,6 @@
     <key alias="rteRelatedStylesheets">Související stylopisy</key>
     <key alias="rteShowLabel">Zobrazit jmenovku</key>
     <key alias="rteWidthAndHeight">Šířka a výška</key>
-    <key alias="allPropTypes">Všechny typy vlastností a údaje o nich</key>
-    <key alias="willBeDeleted">použití tohoto datového typu bude trvale smazáno, potvrďte, že je chcete  odstranit</key>
-    <key alias="yesDelete">Ano, smazat</key>
-    <key alias="andAllRelated">a všechny typy vlastností a data vlastností používající tento typ dat</key>
     <key alias="selectFolder">Vyberte složku, kterou chcete přesunout</key>
     <key alias="inTheTree">do stromové struktury níže</key>
     <key alias="wasMoved">byla přesunuta pod</key>
@@ -656,7 +635,6 @@
     <key alias="icon">Ikona</key>
     <key alias="id">Id</key>
     <key alias="import">Import</key>
-    <key alias="includeFromsubFolders">Zahrnout podsložky do vyhledávání</key>
     <key alias="info">Info</key>
     <key alias="innerMargin">Vnitřní okraj</key>
     <key alias="insert">Vložit</key>
@@ -748,7 +726,6 @@
     <key alias="other">Další</key>
     <key alias="articles">Články</key>
     <key alias="videos">Videa</key>
-    <key alias="installing">Instalování</key>
   </area>
   <area alias="colors">
     <key alias="blue">Modrá</key>
@@ -788,21 +765,12 @@
   </area>
   <area alias="installer">
     <key alias="databaseErrorCannotConnect">Instalátor se nemůže připojit k databázi.</key>
-    <key alias="databaseErrorWebConfig">Nelze uložit soubor web.config. Modifikujte, prosím, připojovací řetězec manuálně.</key>
     <key alias="databaseFound">Vyše databáze byla nalezena a je identifikována jako</key>
     <key alias="databaseHeader">Nastavení databáze</key>
     <key alias="databaseInstall"><![CDATA[
       Stiskněte tlačítko <strong>instalovat</strong>, abyste nainstalovali Umbraco %0% databázi
     ]]></key>
     <key alias="databaseInstallDone"><![CDATA[Umbraco %0% bylo zkopírováno do Vaši databáze. Stiskněte <strong>následující</strong> pro pokračování.]]></key>
-    <key alias="databaseNotFound"><![CDATA[<p>Databáze nenalezena! Zkontrolujte, prosím, že informace v "připojovacím řetězci" souboru "web.config" jsou správné.</p>
-              <p>Pro pokračování otevřete, prosím, soubor "web.config" (za pužití Visual Studia nebo Vašeho oblíbeného tedtového editoru), přejděte na jeho konec, přidejte připojovací řetězec pro Vaši databázi v klíčí nazvaném "umbracoDbDSN" a soubor uložte. </p>
-              <p>
-              Klikněte na tlačítko <strong>zopakovat</strong>, až budete hotovi.<br /><a href="https://our.umbraco.com/documentation/Reference/Config/webconfig/" target="_blank" rel="noopener">
-			              Další informace o editování souboru web.config zde</a>.</p>]]></key>
-    <key alias="databaseText"><![CDATA[Pro dokončení tohoto kroku potřebujete znát některé informace týkající se Vašeho databázového serveru ("připojovací řetězec").<br />
-        Pokud je to nezbytné, kontaktujte vašeho poskytovatele hostingu.
-        Jestliže instalujete na místní počítač nebo server, budete potřebovat informace od Vašeho systémového administrátora.]]></key>
     <key alias="databaseUpgrade"><![CDATA[
       <p>
       Stiskněte tlačítko <strong>povýšit</strong> pro povýšení Vaší databáze na Umbraco %0%</p>
@@ -817,7 +785,6 @@
     <key alias="defaultUserPassChanged"><![CDATA[<strong>Heslo výchozího uživatele bylo úspěšně změněno od doby instalace!</strong></p><p>Netřeba nic dalšího dělat. Klikněte na <b>Následující</b> pro pokračování.]]></key>
     <key alias="defaultUserPasswordChanged">Heslo je změněno!</key>
     <key alias="greatStart">Mějte skvělý start, sledujte naše uváděcí videa</key>
-    <key alias="licenseText">Kliknutím na tlačítko následující (nebo modifikováním umbracoConfigurationStatus v souboru web.config) přijímáte licenci tohoto software tak, jak je uvedena v poli níže. Upozorňujeme, že tato distribuce Umbraca se skládá ze dvou různých licencí, open source MIT licence pro framework a Umbraco freeware licence, která pokrývá UI.</key>
     <key alias="None">Není nainstalováno.</key>
     <key alias="permissionsAffectedFolders">Dotčené soubory a složky</key>
     <key alias="permissionsAffectedFoldersMoreInfo">Další informace o nastavování oprávnění pro Umbraco zde</key>
@@ -877,7 +844,6 @@
     <key alias="theEndFurtherHelp"><![CDATA[<h3>Další pomoc a informace</h3>
     Abyste získali pomoc od naší oceňované komunity, projděte si dokumentaci, nebo si pusťte některá videa zdarma o tom, jak vytvořit jednoduchý web, jak používat balíčky a rychlý úvod do terminologie umbraca]]></key>
     <key alias="theEndHeader">Umbraco %0% je nainstalováno a připraveno k použití</key>
-    <key alias="theEndInstallFailed"><![CDATA[Pro dokončení instalace budete muset ručně změnit <strong>soubor /web.config</strong> a upravit klíč AppSetting <strong>umbracoConfigurationStatus</strong> dole na hodnotu <strong>'%0%'</strong>.]]></key>
     <key alias="theEndInstallSuccess"><![CDATA[Můžete <strong>ihned začít</strong> kliknutím na tlačítko "Spustit Umbraco" níže. <br />Jestliže <strong>je pro Vás Umbraco nové</strong>,
     spoustu zdrojů naleznete na naších stránkách "začínáme".]]></key>
     <key alias="theEndOpenUmbraco"><![CDATA[<h3>Spustit Umbraco</h3>
@@ -922,85 +888,85 @@
     <key alias="resetPasswordEmailCopySubject">Umbraco: Resetování hesla</key>
     <key alias="resetPasswordEmailCopyFormat"><![CDATA[
         <html>
-			<head>
-				<meta name='viewport' content='width=device-width'>
-				<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
-			</head>
-			<body class='' style='font-family: sans-serif; -webkit-font-smoothing: antialiased; font-size: 14px; color: #392F54; line-height: 22px; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background: #1d1333; margin: 0; padding: 0;' bgcolor='#1d1333'>
-				<style type='text/css'> @media only screen and (max-width: 620px) {table[class=body] h1 {font-size: 28px !important; margin-bottom: 10px !important; } table[class=body] .wrapper {padding: 32px !important; } table[class=body] .article {padding: 32px !important; } table[class=body] .content {padding: 24px !important; } table[class=body] .container {padding: 0 !important; width: 100% !important; } table[class=body] .main {border-left-width: 0 !important; border-radius: 0 !important; border-right-width: 0 !important; } table[class=body] .btn table {width: 100% !important; } table[class=body] .btn a {width: 100% !important; } table[class=body] .img-responsive {height: auto !important; max-width: 100% !important; width: auto !important; } } .btn-primary table td:hover {background-color: #34495e !important; } .btn-primary a:hover {background-color: #34495e !important; border-color: #34495e !important; } .btn  a:visited {color:#FFFFFF;} </style>
-				<table border="0" cellpadding="0" cellspacing="0" class="body" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #1d1333;" bgcolor="#1d1333">
-					<tr>
-						<td style="font-family: sans-serif; font-size: 14px; vertical-align: top; padding: 24px;" valign="top">
-							<table style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
-								<tr>
-									<td background="https://umbraco.com/umbraco/assets/img/application/logo.png" bgcolor="#1d1333" width="28" height="28" valign="top" style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
-										<!--[if gte mso 9]> <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:30px;height:30px;"> <v:fill type="tile" src="https://umbraco.com/umbraco/assets/img/application/logo.png" color="#1d1333" /> <v:textbox inset="0,0,0,0"> <![endif]-->
-										<div> </div>
-										<!--[if gte mso 9]> </v:textbox> </v:rect> <![endif]-->
-									</td>
-									<td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top"></td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-				<table border='0' cellpadding='0' cellspacing='0' class='body' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #1d1333;' bgcolor='#1d1333'>
-					<tr>
-						<td style='font-family: sans-serif; font-size: 14px; vertical-align: top;' valign='top'> </td>
-						<td class='container' style='font-family: sans-serif; font-size: 14px; vertical-align: top; display: block; max-width: 560px; width: 560px; margin: 0 auto; padding: 10px;' valign='top'>
-							<div class='content' style='box-sizing: border-box; display: block; max-width: 560px; margin: 0 auto; padding: 10px;'>
-								<br>
-								<table class='main' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; border-radius: 3px; background: #FFFFFF;' bgcolor='#FFFFFF'>
-									<tr>
-										<td class='wrapper' style='font-family: sans-serif; font-size: 14px; vertical-align: top; box-sizing: border-box; padding: 50px;' valign='top'>
-											<table border='0' cellpadding='0' cellspacing='0' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;'>
-												<tr>
-													<td style='line-height: 24px; font-family: sans-serif; font-size: 14px; vertical-align: top;' valign='top'>
-														<h1 style='color: #392F54; font-family: sans-serif; font-weight: bold; line-height: 1.4; font-size: 24px; text-align: left; text-transform: capitalize; margin: 0 0 30px;' align='left'>
-															Vyžadováno resetování hesla
-														</h1>
-														<p style='color: #392F54; font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0 0 15px;'>
-															Vaše uživatelské jméno pro přihlášení do backoffice Umbraco je: <strong>%0%</strong>
-														</p>
-														<p style='color: #392F54; font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0 0 15px;'>
-															<table border='0' cellpadding='0' cellspacing='0' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;'>
-																<tbody>
-																	<tr>
-																		<td style='font-family: sans-serif; font-size: 14px; vertical-align: top; border-radius: 5px; text-align: center; background: #35C786;' align='center' bgcolor='#35C786' valign='top'>
-																			<a href='%1%' target='_blank' rel='noopener' style='color: #FFFFFF; text-decoration: none; -ms-word-break: break-all; word-break: break-all; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; text-transform: capitalize; background: #35C786; margin: 0; padding: 12px 30px; border: 1px solid #35c786;'>
-																				Kliknutím na tento odkaz obnovíte své heslo
-																			</a>
-																		</td>
-																	</tr>
-																</tbody>
-															</table>
-														</p>
-														<p style='max-width: 400px; display: block; color: #392F54; font-family: sans-serif; font-size: 14px; line-height: 20px; font-weight: normal; margin: 15px 0;'>Pokud nemůžete kliknout na odkaz, zkopírujte a vložte tuto adresu URL do okna prohlížeče:</p>
-															<table border='0' cellpadding='0' cellspacing='0'>
-																<tr>
-																	<td style='-ms-word-break: break-all; word-break: break-all; font-family: sans-serif; font-size: 11px; line-height:14px;'>
-																		<font style="-ms-word-break: break-all; word-break: break-all; font-size: 11px; line-height:14px;">
-																			<a style='-ms-word-break: break-all; word-break: break-all; color: #392F54; text-decoration: underline; font-size: 11px; line-height:15px;' href='%1%'>%1%</a>
-																		</font>
-																	</td>
-																</tr>
-															</table>
-														</p>
-													</td>
-												</tr>
-											</table>
-										</td>
-									</tr>
-								</table>
-								<br><br><br>
-							</div>
-						</td>
-						<td style='font-family: sans-serif; font-size: 14px; vertical-align: top;' valign='top'> </td>
-					</tr>
-				</table>
-			</body>
-		</html>
-	]]></key>
+            <head>
+                <meta name='viewport' content='width=device-width'>
+                <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+            </head>
+            <body class='' style='font-family: sans-serif; -webkit-font-smoothing: antialiased; font-size: 14px; color: #392F54; line-height: 22px; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background: #1d1333; margin: 0; padding: 0;' bgcolor='#1d1333'>
+                <style type='text/css'> @media only screen and (max-width: 620px) {table[class=body] h1 {font-size: 28px !important; margin-bottom: 10px !important; } table[class=body] .wrapper {padding: 32px !important; } table[class=body] .article {padding: 32px !important; } table[class=body] .content {padding: 24px !important; } table[class=body] .container {padding: 0 !important; width: 100% !important; } table[class=body] .main {border-left-width: 0 !important; border-radius: 0 !important; border-right-width: 0 !important; } table[class=body] .btn table {width: 100% !important; } table[class=body] .btn a {width: 100% !important; } table[class=body] .img-responsive {height: auto !important; max-width: 100% !important; width: auto !important; } } .btn-primary table td:hover {background-color: #34495e !important; } .btn-primary a:hover {background-color: #34495e !important; border-color: #34495e !important; } .btn  a:visited {color:#FFFFFF;} </style>
+                <table border="0" cellpadding="0" cellspacing="0" class="body" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #1d1333;" bgcolor="#1d1333">
+                    <tr>
+                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; padding: 24px;" valign="top">
+                            <table style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
+                                <tr>
+                                    <td background="https://umbraco.com/umbraco/assets/img/application/logo.png" bgcolor="#1d1333" width="28" height="28" valign="top" style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
+                                        <!--[if gte mso 9]> <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:30px;height:30px;"> <v:fill type="tile" src="https://umbraco.com/umbraco/assets/img/application/logo.png" color="#1d1333" /> <v:textbox inset="0,0,0,0"> <![endif]-->
+                                        <div> </div>
+                                        <!--[if gte mso 9]> </v:textbox> </v:rect> <![endif]-->
+                                    </td>
+                                    <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <table border='0' cellpadding='0' cellspacing='0' class='body' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #1d1333;' bgcolor='#1d1333'>
+                    <tr>
+                        <td style='font-family: sans-serif; font-size: 14px; vertical-align: top;' valign='top'> </td>
+                        <td class='container' style='font-family: sans-serif; font-size: 14px; vertical-align: top; display: block; max-width: 560px; width: 560px; margin: 0 auto; padding: 10px;' valign='top'>
+                            <div class='content' style='box-sizing: border-box; display: block; max-width: 560px; margin: 0 auto; padding: 10px;'>
+                                <br>
+                                <table class='main' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; border-radius: 3px; background: #FFFFFF;' bgcolor='#FFFFFF'>
+                                    <tr>
+                                        <td class='wrapper' style='font-family: sans-serif; font-size: 14px; vertical-align: top; box-sizing: border-box; padding: 50px;' valign='top'>
+                                            <table border='0' cellpadding='0' cellspacing='0' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;'>
+                                                <tr>
+                                                    <td style='line-height: 24px; font-family: sans-serif; font-size: 14px; vertical-align: top;' valign='top'>
+                                                        <h1 style='color: #392F54; font-family: sans-serif; font-weight: bold; line-height: 1.4; font-size: 24px; text-align: left; text-transform: capitalize; margin: 0 0 30px;' align='left'>
+                                                            Vyžadováno resetování hesla
+                                                        </h1>
+                                                        <p style='color: #392F54; font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0 0 15px;'>
+                                                            Vaše uživatelské jméno pro přihlášení do backoffice Umbraco je: <strong>%0%</strong>
+                                                        </p>
+                                                        <p style='color: #392F54; font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0 0 15px;'>
+                                                            <table border='0' cellpadding='0' cellspacing='0' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;'>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td style='font-family: sans-serif; font-size: 14px; vertical-align: top; border-radius: 5px; text-align: center; background: #35C786;' align='center' bgcolor='#35C786' valign='top'>
+                                                                            <a href='%1%' target='_blank' rel='noopener' style='color: #FFFFFF; text-decoration: none; -ms-word-break: break-all; word-break: break-all; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; text-transform: capitalize; background: #35C786; margin: 0; padding: 12px 30px; border: 1px solid #35c786;'>
+                                                                                Kliknutím na tento odkaz obnovíte své heslo
+                                                                            </a>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </p>
+                                                        <p style='max-width: 400px; display: block; color: #392F54; font-family: sans-serif; font-size: 14px; line-height: 20px; font-weight: normal; margin: 15px 0;'>Pokud nemůžete kliknout na odkaz, zkopírujte a vložte tuto adresu URL do okna prohlížeče:</p>
+                                                            <table border='0' cellpadding='0' cellspacing='0'>
+                                                                <tr>
+                                                                    <td style='-ms-word-break: break-all; word-break: break-all; font-family: sans-serif; font-size: 11px; line-height:14px;'>
+                                                                        <font style="-ms-word-break: break-all; word-break: break-all; font-size: 11px; line-height:14px;">
+                                                                            <a style='-ms-word-break: break-all; word-break: break-all; color: #392F54; text-decoration: underline; font-size: 11px; line-height:15px;' href='%1%'>%1%</a>
+                                                                        </font>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br><br><br>
+                            </div>
+                        </td>
+                        <td style='font-family: sans-serif; font-size: 14px; vertical-align: top;' valign='top'> </td>
+                    </tr>
+                </table>
+            </body>
+        </html>
+    ]]></key>
   </area>
   <area alias="main">
     <key alias="dashboard">Ovládací panel</key>
@@ -1040,31 +1006,31 @@
     <key alias="mailBodyVariantSummary">Následující jazyky byly změněny %0%</key>
     <key alias="mailBodyHtml"><![CDATA[<p>Ahoj %0%</p>
 
-		  <p>Toto je automatická zpráva informující Vás, že úloha <strong>'%1%'</strong>
-		  byla provedena na stránce <a href="http://%4%/#/content/content/edit/%5%"><strong>'%2%'</strong></a>
-		  uživatelem <strong>'%3%'</strong>
-	  </p>
-		  <div style="margin: 8px 0; padding: 8px; display: block;">
-				<br />
-				<a style="color: white; font-weight: bold; background-color: #5372c3; text-decoration : none; margin-right: 20px; border: 8px solid #5372c3; width: 150px;" href="http://%4%/#/content/content/edit/%5%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EDITOVAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a> &nbsp;
-				<br />
-		  </div>
-		  <p>
-			  <h3>Shrnutí změn:</h3>
-			  <table style="width: 100%;">
-						   %6%
-				</table>
-			 </p>
+          <p>Toto je automatická zpráva informující Vás, že úloha <strong>'%1%'</strong>
+          byla provedena na stránce <a href="http://%4%/#/content/content/edit/%5%"><strong>'%2%'</strong></a>
+          uživatelem <strong>'%3%'</strong>
+      </p>
+          <div style="margin: 8px 0; padding: 8px; display: block;">
+                <br />
+                <a style="color: white; font-weight: bold; background-color: #5372c3; text-decoration : none; margin-right: 20px; border: 8px solid #5372c3; width: 150px;" href="http://%4%/#/content/content/edit/%5%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EDITOVAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a> &nbsp;
+                <br />
+          </div>
+          <p>
+              <h3>Shrnutí změn:</h3>
+              <table style="width: 100%;">
+                           %6%
+                </table>
+             </p>
 
-		  <div style="margin: 8px 0; padding: 8px; display: block;">
-				<br />
-				<a style="color: white; font-weight: bold; background-color: #5372c3; text-decoration : none; margin-right: 20px; border: 8px solid #5372c3; width: 150px;" href="http://%4%/#/content/content/edit/%5%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EDITOVAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a> &nbsp;
-				<br />
-		  </div>
+          <div style="margin: 8px 0; padding: 8px; display: block;">
+                <br />
+                <a style="color: white; font-weight: bold; background-color: #5372c3; text-decoration : none; margin-right: 20px; border: 8px solid #5372c3; width: 150px;" href="http://%4%/#/content/content/edit/%5%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EDITOVAT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</a> &nbsp;
+                <br />
+          </div>
 
-		  <p>Mějte hezký den!<br /><br />
-			  Zdraví Umbraco robot
-		  </p>]]></key>
+          <p>Mějte hezký den!<br /><br />
+              Zdraví Umbraco robot
+          </p>]]></key>
     <key alias="mailBodyVariantHtmlSummary"><![CDATA[<p>Byly změněny následující jazyky:</p>
         %0%
     ]]></key>
@@ -1080,34 +1046,15 @@
          a výběrem balíčku. Balíčky Umbraco mají obvykle přípony ".umb" nebo ".zip".
       ]]></key>
     <key alias="deletewarning">Tím se balíček odstraní</key>
-    <key alias="dropHere">Přetáhněte sem pro nahrání</key>
     <key alias="includeAllChildNodes">Zahrnout všechny podřízené uzly</key>
-    <key alias="orClickHereToUpload">nebo kliknutím sem vyberte soubor balíčku</key>
-    <key alias="uploadPackage">Nahrát balíček</key>
-    <key alias="localPackageDescription">Nainstalujte místní balíček výběrem ze svého počítače. Instalujte pouze balíčky ze zdrojů, které znáte a kterým důvěřujete</key>
-    <key alias="uploadAnother">Nahrát další balíček</key>
-    <key alias="cancelAndUploadAnother">Zrušit a nahrát další balíček</key>
-    <key alias="accept">Přijímám</key>
-    <key alias="termsOfUse">podmínky použití</key>
-    <key alias="pathToFile">Cesta k souboru</key>
-    <key alias="pathToFileDescription">Absolutní cesta k souboru (ie: /bin/umbraco.bin)</key>
     <key alias="installed">Nainstalováno</key>
     <key alias="installedPackages">Nainstalované balíčky</key>
-    <key alias="installLocal">Instalovat místní</key>
-    <key alias="installFinish">Dokončit</key>
     <key alias="noConfigurationView">Tento balíček nemá žádné zobrazení konfigurace</key>
     <key alias="noPackagesCreated">Zatím nebyly vytvořeny žádné balíčky</key>
     <key alias="noPackages">Nemáte nainstalované žádné balíčky</key>
     <key alias="noPackagesDescription"><![CDATA[Nemáte nainstalované žádné balíčky. Nainstalujte místní balíček tak, že jej vyberete ze svého počítače, nebo procházejte dostupné balíčky pomocí ikony <strong>Balíčky</strong> v pravém horním rohu obrazovky.]]></key>
-    <key alias="packageActions">Akce balíčku</key>
-    <key alias="packageAuthorUrl">Web autora</key>
     <key alias="packageContent">Obsah balíčku</key>
-    <key alias="packageFiles">Soubory balíčku</key>
-    <key alias="packageIconUrl">URL ikony</key>
-    <key alias="packageInstall">Nainstalovat balíček</key>
     <key alias="packageLicense">Licence</key>
-    <key alias="packageLicenseUrl">URL licence</key>
-    <key alias="packageProperties">Vlastnosti balíčku</key>
     <key alias="packageSearch">Hledat balíčky</key>
     <key alias="packageSearchResults">Výsledky pro</key>
     <key alias="packageNoResults">Nemohli jsme nic najít</key>
@@ -1145,17 +1092,6 @@
       <span style="color: Red; font-weight: bold;">Upozornění:</span> všechny dokumenty, media atd. závislé na položkách, které odstraníte, přestanou pracovat a mohou vést k nestabilitě systému,
       takže odinstalovávejte opatrně. Jste-li na pochybách, kontaktujte autora balíčku.]]></key>
     <key alias="packageVersion">Verze balíčku</key>
-    <key alias="packageVersionUpgrade">Upgradování z verze</key>
-    <key alias="packageAlreadyInstalled">Balíček je již nainstalován</key>
-    <key alias="targetVersionMismatch">Tento balíček nelze nainstalovat, vyžaduje minimální verzi Umbraco</key>
-    <key alias="installStateUninstalling">Odinstalovávám...</key>
-    <key alias="installStateDownloading">Stahuji...</key>
-    <key alias="installStateImporting">Importuji...</key>
-    <key alias="installStateInstalling">Instaluji...</key>
-    <key alias="installStateRestarting">Restartuji, prosím čekejte...</key>
-    <key alias="installStateComplete">Vše je hotovo, váš prohlížeč se nyní obnoví, prosím čekejte...</key>
-    <key alias="installStateCompleted">Klepnutím na tlačítko „Dokončit“ dokončete instalaci a znovu načtěte stránku.</key>
-    <key alias="installStateUploading">Nahrávám balíček...</key>
   </area>
   <area alias="paste">
     <key alias="doNothing">Vložit s úplným formatováním (nedoporučeno)</key>
@@ -1252,11 +1188,9 @@
     <key alias="removeLink">Odebrat odkaz</key>
   </area>
   <area alias="imagecropper">
-        <key alias="reset">Zrušit oříznutí</key>
-    <key alias="saveCrop">Uložit oříznutí</key>
-    <key alias="addCrop">Přidat nové oříznutí</key>
-        <key alias="updateEditCrop">Hotovo</key>
-        <key alias="undoEditCrop">Vrátit změny</key>
+    <key alias="reset">Zrušit oříznutí</key>
+    <key alias="updateEditCrop">Hotovo</key>
+    <key alias="undoEditCrop">Vrátit změny</key>
   </area>
   <area alias="rollback">
     <key alias="headline">Vyberte verzi, kterou chcete porovnat s aktuální verzí</key>
@@ -1356,7 +1290,6 @@
     <key alias="editMediaSaved">Médium bylo uloženo</key>
     <key alias="editMediaSavedText">Médium bylo uloženo bez chyb</key>
     <key alias="editMemberSaved">Člen byl uložen</key>
-    <key alias="editMemberGroupSaved">Skupina členů byla uložena</key>
     <key alias="editStylesheetPropertySaved">Vlastnost stylopisu byla uložena</key>
     <key alias="editStylesheetSaved">Stylopis byl uložen</key>
     <key alias="editTemplateSaved">Šablona byla uložena</key>
@@ -1444,14 +1377,14 @@
     <key alias="insertDictionaryItemDesc">Položka slovníku je zástupný symbol pro překladatelný text, což usnadňuje vytváření návrhů pro vícejazyčné webové stránky.</key>
     <key alias="insertMacro">Vložit makro</key>
     <key alias="insertMacroDesc">
-            Makro je konfigurovatelná součást, která je skvělá pro opakovaně použitelné části návrhu, kde potřebujete předat parametry, jako jsou galerie, formuláře a seznamy.
-        </key>
+      Makro je konfigurovatelná součást, která je skvělá pro opakovaně použitelné části návrhu, kde potřebujete předat parametry, jako jsou galerie, formuláře a seznamy.
+    </key>
     <key alias="insertPageField">Vložit pole stránky umbraco</key>
     <key alias="insertPageFieldDesc">Zobrazuje hodnotu pojmenovaného pole z aktuální stránky s možnostmi upravit hodnotu nebo alternativní hodnoty.</key>
     <key alias="insertPartialView">Částečná šablona</key>
     <key alias="insertPartialViewDesc">
-            Částečná šablona je samostatný soubor šablony, který lze vykreslit uvnitř jiné šablony. Je to skvělé pro opakované použití nebo pro oddělení složitých šablon.
-        </key>
+      Částečná šablona je samostatný soubor šablony, který lze vykreslit uvnitř jiné šablony. Je to skvělé pro opakované použití nebo pro oddělení složitých šablon.
+    </key>
     <key alias="mastertemplate">Nadřazená šablona</key>
     <key alias="noMaster">Žádný master</key>
     <key alias="renderBody">Vykreslit podřízenou šablonu</key>
@@ -1473,7 +1406,6 @@
             ]]></key>
     <key alias="queryBuilder">Tvůrce dotazů</key>
     <key alias="itemsReturned">položky vráceny, do</key>
-    <key alias="copyToClipboard">zkopírovat do schránky</key>
     <key alias="iWant">Chci</key>
     <key alias="allContent">veškerý obsah</key>
     <key alias="contentOfType">obsah typu "%0%"</key>
@@ -1519,7 +1451,6 @@
     <key alias="contentAllowed">Tento obsah je zde povolen</key>
     <key alias="clickToEmbed">Klepněte pro vložení</key>
     <key alias="clickToInsertImage">Klepnutím vložíte obrázek</key>
-    <key alias="placeholderImageCaption">Titulek obrázku...</key>
     <key alias="placeholderWriteHere">Zde pište...</key>
     <key alias="gridLayouts">Rozvržení mřížky</key>
     <key alias="gridLayoutsDetail">Rozvržení je celková pracovní oblast pro editor mřížky, obvykle potřebujete pouze jedno nebo dvě různá rozvržení</key>
@@ -1543,11 +1474,10 @@
     <key alias="chooseExtra">Vyberat navíc</key>
     <key alias="chooseDefault">Zvolit výchozí</key>
     <key alias="areAdded">jsou přidány</key>
-        <key alias="warning">Varování</key>
-        <key alias="youAreDeleting">Odstraňujete konfiguraci řádku</key>
-        <key alias="deletingARow">
-            Odstranění názvu konfigurace řádku povede ke ztrátě dat pro veškerý existující obsah založený na této konfiguraci.
-        </key>
+    <key alias="youAreDeleting">Odstraňujete konfiguraci řádku</key>
+    <key alias="deletingARow">
+      Odstranění názvu konfigurace řádku povede ke ztrátě dat pro veškerý existující obsah založený na této konfiguraci.
+    </key>
   </area>
   <area alias="contentTypeEditor">
     <key alias="compositions">Složení</key>
@@ -1637,8 +1567,6 @@
     <key alias="modelsExceptionInUlog">Generování modelů selhalo, viz výjimka v logu Umbraca</key>
   </area>
   <area alias="templateEditor">
-    <key alias="addFallbackField">Přidat záložní pole</key>
-    <key alias="fallbackField">Náhradní pole</key>
     <key alias="addDefaultValue">Přidat výchozí hodnotu</key>
     <key alias="defaultValue">Výchozí hodnota</key>
     <key alias="alternativeField">Alternativní pole</key>
@@ -1647,26 +1575,21 @@
     <key alias="encoding">Kódování</key>
     <key alias="chooseField">Vybrat pole</key>
     <key alias="convertLineBreaks">Konvertovat</key>
-    <key alias="convertLineBreaksDescription">Ano, převést konce řádků</key>
     <key alias="convertLineBreaksHelp">Nahrazuje nové řádky html tagem &amp;lt;br&amp;gt;</key>
     <key alias="customFields">Vlastní pole</key>
     <key alias="dateOnly">Ano, pouze datum</key>
-    <key alias="formatAndEncoding">Formát a kódování</key>
     <key alias="formatAsDate">Formátovat jako datum</key>
-    <key alias="formatAsDateDescr">Naformátuje hodnotu jako datum nebo datum s časem podle aktivního jazyka</key>
     <key alias="htmlEncode">HTML kódování</key>
     <key alias="htmlEncodeHelp">Nahradí speciální znaky jejich HTML ekvivalentem.</key>
     <key alias="insertedAfter">Bude vloženo za hodnotou pole</key>
     <key alias="insertedBefore">Bude vloženo před hodnotou pole</key>
     <key alias="lowercase">Malá písmena</key>
-    <key alias="modifyOutput">Upravit výstup</key>
     <key alias="none">Nic</key>
     <key alias="outputSample">Ukázka výstupu</key>
     <key alias="postContent">Vložit za polem</key>
     <key alias="preContent">Vložit před polem</key>
     <key alias="recursive">Rekurzivní</key>
     <key alias="recursiveDescr">Ano, udělej to rekurzivní</key>
-    <key alias="separator">Oddělovač</key>
     <key alias="standardFields">Standardní pole</key>
     <key alias="uppercase">Velká písmena</key>
     <key alias="urlEncode">Kódování URL</key>
@@ -1847,96 +1770,95 @@
     <key alias="inviteEmailCopySubject">Umbraco: Pozvánka</key>
     <key alias="inviteEmailCopyFormat"><![CDATA[
         <html>
-			<head>
-				<meta name='viewport' content='width=device-width'>
-				<meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
-			</head>
-			<body class='' style='font-family: sans-serif; -webkit-font-smoothing: antialiased; font-size: 14px; color: #392F54; line-height: 22px; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background: #1d1333; margin: 0; padding: 0;' bgcolor='#1d1333'>
-				<style type='text/css'> @media only screen and (max-width: 620px) {table[class=body] h1 {font-size: 28px !important; margin-bottom: 10px !important; } table[class=body] .wrapper {padding: 32px !important; } table[class=body] .article {padding: 32px !important; } table[class=body] .content {padding: 24px !important; } table[class=body] .container {padding: 0 !important; width: 100% !important; } table[class=body] .main {border-left-width: 0 !important; border-radius: 0 !important; border-right-width: 0 !important; } table[class=body] .btn table {width: 100% !important; } table[class=body] .btn a {width: 100% !important; } table[class=body] .img-responsive {height: auto !important; max-width: 100% !important; width: auto !important; } } .btn-primary table td:hover {background-color: #34495e !important; } .btn-primary a:hover {background-color: #34495e !important; border-color: #34495e !important; } .btn  a:visited {color:#FFFFFF;} </style>
-				<table border="0" cellpadding="0" cellspacing="0" class="body" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #1d1333;" bgcolor="#1d1333">
-					<tr>
-						<td style="font-family: sans-serif; font-size: 14px; vertical-align: top; padding: 24px;" valign="top">
-							<table style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
-								<tr>
-									<td background="https://umbraco.com/umbraco/assets/img/application/logo.png" bgcolor="#1d1333" width="28" height="28" valign="top" style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
-										<!--[if gte mso 9]> <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:30px;height:30px;"> <v:fill type="tile" src="https://umbraco.com/umbraco/assets/img/application/logo.png" color="#1d1333" /> <v:textbox inset="0,0,0,0"> <![endif]-->
-										<div> </div>
-										<!--[if gte mso 9]> </v:textbox> </v:rect> <![endif]-->
-									</td>
-									<td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top"></td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-				<table border='0' cellpadding='0' cellspacing='0' class='body' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #1d1333;' bgcolor='#1d1333'>
-					<tr>
-						<td style='font-family: sans-serif; font-size: 14px; vertical-align: top;' valign='top'> </td>
-						<td class='container' style='font-family: sans-serif; font-size: 14px; vertical-align: top; display: block; max-width: 560px; width: 560px; margin: 0 auto; padding: 10px;' valign='top'>
-							<div class='content' style='box-sizing: border-box; display: block; max-width: 560px; margin: 0 auto; padding: 10px;'>
-								<br>
-								<table class='main' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; border-radius: 3px; background: #FFFFFF;' bgcolor='#FFFFFF'>
-									<tr>
-										<td class='wrapper' style='font-family: sans-serif; font-size: 14px; vertical-align: top; box-sizing: border-box; padding: 50px;' valign='top'>
-											<table border='0' cellpadding='0' cellspacing='0' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;'>
-												<tr>
-													<td style='line-height: 24px; font-family: sans-serif; font-size: 14px; vertical-align: top;' valign='top'>
-														<h1 style='color: #392F54; font-family: sans-serif; font-weight: bold; line-height: 1.4; font-size: 24px; text-align: left; text-transform: capitalize; margin: 0 0 30px;' align='left'>
-															Zdravím Vás, %0%,
-														</h1>
-														<p style='color: #392F54; font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0 0 15px;'>
-															Byli jste pozváni <a href="mailto:%4%" style="text-decoration: underline; color: #392F54; -ms-word-break: break-all; word-break: break-all;">%1%</a> do CMS Umbraco.
-														</p>
-														<p style='color: #392F54; font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0 0 15px;'>
-															Zpráva od <a href="mailto:%1%" style="text-decoration: none; color: #392F54; -ms-word-break: break-all; word-break: break-all;">%1%</a>:
-															<br/>
-															<em>%2%</em>
-														</p>
-														<table border='0' cellpadding='0' cellspacing='0' class='btn btn-primary' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box;'>
-															<tbody>
-																<tr>
-																	<td align='left' style='font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;' valign='top'>
-																		<table border='0' cellpadding='0' cellspacing='0' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;'>
-																			<tbody>
-																				<tr>
-																					<td style='font-family: sans-serif; font-size: 14px; vertical-align: top; border-radius: 5px; text-align: center; background: #35C786;' align='center' bgcolor='#35C786' valign='top'>
-																						<a href='%3%' target='_blank' rel='noopener' style='color: #FFFFFF; text-decoration: none; -ms-word-break: break-all; word-break: break-all; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; text-transform: capitalize; background: #35C786; margin: 0; padding: 12px 30px; border: 1px solid #35c786;'>
-																							Kliknutím na tento odkaz přijměte pozvání
-																						</a>
-																					</td>
-																				</tr>
-																			</tbody>
-																		</table>
-																	</td>
-																</tr>
-															</tbody>
-														</table>
-														<p style='max-width: 400px; display: block; color: #392F54; font-family: sans-serif; font-size: 14px; line-height: 20px; font-weight: normal; margin: 15px 0;'>Pokud nemůžete kliknout na odkaz, zkopírujte a vložte tuto adresu URL do okna prohlížeče:</p>
-															<table border='0' cellpadding='0' cellspacing='0'>
-																<tr>
-																	<td style='-ms-word-break: break-all; word-break: break-all; font-family: sans-serif; font-size: 11px; line-height:14px;'>
-																		<font style="-ms-word-break: break-all; word-break: break-all; font-size: 11px; line-height:14px;">
-																			<a style='-ms-word-break: break-all; word-break: break-all; color: #392F54; text-decoration: underline; font-size: 11px; line-height:15px;' href='%3%'>%3%</a>
-																		</font>
-																	</td>
-																</tr>
-															</table>
-														</p>
-													</td>
-												</tr>
-											</table>
-										</td>
-									</tr>
-								</table>
-								<br><br><br>
-							</div>
-						</td>
-						<td style='font-family: sans-serif; font-size: 14px; vertical-align: top;' valign='top'> </td>
-					</tr>
-				</table>
-			</body>
+            <head>
+                <meta name='viewport' content='width=device-width'>
+                <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+            </head>
+            <body class='' style='font-family: sans-serif; -webkit-font-smoothing: antialiased; font-size: 14px; color: #392F54; line-height: 22px; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background: #1d1333; margin: 0; padding: 0;' bgcolor='#1d1333'>
+                <style type='text/css'> @media only screen and (max-width: 620px) {table[class=body] h1 {font-size: 28px !important; margin-bottom: 10px !important; } table[class=body] .wrapper {padding: 32px !important; } table[class=body] .article {padding: 32px !important; } table[class=body] .content {padding: 24px !important; } table[class=body] .container {padding: 0 !important; width: 100% !important; } table[class=body] .main {border-left-width: 0 !important; border-radius: 0 !important; border-right-width: 0 !important; } table[class=body] .btn table {width: 100% !important; } table[class=body] .btn a {width: 100% !important; } table[class=body] .img-responsive {height: auto !important; max-width: 100% !important; width: auto !important; } } .btn-primary table td:hover {background-color: #34495e !important; } .btn-primary a:hover {background-color: #34495e !important; border-color: #34495e !important; } .btn  a:visited {color:#FFFFFF;} </style>
+                <table border="0" cellpadding="0" cellspacing="0" class="body" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #1d1333;" bgcolor="#1d1333">
+                    <tr>
+                        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top; padding: 24px;" valign="top">
+                            <table style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;">
+                                <tr>
+                                    <td background="https://umbraco.com/umbraco/assets/img/application/logo.png" bgcolor="#1d1333" width="28" height="28" valign="top" style="font-family: sans-serif; font-size: 14px; vertical-align: top;">
+                                        <!--[if gte mso 9]> <v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:30px;height:30px;"> <v:fill type="tile" src="https://umbraco.com/umbraco/assets/img/application/logo.png" color="#1d1333" /> <v:textbox inset="0,0,0,0"> <![endif]-->
+                                        <div> </div>
+                                        <!--[if gte mso 9]> </v:textbox> </v:rect> <![endif]-->
+                                    </td>
+                                    <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <table border='0' cellpadding='0' cellspacing='0' class='body' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #1d1333;' bgcolor='#1d1333'>
+                    <tr>
+                        <td style='font-family: sans-serif; font-size: 14px; vertical-align: top;' valign='top'> </td>
+                        <td class='container' style='font-family: sans-serif; font-size: 14px; vertical-align: top; display: block; max-width: 560px; width: 560px; margin: 0 auto; padding: 10px;' valign='top'>
+                            <div class='content' style='box-sizing: border-box; display: block; max-width: 560px; margin: 0 auto; padding: 10px;'>
+                                <br>
+                                <table class='main' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; border-radius: 3px; background: #FFFFFF;' bgcolor='#FFFFFF'>
+                                    <tr>
+                                        <td class='wrapper' style='font-family: sans-serif; font-size: 14px; vertical-align: top; box-sizing: border-box; padding: 50px;' valign='top'>
+                                            <table border='0' cellpadding='0' cellspacing='0' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;'>
+                                                <tr>
+                                                    <td style='line-height: 24px; font-family: sans-serif; font-size: 14px; vertical-align: top;' valign='top'>
+                                                        <h1 style='color: #392F54; font-family: sans-serif; font-weight: bold; line-height: 1.4; font-size: 24px; text-align: left; text-transform: capitalize; margin: 0 0 30px;' align='left'>
+                                                            Zdravím Vás, %0%,
+                                                        </h1>
+                                                        <p style='color: #392F54; font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0 0 15px;'>
+                                                            Byli jste pozváni <a href="mailto:%4%" style="text-decoration: underline; color: #392F54; -ms-word-break: break-all; word-break: break-all;">%1%</a> do CMS Umbraco.
+                                                        </p>
+                                                        <p style='color: #392F54; font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0 0 15px;'>
+                                                            Zpráva od <a href="mailto:%1%" style="text-decoration: none; color: #392F54; -ms-word-break: break-all; word-break: break-all;">%1%</a>:
+                                                            <br/>
+                                                            <em>%2%</em>
+                                                        </p>
+                                                        <table border='0' cellpadding='0' cellspacing='0' class='btn btn-primary' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box;'>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td align='left' style='font-family: sans-serif; font-size: 14px; vertical-align: top; padding-bottom: 15px;' valign='top'>
+                                                                        <table border='0' cellpadding='0' cellspacing='0' style='border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: auto;'>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td style='font-family: sans-serif; font-size: 14px; vertical-align: top; border-radius: 5px; text-align: center; background: #35C786;' align='center' bgcolor='#35C786' valign='top'>
+                                                                                        <a href='%3%' target='_blank' rel='noopener' style='color: #FFFFFF; text-decoration: none; -ms-word-break: break-all; word-break: break-all; border-radius: 5px; box-sizing: border-box; cursor: pointer; display: inline-block; font-size: 14px; font-weight: bold; text-transform: capitalize; background: #35C786; margin: 0; padding: 12px 30px; border: 1px solid #35c786;'>
+                                                                                            Kliknutím na tento odkaz přijměte pozvání
+                                                                                        </a>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                        <p style='max-width: 400px; display: block; color: #392F54; font-family: sans-serif; font-size: 14px; line-height: 20px; font-weight: normal; margin: 15px 0;'>Pokud nemůžete kliknout na odkaz, zkopírujte a vložte tuto adresu URL do okna prohlížeče:</p>
+                                                            <table border='0' cellpadding='0' cellspacing='0'>
+                                                                <tr>
+                                                                    <td style='-ms-word-break: break-all; word-break: break-all; font-family: sans-serif; font-size: 11px; line-height:14px;'>
+                                                                        <font style="-ms-word-break: break-all; word-break: break-all; font-size: 11px; line-height:14px;">
+                                                                            <a style='-ms-word-break: break-all; word-break: break-all; color: #392F54; text-decoration: underline; font-size: 11px; line-height:15px;' href='%3%'>%3%</a>
+                                                                        </font>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                        </p>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <br><br><br>
+                            </div>
+                        </td>
+                        <td style='font-family: sans-serif; font-size: 14px; vertical-align: top;' valign='top'> </td>
+                    </tr>
+                </table>
+            </body>
     </html>]]></key>
-    <key alias="invite">Pozvat</key>
     <key alias="defaultInvitationMessage">Zasílám pozvání...</key>
     <key alias="deleteUser">Smazat uživatele</key>
     <key alias="deleteUserConfirmation">Opravdu chcete smazat tento uživatelský účet?</key>
@@ -1979,110 +1901,62 @@
   </area>
   <area alias="healthcheck">
     <!-- The following keys get these tokens passed in:
-	     0: Current value
-		   1: Recommended value
-		   2: XPath
-		   3: Configuration file path
-	  -->
+         0: Current value
+           1: Recommended value
+           2: XPath
+           3: Configuration file path
+      -->
     <key alias="checkSuccessMessage">Hodnota je nastavena na doporučenou hodnotu: '%0%'.</key>
-    <key alias="rectifySuccessMessage">Hodnota byla nastavena na '%1%' pro XPath '%2%' v konfiguračním souboru '%3%'.</key>
     <key alias="checkErrorMessageDifferentExpectedValue">Očekávaná hodnota '%1%' pro '%2%' v konfiguračním souboru '%3%', ale nalezeno '%0%'.</key>
     <key alias="checkErrorMessageUnexpectedValue">Nalezena neočekávaná hodnota '%0%' pro '%2%' v konfiguračním souboru '%3%'.</key>
     <!-- The following keys get these tokens passed in:
-	     0: Current value
-		   1: Recommended value
-	  -->
-    <key alias="customErrorsCheckSuccessMessage">Vlastní chyby jsou nastaveny na '%0%'.</key>
-    <key alias="customErrorsCheckErrorMessage">Vlastní chyby jsou aktuálně nastaveny na '%0%'. Před nasazením se doporučuje nastavit na '%1%'.</key>
-    <key alias="customErrorsCheckRectifySuccessMessage">Vlastní chyby byly úspěšně nastaveny na '%0%'.</key>
+         0: Current value
+           1: Recommended value
+      -->
     <key alias="macroErrorModeCheckSuccessMessage">MacroErrors jsou nastaveny na '%0%'.</key>
     <key alias="macroErrorModeCheckErrorMessage">MakroErrors jsou nastaveny na '%0%', což zabrání úplnému načtení některých nebo všech stránek na vašem webu, pokud dojde k chybám v makrech. Náprava nastaví hodnotu na '%1%'.</key>
-    <key alias="macroErrorModeCheckRectifySuccessMessage">MakroErrors jsou nyní nastaveny na '%0%'.</key>
     <!-- The following keys get these tokens passed in:
-	     0: Current value
-		   1: Recommended value
-		   2: Server version
-	  -->
-    <key alias="trySkipIisCustomErrorsCheckSuccessMessage">Try Skip IIS Custom Errors je nastaveno na '%0%' a používáte verzi IIS '%1%'.</key>
-    <key alias="trySkipIisCustomErrorsCheckErrorMessage">Try Skip IIS Custom Errors je aktuálně nastaveno na '%0%'. Doporučuje se nastavit %1% pro vaši verzi služby IIS (%2%).</key>
-    <key alias="trySkipIisCustomErrorsCheckRectifySuccessMessage">Try Skip IIS Custom Errors úspěšně nastaveno na '%0%'.</key>
+         0: Current value
+           1: Recommended value
+           2: Server version
+      -->
     <!-- The following keys get predefined tokens passed in that are not all the same, like above -->
-    <key alias="configurationServiceFileNotFound">Soubor neexistuje: '%0%'.</key>
-    <key alias="configurationServiceNodeNotFound"><![CDATA[Nelze najít <strong>'% 0%'</strong> v konfiguračním souboru <strong>'% 1%'</strong>.]]></key>
-    <key alias="configurationServiceError">Došlo k chybě, zkontrolujte ji v logu: %0%.</key>
-    <key alias="databaseSchemaValidationCheckDatabaseOk">Databáze - Databázové schéma je pro tuto verzi Umbraco správné</key>
-    <key alias="databaseSchemaValidationCheckDatabaseErrors">Bylo zjištěno %0% problémů se schématem vaší databáze (podrobnosti najdete v logu)</key>
-    <key alias="databaseSchemaValidationCheckDatabaseLogMessage">Při ověřování databázového schématu vůči aktuální verzi Umbraco byly zjištěny některé chyby.</key>
     <key alias="httpsCheckValidCertificate">Certifikát vašeho webu je platný.</key>
     <key alias="httpsCheckInvalidCertificate">Chyba ověření certifikátu: '%0%'</key>
     <key alias="httpsCheckExpiredCertificate">Platnost SSL certifikátu vašeho webu vypršela.</key>
     <key alias="httpsCheckExpiringCertificate">Platnost certifikátu SSL vašeho webu vyprší za %0% dní.</key>
     <key alias="healthCheckInvalidUrl">Chyba při pingování adresy URL %0% - '%1%'</key>
     <key alias="httpsCheckIsCurrentSchemeHttps">Aktuálně prohlížíte web pomocí schématu HTTPS.</key>
-    <key alias="httpsCheckConfigurationRectifyNotPossible">AppSetting 'Umbraco.Core.UseHttps' je v souboru web.config nastaven na 'false'. Jakmile vstoupíte na tento web pomocí schématu HTTPS, mělo by být nastaveno na 'true'.</key>
-    <key alias="httpsCheckConfigurationCheckResult">AppSetting 'Umbraco.Core.UseHttps' je v souboru web.config nastaven na '%0%', vaše cookies %1% jsou označeny jako zabezpečené.</key>
-    <key alias="httpsCheckEnableHttpsError">V souboru web.config se nepodařilo aktualizovat nastavení 'Umbraco.Core.UseHttps'. Chyba: %0%</key>
     <!-- The following keys don't get tokens passed in -->
-    <key alias="httpsCheckEnableHttpsButton">Povolit HTTPS</key>
-    <key alias="httpsCheckEnableHttpsDescription">Nastaví nastavení umbracoSSL na true v appSettings v souboru web.config.</key>
-    <key alias="httpsCheckEnableHttpsSuccess">AppSetting 'Umbraco.Core.UseHttps' je nyní nastaveno na 'true' v souboru web.config, vaše cookies budou označeny jako zabezpečené.</key>
-    <key alias="rectifyButton">Fix</key>
-    <key alias="cannotRectifyShouldNotEqual">Nelze opravit kontrolu pro porovnání hodnot pomocí 'ShouldNotEqual'.</key>
-    <key alias="cannotRectifyShouldEqualWithValue">Nelze opravit kontrolu pro porovnání hodnot pomocí  'ShouldEqual' s poskytnutou hodnotou.</key>
-    <key alias="valueToRectifyNotProvided">Hodnota k opravě nebyla poskytnuta.</key>
     <key alias="compilationDebugCheckSuccessMessage">Režim kompilace ladění je zakázán.</key>
     <key alias="compilationDebugCheckErrorMessage">Režim ladění je aktuálně povolen. Před spuštěním webu se doporučuje toto nastavení deaktivovat.</key>
-    <key alias="compilationDebugCheckRectifySuccessMessage">Režim ladění byl úspěšně deaktivován.</key>
-    <key alias="traceModeCheckSuccessMessage">Režim sledování je deaktivován.</key>
-    <key alias="traceModeCheckErrorMessage">Režim sledování je aktuálně povolen. Před spuštěním se doporučuje toto nastavení deaktivovat.</key>
-    <key alias="traceModeCheckRectifySuccessMessage">Režim sledování byl úspěšně deaktivován.</key>
-    <key alias="folderPermissionsCheckMessage">Všechny složky mají nastavena správná oprávnění.</key>
     <!-- The following keys get these tokens passed in:
-	    0: Comma delimitted list of failed folder paths
-  	-->
-    <key alias="requiredFolderPermissionFailed"><![CDATA[Následující složky musí být nastaveny s oprávněním k úpravám, ale nelze k nim přistupovat: <strong>%0%</strong>.]]></key>
-    <key alias="optionalFolderPermissionFailed"><![CDATA[Následující složky musí být nastaveny s oprávněními k úpravám, aby některé operace Umbraco fungovaly, ale nemohly být přístupné: <strong>%0%</strong>. Pokud nejsou psány, není třeba podniknout žádné kroky.]]></key>
-    <key alias="filePermissionsCheckMessage">Všechny soubory mají nastavena správná oprávnění.</key>
+        0: Comma delimitted list of failed folder paths
+    -->
     <!-- The following keys get these tokens passed in:
-	    0: Comma delimitted list of failed folder paths
-  	-->
-    <key alias="requiredFilePermissionFailed"><![CDATA[Následující soubory musí být nastaveny s právy pro zápis, ale nelze k nim získat přístup: <strong>%0%</strong>.]]></key>
-    <key alias="optionalFilePermissionFailed"><![CDATA[Následující soubory musí být nastaveny s oprávněními pro zápis, aby určité operace Umbraco fungovaly, ale nemohly být přístupné: <strong>%0%</strong>. Pokud nejsou psány, není třeba podniknout žádné kroky.]]></key>
+        0: Comma delimitted list of failed folder paths
+    -->
     <key alias="clickJackingCheckHeaderFound"><![CDATA[Bylo nalezeno záhlaví nebo metaznačka <strong>X-Frame-Options</strong>, které určuje, zda může být obsah webu zobrazen na jiném webu pomocí IFRAME.]]></key>
     <key alias="clickJackingCheckHeaderNotFound"><![CDATA[Nebylo nalezeno záhlaví nebo metaznačka <strong>X-Frame-Options</strong>, které určuje, zda může být obsah webu zobrazen na jiném webu pomocí IFRAME.]]></key>
-    <key alias="setHeaderInConfig">Nastavit záhlaví v Konfiguraci</key>
-    <key alias="clickJackingSetHeaderInConfigDescription">Přidá hodnotu do sekce httpProtocol/customHeaders do web.config, aby se zabránilo tomu, že web může být zobrazen na jiném webu pomocí IFRAME.</key>
-    <key alias="clickJackingSetHeaderInConfigSuccess">Do souboru web.config bylo přidáno nastavení pro vytvoření záhlaví, které zabrání jinému webu, zobrazit tento web pomocí IFRAME.</key>
-    <key alias="setHeaderInConfigError">Nelze aktualizovat soubor web.config. Chyba: %0%</key>
     <key alias="noSniffCheckHeaderFound"><![CDATA[Bylo nalezeno záhlaví nebo metaznačka <strong>X-Content-Type-Options</strong> použitá k ochraně před zranitelnostmi čichání MIME.]]></key>
     <key alias="noSniffCheckHeaderNotFound"><![CDATA[Záhlaví nebo metaznačky <strong>X-Content-Type-Options</strong> použité k ochraně před zranitelnostmi čichání MIME nebyly nalezeny.]]></key>
-    <key alias="noSniffSetHeaderInConfigDescription">Přidá hodnotu do sekce httpProtocol/customHeaders v souboru web.config, která chrání před zranitelnostmi MIME.</key>
-    <key alias="noSniffSetHeaderInConfigSuccess">Do souboru web.config bylo přidáno nastavení pro vytvoření záhlaví, které chrání před zranitelnostmi MIME.</key>
     <key alias="hSTSCheckHeaderFound"><![CDATA[Záhlaví <strong>Strict-Transport-Security</strong>, také známo jako HSTS-header, bylo nalezeno.]]></key>
     <key alias="hSTSCheckHeaderNotFound"><![CDATA[záhlaví <strong>Strict-Transport-Security</strong> nebylo nalezeno.]]></key>
-    <key alias="hSTSSetHeaderInConfigDescription">Do sekce httpProtocol/customHeaders v souboru web.config přidá záhlaví 'Strict-Transport-Security' s hodnotou 'max-age = 10886400'. Tuto opravu použijte pouze v případě, že vaše domény budou spuštěny s https po dobu příštích 18 týdnů (minimálně).</key>
-    <key alias="hSTSSetHeaderInConfigSuccess">Do vašeho souboru web.config bylo přidáno záhlaví HSTS.</key>
     <key alias="xssProtectionCheckHeaderFound"><![CDATA[Záhlaví <strong>X-XSS-Protection</strong> bylo nalezeno.]]></key>
     <key alias="xssProtectionCheckHeaderNotFound"><![CDATA[Záhlaví <strong>X-XSS-Protection</strong> bylo nalezeno.]]></key>
-    <key alias="xssProtectionSetHeaderInConfigDescription">Přidá záhlaví 'X-XSS-Protection' s hodnotou '1; mode=block' do sekce httpProtocol/customHeaders v souboru web.config. </key>
-    <key alias="xssProtectionSetHeaderInConfigSuccess">Záhlaví X-XSS-Protection bylo přidáno do vašeho souboru web.config.</key>
     <!-- The following key get these tokens passed in:
-	    0: Comma delimitted list of headers found
-  	-->
+        0: Comma delimitted list of headers found
+    -->
     <key alias="excessiveHeadersFound"><![CDATA[Byly nalezeny následující záhlaví odhalující informace o technologii webových stránek: <strong>%0%</strong>.]]></key>
     <key alias="excessiveHeadersNotFound">Nebyly nalezeny žádné hlavičky odhalující informace o technologii webových stránek.</key>
-    <key alias="smtpMailSettingsNotFound">V souboru Web.config nelze najít system.net/mailsettings.</key>
-    <key alias="smtpMailSettingsHostNotConfigured">V části system.net/mailsettings v souboru web.config není hostitel nakonfigurován.</key>
     <key alias="smtpMailSettingsConnectionSuccess">Nastavení SMTP jsou správně nakonfigurována a služba funguje jak má.</key>
-    <key alias="smtpMailSettingsConnectionFail">Server SMTP konfigurovaný s hostitelem '%0%' a portem '%1%' nelze nalézt. Zkontrolujte prosím, zda jsou nastavení SMTP v souboru Web.config a v sekci system.net/mailsettings správná.</key>
     <key alias="notificationEmailsCheckSuccessMessage"><![CDATA[E-mail s upozorněním byl nastaven na <strong>%0%</strong>.]]></key>
     <key alias="notificationEmailsCheckErrorMessage"><![CDATA[E-mail s oznámením je stále nastaven na výchozí hodnotu <strong>%0%</strong>.]]></key>
     <key alias="scheduledHealthCheckEmailBody"><![CDATA[<html><body><p>Výsledky plánovaných kontrol Umbraco Health Checks provedených na %0% v %1% jsou následující:</p>%2%</body></html>]]></key>
     <key alias="scheduledHealthCheckEmailSubject">Stav Umbraco Health Check: %0%</key>
-    <key alias="checkAllGroups">Zkontrolovat všechny skupiny</key>
     <key alias="checkGroup">Zkontrolovat skupinu</key>
     <key alias="helpText">
-        <![CDATA[
+      <![CDATA[
         <p>Kontrola vyhodnocuje různé oblasti vašeho webu z hlediska nastavení osvědčených postupů, konfigurace, potenciálních problémů atd. Problémy lze snadno vyřešit stisknutím tlačítka. Můžete přidat své vlastní kontroly, podívejte se na <a href="https://our.umbraco.com/documentation/Extending/Healthcheck/" target="_blank" rel="noopener" class="btn-link -underline">dokumentaci pro více informací</a> o vlastních kontrolách.</p>
         ]]>
     </key>
@@ -2097,7 +1971,6 @@
     <key alias="panelInformation">Na tuto položku obsahu přesměrovávají následující adresy URL:</key>
     <key alias="noRedirects">Nebyla provedena žádná přesměrování</key>
     <key alias="noRedirectsDescription">Jakmile bude publikovaná stránka přejmenována nebo přesunuta, bude automaticky provedeno přesměrování na novou stránku.</key>
-    <key alias="confirmRemove">Opravdu chcete odstranit přesměrování z '%0%' na '%1%'?</key>
     <key alias="redirectRemoved">Přesměrování bylo odstraněno.</key>
     <key alias="redirectRemoveError">Chyba při odebírání URL přesměrování.</key>
     <key alias="redirectRemoveWarning">Toto odstraní přesměrování</key>
@@ -2183,45 +2056,42 @@
     <key alias="tabName">Závislosti</key>
     <key alias="DataTypeNoReferences">Tento datový typ nemá žádné závislosti.</key>
     <key alias="labelUsedByDocumentTypes">Použito v dokumentových typech</key>
-    <key alias="noDocumentTypes">Žádné vazby na typy dokumentů.</key>
     <key alias="labelUsedByMediaTypes">Použito v typech médií</key>
-    <key alias="noMediaTypes">Žádné vazby na typy médií.</key>
     <key alias="labelUsedByMemberTypes">Použito v typech členů</key>
-    <key alias="noMemberTypes">Žádné vazby na typy členů.</key>
     <key alias="usedByProperties">Použito v </key>
     <key alias="labelUsedByDocuments">Použito v dokumentech</key>
     <key alias="labelUsedByMembers">Použito ve členech</key>
     <key alias="labelUsedByMedia">Použito v médiích</key>
   </area>
   <area alias="logViewer">
-      <key alias="logLevels">Úrovně logování</key>
-      <key alias="selectAllLogLevelFilters">Vybrat vše</key>
-      <key alias="deselectAllLogLevelFilters">Odznačit vše</key>
-      <key alias="savedSearches">Uložená vyhledávání</key>
-      <key alias="totalItems">Celkem položek</key>
-      <key alias="timestamp">Časové razítko</key>
-      <key alias="level">Úroveň</key>
-      <key alias="machine">Stroj</key>
-      <key alias="message">Zpráva</key>
-      <key alias="exception">Výjimka</key>
-      <key alias="properties">Vlastnosti</key>
-      <key alias="searchWithGoogle">Vyhledat na Googlu</key>
-      <key alias="searchThisMessageWithGoogle">Vyhledat zprávu na Googlu</key>
-      <key alias="searchWithBing">Vyhledat na Bing</key>
-      <key alias="searchThisMessageWithBing">Vyhledat zprávu na Bing</key>
-      <key alias="searchOurUmbraco">Prohledat naše Umbraco</key>
-      <key alias="searchThisMessageOnOurUmbracoForumsAndDocs">Vyhledat tuto zprávu na našich fórech a dokumentech Umbraco</key>
-      <key alias="searchOurUmbracoWithGoogle">Vyhledat Our Umbraco na Googlu</key>
-      <key alias="searchOurUmbracoForumsUsingGoogle">Prohledat Our Umbraco fóra pomocí Googlu</key>
-      <key alias="searchUmbracoSource">Prohledat Umbraco Source</key>
-      <key alias="searchWithinUmbracoSourceCodeOnGithub">Vyhledat ve zdrojovém kódu Umbraco na Github</key>
-      <key alias="searchUmbracoIssues">Prohledat Umbraco Issues</key>
-      <key alias="searchUmbracoIssuesOnGithub">Prohledat Umbraco Issues na Github</key>
-      <key alias="deleteThisSearch">Smazat toto vyhledávání</key>
-      <key alias="findLogsWithRequestId">Najít logy s ID požadavku</key>
-      <key alias="findLogsWithNamespace">Najít logy se jmenným prostorem</key>
-      <key alias="findLogsWithMachineName">Najít logy s názvem stroje</key>
-      <key alias="open">Otevřít</key>
+    <key alias="logLevels">Úrovně logování</key>
+    <key alias="selectAllLogLevelFilters">Vybrat vše</key>
+    <key alias="deselectAllLogLevelFilters">Odznačit vše</key>
+    <key alias="savedSearches">Uložená vyhledávání</key>
+    <key alias="totalItems">Celkem položek</key>
+    <key alias="timestamp">Časové razítko</key>
+    <key alias="level">Úroveň</key>
+    <key alias="machine">Stroj</key>
+    <key alias="message">Zpráva</key>
+    <key alias="exception">Výjimka</key>
+    <key alias="properties">Vlastnosti</key>
+    <key alias="searchWithGoogle">Vyhledat na Googlu</key>
+    <key alias="searchThisMessageWithGoogle">Vyhledat zprávu na Googlu</key>
+    <key alias="searchWithBing">Vyhledat na Bing</key>
+    <key alias="searchThisMessageWithBing">Vyhledat zprávu na Bing</key>
+    <key alias="searchOurUmbraco">Prohledat naše Umbraco</key>
+    <key alias="searchThisMessageOnOurUmbracoForumsAndDocs">Vyhledat tuto zprávu na našich fórech a dokumentech Umbraco</key>
+    <key alias="searchOurUmbracoWithGoogle">Vyhledat Our Umbraco na Googlu</key>
+    <key alias="searchOurUmbracoForumsUsingGoogle">Prohledat Our Umbraco fóra pomocí Googlu</key>
+    <key alias="searchUmbracoSource">Prohledat Umbraco Source</key>
+    <key alias="searchWithinUmbracoSourceCodeOnGithub">Vyhledat ve zdrojovém kódu Umbraco na Github</key>
+    <key alias="searchUmbracoIssues">Prohledat Umbraco Issues</key>
+    <key alias="searchUmbracoIssuesOnGithub">Prohledat Umbraco Issues na Github</key>
+    <key alias="deleteThisSearch">Smazat toto vyhledávání</key>
+    <key alias="findLogsWithRequestId">Najít logy s ID požadavku</key>
+    <key alias="findLogsWithNamespace">Najít logy se jmenným prostorem</key>
+    <key alias="findLogsWithMachineName">Najít logy s názvem stroje</key>
+    <key alias="open">Otevřít</key>
   </area>
   <area alias="clipboard">
     <key alias="labelForCopyAllEntries">Kopírovat %0%</key>
@@ -2232,27 +2102,26 @@
     <key alias="tooltipForPropertyActionsMenu">Otevřít akce vlastností</key>
   </area>
   <area alias="nuCache">
-    <key alias="wait">Čekejte</key>
     <key alias="refreshStatus">Stav obnovení</key>
     <key alias="memoryCache">Cache paměť</key>
     <key alias="memoryCacheDescription">
-        <![CDATA[
+      <![CDATA[
             Toto tlačítko umožňuje znovu načíst mezipaměť úplným opětovným načtením z databáze (ale tato mezipaměť databáze nebude znovu vytvořena). To je poměrně rychlé. Použijte jej, pokud si myslíte, že mezipaměť paměti nebyla po některých událostech správně obnovena - což by naznačovalo menší problém Umbraco. (poznámka: spustí opětovné načtení na všech serverech v prostředí LB).
     ]]>
     </key>
     <key alias="reload">Znovu načíst</key>
     <key alias="databaseCache">Cache databáze</key>
     <key alias="databaseCacheDescription">
-        <![CDATA[
+      <![CDATA[
     Toto tlačítko umožňuje znovu vytvořit mezipaměť databáze, tj. obsah tabulky cmsContentNu. <strong>Znovuvytvoření může být náročné.</strong> Použijte jej, když nestačí obnovení stránky, a domníváte se, že mezipaměť databáze nebyla správně vygenerována - což by naznačovalo možný kritický problém Umbraco.
     ]]>
     </key>
     <key alias="rebuild">Obnovit</key>
     <key alias="internals">Internals</key>
     <key alias="internalsDescription">
-        <![CDATA[
+      <![CDATA[
     Toto tlačítko umožňuje spustit kolekci snímků NuCache (po spuštění fullCLR GC).
-     Pokud nevíte, co to znamená, pravděpodobně to <em>nebudete</em> muset používat.
+     Pokud nevíte, co to znamená, pravděpodobně to <em>nebudete</em> muset používat.
     ]]>
     </key>
     <key alias="collect">Sběr</key>
@@ -2262,34 +2131,17 @@
   <area alias="profiling">
     <key alias="performanceProfiling">Profilování výkonu</key>
     <key alias="performanceProfilingDescription">
-        <![CDATA[
+      <![CDATA[
                 <p> Umbraco aktuálně běží v režimu ladění. To znamená, že můžete použít vestavěný profiler výkonu k vyhodnocení výkonu při vykreslování stránek. </p> <p> Pokud chcete aktivovat profiler pro konkrétní vykreslení stránky, jednoduše při požadavku na stránku jednoduše přidejte <b>umbDebug=true</b> do URL.</p> <p> Pokud chcete, aby byl profiler ve výchozím nastavení aktivován pro všechna vykreslení stránky, můžete použít přepínač níže. Ve vašem prohlížeči nastaví soubor cookie, který automaticky aktivuje profiler. Jinými slovy, profiler bude ve výchozím nastavení aktivní pouze ve <i> vašem </i> prohlížeči, ne v ostatních. </p>
         ]]>
     </key>
     <key alias="activateByDefault">Ve výchozím stavu aktivovat profiler</key>
     <key alias="reminder">Přátelské připomenutí</key>
-    <key alias="reminderDescription">
-        <![CDATA[
-            <p>
-                Nikdy byste neměli nechat produkční web běžet v režimu ladění. Režim ladění je vypnut nastavením <b> debug="false" </b> na elementu <b>compilation</b> v souboru web.config.
-            </p>
-        ]]>
-    </key>
-    <key alias="profilerEnabledDescription">
-        <![CDATA[
-            <p>
-                Umbraco v současné době neběží v režimu ladění, takže nemůžete použít vestavěný profiler. Takto by to mělo být pro produkční web.
-            </p>
-            <p>
-                Režim ladění je zapnut nastavením <b> debug="true" </b> na elementu <b> compilation </b> v souboru web.config.
-            </p>
-        ]]>
-    </key>
   </area>
   <area alias="settingsDashboardVideos">
     <key alias="trainingHeadline">Hodiny tréninkových videí Umbraco jsou blíž než si myslíte</key>
     <key alias="trainingDescription">
-        <![CDATA[
+      <![CDATA[
         <p> Chcete ovládnout Umbraco? Stačí strávit pár minut sledování jednoho z těchto videí o používání Umbraco. Nebo navštivte <a href="http://umbraco.tv" target="_blank" rel="noopener">umbraco.tv</a>, kde najdete ještě více videí o Umbraco </p>
     ]]>
     </key>
@@ -2300,27 +2152,27 @@
     <key alias="startDescription">Tato část obsahuje stavební bloky pro váš web Umbraco. Podle níže uvedených odkazů se dozvíte více o práci s položkami v části Nastavení</key>
     <key alias="more">Zjistit více</key>
     <key alias="bulletPointOne">
-        <![CDATA[
+      <![CDATA[
             Další informace o práci s položkami naleznete v části Nastavení <a class="btn-link -underline" href="https://our.umbraco.com/documentation/Getting-Started/Backoffice/Sections/" target="_blank" rel="noopener">v sekci Dokumentace</a> v Our Umbraco
         ]]>
     </key>
     <key alias="bulletPointTwo">
-        <![CDATA[
+      <![CDATA[
             Zeptejte se na <a class="btn-link -underline" href="https://our.umbraco.com/forum" target="_blank" rel="noopener">fóru komunity</a>
         ]]>
     </key>
     <key alias="bulletPointThree">
-        <![CDATA[
+      <![CDATA[
             Podívejte se na naše <a class="btn-link -underline" href="https://umbraco.tv" target="_blank" rel="noopener">výuková videa</a> (některá jsou zdarma, jiná vyžadují předplatné)
         ]]>
     </key>
     <key alias="bulletPointFour">
-        <![CDATA[
+      <![CDATA[
             Další informace o našich <a class="btn-link -underline" href="https://umbraco.com/products/" target="_blank" rel="noopener">nástrojích zvyšujících produktivitu a komerční podpoře</a>
         ]]>
     </key>
     <key alias="bulletPointFive">
-        <![CDATA[
+      <![CDATA[
             Zjistěte více o možnostech <a class="btn-link -underline" href="https://umbraco.com/training" target="_blank" rel="noopener">školení a certifikace</a>
         ]]>
     </key>
@@ -2328,7 +2180,7 @@
   <area alias="startupDashboard">
     <key alias="fallbackHeadline">Vítejte v přátelském CMS</key>
     <key alias="fallbackDescription">Děkujeme, že jste si vybrali Umbraco - myslíme si, že by to mohl být začátek něčeho krásného. I když se to může zpočátku zdát ohromující, udělali jsme hodně pro to, aby byla křivka učení co nejhladší a nejrychlejší.</key>
-  </area>  
+  </area>
   <area alias="formsDashboard">
     <key alias="formsHeadline">Umbraco formuláře</key>
     <key alias="formsDescription">Vytvářejte formuláře pomocí intuitivního rozhraní drag and drop. Od jednoduchých kontaktních formulářů, které odesílají e-maily, až po pokročilé dotazníky, které se integrují do systémů CRM. Vaši klienti to budou milovat!</key>

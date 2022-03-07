@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Moq;
 using NUnit.Framework;
-using Umbraco.Core.Cache;
+using Umbraco.Cms.Core.Cache;
 using UrlTracker.Core.Domain;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Resources.Testing;

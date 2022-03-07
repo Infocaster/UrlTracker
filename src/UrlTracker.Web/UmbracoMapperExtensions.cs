@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Web;
-using Umbraco.Core.Mapping;
+using Microsoft.AspNetCore.Http;
+using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
 
@@ -12,18 +12,18 @@ namespace UrlTracker.Web
         const string _httpContextKey = "ic:urltracker:httpcontext";
 
         [ExcludeFromCodeCoverage]
-        public static void SetHttpContext(this MapperContext context, HttpContextBase httpContext)
+        public static void SetHttpContext(this MapperContext context, HttpContext httpContext)
         {
             context.Items[_httpContextKey] = httpContext;
         }
 
         [ExcludeFromCodeCoverage]
-        public static HttpContextBase GetHttpContext(this MapperContext context)
+        public static HttpContext GetHttpContext(this MapperContext context)
         {
-            return context.Items.TryGetValue(_httpContextKey, out var httpContext) ? httpContext as HttpContextBase : null;
+            return context.Items.TryGetValue(_httpContextKey, out var httpContext) ? httpContext as HttpContext : null;
         }
 
-        public static Url MapToUrl(this UmbracoMapper mapper, ShallowRedirect redirect, HttpContextBase httpContext)
+        public static Url MapToUrl(this IUmbracoMapper mapper, ShallowRedirect redirect, HttpContext httpContext)
         {
             if (httpContext is null)
             {
@@ -37,7 +37,7 @@ namespace UrlTracker.Web
         }
 
 
-        public static Url MapToUrl(this MapperContext context, ShallowRedirect redirect, HttpContextBase httpContext)
+        public static Url MapToUrl(this MapperContext context, ShallowRedirect redirect, HttpContext httpContext)
         {
             if (httpContext is null)
             {

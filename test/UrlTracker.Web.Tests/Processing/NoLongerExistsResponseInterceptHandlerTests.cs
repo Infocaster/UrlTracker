@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Moq;
 using NUnit.Framework;
+using Umbraco.Cms.Core.Web;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Resources.Testing;
@@ -16,7 +18,7 @@ namespace UrlTracker.Web.Tests.Processing
 
         public override void SetUp()
         {
-            _testSubject = new NoLongerExistsResponseInterceptHandler(CompleteRequestAbstraction);
+            _testSubject = new NoLongerExistsResponseInterceptHandler(ResponseAbstraction, UmbracoContextFactoryAbstractionMock.UmbracoContextFactory);
         }
 
         public static IEnumerable<TestCaseData> TestCases()
@@ -34,19 +36,20 @@ namespace UrlTracker.Web.Tests.Processing
         {
             // arrange
             HttpContextMock.ResponseMock.SetupProperty(obj => obj.StatusCode, initialStatusCode);
+            UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetResponseCode()).Returns(initialStatusCode);
             if (expectedStatusCode != initialStatusCode)
             {
-                HttpContextMock.ResponseMock.Setup(obj => obj.Clear()).Verifiable();
-                CompleteRequestAbstractionMock.Setup(obj => obj.CompleteRequest(HttpContextMock.Context)).Verifiable();
+                ResponseAbstractionMock.Setup(obj => obj.Clear(HttpContextMock.Response)).Verifiable();
             }
             var input = new InterceptBase<UrlTrackerShallowClientError>(notFound);
+            bool nextIsCalled = false;
 
             // act
-            await _testSubject.HandleAsync(HttpContextMock.Context, input);
+            await _testSubject.HandleAsync(context => Task.FromResult(nextIsCalled = true), HttpContextMock.Context, input);
 
             // assert
             HttpContextMock.ResponseMock.Verify();
-            CompleteRequestAbstractionMock.Verify();
+            ResponseAbstractionMock.Verify();
             Assert.That(HttpContextMock.Response.StatusCode, Is.EqualTo(expectedStatusCode));
         }
     }

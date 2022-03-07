@@ -1,38 +1,42 @@
 ﻿using System.Threading.Tasks;
-using System.Web;
+using Microsoft.AspNetCore.Http;
+using Umbraco.Cms.Core.Web;
+using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Database.Models;
-using UrlTracker.Web.Abstractions;
+using UrlTracker.Web.Abstraction;
 
 namespace UrlTracker.Web.Processing
 {
     public class NoLongerExistsResponseInterceptHandler
         : ResponseInterceptHandlerBase<UrlTrackerShallowClientError>
     {
-        private readonly ICompleteRequestAbstraction _completeRequestAbstraction;
+        private readonly IResponseAbstraction _responseAbstraction;
+        private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactory;
 
-        public NoLongerExistsResponseInterceptHandler(ICompleteRequestAbstraction completeRequestAbstraction)
+        public NoLongerExistsResponseInterceptHandler(IResponseAbstraction responseAbstraction, IUmbracoContextFactoryAbstraction umbracoContextFactory)
         {
-            _completeRequestAbstraction = completeRequestAbstraction;
+            _responseAbstraction = responseAbstraction;
+            _umbracoContextFactory = umbracoContextFactory;
         }
 
-        protected override ValueTask HandleAsync(HttpContextBase context, UrlTrackerShallowClientError intercept)
+        protected override async ValueTask HandleAsync(RequestDelegate next, HttpContext context, UrlTrackerShallowClientError intercept)
         {
-            if (!ShouldRedirect(context))
+            if (ShouldRedirect(context))
             {
-                return new ValueTask();
+                var response = context.Response;
+                response.Clear(_responseAbstraction);
+                response.StatusCode = 410;
+                await context.Response.CompleteAsync();
+                return;
             }
 
-            var response = context.Response;
-            response.Clear();
-            response.StatusCode = 410;
-            context.CompleteRequest(_completeRequestAbstraction);
-
-            return new ValueTask();
+            await next(context);
         }
 
-        private bool ShouldRedirect(HttpContextBase context)
+        private bool ShouldRedirect(HttpContext context)
         {
-            return context.Response.StatusCode >= 400;
+            using var cref = _umbracoContextFactory.EnsureUmbracoContext();
+            return cref.GetResponseCode() >= 400;
         }
     }
 }

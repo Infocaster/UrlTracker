@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Umbraco.Core.Models;
-using Umbraco.Core.Models.PublishedContent;
-using Umbraco.Core.Services;
-using Umbraco.Web;
+using Microsoft.Extensions.Options;
+using Umbraco.Cms.Core.Models;
+using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Services;
 using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Configuration;
 using UrlTracker.Core.Configuration.Models;
@@ -21,28 +21,28 @@ namespace UrlTracker.Core.Domain
         : IDomainProvider
     {
         private readonly IDomainService _domainService;
-        private readonly IConfiguration<UrlTrackerSettings> _configuration;
+        private readonly IOptions<UrlTrackerSettings> _options;
         private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactory;
 
         public DomainProvider(IDomainService domainService,
-                              IConfiguration<UrlTrackerSettings> configuration,
+                              IOptions<UrlTrackerSettings> options,
                               IUmbracoContextFactoryAbstraction umbracoContextFactory)
         {
             _domainService = domainService;
-            _configuration = configuration;
+            _options = options;
             _umbracoContextFactory = umbracoContextFactory;
         }
 
         public DomainCollection GetDomains()
         {
-            var configurationValue = _configuration.Value;
+            var configurationValue = _options.Value;
             var domains = _domainService.GetAll(configurationValue.HasDomainOnChildNode);
             return CreateCollection(configurationValue, domains);
         }
 
         public DomainCollection GetDomains(int nodeId)
         {
-            var configurationValue = _configuration.Value;
+            var configurationValue = _options.Value;
             var domains = _domainService.GetAssignedDomains(nodeId, configurationValue.HasDomainOnChildNode);
             return CreateCollection(configurationValue, domains);
         }
@@ -62,7 +62,7 @@ namespace UrlTracker.Core.Domain
          * The original model used these services to lazily compute the url
          *      Since the url is used straight away anyway, we might as well compute it immediately
          */
-        private static Url GetUrlFromDomain(IDomain domain, UrlTrackerSettings settings, IUmbracoContextReferenceAbstraction cref)
+        private Url GetUrlFromDomain(IDomain domain, UrlTrackerSettings settings, IUmbracoContextReferenceAbstraction cref)
         {
             // I'm taking some liberties on the original logic. The old logic ensured that the url starts with a protocol.
             //    I am parsing the url into an object to make comparisons with incoming requests easier and more straight forward
@@ -74,7 +74,7 @@ namespace UrlTracker.Core.Domain
                 var node = cref.GetContentById(domain.RootContentId.Value);
                 if (node != null && node.Level > 1)
                 {
-                    result = node.Url(mode: UrlMode.Absolute);
+                    result = node.Url(_umbracoContextFactory, mode: UrlMode.Absolute);
                 }
             }
             else

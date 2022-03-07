@@ -1,64 +1,76 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using System.Web;
-using Umbraco.Core.Mapping;
+using Microsoft.AspNetCore.Http;
+using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Web;
+using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Logging;
 using UrlTracker.Core.Models;
-using UrlTracker.Web.Abstractions;
-using ILogger = UrlTracker.Core.Logging.ILogger;
+using UrlTracker.Web.Abstraction;
 
 namespace UrlTracker.Web.Processing
 {
     public class RedirectResponseInterceptHandler
         : ResponseInterceptHandlerBase<ShallowRedirect>
     {
-        private readonly ILogger _logger;
-        private readonly UmbracoMapper _mapper;
-        private readonly ICompleteRequestAbstraction _completeRequestAbstraction;
+        private readonly ILogger<RedirectResponseInterceptHandler> _logger;
+        private readonly IUmbracoMapper _mapper;
+        private readonly IResponseAbstraction _responseAbstraction;
+        private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactory;
 
-        public RedirectResponseInterceptHandler(ILogger logger,
-                                                UmbracoMapper mapper,
-                                                ICompleteRequestAbstraction completeRequestAbstraction)
+        public RedirectResponseInterceptHandler(ILogger<RedirectResponseInterceptHandler> logger,
+                                                IUmbracoMapper mapper,
+                                                IResponseAbstraction responseAbstraction,
+                                                IUmbracoContextFactoryAbstraction umbracoContextFactory)
         {
             _logger = logger;
             _mapper = mapper;
-            _completeRequestAbstraction = completeRequestAbstraction;
+            _responseAbstraction = responseAbstraction;
+            _umbracoContextFactory = umbracoContextFactory;
         }
 
-        protected override ValueTask HandleAsync(HttpContextBase context, ShallowRedirect intercept)
+        protected override async ValueTask HandleAsync(RequestDelegate next, HttpContext context, ShallowRedirect intercept)
         {
-            if (!ShouldIntercept(context, intercept))
+            bool shouldForceIntercept = ShouldForceIntercept(intercept);
+            bool shouldIntercept = ShouldIntercept(context, intercept);
+            if (!shouldForceIntercept && !shouldIntercept)
             {
-                _logger.LogInterceptCancelled<RedirectResponseInterceptHandler>("requirements not met.", intercept);
-                return new ValueTask();
+                _logger.LogInterceptCancelled("requirements not met.", intercept);
+                await next(context);
+                return;
             }
 
             // get actual redirect url and write to the response
             string url = GetUrl(context, intercept);
 
             var response = context.Response;
-            response.Clear();
-            if (!(url is null))
+            response.Clear(_responseAbstraction);
+            if (url is not null)
             {
-                response.RedirectLocation = url;
+                response.SetRedirectLocation(_responseAbstraction, url);
             }
             response.StatusCode = url is null ? 410 : ((int)intercept.TargetStatusCode);
-            context.CompleteRequest(_completeRequestAbstraction);
-            _logger.LogInterceptPerformed<RedirectResponseInterceptHandler>(url);
-            return new ValueTask();
+            await response.CompleteAsync();
+            _logger.LogInterceptPerformed(url);
         }
 
-        private string GetUrl(HttpContextBase context, ShallowRedirect intercept)
+        private bool ShouldForceIntercept(ShallowRedirect intercept)
+        {
+            return intercept.Force;
+        }
+
+        private string GetUrl(HttpContext context, ShallowRedirect intercept)
         {
             Url url = _mapper.MapToUrl(intercept, context);
             var result = url?.ToString(UrlType.Absolute);
             return result;
         }
 
-        public bool ShouldIntercept(HttpContextBase context, ShallowRedirect intercept)
+        public bool ShouldIntercept(HttpContext context, ShallowRedirect intercept)
         {
-            return intercept.Force
-                || context.Response.StatusCode == (int)HttpStatusCode.NotFound;
+            using var cref = _umbracoContextFactory.EnsureUmbracoContext();
+            return cref.GetResponseCode() == (int)HttpStatusCode.NotFound;
         }
     }
 }

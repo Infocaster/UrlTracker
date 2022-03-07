@@ -4,8 +4,8 @@ using System.Linq;
 using System.Net;
 using Moq;
 using NUnit.Framework;
-using Umbraco.Core.Mapping;
-using Umbraco.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Models.PublishedContent;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
@@ -163,7 +163,15 @@ namespace UrlTracker.Web.Tests.Map
         public void Map_UrlTrackerSettings_GetSettingsResponse()
         {
             // arrange
-            var input = new UrlTrackerSettings(true, true, true, true, true, true);
+            var input = new UrlTrackerSettings
+            {
+                AppendPortNumber = true,
+                HasDomainOnChildNode = true,
+                IsDisabled = true,
+                IsTrackingDisabled = true,
+                IsNotFoundTrackingDisabled = true,
+                LoggingEnabled = true
+            };
 
             // act
             var result = Mapper.Map<GetSettingsResponse>(input);

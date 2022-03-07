@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using System.Web;
-using Umbraco.Core.Composing;
+using Microsoft.AspNetCore.Http;
+using Umbraco.Cms.Core.Composing;
 
 namespace UrlTracker.Web.Processing
 {
@@ -17,12 +18,12 @@ namespace UrlTracker.Web.Processing
     public class ClientErrorFilterCollection
         : BuilderCollectionBase<IClientErrorFilter>, IClientErrorFilterCollection
     {
-        public ClientErrorFilterCollection(IEnumerable<IClientErrorFilter> items)
+        public ClientErrorFilterCollection(Func<IEnumerable<IClientErrorFilter>> items)
             : base(items)
         { }
 
         // asynchronously evaluates all the filters and returns false if any of them return false
-        public async ValueTask<bool> EvaluateCandidacyAsync(HttpContextBase httpContext)
+        public async ValueTask<bool> EvaluateCandidacyAsync(HttpContext httpContext)
         {
             foreach (var filter in this)
             {

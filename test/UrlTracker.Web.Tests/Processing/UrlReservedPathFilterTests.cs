@@ -4,7 +4,6 @@ using NUnit.Framework;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Logging;
-using UrlTracker.Web.Configuration.Models;
 using UrlTracker.Web.Processing;
 
 namespace UrlTracker.Web.Tests.Processing
@@ -16,7 +15,7 @@ namespace UrlTracker.Web.Tests.Processing
         [SetUp]
         public void Setup()
         {
-            _urlReservedPathFilter = new UrlReservedPathFilter(ReservedPathSettings, new ConsoleLogger());
+            _urlReservedPathFilter = new UrlReservedPathFilter(ReservedPathSettingsProvider, new ConsoleLogger<UrlReservedPathFilter>());
         }
 
         [TestCase("http://example.com/lorem/ipsum", "lorem/ipsum/", false, TestName = "EvaluateCandidateAsync returns false if the url path matches a filter")]
@@ -25,7 +24,7 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_NormalFlow_ReturnsMatch(string input, string filteredPath, bool expectation)
         {
             // arrange
-            ReservedPathSettings.Value = new ReservedPathSettings { Paths = new HashSet<string> { filteredPath } };
+            ReservedPathSettingsProviderMock.Setup(obj => obj.Paths).Returns(new HashSet<string> { filteredPath });
             var inputUri = Url.Parse(input);
 
             // act

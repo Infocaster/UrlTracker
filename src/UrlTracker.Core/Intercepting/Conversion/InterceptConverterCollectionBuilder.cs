@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Umbraco.Core.Composing;
+using Umbraco.Cms.Core.Composing;
 using UrlTracker.Core.Intercepting.Models;
 
 namespace UrlTracker.Core.Intercepting.Conversion
@@ -26,7 +27,7 @@ namespace UrlTracker.Core.Intercepting.Conversion
     public class InterceptConverterCollection
         : BuilderCollectionBase<IInterceptConverter>, IInterceptConverterCollection
     {
-        public InterceptConverterCollection(IEnumerable<IInterceptConverter> items) : base(items)
+        public InterceptConverterCollection(Func<IEnumerable<IInterceptConverter>> items) : base(items)
         { }
 
         public async ValueTask<IIntercept> ConvertAsync(ICachableIntercept cachableIntercept)

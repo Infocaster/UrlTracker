@@ -17,7 +17,7 @@ namespace UrlTracker.Core.Tests.Intercepting
 
         public override void SetUp()
         {
-            _testSubject = new RegexRedirectInterceptor(RedirectRepository, new ConsoleLogger());
+            _testSubject = new RegexRedirectInterceptor(RedirectRepository, new ConsoleLogger<RegexRedirectInterceptor>());
             DefaultInterceptContext.SetRootNode(9999);
         }
 

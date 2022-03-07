@@ -1,6 +1,5 @@
-﻿using Umbraco.Core.Mapping;
-using Umbraco.Core.Services;
-using Umbraco.Web;
+﻿using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Services;
 using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Domain.Models;
@@ -21,7 +20,7 @@ namespace UrlTracker.Web.Map
             _umbracoContextFactoryAbstraction = umbracoContextFactoryAbstraction;
         }
 
-        public void DefineMaps(UmbracoMapper mapper)
+        public void DefineMaps(IUmbracoMapper mapper)
         {
             mapper.Define<UrlTrackerSettings, GetSettingsResponse>(
                 (source, context) => new GetSettingsResponse(),

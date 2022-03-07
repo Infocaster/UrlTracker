@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Umbraco.Core.Composing;
+using Umbraco.Cms.Core.Composing;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
 
@@ -19,13 +20,13 @@ namespace UrlTracker.Core.Intercepting.Preprocessing
     {
         private readonly IDefaultInterceptContextFactory _contextFactory;
 
-        public InterceptPreprocessorCollection(IEnumerable<IInterceptPreprocessor> items, IDefaultInterceptContextFactory contextFactory)
+        public InterceptPreprocessorCollection(Func<IEnumerable<IInterceptPreprocessor>> items, IDefaultInterceptContextFactory contextFactory)
             : base(items)
         {
             _contextFactory = contextFactory;
         }
 
-        public async ValueTask<IInterceptContext> PreprocessUrlAsync(Url url, IInterceptContext context = null)
+        public async ValueTask<IInterceptContext> PreprocessUrlAsync(Url url, IInterceptContext? context = null)
         {
             context = context ?? _contextFactory.Create();
             foreach (var preprocessor in this)

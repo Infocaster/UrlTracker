@@ -1,4 +1,4 @@
-﻿using Umbraco.Core.Mapping;
+﻿using Umbraco.Cms.Core.Mapping;
 
 namespace UrlTracker.Resources.Testing.Objects
 {
@@ -6,7 +6,7 @@ namespace UrlTracker.Resources.Testing.Objects
     {
         public TTo To { get; set; }
 
-        public void DefineMaps(UmbracoMapper mapper)
+        public void DefineMaps(IUmbracoMapper mapper)
         {
             mapper.Define<TFrom, TTo>((source, context) => To);
         }

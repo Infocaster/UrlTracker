@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Umbraco.Core.Mapping;
+using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Exceptions;
@@ -15,12 +15,12 @@ namespace UrlTracker.Core
         : IRedirectService
     {
         private readonly IRedirectRepository _redirectRepository;
-        private readonly UmbracoMapper _mapper;
+        private readonly IUmbracoMapper _mapper;
         private readonly IValidationHelper _validationHelper;
         private readonly IExceptionHelper _exceptionHelper;
 
         public RedirectService(IRedirectRepository redirectRepository,
-                               UmbracoMapper mapper,
+                               IUmbracoMapper mapper,
                                IValidationHelper validationHelper,
                                IExceptionHelper exceptionHelper)
         {
@@ -38,7 +38,7 @@ namespace UrlTracker.Core
         }
 
         [ExcludeFromCodeCoverage]
-        public async Task<RedirectCollection> GetAsync(uint skip, uint take, string query = null, OrderBy order = OrderBy.Created, bool descending = true)
+        public async Task<RedirectCollection> GetAsync(uint skip, uint take, string? query = null, OrderBy order = OrderBy.Created, bool descending = true)
         {
             var redirects = await _redirectRepository.GetAsync(skip, take, query, order, descending).ConfigureAwait(false);
             return _mapper.Map<RedirectCollection>(redirects);

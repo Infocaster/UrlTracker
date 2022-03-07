@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Umbraco.Core.Mapping;
-using Umbraco.Core.Persistence;
-using Umbraco.Core.Scoping;
+using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Scoping;
+using Umbraco.Extensions;
 using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Core.Database
@@ -15,10 +15,10 @@ namespace UrlTracker.Core.Database
         : IClientErrorRepository
     {
         private readonly IScopeProvider _scopeProvider;
-        private readonly UmbracoMapper _mapper;
+        private readonly IUmbracoMapper _mapper;
 
         public ClientErrorRepository(IScopeProvider scopeProvider,
-                                     UmbracoMapper mapper)
+                                     IUmbracoMapper mapper)
         {
             _scopeProvider = scopeProvider;
             _mapper = mapper;

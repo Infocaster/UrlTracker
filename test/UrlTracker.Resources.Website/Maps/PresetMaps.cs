@@ -1,7 +1,7 @@
 ﻿using System;
-using Umbraco.Core.Mapping;
-using Umbraco.Core.Models.PublishedContent;
-using Umbraco.Web;
+using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Extensions;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Resources.Testing.Clients.Models;
 
@@ -9,7 +9,7 @@ namespace UrlTracker.Resources.Website.Maps
 {
     public class PresetMaps : IMapDefinition
     {
-        public void DefineMaps(UmbracoMapper mapper)
+        public void DefineMaps(IUmbracoMapper mapper)
         {
             mapper.Define<SeedRedirectRequestRedirect, UrlTrackerEntry>(
                 (source, context) => new UrlTrackerEntry(),

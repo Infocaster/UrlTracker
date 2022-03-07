@@ -1,16 +1,16 @@
-﻿using Umbraco.Core.Composing;
-using Umbraco.Web;
-using Umbraco.Web.Dashboards;
+﻿using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.Dashboards;
+using Umbraco.Cms.Core.DependencyInjection;
 
 namespace UrlTracker.Resources.Website.Composing
 {
-    public class DashboardComposer : IUserComposer
+    public class DashboardComposer : IComposer
     {
-        public void Compose(Composition composition)
+        public void Compose(IUmbracoBuilder builder)
         {
             // here to disable all the default dashboards, because it's a test website, we don't need fancy dashboards
-            composition.Dashboards().Remove<ContentDashboard>();
-            composition.Dashboards().Remove<RedirectUrlDashboard>();
+            builder.Dashboards().Remove<ContentDashboard>();
+            builder.Dashboards().Remove<RedirectUrlDashboard>();
         }
     }
 }

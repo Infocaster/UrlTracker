@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Umbraco.Core;
-using Umbraco.Core.Composing;
-using UrlTracker.Core;
-using UrlTracker.Web.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
+using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Cms.Core.Notifications;
+using UrlTracker.Web.Abstraction;
 using UrlTracker.Web.Compatibility;
 using UrlTracker.Web.Components;
 using UrlTracker.Web.Configuration;
-using UrlTracker.Web.Configuration.Models;
 using UrlTracker.Web.Events;
 using UrlTracker.Web.Events.Models;
 using UrlTracker.Web.Map;
@@ -14,106 +14,81 @@ using UrlTracker.Web.Processing;
 
 namespace UrlTracker.Web
 {
-    [RuntimeLevel(MinLevel = RuntimeLevel.Run)]
     [ExcludeFromCodeCoverage]
     public class WebComposer
-        : IUserComposer
+        : IComposer
     {
-        public void Compose(Composition composition)
+        public void Compose(IUmbracoBuilder builder)
         {
-            composition.ComposeUrlTrackerWebComponents()
-                       .ComposeUrlTrackerWebMaps()
-                       .ComposeUrlTrackerWebAbstractions()
-                       .ComposeUrlTrackerWebConfigurations()
-                       .ComposeDefaultResponseIntercepts()
-                       .ComposeDefaultRequestInterceptFilters()
-                       .ComposeDefaultClientErrorFilters();
+            builder.ComposeUrlTrackerWebComponents()
+                   .ComposeUrlTrackerWebMaps()
+                   .ComposeDefaultResponseIntercepts()
+                   .ComposeDefaultRequestInterceptFilters()
+                   .ComposeDefaultClientErrorFilters();
 
-            composition.RegisterUnique<IRequestModelPatcher, RequestModelPatcher>();
+            builder.Services.AddSingleton<IRequestModelPatcher, RequestModelPatcher>();
+            builder.Services.AddTransient<IRequestAbstraction, RequestAbstraction>();
+            builder.Services.AddTransient<IResponseAbstraction, ResponseAbstraction>();
 
-            composition.RegisterUnique<IResponseInterceptHandlerCollection>(factory => factory.GetInstance<ResponseInterceptHandlerCollection>());
-            composition.RegisterUnique<IRequestInterceptFilterCollection>(factory => factory.GetInstance<RequestInterceptFilterCollection>());
-            composition.RegisterUnique<IClientErrorFilterCollection>(factory => factory.GetInstance<ClientErrorFilterCollection>());
-
-            composition.RegisterEventSubscriber<IncomingRequestEventArgs, IncomingRequestEventSubscriber>();
-            composition.RegisterEventSubscriber<ProcessedEventArgs, ProcessedEventSubscriber>();
-            composition.Register(typeof(IEventPublisher<,>), typeof(EventPublisher<,>), Lifetime.Singleton);
-            composition.Register(typeof(IEventPublisher<>), typeof(EventPublisher<>), Lifetime.Singleton);
+            builder.Services.AddSingleton<IResponseInterceptHandlerCollection>(factory => factory.GetRequiredService<ResponseInterceptHandlerCollection>());
+            builder.Services.AddSingleton<IRequestInterceptFilterCollection>(factory => factory.GetRequiredService<RequestInterceptFilterCollection>());
+            builder.Services.AddSingleton<IClientErrorFilterCollection>(factory => factory.GetRequiredService<ClientErrorFilterCollection>());
+            builder.Services.AddSingleton<IReservedPathSettingsProvider, ReservedPathSettingsProvider>();
         }
     }
 
     [ExcludeFromCodeCoverage]
-    public static class CompositionExtensions
+    public static class IUmbracoBuilderExtensions
     {
-        public static Composition ComposeUrlTrackerWebConfigurations(this Composition composition)
+        public static IUmbracoBuilder ComposeUrlTrackerWebComponents(this IUmbracoBuilder builder)
         {
-            composition.Configure<ReservedPathSettings, ReservedPathSettingsProvider>()
-                       .Lazy();
-
-            return composition;
+            builder.AddNotificationHandler<ContentMovingNotification, ContentChangeHandlingComponent>();
+            builder.AddNotificationHandler<ContentMovedNotification, ContentChangeHandlingComponent>();
+            builder.AddNotificationHandler<ContentPublishingNotification, ContentChangeHandlingComponent>();
+            builder.AddNotificationHandler<ContentPublishedNotification, ContentChangeHandlingComponent>();
+            builder.AddNotificationAsyncHandler<UrlTrackerHandled, ProcessedEventSubscriber>();
+            return builder;
         }
 
-        public static Composition ComposeUrlTrackerWebComponents(this Composition composition)
+        public static IUmbracoBuilder ComposeDefaultResponseIntercepts(this IUmbracoBuilder builder)
         {
-            composition.Components()
-                .Append<IncomingUrlHandlingComponent>()
-                .Append<ContentChangeHandlingComponent>();
-            return composition;
-        }
-
-        public static Composition ComposeDefaultResponseIntercepts(this Composition composition)
-        {
-            composition.ResponseInterceptHandlers()
+            builder.ResponseInterceptHandlers()
                 .Append<RedirectResponseInterceptHandler>()
                 .Append<NoLongerExistsResponseInterceptHandler>();
-            return composition;
+            return builder;
         }
 
-        public static Composition ComposeDefaultRequestInterceptFilters(this Composition composition)
+        public static IUmbracoBuilder ComposeDefaultRequestInterceptFilters(this IUmbracoBuilder builder)
         {
-            composition.RequestInterceptFilters()
+            builder.RequestInterceptFilters()
                 .Append<UrlReservedPathFilter>();
-            return composition;
+            return builder;
         }
 
-        public static Composition ComposeDefaultClientErrorFilters(this Composition composition)
+        public static IUmbracoBuilder ComposeDefaultClientErrorFilters(this IUmbracoBuilder builder)
         {
-            composition.ClientErrorFilters()
+            builder.ClientErrorFilters()
                 .Append<ConfigurationClientErrorFilter>();
-            return composition;
+            return builder;
         }
 
-        public static Composition ComposeUrlTrackerWebMaps(this Composition composition)
+        public static IUmbracoBuilder ComposeUrlTrackerWebMaps(this IUmbracoBuilder builder)
         {
-            composition.MapDefinitions()
+            builder.MapDefinitions()
                 .Add<RedirectMap>()
                 .Add<ResponseMap>()
                 .Add<RequestMap>()
                 .Add<CsvMap>();
-            return composition;
+            return builder;
         }
 
-        public static Composition ComposeUrlTrackerWebAbstractions(this Composition composition)
-        {
-            composition.Register<ICompleteRequestAbstraction, CompleteRequestAbstraction>();
-            composition.Register<IHttpContextAccessorAbstraction, HttpContextAccessorAbstraction>();
-            return composition;
-        }
+        public static ResponseInterceptHandlerCollectionBuilder ResponseInterceptHandlers(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<ResponseInterceptHandlerCollectionBuilder>();
 
-        public static Composition RegisterEventSubscriber<TEvent, TImplementation>(this Composition composition)
-            where TImplementation : IEventSubscriber<object, TEvent>
-        {
-            composition.Register<IEventSubscriber<object, TEvent>, TImplementation>(Lifetime.Singleton);
-            return composition;
-        }
+        public static RequestInterceptFilterCollectionBuilder RequestInterceptFilters(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<RequestInterceptFilterCollectionBuilder>();
 
-        public static ResponseInterceptHandlerCollectionBuilder ResponseInterceptHandlers(this Composition composition)
-            => composition.WithCollectionBuilder<ResponseInterceptHandlerCollectionBuilder>();
-
-        public static RequestInterceptFilterCollectionBuilder RequestInterceptFilters(this Composition composition)
-            => composition.WithCollectionBuilder<RequestInterceptFilterCollectionBuilder>();
-
-        public static ClientErrorFilterCollectionBuilder ClientErrorFilters(this Composition composition)
-            => composition.WithCollectionBuilder<ClientErrorFilterCollectionBuilder>();
+        public static ClientErrorFilterCollectionBuilder ClientErrorFilters(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<ClientErrorFilterCollectionBuilder>();
     }
 }

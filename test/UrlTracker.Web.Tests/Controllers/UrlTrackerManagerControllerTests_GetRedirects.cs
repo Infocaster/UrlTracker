@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using System.Web.Http.Results;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using UrlTracker.Core.Models;
@@ -29,7 +29,7 @@ namespace UrlTracker.Web.Tests.Controllers
 
             // assert
             RedirectServiceMock.Verify();
-            Assert.That(result, Is.TypeOf<OkNegotiatedContentResult<GetRedirectsResponse>>());
+            Assert.That(result, Is.TypeOf<OkObjectResult>());
         }
     }
 }

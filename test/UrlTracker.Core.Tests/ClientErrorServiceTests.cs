@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Umbraco.Core.Mapping;
+using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Exceptions;
 using UrlTracker.Core.Models;

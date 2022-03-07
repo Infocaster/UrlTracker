@@ -5,8 +5,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using NPoco;
+using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Core;
-using Umbraco.Core.Persistence;
+using Umbraco.Cms.Core.Persistence;
+using Umbraco.Extensions;
 
 namespace UrlTracker.Core.Compatibility
 {
@@ -111,7 +113,7 @@ namespace UrlTracker.Core.Compatibility
                         case ExpressionType.Call:
                             var callExpr = (MethodCallExpression)expr;
                             var method = callExpr.Method;
-                            if (method.DeclaringType != typeof(Umbraco.Core.Persistence.NPocoSqlExtensions.Statics) || method.Name != "Alias" || !(callExpr.Arguments[1] is ConstantExpression aliasExpr))
+                            if (method.DeclaringType != typeof(SqlExtensionsStatics) || method.Name != "Alias" || !(callExpr.Arguments[1] is ConstantExpression aliasExpr))
                                 Throw();
                             expr = callExpr.Arguments[0];
                             alias = aliasExpr.Value.ToString();

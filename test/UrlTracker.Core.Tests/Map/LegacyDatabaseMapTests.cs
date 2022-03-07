@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using NUnit.Framework;
-using Umbraco.Core.Mapping;
+using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Map;
 using UrlTracker.Resources.Testing;

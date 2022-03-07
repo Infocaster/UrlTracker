@@ -96,6 +96,18 @@ namespace UrlTracker.Core.Domain.Models
             };
         }
 
+        public static Url Create(Protocol? protocol, string? host, int? port, string? path, string? query)
+        {
+            return new Url
+            {
+                Protocol = protocol,
+                Host = host,
+                Port = port,
+                Path = path,
+                Query = query
+            };
+        }
+
         public static Url FromAbsoluteUri(Uri uri)
         {
             if (uri is null)
@@ -111,7 +123,7 @@ namespace UrlTracker.Core.Domain.Models
                 Protocol = Enum.TryParse(uri.Scheme, true, out Protocol protocolValue) ? (Protocol?)protocolValue : null,
                 Host = uri.Host,
                 Port = uri.Port != -1 && !uri.IsDefaultPort ? (int?)uri.Port : null,
-                Query = uri.Query.TrimStart('?').DefaultIfNullOrWhiteSpace(null)
+                Query = uri.Query
             };
 
             return result;

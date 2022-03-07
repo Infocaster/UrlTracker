@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Resources.Testing;
@@ -22,7 +23,6 @@ namespace UrlTracker.Web.Tests.Processing
         {
             // arrange
             HttpContextMock = new HttpContextMock(new Uri("http://example.com/lorem"));
-            UrlTrackerSettings.Value = new UrlTrackerSettings(false, false, true, false, false, false);
 
             // act
             bool result = await _testSubject.EvaluateCandidateAsync(HttpContextMock.Context);
@@ -35,7 +35,7 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_PluginDisabled_ReturnsFalse()
         {
             // arrange
-            UrlTrackerSettings.Value = new UrlTrackerSettings(true, false, true, false, false, false);
+            UrlTrackerSettings.Value.IsDisabled = true;
 
             // act
             bool result = await _testSubject.EvaluateCandidateAsync(HttpContextMock.Context);
@@ -48,7 +48,7 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_TrackingDisabled_ReturnsFalse()
         {
             // arrange
-            UrlTrackerSettings.Value = new UrlTrackerSettings(false, false, true, true, false, false);
+            UrlTrackerSettings.Value.IsNotFoundTrackingDisabled = true;
 
             // act
             bool result = await _testSubject.EvaluateCandidateAsync(HttpContextMock.Context);
@@ -62,7 +62,6 @@ namespace UrlTracker.Web.Tests.Processing
         {
             // arrange
             HttpContextMock = new HttpContextMock(new Uri("http://example.com/favicon.ico"));
-            UrlTrackerSettings.Value = new UrlTrackerSettings(false, false, true, false, false, false);
 
             // act
             bool result = await _testSubject.EvaluateCandidateAsync(HttpContextMock.Context);

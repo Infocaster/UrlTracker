@@ -1,11 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using Umbraco.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Models.PublishedContent;
 
 namespace UrlTracker.Resources.Testing.Objects
 {
     public class TestPublishedContent : IPublishedContent
     {
+        public TestPublishedContent(bool addDefaultCulture = true)
+        {
+            if (addDefaultCulture)
+            {
+                Cultures = new Dictionary<string, PublishedCultureInfo>
+                {
+                    {"nl-nl", new PublishedCultureInfo("nl-nl", "Dutch", "test", new DateTime(1970, 1, 1)) }
+                };
+            }
+        }
+
         public int Id { get; set; }
 
         public string Name { get; set; }

@@ -1,35 +1,35 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using Umbraco.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace UrlTracker.Core
 {
     [ExcludeFromCodeCoverage]
     internal static class LoggerExtensions
     {
-        public static void LogApplyMigration<T>(this ILogger logger, string migrationName)
+        public static void LogApplyMigration(this ILogger logger, string migrationName)
         {
-            logger.Info<T>("Applying migration {migrationName}", migrationName);
+            logger.LogInformation(new EventId(1001), "Applying migration {migrationName}", migrationName);
         }
 
-        public static void LogSkipStep<T>(this ILogger logger, string step, string reason)
+        public static void LogSkipStep(this ILogger logger, string step, string reason)
         {
-            logger.Info<T>("Skip step {step}: {reason}", step, reason);
+            logger.LogInformation(new EventId(1002), "Skip step {step}: {reason}", step, reason);
         }
 
-        public static void LogStepSuccess<T>(this ILogger logger, string step)
+        public static void LogStepSuccess(this ILogger logger, string step)
         {
-            logger.Info<T>("Step {step} succeeded", step);
+            logger.LogInformation(new EventId(1003), "Step {step} succeeded", step);
         }
 
         public static void LogResults<T>(this ILogger logger, int resultCount)
         {
-            logger.Debug<T>("{source} found {resultCount} results", typeof(T), resultCount);
+            logger.LogDebug(new EventId(1004), "{source} found {resultCount} results", typeof(T), resultCount);
         }
 
-        public static void LogParameters<T>(this ILogger logger, string culture, int? rootnodeid, List<string> urls)
+        public static void LogParameters(this ILogger logger, string culture, int? rootnodeid, List<string> urls)
         {
-            logger.Verbose<T>("No longer available parameters: culture: {culture}, rootnodeid: {rootnodeid}, urls: {urls}", culture, rootnodeid, urls);
+            logger.LogDebug(new EventId(1005), "No longer available parameters: culture: {culture}, rootnodeid: {rootnodeid}, urls: {urls}", culture, rootnodeid, urls);
         }
     }
 }

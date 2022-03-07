@@ -14,7 +14,7 @@ namespace UrlTracker.Web.Tests.Processing
 
         public override void SetUp()
         {
-            _testSubject = new RequestInterceptFilterCollection(new List<IRequestInterceptFilter> { RequestInterceptFilter });
+            _testSubject = new RequestInterceptFilterCollection(() => new List<IRequestInterceptFilter> { RequestInterceptFilter });
         }
 
         public static IEnumerable<TestCaseData> TestCases()

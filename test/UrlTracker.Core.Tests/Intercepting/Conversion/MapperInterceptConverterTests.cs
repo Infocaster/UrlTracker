@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using Umbraco.Core.Mapping;
+using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Intercepting.Conversion;
 using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Resources.Testing;

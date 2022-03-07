@@ -3,17 +3,16 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Umbraco.Core;
-using Umbraco.Core.Composing;
-using Umbraco.Core.Models.PublishedContent;
-using Umbraco.Core.Scoping;
-using Umbraco.Core.Services.Implement;
-using Umbraco.Web;
+using Microsoft.Extensions.Options;
+using Umbraco.Cms.Core;
+using Umbraco.Cms.Core.Events;
+using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Notifications;
+using Umbraco.Cms.Core.Scoping;
+using Umbraco.Extensions;
 using UrlTracker.Core;
 using UrlTracker.Core.Abstractions;
-using UrlTracker.Core.Configuration;
 using UrlTracker.Core.Configuration.Models;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
 
 namespace UrlTracker.Web.Components
@@ -21,19 +20,22 @@ namespace UrlTracker.Web.Components
     // ToDo: 
     [ExcludeFromCodeCoverage]
     public class ContentChangeHandlingComponent
-        : IComponent
+    : INotificationHandler<ContentMovingNotification>,
+      INotificationHandler<ContentMovedNotification>,
+      INotificationHandler<ContentPublishingNotification>,
+      INotificationHandler<ContentPublishedNotification>
     {
         private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactory;
         private readonly IRedirectService _redirectService;
         private readonly IScopeProvider _scopeProvider;
-        private readonly IConfiguration<UrlTrackerSettings> _configuration;
+        private readonly IOptions<UrlTrackerSettings> _configuration;
         private const string _moveRedirectsKey = "ic:MoveRedirects";
         private const string _renameRedirectsKey = "ic:RenameRedirects";
 
         public ContentChangeHandlingComponent(IUmbracoContextFactoryAbstraction umbracoContextFactory,
                                               IRedirectService redirectService,
                                               IScopeProvider scopeProvider,
-                                              IConfiguration<UrlTrackerSettings> configuration)
+                                              IOptions<UrlTrackerSettings> configuration)
         {
             _umbracoContextFactory = umbracoContextFactory;
             _redirectService = redirectService;
@@ -41,30 +43,14 @@ namespace UrlTracker.Web.Components
             _configuration = configuration;
         }
 
-        public void Initialize()
-        {
-            ContentService.Moving += ContentService_Moving;
-            ContentService.Moved += ContentService_Moved;
-            ContentService.Publishing += ContentService_Publishing;
-            ContentService.Published += ContentService_Published;
-        }
-
-        public void Terminate()
-        {
-            ContentService.Moving -= ContentService_Moving;
-            ContentService.Moved -= ContentService_Moved;
-            ContentService.Publishing -= ContentService_Publishing;
-            ContentService.Published -= ContentService_Published;
-        }
-
-        private void ContentService_Publishing(Umbraco.Core.Services.IContentService sender, Umbraco.Core.Events.ContentPublishingEventArgs e)
+        void INotificationHandler<ContentPublishingNotification>.Handle(ContentPublishingNotification notification)
         {
             if (!TrackingEnabled()) return;
 
             using (var cref = _umbracoContextFactory.EnsureUmbracoContext())
             {
                 List<Redirect> redirects = new List<Redirect>();
-                foreach (var entity in e.PublishedEntities)
+                foreach (var entity in notification.PublishedEntities)
                 {
                     // if content is newly created, no published content exists yet at this point,
                     //    so we also don't have to check for redirects
@@ -87,19 +73,19 @@ namespace UrlTracker.Web.Components
                     }
                 }
 
-                e.EventState.Add(_renameRedirectsKey, redirects);
+                notification.State.Add(_renameRedirectsKey, redirects);
             }
         }
 
-        private void ContentService_Published(Umbraco.Core.Services.IContentService sender, Umbraco.Core.Events.ContentPublishedEventArgs e)
+        void INotificationHandler<ContentPublishedNotification>.Handle(ContentPublishedNotification notification)
         {
             if (!TrackingEnabled()) return;
 
-            var redirects = e.EventState[_renameRedirectsKey] as List<Redirect>;
+            var redirects = notification.State[_renameRedirectsKey] as List<Redirect>;
             RegisterRedirects(redirects);
         }
 
-        private void ContentService_Moving(Umbraco.Core.Services.IContentService sender, Umbraco.Core.Events.MoveEventArgs<Umbraco.Core.Models.IContent> e)
+        void INotificationHandler<ContentMovingNotification>.Handle(ContentMovingNotification notification)
         {
             if (!TrackingEnabled()) return;
 
@@ -108,7 +94,7 @@ namespace UrlTracker.Web.Components
             using (var cref = _umbracoContextFactory.EnsureUmbracoContext())
             {
                 List<Redirect> redirects = new List<Redirect>();
-                foreach (var moveInfo in e.MoveInfoCollection)
+                foreach (var moveInfo in notification.MoveInfoCollection)
                 {
                     var content = cref.GetContentById(moveInfo.Entity.Id);
                     var newRoot = cref.GetContentById(moveInfo.NewParentId).Root();
@@ -127,17 +113,17 @@ namespace UrlTracker.Web.Components
                     }
                 }
 
-                e.EventState.Add(_moveRedirectsKey, redirects);
+                notification.State.Add(_moveRedirectsKey, redirects);
             }
         }
 
-        private void ContentService_Moved(Umbraco.Core.Services.IContentService sender, Umbraco.Core.Events.MoveEventArgs<Umbraco.Core.Models.IContent> e)
+        void INotificationHandler<ContentMovedNotification>.Handle(ContentMovedNotification notification)
         {
             if (!TrackingEnabled()) return;
 
             // At this point we know for sure that the operation has succeeded, so now we can register the redirects
             //    Wrap everything in a scope: if anything fails, everything will be rolled back and we won't be left with partial changes
-            var redirects = e.EventState[_moveRedirectsKey] as List<Redirect>;
+            var redirects = notification.State[_moveRedirectsKey] as List<Redirect>;
             RegisterRedirects(redirects);
         }
 

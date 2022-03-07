@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Http.Controllers;
-using System.Web.Http.Filters;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Mvc.Filters;
 using UrlTracker.Web.Controllers.Models;
 
 namespace UrlTracker.Web.Controllers.ActionFilters
@@ -12,7 +7,7 @@ namespace UrlTracker.Web.Controllers.ActionFilters
     public sealed class PatchModelAttribute
         : ActionFilterAttribute
     {
-        public override void OnActionExecuting(HttpActionContext actionContext)
+        public override void OnActionExecuting(ActionExecutingContext actionContext)
         {
             foreach (var key in actionContext.ActionArguments.Keys.ToList())
             {

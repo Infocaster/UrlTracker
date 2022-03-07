@@ -5,23 +5,13 @@ namespace UrlTracker.Core.Configuration.Models
     [ExcludeFromCodeCoverage]
     public class UrlTrackerSettings
     {
-        public UrlTrackerSettings(bool isDisabled, bool isTrackingDisabled, bool loggingEnabled, bool isNotFoundTrackingDisabled, bool appendPortNumber, bool hasDomainOnChildNode)
-        {
-            IsDisabled = isDisabled;
-            IsTrackingDisabled = isTrackingDisabled;
-            LoggingEnabled = loggingEnabled;
-            IsNotFoundTrackingDisabled = isNotFoundTrackingDisabled;
-            AppendPortNumber = appendPortNumber;
-            HasDomainOnChildNode = hasDomainOnChildNode;
-        }
-
         /// <summary>
         /// Returns wether or not the UrlTracker is disabled
         /// </summary>
         /// <remarks>
         /// appSetting: 'urlTracker:disabled'
         /// </remarks>
-        public bool IsDisabled { get; }
+        public bool IsDisabled { get; set; } = false;
 
         /// <summary>
         /// Returns wether or not tracking URL changes is disabled
@@ -29,7 +19,7 @@ namespace UrlTracker.Core.Configuration.Models
         /// <remarks>
         /// appSetting: 'urlTracker:trackingDisabled'
         /// </remarks>
-        public bool IsTrackingDisabled { get; }
+        public bool IsTrackingDisabled { get; set; } = false;
 
         /// <summary>
         /// Returns wether or not logging for the UrlTracker is enabled
@@ -37,7 +27,7 @@ namespace UrlTracker.Core.Configuration.Models
         /// <remarks>
         /// appSettings: 'urlTracker:enableLogging' & 'umbracoDebugMode'
         /// </remarks>
-        public bool LoggingEnabled { get; }
+        public bool LoggingEnabled { get; set; } = true;
 
         /// <summary>
         /// Returns wether or not not found (404) tracking is disabled
@@ -45,7 +35,7 @@ namespace UrlTracker.Core.Configuration.Models
         /// <remarks>
         /// appSetting: 'urlTracker:notFoundTrackingDisabled'
         /// </remarks>
-        public bool IsNotFoundTrackingDisabled { get; }
+        public bool IsNotFoundTrackingDisabled { get; set; } = false;
 
         /// <summary>
         /// Gets a value indicating whether or not to append port numbers to URLs. Default is true.
@@ -53,14 +43,14 @@ namespace UrlTracker.Core.Configuration.Models
         /// <value>
         ///   <c>true</c> if we are to append the port number; otherwise, <c>false</c>.
         /// </value>
-        public bool AppendPortNumber { get; }
+        public bool AppendPortNumber { get; set; } = false;
 
         /// <summary>
-        /// Returns wether or not a child node has a domain configured
+        /// Returns whether or not a child node has a domain configured
         /// </summary>
         /// <remarks>
         /// appSetting: 'urlTracker:hasDomainOnChildNode'
         /// </remarks>
-        public bool HasDomainOnChildNode { get; }
+        public bool HasDomainOnChildNode { get; set; } = false;
     }
 }

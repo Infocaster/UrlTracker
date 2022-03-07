@@ -16,7 +16,7 @@ namespace UrlTracker.Core.Tests.Intercepting
 
         public override void SetUp()
         {
-            _redirectMatcher = new StaticUrlRedirectInterceptor(RedirectRepository, new StaticUrlProviderCollection(new List<IStaticUrlProvider> { new StaticUrlProvider() }), new ConsoleLogger());
+            _redirectMatcher = new StaticUrlRedirectInterceptor(RedirectRepository, new StaticUrlProviderCollection(() => new List<IStaticUrlProvider> { new StaticUrlProvider() }), new ConsoleLogger<StaticUrlRedirectInterceptor>());
         }
 
         public static IEnumerable<TestCaseData> TestCases()

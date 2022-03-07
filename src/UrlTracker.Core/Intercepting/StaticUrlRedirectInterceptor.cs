@@ -5,7 +5,7 @@ using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
-using ILogger = UrlTracker.Core.Logging.ILogger;
+using ILogger = UrlTracker.Core.Logging.ILogger<UrlTracker.Core.Intercepting.StaticUrlRedirectInterceptor>;
 
 namespace UrlTracker.Core.Intercepting
 {
@@ -25,7 +25,7 @@ namespace UrlTracker.Core.Intercepting
             _logger = logger;
         }
 
-        public async ValueTask<ICachableIntercept> InterceptAsync(Url url, IReadOnlyInterceptContext context)
+        public async ValueTask<ICachableIntercept?> InterceptAsync(Url url, IReadOnlyInterceptContext context)
         {
             var interceptStrings = _urlProviderCollection.GetUrls(url);
 
@@ -38,11 +38,11 @@ namespace UrlTracker.Core.Intercepting
             return GetBestIntercept(results, url, context);
         }
 
-        protected virtual CachableInterceptBase<UrlTrackerShallowRedirect> GetBestIntercept(IReadOnlyCollection<UrlTrackerShallowRedirect> intercepts, Url url, IReadOnlyInterceptContext context)
+        protected virtual CachableInterceptBase<UrlTrackerShallowRedirect>? GetBestIntercept(IReadOnlyCollection<UrlTrackerShallowRedirect> intercepts, Url url, IReadOnlyInterceptContext context)
         {
             // return first intercept by default
-            UrlTrackerShallowRedirect bestIntercept = intercepts.FirstOrDefault();
-            return !(bestIntercept is null) ? new CachableInterceptBase<UrlTrackerShallowRedirect>(bestIntercept) : null;
+            UrlTrackerShallowRedirect? bestIntercept = intercepts.FirstOrDefault();
+            return bestIntercept is not null ? new CachableInterceptBase<UrlTrackerShallowRedirect>(bestIntercept) : null;
         }
     }
 }

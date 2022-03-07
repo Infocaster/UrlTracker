@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Web.Http.Results;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using UrlTracker.Core.Domain.Models;
@@ -27,9 +27,9 @@ namespace UrlTracker.Web.Tests.Controllers
             // assert
             Assert.Multiple(() =>
             {
-                Assert.That(result, Is.TypeOf<OkNegotiatedContentResult<List<GetLanguagesFromNodeResponseLanguage>>>());
-                var contentResult = result as OkNegotiatedContentResult<List<GetLanguagesFromNodeResponseLanguage>>;
-                Assert.That(contentResult.Content.Count, Is.EqualTo(1));
+                Assert.That(result, Is.TypeOf<OkObjectResult>());
+                var contentResult = result as OkObjectResult;
+                Assert.That((contentResult.Value as List<GetLanguagesFromNodeResponseLanguage>).Count, Is.EqualTo(1));
             });
         }
     }

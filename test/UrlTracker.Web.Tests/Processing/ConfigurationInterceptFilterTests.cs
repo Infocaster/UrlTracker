@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Domain.Models;
@@ -15,7 +16,7 @@ namespace UrlTracker.Web.Tests.Processing
 
         public override void SetUp()
         {
-            _testSubject = new ConfigurationInterceptFilter(UrlTrackerSettings, new ConsoleLogger());
+            _testSubject = new ConfigurationInterceptFilter(UrlTrackerSettings, new ConsoleLogger<ConfigurationInterceptFilter>());
         }
 
         public static IEnumerable<TestCaseData> TestCases()
@@ -28,7 +29,7 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_NormalFlow_ReturnsResult(bool disabled, bool expected)
         {
             // arrange
-            UrlTrackerSettings.Value = new UrlTrackerSettings(disabled, default, default, default, default, default);
+            UrlTrackerSettings.Value.IsDisabled = disabled;
 
             // act
             var result = await _testSubject.EvaluateCandidateAsync(Url.Parse("http://example.com"));

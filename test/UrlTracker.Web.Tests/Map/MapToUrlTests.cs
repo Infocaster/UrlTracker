@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
-using Umbraco.Core.Mapping;
-using Umbraco.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Models.PublishedContent;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
@@ -198,8 +198,8 @@ namespace UrlTracker.Web.Tests.Map
         public void MapToUrl_NormalFlow_MapsRedirectToUrl(string incomingUrl, IEnumerable<KeyValuePair<int, string>> contentUrls, ShallowRedirect redirect, DomainCollection domains, bool appendPortNumber, Url expectedUrl)
         {
             // arrange
-            HttpContextMock.RequestMock.SetupGet(obj => obj.Url).Returns(new Uri(incomingUrl));
-            UrlTrackerSettings.Value = new UrlTrackerSettings(false, false, true, false, appendPortNumber, false);
+            HttpContextMock.SetupUrl(new Uri(incomingUrl));
+            UrlTrackerSettings.Value.AppendPortNumber = appendPortNumber;
             if (contentUrls?.Any() == true)
             {
                 foreach (var pair in contentUrls) UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetUrl(It.Is<IPublishedContent>(o => o.Id == pair.Key), It.IsAny<UrlMode>(), It.IsAny<string>())).Returns(pair.Value);

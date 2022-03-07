@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Umbraco.Core.Composing;
+using Umbraco.Cms.Core.Composing;
 using UrlTracker.Core.Domain.Models;
 
 namespace UrlTracker.Core.Intercepting
@@ -16,7 +17,7 @@ namespace UrlTracker.Core.Intercepting
     public class StaticUrlProviderCollection
         : BuilderCollectionBase<IStaticUrlProvider>, IStaticUrlProviderCollection
     {
-        public StaticUrlProviderCollection(IEnumerable<IStaticUrlProvider> items)
+        public StaticUrlProviderCollection(Func<IEnumerable<IStaticUrlProvider>> items)
             : base(items)
         { }
 

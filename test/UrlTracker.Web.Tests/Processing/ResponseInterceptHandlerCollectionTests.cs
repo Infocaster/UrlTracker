@@ -13,7 +13,7 @@ namespace UrlTracker.Web.Tests.Processing
 
         public override void SetUp()
         {
-            _testSubject = new ResponseInterceptHandlerCollection(new List<IResponseInterceptHandler> { ResponseInterceptHandler });
+            _testSubject = new ResponseInterceptHandlerCollection(() => new List<IResponseInterceptHandler> { ResponseInterceptHandler });
         }
 
         [TestCase(true, TestName = "Get returns handler if it can handle the intercept")]

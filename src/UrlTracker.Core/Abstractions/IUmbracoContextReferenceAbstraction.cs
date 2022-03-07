@@ -1,5 +1,5 @@
 ﻿using System;
-using Umbraco.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Models.PublishedContent;
 
 namespace UrlTracker.Core.Abstractions
 {
@@ -7,7 +7,8 @@ namespace UrlTracker.Core.Abstractions
         : IDisposable
     {
         IPublishedContent GetContentById(int id);
-        string GetMediaUrl(IPublishedContent content, UrlMode mode, string culture);
-        string GetUrl(IPublishedContent content, UrlMode mode, string culture);
+        string GetMediaUrl(IPublishedContent content, UrlMode mode, string? culture);
+        string GetUrl(IPublishedContent content, UrlMode mode, string? culture);
+        int? GetResponseCode();
     }
 }

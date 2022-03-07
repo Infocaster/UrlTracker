@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Umbraco.Core.Models;
+using System.ComponentModel;
+using Umbraco.Cms.Core.Models;
 
 namespace UrlTracker.Resources.Testing.Objects
 {
@@ -15,19 +16,31 @@ namespace UrlTracker.Resources.Testing.Objects
         public string DomainName { get; set; }
         public int? RootContentId { get; set; }
 
-        public bool IsWildcard { get; }
+        public bool IsWildcard { get; set; }
 
-        public string LanguageIsoCode { get; }
+        public string LanguageIsoCode { get; set; }
 
         public int Id { get; set; }
-        public Guid Key { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public DateTime CreateDate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public DateTime UpdateDate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public DateTime? DeleteDate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Guid Key { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime UpdateDate { get; set; }
+        public DateTime? DeleteDate { get; set; }
 
-        public bool HasIdentity => throw new NotImplementedException();
+        public bool HasIdentity { get; set; }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public object DeepClone()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DisableChangeTracking()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void EnableChangeTracking()
         {
             throw new NotImplementedException();
         }
@@ -58,6 +71,11 @@ namespace UrlTracker.Resources.Testing.Objects
         }
 
         public void ResetDirtyProperties()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ResetIdentity()
         {
             throw new NotImplementedException();
         }

@@ -5,7 +5,7 @@
     <link>https://our.umbraco.com/documentation/Extending-Umbraco/Language-Files</link>
   </creator>
   <area alias="actions">
-    <key alias="assignDomain">Zarządzanie hostami</key>
+    <key alias="assigndomain">Zarządzanie hostami</key>
     <key alias="auditTrail">Historia zmian</key>
     <key alias="browse">Przeglądaj węzeł</key>
     <key alias="changeDocType">Zmień typ dokumentu</key>
@@ -31,7 +31,6 @@
     <key alias="republish">Opublikuj ponownie całą stronę</key>
     <key alias="rename" version="7.3.0">Zmień nazwę</key>
     <key alias="restore" version="7.3.0">Przywróć</key>
-    <key alias="SetPermissionsForThePage">Ustaw  uprawnienia dla strony %0%</key>
     <key alias="chooseWhereToMove">Wybierz dokąd przenieść</key>
     <key alias="toInTheTreeStructureBelow">W strukturze drzewa poniżej</key>
     <key alias="rights">Uprawnienia</key>
@@ -193,7 +192,7 @@
     <key alias="contentRoot">Korzeń zawartości</key>
   </area>
   <area alias="blueprints">
-    <key alias="createBlueprintFrom">Stwórz nowy Szablon Zawartości z '%0%'</key>
+    <key alias="createBlueprintFrom"><![CDATA[Stwórz nowy Szablon Zawartości z <em>%0%</em>]]></key>
     <key alias="blankBlueprint">Pusty</key>
     <key alias="selectBlueprint">Wybierz Szablon Zawartości</key>
     <key alias="createdBlueprintHeading">Szablon Zawartości został stworzony</key>
@@ -387,10 +386,6 @@
     <key alias="rteRelatedStylesheets">Powiązane arkusze stylów</key>
     <key alias="rteShowLabel">Pokaż etykietę</key>
     <key alias="rteWidthAndHeight">Szerokość i wysokość</key>
-    <key alias="allPropTypes">Wszystkie typy właściwości &amp; dane właściwości</key>
-    <key alias="willBeDeleted">używające tego typu danych zostaną usunięte na zawsze, potwierdź, że chcesz je także usunąć</key>
-    <key alias="yesDelete">Tak, usuń</key>
-    <key alias="andAllRelated">i wszystkie typy właściwości &amp; dane właściwości używające tego typu danych</key>
     <key alias="selectFolder">Wybierz folder do przeniesienia</key>
     <key alias="inTheTree">do w strukturze drzewa poniżej</key>
     <key alias="wasMoved">został przeniesiony poniżej</key>
@@ -581,19 +576,12 @@
   </area>
   <area alias="installer">
     <key alias="databaseErrorCannotConnect">Instalator nie mógł połączyć się z bazą danych.</key>
-    <key alias="databaseErrorWebConfig">Nie udało się zapisać pliku web.config. Zmodyfikuj parametry połączenia ręcznie.</key>
     <key alias="databaseFound">Twoja baza danych została znaleziona i zidentyfikowana jako</key>
     <key alias="databaseHeader">Konfiguracja bazy danych</key>
     <key alias="databaseInstall"><![CDATA[
 Naciśnij przycisk <strong>instaluj</strong>, aby zainstalować bazę danych Umbraco %0%
 ]]></key>
     <key alias="databaseInstallDone"><![CDATA[Umbraco %0% zostało skopiowane do Twojej bazy danych. Naciśnij <strong>Dalej</strong>, aby kontynuować.]]></key>
-    <key alias="databaseNotFound"><![CDATA[<p>Nie odnaleziono bazy danych! Sprawdź, czy informacje w sekcji "connection string" w pliku "web.config" są prawidłowe.</p>
-                <p>Aby kontynuować, dokonaj edycji pliku "web.config" (używając Visual Studio lub dowolnego edytora tekstu), przemieść kursor na koniec pliku, dodaj parametry połączenia do Twojej bazy danych w kluczu o nazwie "umbracoDbDSN" i zapisz plik.</p>
-                <p>
-                Kliknij <strong>ponów próbę</strong> kiedy
-                skończysz.<br /><a href="https://our.umbraco.com/documentation/Reference/Config/webconfig/" target="_blank" rel="noopener">
-                Tu znajdziesz więcej informacji na temat edycji pliku "web.config"</a>.</p>]]></key>
     <key alias="databaseText"><![CDATA[Aby zakończyć ten etap instalacji, będziesz musiał podać parametry połączenia do Twojego serwera baz danych ("connection string").<br />
                 Skontaktuj się z Twoim dostawą usług internetowych jeśli zajdzie taka potrzeba.
                 W przypadku instalacji na lokalnej maszynie lub serwerze możesz potrzebować pomocy administratora.]]></key>
@@ -612,7 +600,6 @@ Naciśnij przycisk <strong>instaluj</strong>, aby zainstalować bazę danych Umb
     <key alias="defaultUserPassChanged"><![CDATA[<strong>Hasło domyślnego użytkownika zostało zmienione od czasu instalacji!</strong></p><p>Żadne dodatkowe czynności nie są konieczne. Naciśnij <strong>Dalej</strong>, aby kontynuować.]]></key>
     <key alias="defaultUserPasswordChanged">Hasło zostało zmienione!</key>
     <key alias="greatStart">Aby szybko wejść w świat Umbraco, obejrzyj nasze filmy wprowadzające</key>
-    <key alias="licenseText">Klikając przycisk dalej (lub modyfikując klucz UmbracoConfigurationStatus w pliku web.config), akceptujesz licencję na niniejsze oprogramowanie zgodnie ze specyfikacją w poniższym polu. Zauważ, że ta dystrybucja Umbraco składa się z dwoch licencji - licencja MIT typu open source dla kodu oraz licencja "Umbraco freeware", która dotyczy interfejsu użytkownika.</key>
     <key alias="None">Nie zainstalowane.</key>
     <key alias="permissionsAffectedFolders">Zmienione pliki i foldery</key>
     <key alias="permissionsAffectedFoldersMoreInfo">Więcej informacji na temat ustalania pozwoleń dla Umbraco znajdziesz tutaj</key>
@@ -675,8 +662,6 @@ Naciśnij przycisk <strong>instaluj</strong>, aby zainstalować bazę danych Umb
     <key alias="theEndFurtherHelp"><![CDATA[<h3>Dalsza pomoc i informacje</h3>
                 Zaczerpnij pomocy z naszej nagrodzonej społeczności, przeglądaj dokumentację lub obejrzyj niektóre darmowe filmy o tym, jak budować proste strony, jak używać pakietów i szybki przewodnik po terminologii Umbraco]]></key>
     <key alias="theEndHeader">Umbraco %0% zostało zainstalowane i jest gotowe do użycia</key>
-    <key alias="theEndInstallFailed"><![CDATA[Aby dokończyć instalację musisz
-                ręcznie edytować <strong>plik web.config</strong> i zaktualizować klucz AppSetting o nazwie <strong>UmbracoConfigurationStatus</strong> na dole do wartości <strong>'%0%'</strong>.]]></key>
     <key alias="theEndInstallSuccess"><![CDATA[Możesz <strong>rozpocząć natychmiast</strong> klikając przycisk "Uruchom Umbraco" poniżej. <br />Jeżeli jesteś <strong>nowy dla Umbraco</strong>
                 znajdziesz mnóstwo materiałów na naszych stronach "jak rozpocząć".]]></key>
     <key alias="theEndOpenUmbraco"><![CDATA[<h3>Uruchom Umbraco</h3>
@@ -788,17 +773,7 @@ Naciśnij przycisk <strong>instaluj</strong>, aby zainstalować bazę danych Umb
       Wskaż pakiet z Twojego komputera, poprzez kliknięcie na przycisk "Przeglądaj"<br />
       i wskaż gdzie jest zapisany. Pakiety Umbraco przeważnie posiadają rozszerzenie ".umb" lub ".zip".
       ]]></key>
-    <key alias="dropHere">Upuść, aby załadować</key>
-    <key alias="orClickHereToUpload">lub kliknij tutaj, aby wybrać pliki</key>
-    <key alias="uploadPackage">Załaduj pakiet</key>
-    <key alias="localPackageDescription">Zainstaluj lokalny pakiet poprzez wybranie go ze swojego komputera. Instaluj jedynie te pakiety, z zaufanych i znanych Tobie źródeł</key>
-    <key alias="uploadAnother">Załaduj kolejny pakiet</key>
-    <key alias="cancelAndUploadAnother">Anuluj i załaduj kolejny pakiet</key>
     <key alias="packageLicense">Licencja</key>
-    <key alias="accept">Zgadzam się</key>
-    <key alias="termsOfUse">zasady użytkowania</key>
-    <key alias="packageInstall">Zainstaluj pakiet</key>
-    <key alias="installFinish">Zakończ</key>
     <key alias="installedPackages">Zainstalowane pakiety</key>
     <key alias="noPackages">Nie masz żadnych zainstalowanych pakietów</key>
     <key alias="noPackagesDescription"><![CDATA[Nie masz żadnych zainstalowanych pakietów. Zainstaluj lokalny pakiet poprzez wybranie go ze swojego komputera lub przeglądaj dostępne pakiety, używając ikony <strong>'Pakiety'</strong> w prawym górnym rogu ekranu]]></key>
@@ -839,16 +814,6 @@ Naciśnij przycisk <strong>instaluj</strong>, aby zainstalować bazę danych Umb
       <span style="color: Red; font-weight: bold;">Uwaga:</span> wszystkie elementy, media, itp. w zależności od elementów, które usuwasz, przestaną działać i mogą spowodować niestabilność systemu,
       więc odinstalowuj z uwagą. W przypadku problemów skontaktuj się z autorem pakietu.]]></key>
     <key alias="packageVersion">Wersja pakietu</key>
-    <key alias="packageAlreadyInstalled">Pakiet jest już zainstalowany</key>
-    <key alias="targetVersionMismatch">Ten pakiet nie może być zainstalowany, ponieważ wymaga Umbraco w wersji przynajmniej %0%</key>
-    <key alias="installStateUninstalling">Odinstalowywanie...</key>
-    <key alias="installStateDownloading">Pobieranie...</key>
-    <key alias="installStateImporting">Importowanie...</key>
-    <key alias="installStateInstalling">Instalowanie...</key>
-    <key alias="installStateRestarting">Restartowanie, proszę czekać...</key>
-    <key alias="installStateComplete">Wszystko skończone, Twoja przeglądarka się teraz odświeży, proszę czekać...</key>
-    <key alias="installStateCompleted">Proszę kliknąć Zakończ, aby zakończyć instalację i przeładować stronę.</key>
-    <key alias="installStateUploading">Wgrywanie pakietu...</key>
   </area>
   <area alias="paste">
     <key alias="doNothing">Wklej z zachowaniem formatowania (Nie zalecane)</key>
@@ -914,8 +879,6 @@ Naciśnij przycisk <strong>instaluj</strong>, aby zainstalować bazę danych Umb
   </area>
   <area alias="imagecropper">
     <key alias="reset">Resetuj</key>
-    <key alias="saveCrop">Zapisz przycięcie</key>
-    <key alias="addCrop">Dodaj nowe przycięcie</key>
   </area>
   <area alias="rollback">
     <key alias="currentVersion">Aktualna wersja</key>
@@ -1123,7 +1086,6 @@ Naciśnij przycisk <strong>instaluj</strong>, aby zainstalować bazę danych Umb
     <key alias="contentAllowed">Ta zawartość jest tu dozwolona</key>
     <key alias="clickToEmbed">Kliknij, żeby osadzić</key>
     <key alias="clickToInsertImage">Kliknij, żeby dodać obraz</key>
-    <key alias="placeholderImageCaption">Podpis obrazu...</key>
     <key alias="placeholderWriteHere">Pisz tutaj...</key>
     <key alias="gridLayouts">Układy Siatki</key>
     <key alias="gridLayoutsDetail">Układy to ogólne pole pracy dla edytora siatki, przeważnie będziesz potrzebować tylko jednego lub dwóch różnych układów</key>
@@ -1187,8 +1149,6 @@ Naciśnij przycisk <strong>instaluj</strong>, aby zainstalować bazę danych Umb
     <key alias="showOnMemberProfile">Pokaż na profilu członka</key>
   </area>
   <area alias="templateEditor">
-    <key alias="addFallbackField">Dodaj pole zastępcze</key>
-    <key alias="fallbackField">Pole zastępcze</key>
     <key alias="addDefaultValue">Dodaj domyślną wartość</key>
     <key alias="defaultValue">Domyślna wartość</key>
     <key alias="alternativeField">Pole alternatywne</key>
@@ -1197,26 +1157,21 @@ Naciśnij przycisk <strong>instaluj</strong>, aby zainstalować bazę danych Umb
     <key alias="encoding">Kodowanie</key>
     <key alias="chooseField">Wybierz pole</key>
     <key alias="convertLineBreaks">Konwertuj złamania wiersza</key>
-    <key alias="convertLineBreaksDescription">Tak, konwertuj złamania wiersza</key>
     <key alias="convertLineBreaksHelp">Zamienia złamania wiersza na html-tag &amp;lt;br&amp;gt;</key>
     <key alias="customFields">Niestandardowe Pola</key>
     <key alias="dateOnly">Tak, tylko data</key>
-    <key alias="formatAndEncoding">Format i kodowanie</key>
     <key alias="formatAsDate">Formatuj jako datę</key>
-    <key alias="formatAsDateDescr">Formatuj wartość jako datę lub jako datę i czas, zgodnie z aktywną kulturą</key>
     <key alias="htmlEncode">Kodowanie HTML</key>
     <key alias="htmlEncodeHelp">Zamienia znaki specjalne na ich odpowiedniki HTML</key>
     <key alias="insertedAfter">Zostanie wstawione za wartością pola</key>
     <key alias="insertedBefore">Zostanie wstawione przed wartością pola</key>
     <key alias="lowercase">małe znaki</key>
-    <key alias="modifyOutput">Modyfikuj dane wyjściowe</key>
     <key alias="none">Nic</key>
     <key alias="outputSample">Próbka danych wyjściowych</key>
     <key alias="postContent">Wstaw za polem</key>
     <key alias="preContent">Wstaw przed polem</key>
     <key alias="recursive">Rekurencyjne</key>
     <key alias="recursiveDescr">Tak, spraw, aby było to rekurencyjne</key>
-    <key alias="separator">Separator</key>
     <key alias="standardFields">Standardowe Pola</key>
     <key alias="uppercase">Wielkie litery</key>
     <key alias="urlEncode">Kodowanie URL</key>
@@ -1360,81 +1315,43 @@ Naciśnij przycisk <strong>instaluj</strong>, aby zainstalować bazę danych Umb
 		   3: Ścieżka pliku konfiguracyjnego
 	  -->
     <key alias="checkSuccessMessage">Wartość jest ustawiona na rekomendowaną wartość: '%0%'.</key>
-    <key alias="rectifySuccessMessage">Wartość została ustawiona na '%1%' dla XPath '%2%' w pliku konfiguracyjnym '%3%'.</key>
     <key alias="checkErrorMessageDifferentExpectedValue">Oczekiwana jest wartość '%1%' dla '%2%' w pliku konfiguracyjnym '%3%', ale znaleziono '%0%'.</key>
     <key alias="checkErrorMessageUnexpectedValue">Znaleziono nieoczekiwaną wartość '%0%' dla '%2%' w pliku konfiguracyjnym '%3%'.</key>
     <!-- Następujące klucze spowodują, że tokeny zostaną przekazane:
 	     0: Bieżąca wartość
 		   1: Rekomendowana wartość
 	  -->
-    <key alias="customErrorsCheckSuccessMessage">Niestandardowe błędy są ustawione na '%0%'.</key>
-    <key alias="customErrorsCheckErrorMessage">Niestandardowe błędy są obecnie ustawione na '%0%'. Zaleca się ustawienie ich na '%1%' przed wypuszczeniem strony na produkcję.</key>
-    <key alias="customErrorsCheckRectifySuccessMessage">Niestandardowe błędy zostały z powodzeniem ustawione na '%0%'.</key>
     <key alias="macroErrorModeCheckSuccessMessage">MacroErrors są ustawione na '%0%'.</key>
     <key alias="macroErrorModeCheckErrorMessage">MacroErrors są ustawione na '%0%' co uniemożliwi częściowe lub całkowite załadowanie stron w Twojej witrynie jeśli wystąpią jakiekolwiek błędy w makro. Korekta ustawi wartość na '%1%'.</key>
-    <key alias="macroErrorModeCheckRectifySuccessMessage">MacroErrors są teraz ustawione na '%0%'.</key>
     <!-- Następujące klucze spowodują, że tokeny zostaną przekazane:
 	     0: Bieżąca wartość
 		   1: Rekomendowana wartość
 		   2: Wersja serwera
 	  -->
-    <key alias="trySkipIisCustomErrorsCheckSuccessMessage">Try Skip IIS Custom Errors jest ustawione na '%0%' a Ty używasz IIS w wersji '%1%'.</key>
-    <key alias="trySkipIisCustomErrorsCheckErrorMessage">Try Skip IIS Custom Errors wynosi obecnie '%0%'. Zalecane jest ustawienie go na '%1%' dla Twojego IIS w wersji (%2%).</key>
-    <key alias="trySkipIisCustomErrorsCheckRectifySuccessMessage">Try Skip IIS Custom Errors ustawiono z powodzeniem na '%0%'.</key>
     <!-- Następujące klucze przekazują predefiniowane tokeny, nie wszystkie są identyczne jak powyżej -->
-    <key alias="configurationServiceFileNotFound">Plik nie istnieje: '%0%'.</key>
-    <key alias="configurationServiceNodeNotFound"><![CDATA[Nie można znaleźć <strong>'%0%'</strong> w pliku konfiguracyjnym <strong>'%1%'</strong>.]]></key>
-    <key alias="configurationServiceError">Wystąpił błąd, sprawdź logi, aby wyświetlić pełen opis błędu: %0%.</key>
     <key alias="httpsCheckValidCertificate">Certifikat Twojej strony jest poprawny.</key>
     <key alias="httpsCheckInvalidCertificate">Błąd walidacji certyfikatu: '%0%'</key>
     <key alias="httpsCheckExpiredCertificate">Certyfikat SSL Twojej strony wygasł.</key>
     <key alias="httpsCheckExpiringCertificate">Certyfikat SSL Twojej strony wygaśnie za %0% dni.</key>
     <key alias="healthCheckInvalidUrl">Błąd pingowania adresu URL %0% - '%1%'</key>
     <key alias="httpsCheckIsCurrentSchemeHttps">Oglądasz %0% stronę używając HTTPS.</key>
-    <key alias="httpsCheckConfigurationRectifyNotPossible">appSetting 'Umbraco.Core.UseHttps' został ustawiony na 'false' w Twoim pliku web.config. Po uzyskaniu dostępu do strony, używając HTTPS, powinieneś go ustawić na 'true'.</key>
-    <key alias="httpsCheckConfigurationCheckResult">appSetting 'Umbraco.Core.UseHttps' został ustawiony na '%0%' w Twoim pliku web.config, Twoje ciasteczka są %1% ustawione jako bezpieczne.</key>
-    <key alias="httpsCheckEnableHttpsError">Nie można zaktualizaować ustawień 'Umbraco.Core.UseHttps' w Twoim pliku web.config file. Błąd: %0%</key>
     <!-- Następujące klucze nie mają przekazanych tokenów -->
-    <key alias="httpsCheckEnableHttpsButton">Włącz HTTPS</key>
-    <key alias="httpsCheckEnableHttpsDescription">Ustawia umbracoSSL na 'true' w appSettings pliku web.config.</key>
-    <key alias="httpsCheckEnableHttpsSuccess">appSetting 'Umbraco.Core.UseHttps' jest teraz ustawione na 'true' w Twoim pliku web.config, Twoje ciasteczka będą oznaczone jako bezpieczne.</key>
-    <key alias="rectifyButton">Napraw</key>
-    <key alias="cannotRectifyShouldNotEqual">Nie można naprawić sprawdzenia z wartością typu porównania 'ShouldNotEqual'.</key>
-    <key alias="cannotRectifyShouldEqualWithValue">Nie można naprawić sprawdzenia z wartością typu porównania 'ShouldEqual' z wprowadzoną wartością.</key>
-    <key alias="valueToRectifyNotProvided">Nie wprowadzono wartości do naprawy sprawdzenia.</key>
     <key alias="compilationDebugCheckSuccessMessage">Tryb kompilacji debugowania jest wyłączony.</key>
     <key alias="compilationDebugCheckErrorMessage">Tryb kompilacji debugowania jest obecnie włączony. Zaleca się wyłączenie tego ustawienia przed wypuszczeniem strony na produkcję.</key>
-    <key alias="compilationDebugCheckRectifySuccessMessage">Tryb komplikacji debugowania został wyłączony z powodzeniem.</key>
-    <key alias="traceModeCheckSuccessMessage">Tryb śledzenia jest wyłączony.</key>
-    <key alias="traceModeCheckErrorMessage">Tryb śledzenia jest obecnie włączony. Zaleca się wyłączenie tego ustawienia przed wypuszczeniem strony na produkcję.</key>
-    <key alias="traceModeCheckRectifySuccessMessage">Tryb śledzenia został wyłączony z powodzeniem</key>
-    <key alias="folderPermissionsCheckMessage">Wszystkie foldery mają ustawione poprawne ustawienia.</key>
     <!-- Następujące klucze spowodują, że tokeny zostaną przekazane:
 	    0: Lista uszkodzonych ścieżek folderów oddzielonych przecinkami
   	-->
-    <key alias="requiredFolderPermissionFailed"><![CDATA[Następujące foldery muszą być skonfigurowane z uprawnieniami modyfikującymi, ale nie można uzyskać do nich dostępu: <strong>%0%</strong>.]]></key>
-    <key alias="optionalFolderPermissionFailed"><![CDATA[Następujące foldery muszą być skonfigurowane z uprawnieniami modyfikującymi dla pewnych operacji Umbraco, aby funkcjonować, ale nie można uzyskać do nich dostępu: <strong>%0%</strong>. Jeśli nie będzie nic w nich pisane, żadne działania nie muszą być podejmowane.]]></key>
-    <key alias="filePermissionsCheckMessage">Wszystkie pliki mają ustawione poprawne uprawnienia.</key>
     <!-- Następujące klucze spowodują, że tokeny zostaną przekazane:
 	    0: Lista uszkodzonych ścieżek folderów oddzielonych przecinkami
   	-->
-    <key alias="requiredFilePermissionFailed"><![CDATA[Następujące pliki muszą być ustawione z uprawnieniami do zapisu, ale nie można uzyskać do nich dostępu: <strong>%0%</strong>.]]></key>
-    <key alias="optionalFilePermissionFailed"><![CDATA[Następujące pliki muszą być ustawione z uprawnieniami do zapisu dla pewnych operacji Umbraco, aby funkcjonować, ale nie można uzyskać do nich dostępu: <strong>%0%</strong>. Jeśli nie będzie nic w nich pisane, żadne działania nie muszą być podejmowane.]]></key>
     <key alias="clickJackingCheckHeaderFound"><![CDATA[Nagłówek lub meta-tag <strong>X-Frame-Options</strong> używany do kontrolowania czy strona może być IFRAME'owana przez inną został znaleziony.]]></key>
     <key alias="clickJackingCheckHeaderNotFound"><![CDATA[Nagłówek lub meta-tag <strong>X-Frame-Options</strong> używany do kontrolowania czy strona może być IFRAME'owana przez inną nie został znaleziony.]]></key>
-    <key alias="setHeaderInConfig">Ustaw nagłówek w Config</key>
-    <key alias="clickJackingSetHeaderInConfigDescription">Dodaje wartość do sekcji httpProtocol/customHeaders pliku web.config, aby zapobiec IFRAME'owania strony przez inne witryny.</key>
-    <key alias="clickJackingSetHeaderInConfigSuccess">Ustawienie do tworzenia nagłówka, zapobiegającego IFRAME'owania strony przez inne witryny zostało dodane do Twojego pliku web.config.</key>
-    <key alias="setHeaderInConfigError">Nie można zaktualizować pliku web.config. Błąd: %0%</key>
     <!-- Następujące klucze spowodują, że tokeny zostaną przekazane:
 	    0: Lista znalezionych nagłówków, oddzielonych przecinkami
   	-->
     <key alias="excessiveHeadersFound"><![CDATA[Znaleziono następujące nagłówki, ujawniające informacje o technologii strony: <strong>%0%</strong>.]]></key>
     <key alias="excessiveHeadersNotFound">Nie znaleziono żadnych nagłówków, ujawniających informacji o technologii strony.</key>
-    <key alias="smtpMailSettingsNotFound">Nie znaleziono system.net/mailsettings w pliku Web.config.</key>
-    <key alias="smtpMailSettingsHostNotConfigured">Host nie jest skonfigurowany w sekcji system.net/mailsettings pliku Web.config.</key>
     <key alias="smtpMailSettingsConnectionSuccess">Ustawienia SMTP są skonfigurowane poprawnie i serwis działa według oczekiwań.</key>
-    <key alias="smtpMailSettingsConnectionFail">Nie można połączyć się z serwerem SMTP skonfigurowanym z hostem '%0%' i portem '%1%'. Proszę sprawdzić ponownie, czy ustawienia system.net/mailsettings w pliku Web.config są poprawne.</key>
     <key alias="notificationEmailsCheckSuccessMessage"><![CDATA[E-mail z powiadomieniem został wysłany do <strong>%0%</strong>.]]></key>
     <key alias="notificationEmailsCheckErrorMessage"><![CDATA[E-mail do powiadomień jest nadal ustawiony na domyślną wartość <strong>%0%</strong>.]]></key>
   </area>
@@ -1445,7 +1362,6 @@ Naciśnij przycisk <strong>instaluj</strong>, aby zainstalować bazę danych Umb
     <key alias="redirectedTo">Przekierowane do</key>
     <key alias="noRedirects">Nie stworzono żadnych przekierowań</key>
     <key alias="noRedirectsDescription">Kiedy nazwa opublikowanej strony zostanie zmieniona lub zostanie ona przeniesiona, zostanie stworzone automatyczne przekierowanie na nową stronę.</key>
-    <key alias="confirmRemove">Czy jesteś pewien, że chcesz usunąć przekierowanie z '%0%' do '%1%'?</key>
     <key alias="redirectRemoved">Przekierowanie URL zostało usunięte.</key>
     <key alias="redirectRemoveError">Wystąpił błąd podczas usuwania przekierowania URL.</key>
     <key alias="confirmDisable">Czy jesteś pewien, że chcesz wyłączyć śledzenie URL?</key>

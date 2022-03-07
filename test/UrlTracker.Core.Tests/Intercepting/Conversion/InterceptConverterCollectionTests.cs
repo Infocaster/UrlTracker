@@ -14,7 +14,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Conversion
 
         public override void SetUp()
         {
-            _testSubject = new InterceptConverterCollection(new List<IInterceptConverter> { InterceptConverter });
+            _testSubject = new InterceptConverterCollection(() => new List<IInterceptConverter> { InterceptConverter });
         }
 
         public static IEnumerable<TestCaseData> TestCases()

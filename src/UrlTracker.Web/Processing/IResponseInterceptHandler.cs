@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using System.Web;
+using Microsoft.AspNetCore.Http;
 using UrlTracker.Core.Intercepting.Models;
 
 namespace UrlTracker.Web.Processing
@@ -7,6 +7,6 @@ namespace UrlTracker.Web.Processing
     public interface IResponseInterceptHandler
     {
         bool CanHandle(IIntercept intercept);
-        ValueTask HandleAsync(HttpContextBase context, IIntercept intercept);
+        ValueTask HandleAsync(RequestDelegate next, HttpContext context, IIntercept intercept);
     }
 }

@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Umbraco.Core.Composing;
+using Umbraco.Cms.Core.Composing;
 using UrlTracker.Core.Domain.Models;
 
 namespace UrlTracker.Web.Processing
@@ -16,7 +17,7 @@ namespace UrlTracker.Web.Processing
     public class RequestInterceptFilterCollection
         : BuilderCollectionBase<IRequestInterceptFilter>, IRequestInterceptFilterCollection
     {
-        public RequestInterceptFilterCollection(IEnumerable<IRequestInterceptFilter> items)
+        public RequestInterceptFilterCollection(Func<IEnumerable<IRequestInterceptFilter>> items)
             : base(items)
         { }
 

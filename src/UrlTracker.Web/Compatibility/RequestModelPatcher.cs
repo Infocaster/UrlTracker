@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Umbraco.Web;
+using Umbraco.Cms.Core.Web;
+using Umbraco.Extensions;
 using UrlTracker.Core.Domain;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Web.Controllers.Models;
