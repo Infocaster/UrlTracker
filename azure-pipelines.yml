@@ -44,11 +44,14 @@ stages:
         projects: UrlTracker.sln
         arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion)'
 
-    #- task: DotNetCoreCLI@2
-    #  displayName: 'Run tests'
-    #  inputs:
-    #    command: 'test'
-    #    arguments: '.\UrlTracker.sln'
+    - task: DotNetCoreCLI@2
+      displayName: 'Run tests'
+      inputs:
+        command: 'test'
+        projects: |
+          test/UrlTracker.Core.Tests/UrlTracker.Core.Tests.csproj
+          test/UrlTracker.Web.Tests/UrlTracker.Web.Tests.csproj
+        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion)'
 
     - task: DotNetCoreCLI@2
       displayName: 'dotnet pack'
