@@ -37,6 +37,13 @@ stages:
         configFilePath: GitVersion.yml
         updateAssemblyInfo: true
 
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet build'
+      inputs:
+        command: build
+        projects: UrlTracker.sln
+        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion)'
+
     #- task: DotNetCoreCLI@2
     #  displayName: 'Run tests'
     #  inputs:
@@ -47,7 +54,7 @@ stages:
       displayName: 'dotnet pack'
       inputs:
         command: pack
-        arguments: '--configuration $(BuildConfiguration)  /p:Version=$(GitVersion.NuGetVersion)'
+        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion)'
         packagesToPack: src/UrlTracker.Web/UrlTracker.Web.csproj
         versioningScheme: byEnvVar
         versionEnvVar: GitVersion.NuGetVersion
