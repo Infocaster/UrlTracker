@@ -41,10 +41,12 @@ namespace UrlTracker.Core.Database
                     .From<UrlTrackerEntry>()
                     .Where<UrlTrackerEntry>(e => e.OldUrl == sourceUrl)
                     .Where<UrlTrackerEntry>(e => e.RedirectRootNodeId == targetRootNodeId)
-                    .Where<UrlTrackerEntry>(e => e.Culture == culture)
                     .Where<UrlTrackerEntry>(e => e.Is404 == is404);
 
-                await scope.Database.ExecuteAsync(query);
+                if (culture is null) query = query.WhereNull<UrlTrackerEntry>(e => e.Culture);
+                else query = query.Where<UrlTrackerEntry>(e => e.Culture == culture);
+
+                var result = await scope.Database.ExecuteAsync(query);
                 scope.Complete();
             }
         }
