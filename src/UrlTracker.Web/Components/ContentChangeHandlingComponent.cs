@@ -95,6 +95,10 @@ namespace UrlTracker.Web.Components
         {
             if (!TrackingEnabled()) return;
 
+            // Check if the key exists: Fixes an error on sorting;
+            //    sorting raises the published event without the publishing event.
+            if (!e.EventState.ContainsKey(_renameRedirectsKey)) return;
+
             var redirects = e.EventState[_renameRedirectsKey] as List<Redirect>;
             RegisterRedirects(redirects);
         }
@@ -134,6 +138,7 @@ namespace UrlTracker.Web.Components
         private void ContentService_Moved(Umbraco.Core.Services.IContentService sender, Umbraco.Core.Events.MoveEventArgs<Umbraco.Core.Models.IContent> e)
         {
             if (!TrackingEnabled()) return;
+            if (!e.EventState.ContainsKey(_moveRedirectsKey)) return;
 
             // At this point we know for sure that the operation has succeeded, so now we can register the redirects
             //    Wrap everything in a scope: if anything fails, everything will be rolled back and we won't be left with partial changes
@@ -172,7 +177,7 @@ namespace UrlTracker.Web.Components
             {
                 foreach (var redirect in redirects)
                 {
-                    // this looks hacky, but it's the only way to perform async tasks
+                    // this looks hacky, but it's the easiest way to perform async tasks
                     //    in a sync context without potentially creating deadlocks
                     Task.Run(() => _redirectService.AddAsync(redirect).Wait()).Wait();
                 }
