@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using Umbraco.Core.Mapping;
+using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Core.Map
@@ -7,7 +7,7 @@ namespace UrlTracker.Core.Map
     public class LegacyDatabaseMap
         : IMapDefinition
     {
-        public void DefineMaps(UmbracoMapper mapper)
+        public void DefineMaps(IUmbracoMapper mapper)
         {
             mapper.Define<UrlTrackerEntry, UrlTrackerShallowRedirect>(
                 (source, context) => new UrlTrackerShallowRedirect(),
@@ -18,7 +18,7 @@ namespace UrlTracker.Core.Map
                 Map);
 
             mapper.Define<UrlTrackerEntry, UrlTrackerRedirect>(
-                (source, context) => context.Map<UrlTrackerEntry, UrlTrackerShallowRedirect>(source, new UrlTrackerRedirect()) as UrlTrackerRedirect,
+                (source, context) => (UrlTrackerRedirect)context.Map<UrlTrackerEntry, UrlTrackerShallowRedirect>(source, new UrlTrackerRedirect()),
                 Map);
 
             mapper.Define<UrlTrackerEntry, UrlTrackerNotFound>(

@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
+using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
-using Umbraco.Core.Mapping;
+using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Web;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Core.Models;
@@ -32,7 +33,7 @@ namespace UrlTracker.Web.Tests.Processing
 
         public override void SetUp()
         {
-            _testSubject = new RedirectResponseInterceptHandler(new ConsoleLogger(), Mapper, CompleteRequestAbstraction);
+            _testSubject = new RedirectResponseInterceptHandler(new ConsoleLogger<RedirectResponseInterceptHandler>(), Mapper, ResponseAbstraction, UmbracoContextFactoryAbstractionMock.UmbracoContextFactory);
             _testMap.To = null; // <- always reset the url on the test map to prevent urls from leaking between tests
         }
 
@@ -123,30 +124,30 @@ namespace UrlTracker.Web.Tests.Processing
         {
             // arrange
             HttpContextMock.ResponseMock.SetupProperty(obj => obj.StatusCode, initialStatusCode);
-            HttpContextMock.RequestMock.SetupGet(obj => obj.Url).Returns(new Uri(initialUrl));
-
-            if (initialStatusCode != expectedStatusCode)
-            {
-                HttpContextMock.ResponseMock.Setup(obj => obj.Clear()).Verifiable();
-                CompleteRequestAbstractionMock.Setup(obj => obj.CompleteRequest(It.Is<HttpContextBase>(o => ReferenceEquals(o, HttpContextMock.Context)))).Verifiable();
-            }
+            HttpContextMock.SetupUrl(new Uri(initialUrl));
+            UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetResponseCode()).Returns(initialStatusCode);
+            bool nextInvoked = false;
+            Task next(HttpContext context) => Task.FromResult(nextInvoked = true);
             if (expectedUrl != null)
             {
                 _testMap.To = Url.Parse(expectedUrl);
-                HttpContextMock.ResponseMock.SetupProperty(obj => obj.RedirectLocation);
+                ResponseAbstractionMock.Setup(obj => obj.SetRedirectLocation(HttpContextMock.Response, expectedUrl)).Verifiable();
             }
             var input = new InterceptBase<ShallowRedirect>(redirect);
 
             // act
-            await _testSubject.HandleAsync(HttpContextMock.Context, input);
+            await _testSubject.HandleAsync(next, HttpContextMock.Context, input);
 
             // assert
             HttpContextMock.ResponseMock.Verify();
-            CompleteRequestAbstractionMock.Verify();
             Assert.Multiple(() =>
             {
+                if(initialStatusCode == expectedStatusCode)
+                {
+                    Assert.That(nextInvoked, Is.True);
+                }
                 Assert.That(HttpContextMock.Response.StatusCode, Is.EqualTo(expectedStatusCode));
-                Assert.That(HttpContextMock.Response.RedirectLocation, Is.EqualTo(expectedUrl));
+                ResponseAbstractionMock.Verify();
             });
         }
     }

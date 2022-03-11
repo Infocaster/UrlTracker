@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Umbraco.Core.Cache;
+using Umbraco.Cms.Core.Cache;
+using Umbraco.Extensions;
 using UrlTracker.Core.Domain.Models;
 
 namespace UrlTracker.Core.Domain

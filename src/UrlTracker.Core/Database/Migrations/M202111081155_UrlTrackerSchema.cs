@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using NPoco;
-using Umbraco.Core.Persistence.DatabaseAnnotations;
-using Umbraco.Core.Persistence.DatabaseModelDefinitions;
+using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
+using Umbraco.Cms.Infrastructure.Persistence.DatabaseModelDefinitions;
 
 namespace UrlTracker.Core.Database.Migrations
 {
@@ -18,13 +18,13 @@ namespace UrlTracker.Core.Database.Migrations
         public int Id { get; set; }
 
         [Column("Culture"), Length(10), NullSetting(NullSetting = NullSettings.Null)]
-        public string Culture { get; set; }
+        public string? Culture { get; set; }
 
         [Column("OldUrl"), Length(255), NullSetting(NullSetting = NullSettings.Null)]
-        public string OldUrl { get; set; }
+        public string? OldUrl { get; set; }
 
         [Column("OldRegex"), Length(255), NullSetting(NullSetting = NullSettings.Null)]
-        public string OldRegex { get; set; }
+        public string? OldRegex { get; set; }
 
         [Column("RedirectRootNodeId"), NullSetting(NullSetting = NullSettings.Null)]
         public int? RedirectRootNodeId { get; set; }
@@ -33,7 +33,7 @@ namespace UrlTracker.Core.Database.Migrations
         public int? RedirectNodeId { get; set; }
 
         [Column("RedirectUrl"), Length(255), NullSetting(NullSetting = NullSettings.Null)]
-        public string RedirectUrl { get; set; }
+        public string? RedirectUrl { get; set; }
 
         [Column("RedirectHttpCode"), NullSetting(NullSetting = NullSettings.Null)]
         public int? RedirectHttpCode { get; set; }
@@ -45,13 +45,13 @@ namespace UrlTracker.Core.Database.Migrations
         public bool ForceRedirect { get; set; }
 
         [Column("Notes"), Length(255), NullSetting(NullSetting = NullSettings.Null)]
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
 
         [Column("Is404")]
         public bool Is404 { get; set; }
 
         [Column("Referrer"), Length(255), NullSetting(NullSetting = NullSettings.Null)]
-        public string Referrer { get; set; }
+        public string? Referrer { get; set; }
 
         [Column("Inserted"), Constraint(Default = SystemMethods.CurrentDateTime)]
         public DateTime Inserted { get; set; }
@@ -71,10 +71,10 @@ namespace UrlTracker.Core.Database.Migrations
         public int? RootNodeId { get; set; }
 
         [Column("Culture"), Length(10), NullSetting(NullSetting = NullSettings.Null)]
-        public string Culture { get; set; }
+        public string? Culture { get; set; }
 
         [Column("Url"), Length(255), NullSetting(NullSetting = NullSettings.Null)]
-        public string Url { get; set; }
+        public string? Url { get; set; }
 
         [Column("Inserted"), Constraint(Default = SystemMethods.CurrentDateTime)]
         public DateTime Inserted { get; set; }

@@ -1,22 +1,18 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 using Moq;
-using Umbraco.Core;
-using Umbraco.Core.Cache;
-using Umbraco.Core.Configuration;
-using Umbraco.Core.Logging;
-using Umbraco.Core.Mapping;
-using Umbraco.Core.Persistence;
-using Umbraco.Web;
+using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
+using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Web.Controllers;
 using UrlTracker.Web.Controllers.Models;
 
 namespace UrlTracker.Web.Tests.Controllers
 {
-    public partial class UrlTrackerManagerControllerTests : ControllerTestsBase
+    public partial class UrlTrackerManagerControllerTests : TestBase
     {
         private UrlTrackerManagerController _testSubject;
 
@@ -40,22 +36,23 @@ namespace UrlTracker.Web.Tests.Controllers
         public override void SetUp()
         {
             base.SetUp();
-            UrlTrackerSettings.Value = new UrlTrackerSettings(true, true, true, true, true, true);
-            _testSubject = new UrlTrackerManagerController(Mock.Of<IGlobalSettings>(),
-                                                           Mock.Of<IUmbracoContextAccessor>(),
-                                                           Mock.Of<ISqlContext>(),
-                                                           ServiceContext,
-                                                           AppCaches.NoCache,
-                                                           Mock.Of<IProfilingLogger>(),
-                                                           Mock.Of<IRuntimeState>(),
-                                                           UmbracoHelper,
-                                                           UrlTrackerSettings,
+            UrlTrackerSettings = Options.Create(new UrlTrackerSettings
+            {
+                AppendPortNumber = true,
+                HasDomainOnChildNode = true,
+                IsDisabled = true,
+                IsTrackingDisabled = true,
+                IsNotFoundTrackingDisabled = true,
+                LoggingEnabled = true
+            });
+            _testSubject = new UrlTrackerManagerController(UrlTrackerSettings,
                                                            DomainProvider,
                                                            RedirectService,
                                                            ClientErrorService,
                                                            LegacyService,
                                                            ScopeProviderMock.Provider,
-                                                           RequestModelPatcher);
+                                                           RequestModelPatcher,
+                                                           Mapper);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
-using System.Web.Http.Results;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
 using UrlTracker.Core.Models;
@@ -26,8 +26,7 @@ namespace UrlTracker.Web.Tests.Controllers
             RedirectServiceMock.Verify();
             Assert.Multiple(() =>
             {
-                Assert.That(result, Is.TypeOf<StatusCodeResult>());
-                Assert.That((result as StatusCodeResult).StatusCode, Is.EqualTo(HttpStatusCode.Created));
+                Assert.That(result, Is.TypeOf<OkResult>());
             });
         }
 
@@ -55,8 +54,7 @@ namespace UrlTracker.Web.Tests.Controllers
             ClientErrorServiceMock.Verify();
             Assert.Multiple(() =>
             {
-                Assert.That(result, Is.TypeOf<StatusCodeResult>());
-                Assert.That((result as StatusCodeResult).StatusCode, Is.EqualTo(HttpStatusCode.Created));
+                Assert.That(result, Is.TypeOf<OkResult>());
             });
         }
     }

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Umbraco.Core.Models.PublishedContent;
-using Umbraco.Web;
+using Umbraco.Cms.Core;
+using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Routing;
+using Umbraco.Cms.Core.Web;
+using Umbraco.Extensions;
 
 namespace UrlTracker.Core.Abstractions
 {
@@ -10,15 +13,17 @@ namespace UrlTracker.Core.Abstractions
         : IUmbracoContextFactoryAbstraction
     {
         private readonly IUmbracoContextFactory _umbracoContextFactory;
+        private readonly IPublishedUrlProvider _urlProvider;
 
-        public UmbracoContextFactoryAbstraction(IUmbracoContextFactory umbracoContextFactory)
+        public UmbracoContextFactoryAbstraction(IUmbracoContextFactory umbracoContextFactory, IPublishedUrlProvider urlProvider)
         {
             _umbracoContextFactory = umbracoContextFactory;
+            _urlProvider = urlProvider;
         }
 
         public IUmbracoContextReferenceAbstraction EnsureUmbracoContext()
         {
-            return new UmbracoContextReferenceAbstraction(_umbracoContextFactory.EnsureUmbracoContext());
+            return new UmbracoContextReferenceAbstraction(_umbracoContextFactory.EnsureUmbracoContext(), _urlProvider);
         }
     }
 
@@ -27,10 +32,12 @@ namespace UrlTracker.Core.Abstractions
         : IUmbracoContextReferenceAbstraction
     {
         private readonly UmbracoContextReference _cref;
+        private readonly IPublishedUrlProvider _urlProvider;
 
-        public UmbracoContextReferenceAbstraction(UmbracoContextReference cref)
+        public UmbracoContextReferenceAbstraction(UmbracoContextReference cref, IPublishedUrlProvider urlProvider)
         {
             _cref = cref;
+            _urlProvider = urlProvider;
         }
 
         public void Dispose()
@@ -41,20 +48,27 @@ namespace UrlTracker.Core.Abstractions
         public IPublishedContent GetContentById(int id)
             => _cref.UmbracoContext.Content.GetById(id);
 
-        public string GetUrl(IPublishedContent content, UrlMode mode, string culture)
-            => _cref.UmbracoContext.UrlProvider.GetUrl(content, mode, culture);
+        public string GetUrl(IPublishedContent content, UrlMode mode, string? culture)
+            => content.Url(_urlProvider, culture, mode);
 
-        public string GetMediaUrl(IPublishedContent content, UrlMode mode, string culture)
-            => _cref.UmbracoContext.UrlProvider.GetMediaUrl(content, mode, culture);
+        public string GetMediaUrl(IPublishedContent content, UrlMode mode, string? culture)
+            => content.MediaUrl(_urlProvider, culture, mode);
+
+        public int? GetResponseCode()
+        {
+            return _cref.UmbracoContext.PublishedRequest.ResponseStatusCode;
+        }
     }
 
     [ExcludeFromCodeCoverage]
     public static class UmbracoContextFactoryAbstractionExtensions
     {
-        public static string Url(this IPublishedContent content, IUmbracoContextFactoryAbstraction abstraction, string culture = null, UrlMode mode = UrlMode.Default)
+        public static string Url(this IPublishedContent content, IUmbracoContextFactoryAbstraction abstraction, string? culture = null, UrlMode mode = UrlMode.Default)
         {
             using (var cref = abstraction.EnsureUmbracoContext())
             {
+                if (!content.HasCulture(culture)) culture = null;
+
                 switch (content.ItemType)
                 {
                     case PublishedItemType.Content:

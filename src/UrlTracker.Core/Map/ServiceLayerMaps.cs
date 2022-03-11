@@ -1,8 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Umbraco.Core.Mapping;
+using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Database.Models;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Map
@@ -18,14 +17,14 @@ namespace UrlTracker.Core.Map
         }
 
         [ExcludeFromCodeCoverage]
-        public void DefineMaps(UmbracoMapper mapper)
+        public void DefineMaps(IUmbracoMapper mapper)
         {
             mapper.Define<UrlTrackerShallowRedirect, ShallowRedirect>(
                 (source, context) => new ShallowRedirect(),
                 Map);
 
             mapper.Define<UrlTrackerRedirect, Redirect>(
-                (source, context) => context.Map<UrlTrackerShallowRedirect, ShallowRedirect>(source, new Redirect()) as Redirect,
+                (source, context) => (Redirect)context.Map<UrlTrackerShallowRedirect, ShallowRedirect>(source, new Redirect()),
                 Map);
 
             mapper.Define<UrlTrackerRedirectCollection, RedirectCollection>(

@@ -1,38 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Routing;
 using NUnit.Framework;
-using UrlTracker.Resources.Testing.Objects;
+using UrlTracker.Resources.Testing;
 using UrlTracker.Web.Controllers.ActionFilters;
 using UrlTracker.Web.Controllers.Models;
 
 namespace UrlTracker.Web.Tests.Controllers.ActionFilters
 {
-    public class PatchModelAttributeTests
+    public class PatchModelAttributeTests : TestBase
     {
         private PatchModelAttribute _testSubject;
-        private TestActionDescriptor _actionDescriptor;
-        private HttpActionContext _actionContext;
-        private TestParameterDescriptor _parameterDescriptor;
+        private ActionContext _actionContext;
+        private ActionExecutingContext _actionExecutingContext;
 
         [SetUp]
         public void SetUp()
         {
             _testSubject = new PatchModelAttribute();
-            _parameterDescriptor = new TestParameterDescriptor("test", typeof(object));
-            _actionDescriptor = new TestActionDescriptor("test", typeof(IHttpActionResult));
-            _actionDescriptor.Parameters.Add(_parameterDescriptor);
-            _actionContext = new HttpActionContext
-            {
-                ControllerContext = new HttpControllerContext { Request = new HttpRequestMessage() },
-                Response = new HttpResponseMessage(),
-                ActionDescriptor = _actionDescriptor,
-            };
+            _actionContext = new ActionContext(HttpContextMock.Context, new RouteData(), new ActionDescriptor());
+            _actionExecutingContext = new ActionExecutingContext(_actionContext, new List<IFilterMetadata>(), new Dictionary<string, object>(), new object());
         }
 
 
@@ -49,10 +39,10 @@ namespace UrlTracker.Web.Tests.Controllers.ActionFilters
         {
             // arrange
             AddRedirectRequest input = new AddRedirectRequest { OldUrl = inputUrl, RedirectUrl = inputUrl };
-            _actionContext.ActionArguments.Add("test", input);
+            _actionExecutingContext.ActionArguments.Add("test", input);
 
             // act
-            _testSubject.OnActionExecuting(_actionContext);
+            _testSubject.OnActionExecuting(_actionExecutingContext);
 
             // assert
             Assert.Multiple(() =>

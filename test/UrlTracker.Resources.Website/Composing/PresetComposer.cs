@@ -1,27 +1,19 @@
-﻿using LightInject;
-using Umbraco.Core;
-using Umbraco.Core.Composing;
-using UrlTracker.Core.Configuration;
-using UrlTracker.Core.Configuration.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.DependencyInjection;
 using UrlTracker.Resources.Website.Maps;
 using UrlTracker.Resources.Website.Preset;
-using UrlTracker.Web;
 
 namespace UrlTracker.Resources.Website.Composing
 {
-    [RuntimeLevel(MinLevel = RuntimeLevel.Run), ComposeAfter(typeof(WebComposer))]
-    public class PresetComposer : IUserComposer
+    public class PresetComposer : IComposer
     {
-        public void Compose(Composition composition)
+        public void Compose(IUmbracoBuilder builder)
         {
-            var container = composition.Concrete as ServiceContainer;
+            builder.Services.AddSingleton<IPresetService, PresetService>();
+            builder.Services.AddSingleton<IUrlTrackerConfigurationManager, UrlTrackerConfigurationManager>();
 
-            composition.RegisterUnique<IPresetService, PresetService>();
-            composition.RegisterUnique<IUrlTrackerConfigurationManager, UrlTrackerConfigurationManager>();
-
-            container.Decorate<IConfiguration<UrlTrackerSettings>, DecoratorUrlTrackerConfigurationHijack>();
-
-            composition.MapDefinitions()
+            builder.MapDefinitions()
                 .Add<PresetMaps>();
         }
     }

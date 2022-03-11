@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using Umbraco.Core.Mapping;
+using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Exceptions;
@@ -16,12 +16,12 @@ namespace UrlTracker.Core
         private readonly IClientErrorRepository _clientErrorRepository;
         private readonly IValidationHelper _validationHelper;
         private readonly IExceptionHelper _exceptionHelper;
-        private readonly UmbracoMapper _mapper;
+        private readonly IUmbracoMapper _mapper;
 
         public ClientErrorService(IClientErrorRepository clientErrorRepository,
                                   IValidationHelper validationHelper,
                                   IExceptionHelper exceptionHelper,
-                                  UmbracoMapper mapper)
+                                  IUmbracoMapper mapper)
         {
             _clientErrorRepository = clientErrorRepository;
             _validationHelper = validationHelper;

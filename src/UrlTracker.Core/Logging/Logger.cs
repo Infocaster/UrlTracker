@@ -1,132 +1,37 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using UrlTracker.Core.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using UrlTracker.Core.Configuration.Models;
 
 namespace UrlTracker.Core.Logging
 {
-    public interface ILogger
-        : Umbraco.Core.Logging.ILogger
+    public interface ILogger<TSource>
+        : Microsoft.Extensions.Logging.ILogger<TSource>
     { }
 
     [ExcludeFromCodeCoverage]
-    internal class Logger
-        : ILogger
+    internal class Logger<TSource>
+        : ILogger<TSource>
     {
-        private readonly Umbraco.Core.Logging.ILogger _logger;
-        private readonly IConfiguration<UrlTrackerSettings> _configuration;
+        private readonly Microsoft.Extensions.Logging.ILogger<TSource> _logger;
+        private readonly IOptions<UrlTrackerSettings> _options;
 
-        public Logger(Umbraco.Core.Logging.ILogger logger, IConfiguration<UrlTrackerSettings> configuration)
+        public Logger(Microsoft.Extensions.Logging.ILogger<TSource> logger, IOptions<UrlTrackerSettings> options)
         {
             _logger = logger;
-            _configuration = configuration;
+            _options = options;
         }
 
-        private bool LoggingEnabled => _configuration.Value.LoggingEnabled;
+        public IDisposable BeginScope<TState>(TState state)
+            => _logger.BeginScope<TState>(state);
 
-        public void Debug(Type reporting, string message)
-        {
-            if (LoggingEnabled) _logger.Debug(reporting, message);
-        }
+        public bool IsEnabled(LogLevel logLevel)
+            => _logger.IsEnabled(logLevel) && _options.Value.LoggingEnabled;
 
-        public void Debug(Type reporting, string messageTemplate, params object[] propertyValues)
+        public void Log<TState>(LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            if (LoggingEnabled) _logger.Debug(reporting, messageTemplate, propertyValues);
-        }
-
-        public void Error(Type reporting, Exception exception, string message)
-        {
-            if (LoggingEnabled) _logger.Error(reporting, exception, message);
-        }
-
-        public void Error(Type reporting, Exception exception)
-        {
-            if (LoggingEnabled) _logger.Error(reporting, exception);
-        }
-
-        public void Error(Type reporting, string message)
-        {
-            if (LoggingEnabled) _logger.Error(reporting, message);
-        }
-
-        public void Error(Type reporting, Exception exception, string messageTemplate, params object[] propertyValues)
-        {
-            if (LoggingEnabled) _logger.Error(reporting, exception, messageTemplate, propertyValues);
-        }
-
-        public void Error(Type reporting, string messageTemplate, params object[] propertyValues)
-        {
-            if (LoggingEnabled) _logger.Error(reporting, messageTemplate, propertyValues);
-        }
-
-        public void Fatal(Type reporting, Exception exception, string message)
-        {
-            if (LoggingEnabled) _logger.Fatal(reporting, exception, message);
-        }
-
-        public void Fatal(Type reporting, Exception exception)
-        {
-            if (LoggingEnabled) _logger.Fatal(reporting, exception);
-        }
-
-        public void Fatal(Type reporting, string message)
-        {
-            if (LoggingEnabled) _logger.Fatal(reporting, message);
-        }
-
-        public void Fatal(Type reporting, Exception exception, string messageTemplate, params object[] propertyValues)
-        {
-            if (LoggingEnabled) _logger.Fatal(reporting, exception, messageTemplate, propertyValues);
-        }
-
-        public void Fatal(Type reporting, string messageTemplate, params object[] propertyValues)
-        {
-            if (LoggingEnabled) _logger.Fatal(reporting, messageTemplate, propertyValues);
-        }
-
-        public void Info(Type reporting, string message)
-        {
-            if (LoggingEnabled) _logger.Info(reporting, message);
-        }
-
-        public void Info(Type reporting, string messageTemplate, params object[] propertyValues)
-        {
-            if (LoggingEnabled) _logger.Info(reporting, messageTemplate, propertyValues);
-        }
-
-        public bool IsEnabled(Type reporting, Umbraco.Core.Logging.LogLevel level)
-        {
-            return _logger.IsEnabled(reporting, level);
-        }
-
-        public void Verbose(Type reporting, string message)
-        {
-            if (LoggingEnabled) _logger.Verbose(reporting, message);
-        }
-
-        public void Verbose(Type reporting, string messageTemplate, params object[] propertyValues)
-        {
-            if (LoggingEnabled) _logger.Verbose(reporting, messageTemplate, propertyValues);
-        }
-
-        public void Warn(Type reporting, string message)
-        {
-            if (LoggingEnabled) _logger.Warn(reporting, message);
-        }
-
-        public void Warn(Type reporting, string messageTemplate, params object[] propertyValues)
-        {
-            if (LoggingEnabled) _logger.Warn(reporting, messageTemplate, propertyValues);
-        }
-
-        public void Warn(Type reporting, Exception exception, string message)
-        {
-            if (LoggingEnabled) _logger.Warn(reporting, exception, message);
-        }
-
-        public void Warn(Type reporting, Exception exception, string messageTemplate, params object[] propertyValues)
-        {
-            if (LoggingEnabled) _logger.Warn(reporting, exception, messageTemplate, propertyValues);
+            if(IsEnabled(logLevel)) _logger.Log<TState>(logLevel, eventId, state, exception, formatter);
         }
     }
 }

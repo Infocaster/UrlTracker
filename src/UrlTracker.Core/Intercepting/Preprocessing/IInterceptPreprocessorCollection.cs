@@ -6,6 +6,6 @@ namespace UrlTracker.Core.Intercepting.Preprocessing
 {
     public interface IInterceptPreprocessorCollection
     {
-        ValueTask<IInterceptContext> PreprocessUrlAsync(Url url, IInterceptContext context = null);
+        ValueTask<IInterceptContext> PreprocessUrlAsync(Url url, IInterceptContext? context = null);
     }
 }

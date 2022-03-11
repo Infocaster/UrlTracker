@@ -1,18 +1,19 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using UrlTracker.Core.Configuration;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Domain.Models;
-using ILogger = UrlTracker.Core.Logging.ILogger;
+using UrlTracker.Core.Logging;
 
 namespace UrlTracker.Web.Processing
 {
     public class ConfigurationInterceptFilter
         : IRequestInterceptFilter
     {
-        private readonly IConfiguration<UrlTrackerSettings> _configuration;
-        private readonly ILogger _logger;
+        private readonly IOptions<UrlTrackerSettings> _configuration;
+        private readonly ILogger<ConfigurationInterceptFilter> _logger;
 
-        public ConfigurationInterceptFilter(IConfiguration<UrlTrackerSettings> configuration, ILogger logger)
+        public ConfigurationInterceptFilter(IOptions<UrlTrackerSettings> configuration, ILogger<ConfigurationInterceptFilter> logger)
         {
             _configuration = configuration;
             _logger = logger;
@@ -28,7 +29,7 @@ namespace UrlTracker.Web.Processing
             _logger.LogStart<ConfigurationInterceptFilter>();
             if (_configuration.Value.IsDisabled)
             {
-                _logger.LogUrlTrackerDisabled<ConfigurationInterceptFilter>();
+                _logger.LogUrlTrackerDisabled();
                 return false;
             }
 

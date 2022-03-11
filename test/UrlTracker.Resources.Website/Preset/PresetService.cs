@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Umbraco.Core.Logging;
-using Umbraco.Core.Scoping;
-using Umbraco.Core.Services;
+using Microsoft.Extensions.Logging;
+using Umbraco.Cms.Core.Scoping;
+using Umbraco.Cms.Core.Services;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Database.Models;
 
@@ -21,9 +21,9 @@ namespace UrlTracker.Resources.Website.Preset
         private readonly IScopeProvider _scopeProvider;
         private readonly IContentService _contentService;
         private readonly IUrlTrackerConfigurationManager _urlTrackerConfigurationManager;
-        private readonly ILogger _logger;
+        private readonly ILogger<PresetService> _logger;
 
-        public PresetService(IScopeProvider scopeProvider, IContentService contentService, IUrlTrackerConfigurationManager urlTrackerConfigurationManager, ILogger logger)
+        public PresetService(IScopeProvider scopeProvider, IContentService contentService, IUrlTrackerConfigurationManager urlTrackerConfigurationManager, ILogger<PresetService> logger)
         {
             _scopeProvider = scopeProvider;
             _contentService = contentService;
@@ -78,7 +78,7 @@ namespace UrlTracker.Resources.Website.Preset
 
             foreach (var entry in entries)
             {
-                _logger.Debug<PresetService>("Inserted entry: {entry}", entry);
+                _logger.LogDebug("Inserted entry: {entry}", entry);
             }
         }
 

@@ -15,7 +15,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
 
         public override void SetUp()
         {
-            _testSubject = new InterceptPreprocessorCollection(new List<IInterceptPreprocessor> { InterceptPreprocessor }, DefaultInterceptContextFactory);
+            _testSubject = new InterceptPreprocessorCollection(() => new List<IInterceptPreprocessor> { InterceptPreprocessor }, DefaultInterceptContextFactory);
         }
 
         public static IEnumerable<TestCaseData> TestCases()

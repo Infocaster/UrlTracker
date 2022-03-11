@@ -1,11 +1,11 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using LightInject;
-using Umbraco.Core;
-using Umbraco.Core.Cache;
-using Umbraco.Core.Composing;
+using Microsoft.Extensions.DependencyInjection;
+using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Cms.Core.Notifications;
 using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Components;
-using UrlTracker.Core.Configuration;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Models;
@@ -23,121 +23,116 @@ namespace UrlTracker.Core
 {
     [ExcludeFromCodeCoverage]
     public class CoreComposer
-        : IUserComposer
+        : IComposer
     {
-        public void Compose(Composition composition)
+        public void Compose(IUmbracoBuilder builder)
         {
-            var container = composition.Concrete as IServiceRegistry;
+            builder.ComposeUrlTrackerCoreComponents()
+                   .ComposeUrlTrackerCoreNotifications()
+                   .ComposeUrlTrackerCoreConfigurations()
+                   .ComposeUrlTrackerCoreMaps()
+                   .ComposeUrlTrackerCoreAbstractions()
+                   .ComposeDefaultInterceptors()
+                   .ComposeDefaultInterceptPreprocessors()
+                   .ComposeDefaultInterceptConverters();
 
-            composition.ComposeUrlTrackerCoreComponents()
-                       .ComposeUrlTrackerCoreConfigurations()
-                       .ComposeUrlTrackerCoreMaps()
-                       .ComposeUrlTrackerCoreAbstractions()
-                       .ComposeDefaultInterceptors()
-                       .ComposeDefaultInterceptPreprocessors()
-                       .ComposeDefaultInterceptConverters();
+            builder.Services.AddSingleton<IDomainProvider, DomainProvider>();
+            builder.Services.Decorate<IDomainProvider>((decoratee, factory) => new DecoratorDomainProviderCaching(decoratee, factory.GetRequiredService<AppCaches>().RuntimeCache));
 
-            composition.RegisterUnique<IDomainProvider, DomainProvider>();
-            container.Decorate<IDomainProvider>((factory, decoratee) => new DecoratorDomainProviderCaching(decoratee, factory.GetInstance<AppCaches>().RuntimeCache));
+            builder.Services.AddSingleton<IDefaultInterceptContextFactory, DefaultInterceptContextFactory>();
+            builder.Services.AddSingleton<IIntermediateInterceptService, IntermediateInterceptService>();
+            builder.Services.AddSingleton<IInterceptService, InterceptService>();
+            builder.Services.AddSingleton<IRedirectService, RedirectService>();
+            builder.Services.AddSingleton<IClientErrorService, ClientErrorService>();
+            builder.Services.AddSingleton<ILegacyService, LegacyService>();
+            builder.Services.AddSingleton<IRedirectRepository, RedirectRepository>();
+            builder.Services.AddSingleton<IClientErrorRepository, ClientErrorRepository>();
+            builder.Services.AddSingleton<ILegacyRepository, LegacyRepository>();
+            builder.Services.AddSingleton<IValidationHelper, ValidationHelper>();
+            builder.Services.AddSingleton<IExceptionHelper, ExceptionHelper>();
 
-            composition.RegisterUnique<IDefaultInterceptContextFactory, DefaultInterceptContextFactory>();
-            composition.RegisterUnique<IIntermediateInterceptService, IntermediateInterceptService>();
-            composition.RegisterUnique<IInterceptService, InterceptService>();
-            composition.RegisterUnique<IRedirectService, RedirectService>();
-            composition.RegisterUnique<IClientErrorService, ClientErrorService>();
-            composition.RegisterUnique<ILegacyService, LegacyService>();
-            composition.RegisterUnique<IRedirectRepository, RedirectRepository>();
-            composition.RegisterUnique<IClientErrorRepository, ClientErrorRepository>();
-            composition.RegisterUnique<ILegacyRepository, LegacyRepository>();
-            composition.RegisterUnique<IValidationHelper, ValidationHelper>();
-            composition.RegisterUnique<IExceptionHelper, ExceptionHelper>();
+            builder.Services.AddTransient(typeof(ILogger<>), typeof(Logger<>));
 
-            composition.Register<ILogger, Logger>(Lifetime.Transient);
-
-            composition.RegisterUnique<IStaticUrlProviderCollection>(factory => factory.GetInstance<StaticUrlProviderCollection>());
-            composition.RegisterUnique<IInterceptPreprocessorCollection>(factory => factory.GetInstance<InterceptPreprocessorCollection>());
-            composition.RegisterUnique<IInterceptorCollection>(factory => factory.GetInstance<InterceptorCollection>());
-            composition.RegisterUnique<IInterceptConverterCollection>(factory => factory.GetInstance<InterceptConverterCollection>());
+            builder.Services.AddSingleton<IStaticUrlProviderCollection>(factory => factory.GetRequiredService<StaticUrlProviderCollection>());
+            builder.Services.AddSingleton<IInterceptPreprocessorCollection>(factory => factory.GetRequiredService<InterceptPreprocessorCollection>());
+            builder.Services.AddSingleton<IInterceptorCollection>(factory => factory.GetRequiredService<InterceptorCollection>());
+            builder.Services.AddSingleton<IInterceptConverterCollection>(factory => factory.GetRequiredService<InterceptConverterCollection>());
         }
     }
 
     [ExcludeFromCodeCoverage]
-    public static class CompositionExtensions
+    public static class IUmbracoBuilderExtensions
     {
-        public static InterceptorCollectionBuilder Interceptors(this Composition composition)
-            => composition.WithCollectionBuilder<InterceptorCollectionBuilder>();
+        public static InterceptorCollectionBuilder Interceptors(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<InterceptorCollectionBuilder>();
 
-        public static InterceptPreprocessorCollectionBuilder InterceptPreprocessors(this Composition composition)
-            => composition.WithCollectionBuilder<InterceptPreprocessorCollectionBuilder>();
+        public static InterceptPreprocessorCollectionBuilder InterceptPreprocessors(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<InterceptPreprocessorCollectionBuilder>();
 
-        public static StaticUrlProviderCollectionBuilder StaticUrlProviders(this Composition composition)
-            => composition.WithCollectionBuilder<StaticUrlProviderCollectionBuilder>();
+        public static StaticUrlProviderCollectionBuilder StaticUrlProviders(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<StaticUrlProviderCollectionBuilder>();
 
-        public static InterceptConverterCollectionBuilder InterceptConverters(this Composition composition)
-            => composition.WithCollectionBuilder<InterceptConverterCollectionBuilder>();
+        public static InterceptConverterCollectionBuilder InterceptConverters(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<InterceptConverterCollectionBuilder>();
 
-        public static ConfigurationComposition<T> Configure<T, P>(this IRegister composition)
-            where T : class
-            where P : IConfiguration<T>
+        public static IUmbracoBuilder ComposeDefaultInterceptors(this IUmbracoBuilder builder)
         {
-            return ConfigurationComposition<T>.Create<P>(composition);
-        }
-
-        public static Composition ComposeDefaultInterceptors(this Composition composition)
-        {
-            composition.Interceptors()
+            builder.Interceptors()
                 .Append<StaticUrlRedirectInterceptor>()
                 .Append<RegexRedirectInterceptor>()
                 .Append<NoLongerExistsInterceptor>();
 
-            composition.StaticUrlProviders()
+            builder.StaticUrlProviders()
                 .Append<StaticUrlProvider>();
-            return composition;
+            return builder;
         }
 
-        public static Composition ComposeDefaultInterceptPreprocessors(this Composition composition)
+        public static IUmbracoBuilder ComposeDefaultInterceptPreprocessors(this IUmbracoBuilder builder)
         {
-            composition.InterceptPreprocessors()
+            builder.InterceptPreprocessors()
                 .Append<DomainUrlPreprocessor>();
-            return composition;
+            return builder;
         }
 
-        public static Composition ComposeDefaultInterceptConverters(this Composition composition)
+        public static IUmbracoBuilder ComposeDefaultInterceptConverters(this IUmbracoBuilder builder)
         {
-            composition.InterceptConverters()
+            builder.InterceptConverters()
                 .Append<MapperInterceptConverter<UrlTrackerShallowRedirect, ShallowRedirect>>();
-            return composition;
+            return builder;
         }
 
-        public static Composition ComposeUrlTrackerCoreComponents(this Composition composition)
+        public static IUmbracoBuilder ComposeUrlTrackerCoreComponents(this IUmbracoBuilder builder)
         {
-            composition.Components()
-                .Append<MigrationComponent>()
-                .Append<ContentChangeHandlerComponent>();
-            return composition;
+            builder.AddComponent<MigrationComponent>();
+            return builder;
         }
 
-        public static Composition ComposeUrlTrackerCoreConfigurations(this Composition composition)
+        public static IUmbracoBuilder ComposeUrlTrackerCoreNotifications(this IUmbracoBuilder builder)
         {
-            composition.Configure<UrlTrackerSettings, UrlTrackerConfigurationProvider>()
-                       .Lazy();
-
-            return composition;
+            builder.AddNotificationHandler<DomainDeletedNotification, ContentChangeHandlerComponent>();
+            builder.AddNotificationHandler<DomainSavedNotification, ContentChangeHandlerComponent>();
+            return builder;
         }
 
-        public static Composition ComposeUrlTrackerCoreMaps(this Composition composition)
+        public static IUmbracoBuilder ComposeUrlTrackerCoreConfigurations(this IUmbracoBuilder builder)
         {
-            composition.MapDefinitions()
+            builder.Services.AddOptions<UrlTrackerSettings>()
+                            .Bind(builder.Config.GetSection(Defaults.Options.UrlTrackerSection));
+            return builder;
+        }
+
+        public static IUmbracoBuilder ComposeUrlTrackerCoreMaps(this IUmbracoBuilder builder)
+        {
+            builder.MapDefinitions()
                 .Add<LegacyDatabaseMap>()
                 .Add<ServiceLayerMaps>();
-            return composition;
+            return builder;
         }
 
-        public static Composition ComposeUrlTrackerCoreAbstractions(this Composition composition)
+        public static IUmbracoBuilder ComposeUrlTrackerCoreAbstractions(this IUmbracoBuilder builder)
         {
-            composition.RegisterUnique<IAppSettingsAbstraction, AppSettingsAbstraction>();
-            composition.RegisterUnique<IUmbracoContextFactoryAbstraction, UmbracoContextFactoryAbstraction>();
-            return composition;
+            builder.Services.AddSingleton<IUmbracoContextFactoryAbstraction, UmbracoContextFactoryAbstraction>();
+            return builder;
         }
     }
 }

@@ -1,32 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Umbraco.Core.Configuration;
-using UrlTracker.Core.Configuration;
-using UrlTracker.Web.Configuration.Models;
+using Microsoft.Extensions.Options;
+using Umbraco.Cms.Core.Configuration.Models;
 
 namespace UrlTracker.Web.Configuration
 {
-    public class ReservedPathSettingsProvider
-        : IConfiguration<ReservedPathSettings>
-    {
-        private readonly IGlobalSettings _globalSettings;
 
-        public ReservedPathSettingsProvider(IGlobalSettings globalSettings)
+    public class ReservedPathSettingsProvider : IReservedPathSettingsProvider
+    {
+        private readonly IOptions<GlobalSettings> _globalSettings;
+        private HashSet<string> _paths = null;
+
+        public ReservedPathSettingsProvider(IOptions<GlobalSettings> globalSettings)
         {
             _globalSettings = globalSettings;
         }
 
-        public ReservedPathSettings Value
+        public HashSet<string> Paths
         {
             get
             {
                 // reserved paths are defined by umbraco in the global settings
-                var paths = _globalSettings.ReservedPaths.Split(',').Concat(_globalSettings.ReservedUrls.Split(','));
+                if (_paths is not null) return _paths;
 
-                return new ReservedPathSettings
-                {
-                    Paths = new HashSet<string>(paths)
-                };
+                var globalSettingsValue = _globalSettings.Value;
+                return _paths = new HashSet<string>(from path in globalSettingsValue.ReservedPaths.Split(',').Concat(globalSettingsValue.ReservedUrls.Split(','))
+                                                    where !string.IsNullOrWhiteSpace(path)
+                                                    select path.Trim(' ', '~', '/', '\\') + '/');
             }
         }
     }

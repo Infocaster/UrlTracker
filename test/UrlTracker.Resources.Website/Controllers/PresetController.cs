@@ -1,8 +1,10 @@
 ﻿using System.Threading.Tasks;
-using System.Web.Http;
-using Umbraco.Core.Models.PublishedContent;
-using Umbraco.Web.WebApi;
-using UrlTracker.Core.Configuration;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Cms.Web.Common;
+using Umbraco.Cms.Web.Common.Controllers;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Resources.Testing.Clients.Models;
@@ -10,20 +12,24 @@ using UrlTracker.Resources.Website.Preset;
 
 namespace UrlTracker.Resources.Website.Controllers
 {
-    [RoutePrefix("api/preset")]
+    [Route("api/preset")]
     public class PresetController : UmbracoApiController
     {
         private readonly IPresetService _presetService;
-        private readonly IConfiguration<UrlTrackerSettings> _configuration;
+        private readonly IOptions<UrlTrackerSettings> _configuration;
+        private readonly IUmbracoMapper _mapper;
+        private readonly UmbracoHelper _umbraco;
 
-        public PresetController(IPresetService presetService, IConfiguration<UrlTrackerSettings> configuration)
+        public PresetController(IPresetService presetService, IOptions<UrlTrackerSettings> configuration, IUmbracoMapper mapper, UmbracoHelper umbraco)
         {
             _presetService = presetService;
             _configuration = configuration;
+            _mapper = mapper;
+            _umbraco = umbraco;
         }
 
         [HttpPost, Route("reset")]
-        public async Task<IHttpActionResult> Reset()
+        public async Task<IActionResult> Reset()
         {
             _presetService.EnsureContent();
             await _presetService.WipeUrlTrackerTablesAsync();
@@ -32,35 +38,35 @@ namespace UrlTracker.Resources.Website.Controllers
         }
 
         [HttpPost, Route("seedRedirect")]
-        public IHttpActionResult SeedRedirect([FromBody] SeedRedirectRequest request)
+        public IActionResult SeedRedirect([FromBody] SeedRedirectRequest request)
         {
             if (request is null) return BadRequest();
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var entries = Mapper.MapEnumerable<SeedRedirectRequestRedirect, UrlTrackerEntry>(request.Redirects);
+            var entries = _mapper.MapEnumerable<SeedRedirectRequestRedirect, UrlTrackerEntry>(request.Redirects);
             _presetService.Insert(entries);
             return Ok();
         }
 
         [HttpGet, Route("tree")]
-        public IHttpActionResult GetTree()
+        public IActionResult GetTree()
         {
             var result = new ContentTreeViewModelCollection
             {
-                RootContent = Mapper.MapEnumerable<IPublishedContent, ContentTreeViewModel>(Umbraco.ContentAtRoot())
+                RootContent = _mapper.MapEnumerable<IPublishedContent, ContentTreeViewModel>(_umbraco.ContentAtRoot())
             };
 
             return Ok(result);
         }
 
         [HttpGet, Route("settings")]
-        public IHttpActionResult GetSettings()
+        public IActionResult GetSettings()
         {
             return Ok(_configuration.Value);
         }
 
         [HttpPost, Route("settings")]
-        public IHttpActionResult SetSettings([FromBody] UrlTrackerSettings settings)
+        public IActionResult SetSettings([FromBody] UrlTrackerSettings settings)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 

@@ -6,7 +6,7 @@ using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
-using ILogger = UrlTracker.Core.Logging.ILogger;
+using ILogger = UrlTracker.Core.Logging.ILogger<UrlTracker.Core.Intercepting.NoLongerExistsInterceptor>;
 
 namespace UrlTracker.Core.Intercepting
 {
@@ -26,14 +26,14 @@ namespace UrlTracker.Core.Intercepting
             _logger = logger;
         }
 
-        public async ValueTask<ICachableIntercept> InterceptAsync(Url url, IReadOnlyInterceptContext context)
+        public async ValueTask<ICachableIntercept?> InterceptAsync(Url url, IReadOnlyInterceptContext context)
         {
             var urls = _staticUrlProviders.GetUrls(url);
 
             var rootNodeId = context.GetRootNode();
             var culture = context.GetCulture();
 
-            _logger.LogParameters<NoLongerExistsInterceptor>(culture, rootNodeId, urls.ToList());
+            _logger.LogParameters(culture, rootNodeId, urls.ToList());
 
             var results = await _clientErrorRepository.GetShallowAsync(urls, rootNodeId, culture);
             _logger.LogResults<NoLongerExistsInterceptor>(results.Count);
@@ -41,7 +41,7 @@ namespace UrlTracker.Core.Intercepting
             return GetBestResult(results);
         }
 
-        private ICachableIntercept GetBestResult(IReadOnlyCollection<UrlTrackerShallowClientError> results)
+        private ICachableIntercept? GetBestResult(IReadOnlyCollection<UrlTrackerShallowClientError> results)
         {
             var bestResult = results.FirstOrDefault(r => r.TargetStatusCode == HttpStatusCode.Gone);
             return !(bestResult is null) ? new CachableInterceptBase<UrlTrackerShallowClientError>(bestResult) : null;

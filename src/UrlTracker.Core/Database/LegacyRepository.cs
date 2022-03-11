@@ -2,8 +2,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Umbraco.Core.Persistence;
-using Umbraco.Core.Scoping;
+using Umbraco.Cms.Core.Scoping;
+using Umbraco.Extensions;
 using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Core.Database
@@ -41,8 +41,10 @@ namespace UrlTracker.Core.Database
                     .From<UrlTrackerEntry>()
                     .Where<UrlTrackerEntry>(e => e.OldUrl == sourceUrl)
                     .Where<UrlTrackerEntry>(e => e.RedirectRootNodeId == targetRootNodeId)
-                    .Where<UrlTrackerEntry>(e => e.Culture == culture)
                     .Where<UrlTrackerEntry>(e => e.Is404 == is404);
+
+                if (culture is null) query = query.WhereNull<UrlTrackerEntry>(e => e.Culture);
+                else query = query.Where<UrlTrackerEntry>(e => e.Culture == culture);
 
                 await scope.Database.ExecuteAsync(query);
                 scope.Complete();

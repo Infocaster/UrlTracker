@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Umbraco.Core.Composing;
+using Umbraco.Cms.Core.Composing;
 using UrlTracker.Core.Intercepting.Models;
 
 namespace UrlTracker.Web.Processing
@@ -16,7 +17,7 @@ namespace UrlTracker.Web.Processing
     public class ResponseInterceptHandlerCollection
         : BuilderCollectionBase<IResponseInterceptHandler>, IResponseInterceptHandlerCollection
     {
-        public ResponseInterceptHandlerCollection(IEnumerable<IResponseInterceptHandler> items)
+        public ResponseInterceptHandlerCollection(Func<IEnumerable<IResponseInterceptHandler>> items)
             : base(items)
         { }
 

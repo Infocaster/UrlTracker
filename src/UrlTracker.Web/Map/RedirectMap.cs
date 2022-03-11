@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
-using Umbraco.Core.Mapping;
-using Umbraco.Core.Models.PublishedContent;
-using Umbraco.Web;
+using Microsoft.Extensions.Options;
+using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Models.PublishedContent;
 using UrlTracker.Core.Abstractions;
-using UrlTracker.Core.Configuration;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Domain;
 using UrlTracker.Core.Domain.Models;
@@ -15,11 +14,11 @@ namespace UrlTracker.Web.Map
     public class RedirectMap
         : IMapDefinition
     {
-        private readonly IConfiguration<UrlTrackerSettings> _configuration;
+        private readonly IOptions<UrlTrackerSettings> _configuration;
         private readonly IDomainProvider _domainProvider;
         private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactoryAbstraction;
 
-        public RedirectMap(IConfiguration<UrlTrackerSettings> configuration,
+        public RedirectMap(IOptions<UrlTrackerSettings> configuration,
                            IDomainProvider domainProvider,
                            IUmbracoContextFactoryAbstraction umbracoContextFactoryAbstraction)
         {
@@ -28,7 +27,7 @@ namespace UrlTracker.Web.Map
             _umbracoContextFactoryAbstraction = umbracoContextFactoryAbstraction;
         }
 
-        public void DefineMaps(UmbracoMapper mapper)
+        public void DefineMaps(IUmbracoMapper mapper)
         {
             mapper.Define<ShallowRedirect, Url>(
                 (source, context) =>
@@ -37,18 +36,18 @@ namespace UrlTracker.Web.Map
 
                     var configurationValue = _configuration.Value;
                     Url url = null;
-                    Uri requestUri = httpContext.Request.Url;
+                    var request = httpContext.Request;
                     if (source.TargetNode != null)
                     {
                         url = Url.Parse(source.TargetNode.Url(_umbracoContextFactoryAbstraction, culture: !string.IsNullOrEmpty(source.Culture) ? source.Culture : null, UrlMode.Absolute));
 
                         // logic taken from the old url tracker:
-                        url.Port = requestUri.Port != 80 && configurationValue.AppendPortNumber ? requestUri.Port : (int?)null;
+                        url.Port = request.Host.Port != 80 && configurationValue.AppendPortNumber ? request.Host.Port : (int?)null;
 
                         // also from the old url tracker:
-                        if (requestUri.Host != url.Host && _domainProvider.GetDomains().Any(d => d.NodeId == source.TargetRootNode?.Id && d.Url.Host.Equals(requestUri.Host)))
+                        if (request.Host.Host != url.Host && _domainProvider.GetDomains().Any(d => d.NodeId == source.TargetRootNode?.Id && d.Url.Host.Equals(request.Host.Host)))
                         {
-                            url.Host = requestUri.Host;
+                            url.Host = request.Host.Host;
                         }
                     }
                     else if (!string.IsNullOrWhiteSpace(source.TargetUrl))
@@ -63,11 +62,11 @@ namespace UrlTracker.Web.Map
 
                     // then make changes to the url, based on the configuration
                     // ensure that the url is absolute by defining the host and the protocol if they weren't present yet.
-                    if (string.IsNullOrEmpty(url.Host)) url.Host = requestUri.Host;
+                    if (string.IsNullOrEmpty(url.Host)) url.Host = request.Host.Host;
 
-                    if (!url.Protocol.HasValue) url.Protocol = (Protocol)Enum.Parse(typeof(Protocol), requestUri.Scheme, true);
+                    if (!url.Protocol.HasValue) url.Protocol = (Protocol)Enum.Parse(typeof(Protocol), request.Scheme, true);
 
-                    if (source.PassThroughQueryString) url.Query = httpContext.Request.Url.Query;
+                    if (source.PassThroughQueryString) url.Query = httpContext.Request.QueryString.Value;
 
                     return url;
                 });

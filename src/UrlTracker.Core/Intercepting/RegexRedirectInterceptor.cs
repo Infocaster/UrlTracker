@@ -4,7 +4,7 @@ using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
-using ILogger = UrlTracker.Core.Logging.ILogger;
+using ILogger = UrlTracker.Core.Logging.ILogger<UrlTracker.Core.Intercepting.RegexRedirectInterceptor>;
 
 namespace UrlTracker.Core.Intercepting
 {
@@ -21,7 +21,7 @@ namespace UrlTracker.Core.Intercepting
             _logger = logger;
         }
 
-        public async ValueTask<ICachableIntercept> InterceptAsync(Url url, IReadOnlyInterceptContext context)
+        public async ValueTask<ICachableIntercept?> InterceptAsync(Url url, IReadOnlyInterceptContext context)
         {
             var regexRedirects = await _redirectRepository.GetShallowWithRegexAsync();
 

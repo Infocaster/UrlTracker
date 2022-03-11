@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Umbraco.Core.Mapping;
+using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Intercepting.Models;
 
 namespace UrlTracker.Core.Intercepting.Conversion
@@ -7,9 +7,9 @@ namespace UrlTracker.Core.Intercepting.Conversion
     public class MapperInterceptConverter<TFrom, TTo>
         : IInterceptConverter
     {
-        private readonly UmbracoMapper _mapper;
+        private readonly IUmbracoMapper _mapper;
 
-        public MapperInterceptConverter(UmbracoMapper mapper)
+        public MapperInterceptConverter(IUmbracoMapper mapper)
         {
             _mapper = mapper;
         }

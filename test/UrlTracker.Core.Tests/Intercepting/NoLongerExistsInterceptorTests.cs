@@ -18,7 +18,7 @@ namespace UrlTracker.Core.Tests.Intercepting
 
         public override void SetUp()
         {
-            _testSubject = new NoLongerExistsInterceptor(ClientErrorRepository, new StaticUrlProviderCollection(new List<IStaticUrlProvider> { new StaticUrlProvider() }), new ConsoleLogger());
+            _testSubject = new NoLongerExistsInterceptor(ClientErrorRepository, new StaticUrlProviderCollection(() => new List<IStaticUrlProvider> { new StaticUrlProvider() }), new ConsoleLogger<NoLongerExistsInterceptor>());
         }
 
         public static IEnumerable<TestCaseData> TestCases()

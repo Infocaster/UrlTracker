@@ -5,9 +5,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using NPoco;
-using Umbraco.Core.Mapping;
-using Umbraco.Core.Persistence;
-using Umbraco.Core.Scoping;
+using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Scoping;
+using Umbraco.Cms.Infrastructure.Persistence;
+using Umbraco.Extensions;
 using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Core.Database
@@ -17,9 +18,9 @@ namespace UrlTracker.Core.Database
         : IRedirectRepository
     {
         private readonly IScopeProvider _scopeProvider;
-        private readonly UmbracoMapper _mapper;
+        private readonly IUmbracoMapper _mapper;
 
-        public RedirectRepository(IScopeProvider scopeProvider, UmbracoMapper mapper)
+        public RedirectRepository(IScopeProvider scopeProvider, IUmbracoMapper mapper)
         {
             _scopeProvider = scopeProvider;
             _mapper = mapper;
@@ -104,7 +105,7 @@ namespace UrlTracker.Core.Database
                 q = q.From<UrlTrackerEntry>()
                      .Where<UrlTrackerEntry>(e => !e.Is404)
                      .Where<UrlTrackerEntry>(e => e.RedirectHttpCode >= 300 && e.RedirectHttpCode < 400);
-                if (!(query is null))
+                if (query is not null)
                 {
                     bool queryIsInt = int.TryParse(query, out var queryInt);
                     q = q.Where<UrlTrackerEntry>(e => e.OldUrl.Contains(query)

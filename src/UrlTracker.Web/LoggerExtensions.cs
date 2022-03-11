@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using Umbraco.Core.Logging;
+using Microsoft.Extensions.Logging;
 using UrlTracker.Core.Models;
 
 namespace UrlTracker.Web
@@ -8,64 +8,64 @@ namespace UrlTracker.Web
     [ExcludeFromCodeCoverage]
     internal static class LoggerExtensions
     {
-        public static void LogUrlTrackerDisabled<T>(this ILogger logger)
+        public static void LogUrlTrackerDisabled(this ILogger logger)
         {
-            logger.Debug<T>("Url tracker is disabled by config");
+            logger.LogDebug(new EventId(2001), "Url tracker is disabled by config");
         }
 
-        public static void LogEventPublished<T>(this ILogger logger, Type eventType, Type source)
+        public static void LogEventPublished(this ILogger logger, Type eventType, Type source)
         {
-            logger.Verbose<T>("{eventType} event published", eventType, source);
+            logger.LogDebug(new EventId(2002), "{eventType} event published", eventType, source);
         }
 
-        public static void LogSubscriberError<T>(this ILogger logger, Exception exception, Type subscriberType, Type eventType)
+        public static void LogSubscriberError(this ILogger logger, Exception exception, Type subscriberType, Type eventType)
         {
-            logger.Error<T>(exception, "{subscriberType} threw an exception while handling {eventType} event", subscriberType, eventType);
+            logger.LogError(new EventId(2003), exception, "{subscriberType} threw an exception while handling {eventType} event", subscriberType, eventType);
         }
 
-        public static void LogRequestDetected<T>(this ILogger logger, string url)
+        public static void LogRequestDetected(this ILogger logger, string url)
         {
-            logger.Verbose<T>("Incoming url detected: '{url}'", url);
+            logger.LogDebug(new EventId(2004), "Incoming url detected: '{url}'", url);
         }
 
-        public static void LogAbortHandling<T>(this ILogger logger, string reason)
+        public static void LogAbortHandling(this ILogger logger, string reason)
         {
-            logger.Verbose<T>("Handling aborted: {reason}", reason);
+            logger.LogDebug(new EventId(2005), "Handling aborted: {reason}", reason);
         }
 
-        public static void LogInterceptFound<T>(this ILogger logger, Type interceptType)
+        public static void LogInterceptFound(this ILogger logger, Type interceptType)
         {
-            logger.Debug<T>("Found an intercept of type '{interceptType}'", interceptType);
+            logger.LogDebug(new EventId(2006), "Found an intercept of type '{interceptType}'", interceptType);
         }
 
-        public static void LogRegisteredEventHandlers<T>(this ILogger logger)
+        public static void LogRegisteredEventHandlers(this ILogger logger)
         {
-            logger.Debug<T>("Registered eventhandlers");
+            logger.LogDebug(new EventId(2007), "Registered eventhandlers");
         }
 
-        public static void LogAbortClientErrorHandling<T>(this ILogger logger, string reason)
+        public static void LogAbortClientErrorHandling(this ILogger logger, string reason)
         {
-            logger.Verbose<T>("Client error handling aborted: {reason}", reason);
+            logger.LogDebug(new EventId(2008), "Client error handling aborted: {reason}", reason);
         }
 
-        public static void LogInterceptCancelled<T>(this ILogger logger, string reason, ShallowRedirect redirect)
+        public static void LogInterceptCancelled(this ILogger logger, string reason, ShallowRedirect redirect)
         {
-            logger.Debug<T>("Intercept cancelled: {reason}", reason, redirect);
+            logger.LogDebug(new EventId(2009), "Intercept cancelled: {reason}", reason, redirect);
         }
 
-        public static void LogInterceptPerformed<T>(this ILogger logger, string targetUrl)
+        public static void LogInterceptPerformed(this ILogger logger, string targetUrl)
         {
-            logger.Info<T>("Redirect request to: {targetUrl}", targetUrl);
+            logger.LogInformation(new EventId(2010), "Redirect request to: {targetUrl}", targetUrl);
         }
 
         public static void LogStart<T>(this ILogger logger)
         {
-            logger.Verbose<T>("Filter incoming url with {source}", typeof(T));
+            logger.LogDebug(new EventId(2011), "Filter incoming url with {source}", typeof(T));
         }
 
-        public static void LogPathIsReserved<T>(this ILogger logger)
+        public static void LogPathIsReserved(this ILogger logger)
         {
-            logger.Debug<T>("Incoming url is reserved by umbraco settings.");
+            logger.LogDebug(new EventId(2012), "Incoming url is reserved by umbraco settings.");
         }
     }
 }

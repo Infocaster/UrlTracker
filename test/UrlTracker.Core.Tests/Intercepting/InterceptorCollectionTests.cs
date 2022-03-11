@@ -15,7 +15,7 @@ namespace UrlTracker.Core.Tests.Intercepting
 
         public override void SetUp()
         {
-            _testSubject = new InterceptorCollection(new List<IInterceptor> { Interceptor });
+            _testSubject = new InterceptorCollection(() => new List<IInterceptor> { Interceptor });
         }
 
         public static TestCaseData[] TestCases()

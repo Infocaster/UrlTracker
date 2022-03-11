@@ -17,14 +17,14 @@ namespace UrlTracker.Web.Tests.Configuration
         public void Value_NormalFlow_ReturnsReservedPaths()
         {
             // arrange
-            GlobalSettingsMock.SetupGet(obj => obj.ReservedPaths).Returns("/lorem,/ipsum");
-            GlobalSettingsMock.SetupGet(obj => obj.ReservedUrls).Returns("/dolor,/sit");
+            GlobalSettings.Value.ReservedPaths = "/lorem,/ipsum";
+            GlobalSettings.Value.ReservedUrls = "/dolor,/sit";
 
             // act
-            var result = _testSubject.Value;
+            var result = _testSubject.Paths;
 
             // assert
-            CollectionAssert.AreEquivalent(new[] { "lorem/", "ipsum/", "dolor/", "sit/" }, result.Paths);
+            CollectionAssert.AreEquivalent(new[] { "lorem/", "ipsum/", "dolor/", "sit/" }, result);
         }
     }
 }

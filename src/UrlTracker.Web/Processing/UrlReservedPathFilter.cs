@@ -1,20 +1,19 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using UrlTracker.Core.Configuration;
 using UrlTracker.Core.Domain.Models;
-using UrlTracker.Web.Configuration.Models;
-using ILogger = UrlTracker.Core.Logging.ILogger;
+using UrlTracker.Core.Logging;
+using UrlTracker.Web.Configuration;
 
 namespace UrlTracker.Web.Processing
 {
     public class UrlReservedPathFilter
         : IRequestInterceptFilter
     {
-        private readonly IConfiguration<ReservedPathSettings> _configuration;
-        private readonly ILogger _logger;
+        private readonly IReservedPathSettingsProvider _configuration;
+        private readonly ILogger<UrlReservedPathFilter> _logger;
 
-        public UrlReservedPathFilter(IConfiguration<ReservedPathSettings> configuration, ILogger logger)
+        public UrlReservedPathFilter(IReservedPathSettingsProvider configuration, ILogger<UrlReservedPathFilter> logger)
         {
             _configuration = configuration;
             _logger = logger;
@@ -34,9 +33,9 @@ namespace UrlTracker.Web.Processing
 
             // configuration ensures that paths have the format 'my/url.aspx/'
             //    the current path also ensures this, so now we can simply compare the strings
-            if (_configuration.Value.Paths.Any(p => path.StartsWith(p, StringComparison.InvariantCultureIgnoreCase)))
+            if (_configuration.Paths.Any(p => path.StartsWith(p, StringComparison.InvariantCultureIgnoreCase)))
             {
-                _logger.LogPathIsReserved<UrlReservedPathFilter>();
+                _logger.LogPathIsReserved();
                 return false;
             }
 

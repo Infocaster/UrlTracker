@@ -2,7 +2,7 @@
 {
     public static class ObjectExtensions
     {
-        public static string DefaultIfNullOrWhiteSpace(this string input, string @default)
+        public static string? DefaultIfNullOrWhiteSpace(this string? input, string? @default)
             => string.IsNullOrWhiteSpace(input) ? @default : input;
     }
 }

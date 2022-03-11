@@ -1,42 +1,39 @@
 ﻿using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using System.Web.Http.Controllers;
-using System.Web.Http.Filters;
+using Microsoft.AspNetCore.Mvc.Filters;
 using UrlTracker.Core;
 
 namespace UrlTracker.Web.Controllers.ActionFilters
 {
-    public class ValidateModelAttribute
-        : ActionFilterAttribute
-    {
-        public override void OnActionExecuting(HttpActionContext actionContext)
-        {
-            if (!actionContext.ModelState.IsValid)
-            {
-                actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.BadRequest, actionContext.ModelState);
-                return;
-            }
+    // public class ValidateModelAttribute
+    //     : ActionFilterAttribute
+    // {
+    //     public override void OnActionExecuting(ActionExecutingContext actionContext)
+    //     {
+    //         if (!actionContext.ModelState.IsValid)
+    //         {
+    //             actionContext.HttpContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.BadRequest, actionContext.ModelState);
+    //             return;
+    //         }
 
-            var parameters = actionContext.ActionDescriptor.GetParameters();
-            foreach (var parameter in parameters)
-            {
-                if (parameter.IsOptional) continue;
-                bool isValid = true;
-                if (actionContext.ActionArguments[parameter.ParameterName] == parameter.DefaultValue)
-                {
-                    isValid = false;
-                }
+    //         var parameters = actionContext.ActionDescriptor.GetParameters();
+    //         foreach (var parameter in parameters)
+    //         {
+    //             if (parameter.IsOptional) continue;
+    //             bool isValid = true;
+    //             if (actionContext.ActionArguments[parameter.ParameterName] == parameter.DefaultValue)
+    //             {
+    //                 isValid = false;
+    //             }
 
-                if (isValid) continue;
+    //             if (isValid) continue;
 
-                string message = (parameter.ParameterBinderAttribute is FromBodyAttribute)
-                    ? Defaults.Validation.BodyContentMissing
-                    : Defaults.Validation.QueryParamsMissing;
+    //             string message = (parameter.ParameterBinderAttribute is FromBodyAttribute)
+    //                 ? Defaults.Validation.BodyContentMissing
+    //                 : Defaults.Validation.QueryParamsMissing;
 
-                actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.BadRequest, message);
-                return;
-            }
-        }
-    }
+    //             actionContext.Response = actionContext.Request.CreateErrorResponse(HttpStatusCode.BadRequest, message);
+    //             return;
+    //         }
+    //     }
+    // }
 }
