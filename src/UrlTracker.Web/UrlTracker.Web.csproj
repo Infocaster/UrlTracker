@@ -48,6 +48,7 @@ Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.</Descri
     <Content Include="App_Plugins\UrlTracker\**\*.*">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <PackagePath>content\App_Plugins\UrlTracker</PackagePath>
     </Content>
     <None Include="build\**\*.*">
       <Pack>True</Pack>

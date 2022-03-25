@@ -17,7 +17,7 @@
     <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="68.2" />
   </ItemGroup>
 
-  <Import Project="..\..\src\UrlTracker.Web\build\UrlTracker.Web.targets" />
+  <Import Project="..\..\src\UrlTracker.Web\build\UrlTracker.targets" />
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\UrlTracker.Web\UrlTracker.Web.csproj" />
