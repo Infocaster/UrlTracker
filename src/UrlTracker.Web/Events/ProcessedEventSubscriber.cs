@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 using UrlTracker.Core;
 using UrlTracker.Core.Models;
@@ -11,6 +12,7 @@ namespace UrlTracker.Web.Events
     public class ProcessedEventSubscriber
         : IEventSubscriber<object, ProcessedEventArgs>
     {
+        private const string _cacheKey = "RegisteredNotFound";
         private readonly IClientErrorService _clientErrorService;
         private readonly IClientErrorFilterCollection _clientErrorFilterCollection;
         private readonly ILogger _logger;
@@ -32,13 +34,22 @@ namespace UrlTracker.Web.Events
                 return;
             }
 
+            if (!(args.HttpContext.Items[_cacheKey] is null))
+            {
+                _logger.LogAbortClientErrorHandling<ProcessedEventSubscriber>("Client error has already been processed in this request.");
+                return;
+            }
+
             if (!await _clientErrorFilterCollection.EvaluateCandidacyAsync(args.HttpContext))
             {
                 _logger.LogAbortClientErrorHandling<ProcessedEventSubscriber>("Incoming request failed client error candidacy check");
                 return;
             }
 
-            await _clientErrorService.AddAsync(CreateNotFound(args));
+            NotFound notFound = CreateNotFound(args);
+            args.HttpContext.Items.Add(_cacheKey, notFound);
+
+            await _clientErrorService.AddAsync(notFound);
         }
 
         [ExcludeFromCodeCoverage]

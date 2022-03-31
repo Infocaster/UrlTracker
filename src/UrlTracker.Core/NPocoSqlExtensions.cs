@@ -12,6 +12,15 @@ namespace UrlTracker.Core
     [ExcludeFromCodeCoverage]
     public static class NPocoSqlExtensions
     {
+        public static Sql<ISqlContext> From(this Sql<ISqlContext> sql, string alias, Action<Sql<ISqlContext>> subQuery)
+        {
+            sql.Append("FROM (");
+            var sub = sql.SqlContext.Sql();
+            subQuery(sub);
+            sql.Append(sub);
+            sql.Append(") AS " + sql.SqlContext.SqlSyntax.GetQuotedColumnName(alias));
+            return sql;
+        }
         public static Sql<ISqlContext> GenericOrderBy(this Sql<ISqlContext> sql, bool descending, params string[] fields)
         {
             return descending

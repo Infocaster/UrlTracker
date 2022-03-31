@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web;
 using Moq;
 
@@ -14,6 +15,7 @@ namespace UrlTracker.Resources.Testing.Mocks
 
             ContextMock.Setup(obj => obj.Request).Returns(RequestMock.Object);
             ContextMock.Setup(obj => obj.Response).Returns(ResponseMock.Object);
+            ContextMock.Setup(obj => obj.Items).Returns(new Dictionary<object, object>());
             if (incomingUrl != null)
             {
                 if (!incomingUrl.IsAbsoluteUri) throw new ArgumentException("Incoming url must always be absolute");

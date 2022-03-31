@@ -49,6 +49,12 @@ stages:
         platform: '$(BuildPlatform)'
         configuration: '$(BuildConfiguration)'
 
+    - task: VisualStudioTestPlatformInstaller@1
+      displayName: 'Install test platform'
+      inputs:
+        packageFeedSelector: nugetOrg
+        versionSelector: latestStable
+
     - task: VSTest@2
       displayName: 'Run tests'
       inputs:
@@ -59,6 +65,7 @@ stages:
         platform: '$(BuildPlatform)'
         configuration: '$(BuildConfiguration)'
         runSettingsFile: '.runsettings'
+        vsTestVersion: toolsInstaller
 
     - task: NuGetCommand@2
       displayName: 'NuGet pack'

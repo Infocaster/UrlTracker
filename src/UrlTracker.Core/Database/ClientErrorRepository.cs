@@ -82,15 +82,19 @@ namespace UrlTracker.Core.Database
             using (var scope = _scopeProvider.CreateScope(autoComplete: true))
             {
                 var countQuery = scope.SqlContext.Sql()
-                                                 .SelectCount()
-                                                 .From<UrlTrackerEntry>(tableAlias)
-                                                 .Where<UrlTrackerEntry>(e => e.Is404, tableAlias);
-                if (!(query is null))
-                {
-                    countQuery = countQuery.Where<UrlTrackerEntry>(e => e.OldUrl.Contains(query), tableAlias);
-                }
+                                                 .SelectCount().From("e", sql =>
+                                                 {
+                                                     sql.SelectMax<UrlTrackerEntry>("Id", tableAlias, e => e.Id)
+                                                        .From<UrlTrackerEntry>(tableAlias)
+                                                        .Where<UrlTrackerEntry>(e => e.Is404, tableAlias);
 
-                countQuery = countQuery.GroupBy<UrlTrackerEntry>(tableAlias, e => e.OldUrl, e => e.Culture, e => e.RedirectRootNodeId, e => e.Is404);
+                                                     if (!(query is null))
+                                                     {
+                                                         sql = sql.Where<UrlTrackerEntry>(e => e.OldUrl.Contains(query), tableAlias);
+                                                     }
+
+                                                     sql = sql.GroupBy<UrlTrackerEntry>(tableAlias, e => e.OldUrl, e => e.Culture, e => e.RedirectRootNodeId, e => e.Is404);
+                                                 });
 
                 Task<int> totalRecordsTask = scope.Database.ExecuteScalarAsync<int>(countQuery);
                 var selectQuery = scope.SqlContext.Sql()
