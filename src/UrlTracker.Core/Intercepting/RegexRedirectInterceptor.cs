@@ -29,8 +29,8 @@ namespace UrlTracker.Core.Intercepting
             //    so we just take the first intercept that we can find.
             int? rootNodeId = context.GetRootNode();
 
-            string interceptString = url.Path.Trim('/');
-            if (url.Query != null) interceptString += "?" + url.Query;
+            string interceptString = url.Path!.Trim('/');
+            if (url.Query is not null) interceptString += "?" + url.Query;
 
             foreach (var redirect in regexRedirects)
             {
@@ -38,7 +38,7 @@ namespace UrlTracker.Core.Intercepting
                     || redirect.TargetRootNodeId == null
                     || redirect.TargetRootNodeId == -1
                     || redirect.TargetRootNodeId == rootNodeId)
-                   && Regex.IsMatch(interceptString, redirect.SourceRegex, RegexOptions.IgnoreCase))
+                   && Regex.IsMatch(interceptString, redirect.SourceRegex!, RegexOptions.IgnoreCase))
                 {
                     _logger.LogResults<RegexRedirectInterceptor>(1);
                     return new CachableInterceptBase<UrlTrackerShallowRedirect>(redirect);

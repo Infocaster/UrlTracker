@@ -20,44 +20,38 @@ namespace UrlTracker.Core.Database
             _scopeProvider = scopeProvider;
         }
 
-        public async Task<UrlTrackerEntry> GetAsync(int id)
+        public async Task<UrlTrackerEntry?> GetAsync(int id)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var query = scope.SqlContext.Sql()
-                                            .SelectAll()
-                                            .From<UrlTrackerEntry>()
-                                            .Where<UrlTrackerEntry>(e => e.Id == id);
-                var results = await scope.Database.FetchAsync<UrlTrackerEntry>(query);
-                return results.FirstOrDefault();
-            }
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var query = scope.SqlContext.Sql()
+                                        .SelectAll()
+                                        .From<UrlTrackerEntry>()
+                                        .Where<UrlTrackerEntry>(e => e.Id == id);
+            var results = await scope.Database.FetchAsync<UrlTrackerEntry>(query).ConfigureAwait(false);
+            return results.FirstOrDefault();
         }
 
-        public async Task DeleteAsync(string culture, string sourceUrl, int? targetRootNodeId, bool is404)
+        public async Task DeleteAsync(string? culture, string sourceUrl, int? targetRootNodeId, bool is404)
         {
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                var query = scope.SqlContext.Sql().Delete()
-                    .From<UrlTrackerEntry>()
-                    .Where<UrlTrackerEntry>(e => e.OldUrl == sourceUrl)
-                    .Where<UrlTrackerEntry>(e => e.RedirectRootNodeId == targetRootNodeId)
-                    .Where<UrlTrackerEntry>(e => e.Is404 == is404);
+            using var scope = _scopeProvider.CreateScope();
+            var query = scope.SqlContext.Sql().Delete()
+                .From<UrlTrackerEntry>()
+                .Where<UrlTrackerEntry>(e => e.OldUrl == sourceUrl)
+                .Where<UrlTrackerEntry>(e => e.RedirectRootNodeId == targetRootNodeId)
+                .Where<UrlTrackerEntry>(e => e.Is404 == is404);
 
-                if (culture is null) query = query.WhereNull<UrlTrackerEntry>(e => e.Culture);
-                else query = query.Where<UrlTrackerEntry>(e => e.Culture == culture);
+            if (culture is null) query = query.WhereNull<UrlTrackerEntry>(e => e.Culture);
+            else query = query.Where<UrlTrackerEntry>(e => e.Culture == culture);
 
-                await scope.Database.ExecuteAsync(query);
-                scope.Complete();
-            }
+            await scope.Database.ExecuteAsync(query).ConfigureAwait(false);
+            scope.Complete();
         }
 
         public async Task DeleteAsync(UrlTrackerEntry entry)
         {
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                await scope.Database.DeleteAsync(entry);
-                scope.Complete();
-            }
+            using var scope = _scopeProvider.CreateScope();
+            await scope.Database.DeleteAsync(entry).ConfigureAwait(false);
+            scope.Complete();
         }
     }
 }

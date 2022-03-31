@@ -29,76 +29,64 @@ namespace UrlTracker.Core.Database
         public async Task<UrlTrackerRedirect> AddAsync(UrlTrackerRedirect redirect)
         {
             var entry = _mapper.Map<UrlTrackerEntry>(redirect);
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                await scope.Database.InsertAsync(entry);
+            using var scope = _scopeProvider.CreateScope();
+            await scope.Database.InsertAsync(entry);
 
-                var result = _mapper.Map<UrlTrackerRedirect>(entry);
+            var result = _mapper.Map<UrlTrackerRedirect>(entry);
 
-                scope.Complete();
-                return result;
-            }
+            scope.Complete();
+            return result;
         }
 
         public async Task<UrlTrackerRedirect> UpdateAsync(UrlTrackerRedirect redirect)
         {
             var entry = _mapper.Map<UrlTrackerEntry>(redirect);
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                await scope.Database.UpdateAsync(entry);
+            using var scope = _scopeProvider.CreateScope();
+            await scope.Database.UpdateAsync(entry);
 
-                var result = _mapper.Map<UrlTrackerRedirect>(entry);
+            var result = _mapper.Map<UrlTrackerRedirect>(entry);
 
-                scope.Complete();
-                return result;
-            }
+            scope.Complete();
+            return result;
         }
 
         public async Task<UrlTrackerRedirectCollection> GetAsync()
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var query = scope.SqlContext.Sql()
-                                            .SelectAll()
-                                            .From<UrlTrackerEntry>()
-                                            .Where<UrlTrackerEntry>(e => !e.Is404)
-                                            .Where<UrlTrackerEntry>(e => e.RedirectHttpCode >= 300 && e.RedirectHttpCode < 400)
-                                            .OrderBy<UrlTrackerEntry>(false, e => e.Id);
-                var records = await scope.Database.FetchAsync<UrlTrackerEntry>(query);
-                var redirects = _mapper.MapEnumerable<UrlTrackerEntry, UrlTrackerRedirect>(records);
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var query = scope.SqlContext.Sql()
+                                        .SelectAll()
+                                        .From<UrlTrackerEntry>()
+                                        .Where<UrlTrackerEntry>(e => !e.Is404)
+                                        .Where<UrlTrackerEntry>(e => e.RedirectHttpCode >= 300 && e.RedirectHttpCode < 400)
+                                        .OrderBy<UrlTrackerEntry>(false, e => e.Id);
+            var records = await scope.Database.FetchAsync<UrlTrackerEntry>(query);
+            var redirects = _mapper.MapEnumerable<UrlTrackerEntry, UrlTrackerRedirect>(records);
 
-                return UrlTrackerRedirectCollection.Create(redirects);
-            }
+            return UrlTrackerRedirectCollection.Create(redirects);
         }
 
-        public async Task<UrlTrackerRedirectCollection> GetAsync(uint skip, uint take, string query, OrderBy order, bool descending)
+        public async Task<UrlTrackerRedirectCollection> GetAsync(uint skip, uint take, string? query, OrderBy order, bool descending)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var countQuery = scope.SqlContext.Sql().SelectCount();
+            countQuery = PopulateRedirectQuery(countQuery);
+
+            Task<int> totalRecordsTask = scope.Database.ExecuteScalarAsync<int>(countQuery);
+
+            var selectQuery = scope.SqlContext.Sql().SelectAll();
+            selectQuery = PopulateRedirectQuery(selectQuery);
+            Expression<Func<UrlTrackerEntry, object>> orderParameter = order switch
             {
-                var countQuery = scope.SqlContext.Sql().SelectCount();
-                countQuery = PopulateRedirectQuery(countQuery);
+                OrderBy.Created => e => e.Inserted,
+                OrderBy.Culture => e => e.Culture!,
+                _ => throw new ArgumentOutOfRangeException(nameof(order)),
+            };
+            selectQuery = selectQuery.OrderBy<UrlTrackerEntry>(descending, orderParameter);
 
-                Task<int> totalRecordsTask = scope.Database.ExecuteScalarAsync<int>(countQuery);
+            List<UrlTrackerEntry> records = await scope.Database.SkipTakeAsync<UrlTrackerEntry>(skip, take, selectQuery);
+            var redirects = _mapper.MapEnumerable<UrlTrackerEntry, UrlTrackerRedirect>(records);
 
-                var selectQuery = scope.SqlContext.Sql().SelectAll();
-                selectQuery = PopulateRedirectQuery(selectQuery);
-                Expression<Func<UrlTrackerEntry, object>> orderParameter;
-                switch (order)
-                {
-                    case OrderBy.Created: orderParameter = e => e.Inserted; break;
-                    case OrderBy.Culture: orderParameter = e => e.Culture; break;
-                    case OrderBy.Occurrences:
-                    case OrderBy.LastOccurrence:
-                    default: throw new ArgumentOutOfRangeException(nameof(order));
-                }
-
-                selectQuery = selectQuery.OrderBy<UrlTrackerEntry>(descending, orderParameter);
-
-                List<UrlTrackerEntry> records = await scope.Database.SkipTakeAsync<UrlTrackerEntry>(skip, take, selectQuery);
-                var redirects = _mapper.MapEnumerable<UrlTrackerEntry, UrlTrackerRedirect>(records);
-
-                return UrlTrackerRedirectCollection.Create(redirects, await totalRecordsTask);
-            }
+            return UrlTrackerRedirectCollection.Create(redirects, await totalRecordsTask);
 
             Sql<ISqlContext> PopulateRedirectQuery(Sql<ISqlContext> q)
             {
@@ -108,10 +96,10 @@ namespace UrlTracker.Core.Database
                 if (query is not null)
                 {
                     bool queryIsInt = int.TryParse(query, out var queryInt);
-                    q = q.Where<UrlTrackerEntry>(e => e.OldUrl.Contains(query)
-                                                      || e.OldRegex.Contains(query)
-                                                      || e.RedirectUrl.Contains(query)
-                                                      || e.Notes.Contains(query)
+                    q = q.Where<UrlTrackerEntry>(e => e.OldUrl!.Contains(query)
+                                                      || e.OldRegex!.Contains(query)
+                                                      || e.RedirectUrl!.Contains(query)
+                                                      || e.Notes!.Contains(query)
                                                       || (queryIsInt && (e.RedirectNodeId == queryInt)));
                 }
 
@@ -135,49 +123,46 @@ namespace UrlTracker.Core.Database
          * Bonus: It would be awesome if somebody changes an existing domain, that we insert all required redirects to redirect
          *      the old domain to the new one
          */
-        public async Task<IReadOnlyCollection<UrlTrackerShallowRedirect>> GetShallowAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string culture = null)
+        public async Task<IReadOnlyCollection<UrlTrackerShallowRedirect>> GetShallowAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            
+            // get base query
+            var query = scope.SqlContext.Sql()
+                .SelectAll()
+                .From<UrlTrackerEntry>()
+                .Where<UrlTrackerEntry>(entry => urlsAndPaths.Contains(entry.OldUrl))
+                .Where<UrlTrackerEntry>(entry => entry.RedirectHttpCode >= 300 && entry.RedirectHttpCode < 400);
+
+            if (rootNodeId.HasValue)
             {
-                // get base query
-                var query = scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<UrlTrackerEntry>()
-                    .Where<UrlTrackerEntry>(entry => urlsAndPaths.Contains(entry.OldUrl))
-                    .Where<UrlTrackerEntry>(entry => entry.RedirectHttpCode >= 300 && entry.RedirectHttpCode < 400);
-
-                if (rootNodeId.HasValue)
-                {
-                    // intercept on root node id if it has been given. Rows without root node id should also be returned
-                    query = query.Where<UrlTrackerEntry>(entry => entry.RedirectRootNodeId == rootNodeId || entry.RedirectRootNodeId == null);
-                }
-                if (!string.IsNullOrWhiteSpace(culture))
-                {
-                    // intercept on culture if it has been given. Rows without culture should also be returned
-                    query = query.Where<UrlTrackerEntry>(entry => entry.Culture == culture || entry.Culture == null);
-                }
-
-                query = query.OrderBy<UrlTrackerEntry>(true, e => e.ForceRedirect, e => e.Inserted);
-
-                // return entries as redirects
-                var entries = await scope.Database.FetchAsync<UrlTrackerEntry>(query).ConfigureAwait(false);
-                return _mapper.MapEnumerable<UrlTrackerEntry, UrlTrackerShallowRedirect>(entries);
+                // intercept on root node id if it has been given. Rows without root node id should also be returned
+                query = query.Where<UrlTrackerEntry>(entry => entry.RedirectRootNodeId == rootNodeId || entry.RedirectRootNodeId == null);
             }
+            if (!string.IsNullOrWhiteSpace(culture))
+            {
+                // intercept on culture if it has been given. Rows without culture should also be returned
+                query = query.Where<UrlTrackerEntry>(entry => entry.Culture == culture || entry.Culture == null);
+            }
+
+            query = query.OrderBy<UrlTrackerEntry>(true, e => e.ForceRedirect, e => e.Inserted);
+
+            // return entries as redirects
+            var entries = await scope.Database.FetchAsync<UrlTrackerEntry>(query).ConfigureAwait(false);
+            return _mapper.MapEnumerable<UrlTrackerEntry, UrlTrackerShallowRedirect>(entries);
         }
 
         public async Task<IReadOnlyCollection<UrlTrackerShallowRedirect>> GetShallowWithRegexAsync()
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                Sql<ISqlContext> sql =
-                    scope.SqlContext.Sql()
-                                    .SelectAll()
-                                    .From<UrlTrackerEntry>()
-                                    .Where<UrlTrackerEntry>(e => e.OldRegex != null && e.OldRegex != "")
-                                    .OrderBy<UrlTrackerEntry>(true, e => e.ForceRedirect, e => e.Inserted);
-                var entries = await scope.Database.FetchAsync<UrlTrackerEntry>(sql).ConfigureAwait(false);
-                return _mapper.MapEnumerable<UrlTrackerEntry, UrlTrackerShallowRedirect>(entries);
-            }
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            Sql<ISqlContext> sql =
+                scope.SqlContext.Sql()
+                                .SelectAll()
+                                .From<UrlTrackerEntry>()
+                                .Where<UrlTrackerEntry>(e => e.OldRegex != null && e.OldRegex != "")
+                                .OrderBy<UrlTrackerEntry>(true, e => e.ForceRedirect, e => e.Inserted);
+            var entries = await scope.Database.FetchAsync<UrlTrackerEntry>(sql).ConfigureAwait(false);
+            return _mapper.MapEnumerable<UrlTrackerEntry, UrlTrackerShallowRedirect>(entries);
         }
     }
 }

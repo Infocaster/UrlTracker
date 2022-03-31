@@ -14,7 +14,7 @@ namespace UrlTracker.Core.Tests
             // arrange
 
             // act
-            Task result() => _testSubject.UpdateAsync(null);
+            Task result() => _testSubject!.UpdateAsync(null!);
 
             // assert
             AssertArgumentNullException(result, "redirect");
@@ -27,7 +27,7 @@ namespace UrlTracker.Core.Tests
             Exception exception = SetupValidationFails();
 
             // act
-            Task result() => _testSubject.UpdateAsync(new Redirect());
+            Task result() => _testSubject!.UpdateAsync(new Redirect());
 
             // assert
             AssertValidationException(result, exception);
@@ -40,7 +40,7 @@ namespace UrlTracker.Core.Tests
             SetupValidationSuccessful();
 
             // act
-            Task result() => _testSubject.UpdateAsync(new Redirect { Id = 1000 });
+            Task result() => _testSubject!.UpdateAsync(new Redirect { Id = 1000 });
 
             // assert
             AssertValidationNoExceptions(result);
@@ -53,13 +53,13 @@ namespace UrlTracker.Core.Tests
             SetupValidationSuccessful();
 
             // act
-            Task result() => _testSubject.UpdateAsync(new Redirect());
+            Task result() => _testSubject!.UpdateAsync(new Redirect());
 
             // assert
             Assert.Multiple(() =>
             {
                 var actualException = Assert.ThrowsAsync<ArgumentException>(result);
-                Assert.That(actualException.InnerException, Is.TypeOf<ValidationException>());
+                Assert.That(actualException?.InnerException, Is.TypeOf<ValidationException>());
             });
         }
     }

@@ -49,13 +49,13 @@ namespace UrlTracker.Core
         }
 
         [ExcludeFromCodeCoverage]
-        public async Task<RichNotFoundCollection> GetAsync(uint skip, uint take, string query, OrderBy orderBy, bool descending)
+        public async Task<RichNotFoundCollection> GetAsync(uint skip, uint take, string? query, OrderBy orderBy, bool descending)
         {
             var urlTrackerRichNotFounds = await _clientErrorRepository.GetAsync(skip, take, query, orderBy, descending);
             return _mapper.Map<RichNotFoundCollection>(urlTrackerRichNotFounds);
         }
 
-        public Task DeleteAsync(string url, string culture)
+        public Task DeleteAsync(string url, string? culture)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
@@ -68,7 +68,7 @@ namespace UrlTracker.Core
         }
 
         [ExcludeFromCodeCoverage]
-        public async Task<NotFound> GetAsync(int id)
+        public async Task<NotFound?> GetAsync(int id)
         {
             var result = await _clientErrorRepository.GetAsync(id);
             return _mapper.Map<NotFound>(result);

@@ -45,7 +45,7 @@ namespace UrlTracker.Core.Abstractions
             _cref.Dispose();
         }
 
-        public IPublishedContent GetContentById(int id)
+        public IPublishedContent? GetContentById(int id)
             => _cref.UmbracoContext.Content.GetById(id);
 
         public string GetUrl(IPublishedContent content, UrlMode mode, string? culture)
@@ -65,20 +65,15 @@ namespace UrlTracker.Core.Abstractions
     {
         public static string Url(this IPublishedContent content, IUmbracoContextFactoryAbstraction abstraction, string? culture = null, UrlMode mode = UrlMode.Default)
         {
-            using (var cref = abstraction.EnsureUmbracoContext())
-            {
-                if (!content.HasCulture(culture)) culture = null;
+            using var cref = abstraction.EnsureUmbracoContext();
+            if (!content.HasCulture(culture)) culture = null;
 
-                switch (content.ItemType)
-                {
-                    case PublishedItemType.Content:
-                        return cref.GetUrl(content, mode, culture);
-                    case PublishedItemType.Media:
-                        return cref.GetMediaUrl(content, mode, culture);
-                    default:
-                        throw new NotSupportedException();
-                }
-            }
+            return content.ItemType switch
+            {
+                PublishedItemType.Content => cref.GetUrl(content, mode, culture),
+                PublishedItemType.Media => cref.GetMediaUrl(content, mode, culture),
+                _ => throw new NotSupportedException(),
+            };
         }
     }
 }

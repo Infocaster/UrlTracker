@@ -11,11 +11,11 @@ namespace UrlTracker.Web.Tests.Processing
 {
     public class ConfigurationClientErrorFilterTests : TestBase
     {
-        private ConfigurationClientErrorFilter _testSubject;
+        private ConfigurationClientErrorFilter? _testSubject;
 
         public override void SetUp()
         {
-            _testSubject = new ConfigurationClientErrorFilter(UrlTrackerSettings);
+            _testSubject = new ConfigurationClientErrorFilter(UrlTrackerSettings!);
         }
 
         [TestCase(TestName = "EvaluateCandidateAsync returns true if the incoming request is a candidate")]
@@ -25,7 +25,7 @@ namespace UrlTracker.Web.Tests.Processing
             HttpContextMock = new HttpContextMock(new Uri("http://example.com/lorem"));
 
             // act
-            bool result = await _testSubject.EvaluateCandidateAsync(HttpContextMock.Context);
+            bool result = await _testSubject!.EvaluateCandidateAsync(HttpContextMock.Context);
 
             // assert
             Assert.That(result, Is.True);
@@ -35,10 +35,10 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_PluginDisabled_ReturnsFalse()
         {
             // arrange
-            UrlTrackerSettings.Value.IsDisabled = true;
+            UrlTrackerSettings!.Value.IsDisabled = true;
 
             // act
-            bool result = await _testSubject.EvaluateCandidateAsync(HttpContextMock.Context);
+            bool result = await _testSubject!.EvaluateCandidateAsync(HttpContextMock!.Context);
 
             // assert
             Assert.That(result, Is.False);
@@ -48,10 +48,10 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_TrackingDisabled_ReturnsFalse()
         {
             // arrange
-            UrlTrackerSettings.Value.IsNotFoundTrackingDisabled = true;
+            UrlTrackerSettings!.Value.IsNotFoundTrackingDisabled = true;
 
             // act
-            bool result = await _testSubject.EvaluateCandidateAsync(HttpContextMock.Context);
+            bool result = await _testSubject!.EvaluateCandidateAsync(HttpContextMock!.Context);
 
             // assert
             Assert.That(result, Is.False);
@@ -64,7 +64,7 @@ namespace UrlTracker.Web.Tests.Processing
             HttpContextMock = new HttpContextMock(new Uri("http://example.com/favicon.ico"));
 
             // act
-            bool result = await _testSubject.EvaluateCandidateAsync(HttpContextMock.Context);
+            bool result = await _testSubject!.EvaluateCandidateAsync(HttpContextMock.Context);
 
             // assert
             Assert.That(result, Is.False);

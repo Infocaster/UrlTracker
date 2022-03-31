@@ -7,6 +7,11 @@ namespace UrlTracker.Core.Database.Models
     [ExcludeFromCodeCoverage]
     public class UrlTrackerShallowClientError
     {
+        public UrlTrackerShallowClientError(HttpStatusCode targetStatusCode)
+        {
+            TargetStatusCode = targetStatusCode;
+        }
+
         public int? Id { get; set; }
         public HttpStatusCode TargetStatusCode { get; set; }
     }
@@ -14,7 +19,13 @@ namespace UrlTracker.Core.Database.Models
     public class UrlTrackerClientError
         : UrlTrackerShallowClientError
     {
-        public string Culture { get; set; }
+        public UrlTrackerClientError(string url, HttpStatusCode targetStatusCode)
+            : base(targetStatusCode)
+        {
+            Url = url;
+        }
+
+        public string? Culture { get; set; }
         public string Url { get; set; }
         public int? RootNodeId { get; set; }
         public int? NodeId { get; set; }

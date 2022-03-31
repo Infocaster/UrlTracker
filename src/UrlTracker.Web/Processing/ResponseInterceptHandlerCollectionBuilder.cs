@@ -21,7 +21,7 @@ namespace UrlTracker.Web.Processing
             : base(items)
         { }
 
-        public IResponseInterceptHandler Get(IIntercept intercept)
+        public IResponseInterceptHandler? Get(IIntercept intercept)
         {
             return this.FirstOrDefault(handler => handler.CanHandle(intercept));
         }

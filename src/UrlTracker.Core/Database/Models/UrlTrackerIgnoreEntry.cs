@@ -21,10 +21,10 @@ namespace UrlTracker.Core.Database.Models
         public int? RootNodeId { get; set; }
 
         [Column("Culture"), Length(10), NullSetting(NullSetting = NullSettings.Null)]
-        public string Culture { get; set; }
+        public string? Culture { get; set; }
 
         [Column("Url"), Length(255), NullSetting(NullSetting = NullSettings.Null)]
-        public string Url { get; set; }
+        public string? Url { get; set; }
 
         [Column("Inserted"), Constraint(Default = SystemMethods.CurrentDateTime), ComputedColumn]
         public DateTime Inserted { get; set; }

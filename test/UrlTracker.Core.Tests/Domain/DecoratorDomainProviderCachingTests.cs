@@ -10,8 +10,8 @@ namespace UrlTracker.Core.Tests.Domain
 {
     public class DecoratorDomainProviderCachingTests : TestBase
     {
-        private ObjectCacheAppCache _runtimeCache;
-        private DecoratorDomainProviderCaching _testSubject;
+        private ObjectCacheAppCache? _runtimeCache;
+        private DecoratorDomainProviderCaching? _testSubject;
 
         public override void SetUp()
         {
@@ -29,11 +29,11 @@ namespace UrlTracker.Core.Tests.Domain
         {
             // arrange
             var output = DomainCollection.Create(Enumerable.Empty<Core.Domain.Models.Domain>());
-            DomainProviderMock.Setup(obj => obj.GetDomains())
+            DomainProviderMock!.Setup(obj => obj.GetDomains())
                 .Returns(output);
 
             // act
-            var result1 = _testSubject.GetDomains();
+            var result1 = _testSubject!.GetDomains();
             var result2 = _testSubject.GetDomains();
 
             // assert

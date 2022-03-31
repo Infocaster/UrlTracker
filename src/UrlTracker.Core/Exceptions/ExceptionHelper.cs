@@ -15,7 +15,7 @@ namespace UrlTracker.Core.Exceptions
             }
             catch (Exception e)
             {
-                throw new ArgumentException("Argument is invalid", parameter, e);
+                throw new ArgumentException(null, parameter, e);
             }
         }
     }

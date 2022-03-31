@@ -9,6 +9,11 @@ namespace UrlTracker.Core.Models
         : IEnumerable<TElement>
         where TThis : UrlTrackerCollectionBase<TThis, TElement>, new()
     {
+        public UrlTrackerCollectionBase()
+        {
+            Elements = new List<TElement>();
+        }
+
         public IReadOnlyCollection<TElement> Elements { get; private set; }
         public int Total { get; private set; }
 

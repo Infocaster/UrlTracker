@@ -9,7 +9,7 @@ namespace UrlTracker.Web.Controllers.Models
         public int? Skip { get; set; }
         [Required]
         public int? Amount { get; set; }
-        public string Query { get; set; }
+        public string? Query { get; set; }
         public OrderBy SortType { get; set; } = OrderBy.CreatedDesc;
     }
 }

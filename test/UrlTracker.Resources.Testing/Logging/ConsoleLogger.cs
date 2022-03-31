@@ -17,10 +17,10 @@ namespace UrlTracker.Resources.Testing.Logging
 
         public void Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            Log(logLevel.ToString(), exception, formatter(state, exception));
+            ConsoleLogger<T>.Log(logLevel.ToString(), exception, formatter(state, exception));
         }
 
-        private void Log(string severity, Exception exception, string message)
+        private static void Log(string severity, Exception exception, string message)
         {
             Console.WriteLine($"[{DateTime.UtcNow} {severity,10}] <{typeof(T)}> {exception} | {message}");
         }

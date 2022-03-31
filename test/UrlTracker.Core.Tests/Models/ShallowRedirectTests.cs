@@ -78,8 +78,8 @@ namespace UrlTracker.Core.Tests.Models
         public void Redirect_NormalFlow_HasProperValidation(ShallowRedirect input, bool isValid, IEnumerable<string> expectedInvalidProperties)
         {
             // arrange
-            ValidationContext ctx = new ValidationContext(input);
-            List<ValidationResult> validationResults = new List<ValidationResult>();
+            ValidationContext ctx = new(input);
+            List<ValidationResult> validationResults = new();
 
             // act
             var result = Validator.TryValidateObject(input, ctx, validationResults, true);

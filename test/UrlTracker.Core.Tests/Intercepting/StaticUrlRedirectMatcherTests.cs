@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
@@ -12,11 +13,11 @@ namespace UrlTracker.Core.Tests.Intercepting
 {
     public class StaticUrlRedirectMatcherTests : TestBase
     {
-        private StaticUrlRedirectInterceptor _redirectMatcher;
+        private StaticUrlRedirectInterceptor? _testSubject;
 
         public override void SetUp()
         {
-            _redirectMatcher = new StaticUrlRedirectInterceptor(RedirectRepository, new StaticUrlProviderCollection(() => new List<IStaticUrlProvider> { new StaticUrlProvider() }), new ConsoleLogger<StaticUrlRedirectInterceptor>());
+            _testSubject = new StaticUrlRedirectInterceptor(RedirectRepository, new StaticUrlProviderCollection(() => new List<IStaticUrlProvider> { new StaticUrlProvider() }), new ConsoleLogger<StaticUrlRedirectInterceptor>());
         }
 
         public static IEnumerable<TestCaseData> TestCases()
@@ -31,7 +32,7 @@ namespace UrlTracker.Core.Tests.Intercepting
             };
 
             yield return new TestCaseData(
-                new UrlTrackerShallowRedirect[0],
+                Array.Empty<UrlTrackerShallowRedirect>(),
                 null).SetName("InterceptAsync returns null if no match is found");
 
             yield return new TestCaseData(
@@ -43,10 +44,10 @@ namespace UrlTracker.Core.Tests.Intercepting
         public async Task GetMatchAsync_NormalFlow_ReturnsMatch(UrlTrackerShallowRedirect[] output, UrlTrackerShallowRedirect expected)
         {
             // arrange
-            RedirectRepositoryMock.Setup(obj => obj.GetShallowAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<string>())).ReturnsAsync(output);
+            RedirectRepositoryMock!.Setup(obj => obj.GetShallowAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<string>())).ReturnsAsync(output);
 
             // act
-            var result = await _redirectMatcher.InterceptAsync(Url.Parse("http://example.com"), DefaultInterceptContext);
+            var result = await _testSubject!.InterceptAsync(Url.Parse("http://example.com"), DefaultInterceptContext!);
 
             // assert
             Assert.That(result?.Info, Is.EqualTo(expected));

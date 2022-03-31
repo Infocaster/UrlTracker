@@ -11,8 +11,8 @@ namespace UrlTracker.Web.Tests
 {
     public class UmbracoMapperExtensionsTests : TestBase
     {
-        private MapperContext _mapperContext;
-        private TestMapDefinition<ShallowRedirect, Url> _testMap;
+        private MapperContext? _mapperContext;
+        private TestMapDefinition<ShallowRedirect, Url>? _testMap;
 
         protected override ICollection<IMapDefinition> CreateMappers()
         {
@@ -33,7 +33,7 @@ namespace UrlTracker.Web.Tests
             // arrange
 
             // act
-            Url result() => Mapper.MapToUrl(new ShallowRedirect(), null);
+            Url result() => Mapper!.MapToUrl(new ShallowRedirect(), null!);
 
             // assert
             Assert.That(result, Throws.ArgumentNullException);
@@ -43,10 +43,10 @@ namespace UrlTracker.Web.Tests
         public void MapperMapToUrl_NormalFlow_ReturnsResult()
         {
             // arrange
-            _testMap.To = Url.Parse("http://example.com");
+            _testMap!.To = Url.Parse("http://example.com");
 
             // act
-            var result = Mapper.MapToUrl(new ShallowRedirect(), HttpContextMock.Context);
+            var result = Mapper!.MapToUrl(new ShallowRedirect(), HttpContextMock!.Context);
 
             // assert
             Assert.That(result, Is.EqualTo(_testMap.To));
@@ -58,7 +58,7 @@ namespace UrlTracker.Web.Tests
             // arrange
 
             // act
-            Url result() => _mapperContext.MapToUrl(new ShallowRedirect(), null);
+            Url result() => _mapperContext!.MapToUrl(new ShallowRedirect(), null!);
 
             // assert
             Assert.That(result, Throws.ArgumentNullException);
@@ -68,10 +68,10 @@ namespace UrlTracker.Web.Tests
         public void ContextMapToUrl_NormalFlow_ReturnsResult()
         {
             // arrange
-            _testMap.To = Url.Parse("http://example.com");
+            _testMap!.To = Url.Parse("http://example.com");
 
             // act
-            var result = _mapperContext.MapToUrl(new ShallowRedirect(), HttpContextMock.Context);
+            var result = _mapperContext!.MapToUrl(new ShallowRedirect(), HttpContextMock!.Context);
 
             // assert
             Assert.That(result, Is.EqualTo(_testMap.To));

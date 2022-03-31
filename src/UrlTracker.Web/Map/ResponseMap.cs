@@ -27,7 +27,11 @@ namespace UrlTracker.Web.Map
                 Map);
 
             mapper.Define<Domain, GetLanguagesFromNodeResponseLanguage>(
-                (source, context) => new GetLanguagesFromNodeResponseLanguage(),
+                (source, context) =>
+                {
+                    var language = _localizationService.GetLanguageByIsoCode(source.LanguageIsoCode);
+                    return new GetLanguagesFromNodeResponseLanguage(source.LanguageIsoCode.ToLower(), language.CultureName);
+                },
                 Map);
 
             mapper.Define<Redirect, RedirectViewModel>(
@@ -35,22 +39,14 @@ namespace UrlTracker.Web.Map
                 Map);
 
             mapper.Define<RedirectCollection, GetRedirectsResponse>(
-                (source, context) => new GetRedirectsResponse(),
-                Map);
+                (source, context) => new GetRedirectsResponse(context.MapEnumerable<Redirect, RedirectViewModel>(source), source.Total));
 
             mapper.Define<RichNotFound, RedirectViewModel>(
                 (source, context) => new RedirectViewModel(),
                 Map);
 
             mapper.Define<RichNotFoundCollection, GetNotFoundsResponse>(
-                (source, context) => new GetNotFoundsResponse(),
-                Map);
-        }
-
-        private static void Map(RichNotFoundCollection source, GetNotFoundsResponse target, MapperContext context)
-        {
-            target.Entries = context.MapEnumerable<RichNotFound, RedirectViewModel>(source);
-            target.NumberOfEntries = source.Total;
+                (source, context) => new GetNotFoundsResponse(context.MapEnumerable<RichNotFound, RedirectViewModel>(source), source.Total));
         }
 
         private static void Map(RichNotFound source, RedirectViewModel target, MapperContext context)
@@ -68,7 +64,7 @@ namespace UrlTracker.Web.Map
 
             var queryStart = source.Url.IndexOf('?');
 
-            target.OldUrlWithoutQuery = queryStart != -1 ? source.Url.Substring(0, queryStart) : source.Url;
+            target.OldUrlWithoutQuery = queryStart != -1 ? source.Url[..queryStart] : source.Url;
             target.RedirectHttpCode = 0;
             target.RedirectNodeId = null;
             target.RedirectPassThroughQueryString = false;
@@ -78,18 +74,12 @@ namespace UrlTracker.Web.Map
             target.Remove404 = false;
         }
 
-        private static void Map(RedirectCollection source, GetRedirectsResponse target, MapperContext context)
-        {
-            target.NumberOfEntries = source.Total;
-            target.Entries = context.MapEnumerable<Redirect, RedirectViewModel>(source);
-        }
-
         private void Map(Redirect source, RedirectViewModel target, MapperContext context)
         {
             target.CalculatedRedirectUrl = source.TargetNode?.Url(_umbracoContextFactoryAbstraction) ?? source.TargetUrl;
             target.Culture = source.Culture;
             target.ForceRedirect = source.Force;
-            target.Id = source.Id.Value;
+            target.Id = source.Id!.Value;
             target.Inserted = source.Inserted;
             target.Is404 = false;
             target.Notes = source.Notes;
@@ -98,7 +88,7 @@ namespace UrlTracker.Web.Map
             target.OldUrl = source.SourceUrl;
 
             int queryIndex = target.OldUrl?.IndexOf("?") ?? -1;
-            target.OldUrlWithoutQuery = queryIndex >= 0 ? target.OldUrl.Substring(0, queryIndex) : target.OldUrl;
+            target.OldUrlWithoutQuery = queryIndex >= 0 ? target.OldUrl![..queryIndex] : target.OldUrl;
             target.RedirectHttpCode = ((int)source.TargetStatusCode);
             target.RedirectNodeId = source.TargetNode?.Id;
             target.RedirectPassThroughQueryString = source.PassThroughQueryString;
@@ -112,8 +102,6 @@ namespace UrlTracker.Web.Map
         {
             var language = _localizationService.GetLanguageByIsoCode(source.LanguageIsoCode);
             target.Id = language.Id;
-            target.IsoCode = source.LanguageIsoCode.ToLower();
-            target.CultureName = language.CultureName;
         }
 
         private static void Map(UrlTrackerSettings source, GetSettingsResponse target, MapperContext context)

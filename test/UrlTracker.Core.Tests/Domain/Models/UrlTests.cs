@@ -123,7 +123,7 @@ namespace UrlTracker.Core.Tests.Domain.Models
             // arrange
 
             // act
-            void result() => Url.Parse(string.Empty);
+            static void result() => Url.Parse(string.Empty);
 
             // assert
             Assert.Throws<ArgumentException>(result);
@@ -209,7 +209,7 @@ namespace UrlTracker.Core.Tests.Domain.Models
             // arrange
 
             // act
-            void result() => Url.FromAbsoluteUri(null);
+            static void result() => Url.FromAbsoluteUri(null!);
 
             // assert
             Assert.Throws<ArgumentNullException>(result);
@@ -219,7 +219,7 @@ namespace UrlTracker.Core.Tests.Domain.Models
         public void FromAbsoluteUri_UriIsRelative_ThrowsException()
         {
             // arrange
-            Uri uri = new Uri("/lorem", UriKind.Relative);
+            Uri uri = new("/lorem", UriKind.Relative);
 
             // act
             void result() => Url.FromAbsoluteUri(uri);

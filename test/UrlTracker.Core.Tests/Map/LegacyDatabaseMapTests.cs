@@ -26,7 +26,7 @@ namespace UrlTracker.Core.Tests.Map
             UrlTrackerEntry input = BaseUrlTrackerEntry;
 
             // act
-            var result = Mapper.Map<UrlTrackerShallowRedirect>(input);
+            var result = Mapper!.Map<UrlTrackerShallowRedirect>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -52,7 +52,7 @@ namespace UrlTracker.Core.Tests.Map
             input.Is404 = true;
 
             // act
-            var result = Mapper.Map<UrlTrackerShallowClientError>(input);
+            var result = Mapper!.Map<UrlTrackerShallowClientError>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -70,7 +70,7 @@ namespace UrlTracker.Core.Tests.Map
             input.RedirectHttpCode = 410;
 
             // act
-            var result = Mapper.Map<UrlTrackerShallowClientError>(input);
+            var result = Mapper!.Map<UrlTrackerShallowClientError>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -87,7 +87,7 @@ namespace UrlTracker.Core.Tests.Map
             var input = BaseUrlTrackerEntry;
 
             // act
-            var result = Mapper.Map<UrlTrackerRedirect>(input);
+            var result = Mapper!.Map<UrlTrackerRedirect>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -106,7 +106,7 @@ namespace UrlTracker.Core.Tests.Map
             input.Is404 = true;
 
             // act
-            var result = Mapper.Map<UrlTrackerNotFound>(input);
+            var result = Mapper!.Map<UrlTrackerNotFound>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -140,7 +140,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper.Map<UrlTrackerEntry>(input);
+            var result = Mapper!.Map<UrlTrackerEntry>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -165,17 +165,16 @@ namespace UrlTracker.Core.Tests.Map
         public void Map_UrlTrackerNotFound_UrlTrackerEntry()
         {
             // arrange
-            var input = new UrlTrackerNotFound
+            var input = new UrlTrackerNotFound("http://example.com/lorem")
             {
                 Id = 1000,
                 Ignored = false,
                 Inserted = new DateTime(2022, 1, 23),
-                Referrer = "http://example.com",
-                Url = "http://example.com/lorem"
+                Referrer = "http://example.com"
             };
 
             // act
-            var result = Mapper.Map<UrlTrackerEntry>(input);
+            var result = Mapper!.Map<UrlTrackerEntry>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -214,7 +213,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper.Map<UrlTrackerRichNotFound>(input);
+            var result = Mapper!.Map<UrlTrackerRichNotFound>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -228,7 +227,7 @@ namespace UrlTracker.Core.Tests.Map
         }
 
         private static UrlTrackerEntry BaseUrlTrackerEntry =>
-            new UrlTrackerEntry
+            new()
             {
                 Culture = "nl-nl",
                 ForceRedirect = true,

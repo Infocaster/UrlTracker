@@ -69,8 +69,6 @@
 	        if (!sortType)
 				sortType = "LastOccurredDesc";
 
-			console.log(sortType);
-
 	        return $http({
 				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/GetNotFounds",
 		        method: "GET",

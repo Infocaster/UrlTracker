@@ -11,7 +11,7 @@ namespace UrlTracker.Web.Abstraction
 
         public void SetRedirectLocation(HttpResponse response, string url)
         {
-                response.Headers["Location"] = url;
+            response.Headers["Location"] = url;
         }
     }
 

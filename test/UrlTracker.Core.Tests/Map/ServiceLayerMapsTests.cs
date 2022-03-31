@@ -20,13 +20,13 @@ namespace UrlTracker.Core.Tests.Map
         {
             return new[]
             {
-                new ServiceLayerMaps(UmbracoContextFactoryAbstractionMock.UmbracoContextFactory)
+                new ServiceLayerMaps(UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory)
             };
         }
 
         public override void SetUp()
         {
-            UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => new TestPublishedContent { Id = id });
+            UmbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => new TestPublishedContent { Id = id });
         }
 
         [TestCase(TestName = "Map UrlTrackerShallowRedirect to ShallowRedirect")]
@@ -48,7 +48,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper.Map<ShallowRedirect>(input);
+            var result = Mapper!.Map<ShallowRedirect>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -77,7 +77,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper.Map<Redirect>(input);
+            var result = Mapper!.Map<Redirect>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -94,7 +94,7 @@ namespace UrlTracker.Core.Tests.Map
             var input = UrlTrackerRedirectCollection.Create(new[] { new UrlTrackerRedirect() }, 3);
 
             // act
-            var result = Mapper.Map<RedirectCollection>(input);
+            var result = Mapper!.Map<RedirectCollection>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -126,7 +126,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper.Map<UrlTrackerRedirect>(input);
+            var result = Mapper!.Map<UrlTrackerRedirect>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -153,7 +153,7 @@ namespace UrlTracker.Core.Tests.Map
             var input = new Redirect();
 
             // act
-            var result = Mapper.Map<UrlTrackerRedirect>(input);
+            var result = Mapper!.Map<UrlTrackerRedirect>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -168,17 +168,16 @@ namespace UrlTracker.Core.Tests.Map
         public void Map_NotFound_UrlTrackerNotFound()
         {
             // arrange
-            var input = new NotFound
+            var input = new NotFound("http://example.com/lorem")
             {
                 Id = 1000,
                 Ignored = false,
                 Inserted = new DateTime(2022, 1, 23),
-                Referrer = "http://example.com",
-                Url = "http://example.com/lorem"
+                Referrer = "http://example.com"
             };
 
             // act
-            var result = Mapper.Map<UrlTrackerNotFound>(input);
+            var result = Mapper!.Map<UrlTrackerNotFound>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -195,17 +194,16 @@ namespace UrlTracker.Core.Tests.Map
         public void Map_UrlTrackerNotFound_NotFound()
         {
             // arrange
-            var input = new UrlTrackerNotFound
+            var input = new UrlTrackerNotFound("http://example.com/lorem")
             {
                 Id = 1000,
                 Ignored = false,
                 Inserted = new DateTime(2022, 1, 23),
-                Referrer = "http://example.com",
-                Url = "http://example.com/lorem"
+                Referrer = "http://example.com"
             };
 
             // act
-            var result = Mapper.Map<NotFound>(input);
+            var result = Mapper!.Map<NotFound>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -222,10 +220,10 @@ namespace UrlTracker.Core.Tests.Map
         public void Map_UrlTrackerRichNotFoundCollection_RichNotFoundCollection()
         {
             // arrange
-            var input = UrlTrackerRichNotFoundCollection.Create(new[] { new UrlTrackerRichNotFound() }, 3);
+            var input = UrlTrackerRichNotFoundCollection.Create(new[] { new UrlTrackerRichNotFound("http://example.com") }, 3);
 
             // act
-            var result = Mapper.Map<RichNotFoundCollection>(input);
+            var result = Mapper!.Map<RichNotFoundCollection>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -240,17 +238,16 @@ namespace UrlTracker.Core.Tests.Map
         public void Map_UrlTrackerRichNotFound_RichNotFound()
         {
             // arrange
-            var input = new UrlTrackerRichNotFound
+            var input = new UrlTrackerRichNotFound("http://example.com/lorem")
             {
                 Id = 1000,
                 LatestOccurrence = new DateTime(2022, 1, 23),
                 MostCommonReferrer = "http://example.com",
-                Occurrences = 3,
-                Url = "http://example.com/lorem"
+                Occurrences = 3
             };
 
             // act
-            var result = Mapper.Map<RichNotFound>(input);
+            var result = Mapper!.Map<RichNotFound>(input);
 
             // assert
             Assert.Multiple(() =>

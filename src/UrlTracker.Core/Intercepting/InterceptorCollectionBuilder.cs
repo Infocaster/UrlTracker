@@ -27,7 +27,7 @@ namespace UrlTracker.Core.Intercepting
             foreach (var interceptor in this)
             {
                 var result = await interceptor.InterceptAsync(url, context);
-                if (!(result is null)) return result;
+                if (result is not null) return result;
             }
 
             return null;

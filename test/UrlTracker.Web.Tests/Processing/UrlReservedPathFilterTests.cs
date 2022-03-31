@@ -10,7 +10,7 @@ namespace UrlTracker.Web.Tests.Processing
 {
     public class UrlReservedPathFilterTests : TestBase
     {
-        private UrlReservedPathFilter _urlReservedPathFilter;
+        private UrlReservedPathFilter? _urlReservedPathFilter;
 
         [SetUp]
         public void Setup()
@@ -24,11 +24,11 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_NormalFlow_ReturnsMatch(string input, string filteredPath, bool expectation)
         {
             // arrange
-            ReservedPathSettingsProviderMock.Setup(obj => obj.Paths).Returns(new HashSet<string> { filteredPath });
+            ReservedPathSettingsProviderMock!.Setup(obj => obj.Paths).Returns(new HashSet<string> { filteredPath });
             var inputUri = Url.Parse(input);
 
             // act
-            var result = await _urlReservedPathFilter.EvaluateCandidateAsync(inputUri);
+            var result = await _urlReservedPathFilter!.EvaluateCandidateAsync(inputUri);
 
             // assert
             Assert.That(result, Is.EqualTo(expectation));

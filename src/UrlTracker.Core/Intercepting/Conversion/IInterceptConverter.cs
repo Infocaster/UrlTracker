@@ -5,6 +5,6 @@ namespace UrlTracker.Core.Intercepting.Conversion
 {
     public interface IInterceptConverter
     {
-        ValueTask<IIntercept> ConvertAsync(ICachableIntercept cachableIntercept);
+        ValueTask<IIntercept?> ConvertAsync(ICachableIntercept cachableIntercept);
     }
 }

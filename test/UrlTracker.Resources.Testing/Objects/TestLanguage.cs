@@ -8,10 +8,10 @@ namespace UrlTracker.Resources.Testing.Objects
 {
     public class TestLanguage : ILanguage
     {
-        public string IsoCode { get; set; }
-        public string CultureName { get; set; }
+        public string? IsoCode { get; set; }
+        public string? CultureName { get; set; }
 
-        public CultureInfo CultureInfo { get; set; }
+        public CultureInfo? CultureInfo { get; set; }
 
         public bool IsDefault { get; set; }
         public bool IsMandatory { get; set; }
@@ -24,7 +24,12 @@ namespace UrlTracker.Resources.Testing.Objects
 
         public bool HasIdentity { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        // Cleanly suppress warning for unused event handler. See: https://stackoverflow.com/a/1093351/2853950
+        public event PropertyChangedEventHandler? PropertyChanged
+        {
+            add { throw new NotSupportedException(); }
+            remove { }
+        }
 
         public object DeepClone()
         {

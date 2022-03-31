@@ -11,7 +11,7 @@ namespace UrlTracker.Core.Tests.Intercepting
 {
     public class InterceptorCollectionTests : TestBase
     {
-        private InterceptorCollection _testSubject;
+        private InterceptorCollection? _testSubject;
 
         public override void SetUp()
         {
@@ -32,11 +32,11 @@ namespace UrlTracker.Core.Tests.Intercepting
         public async Task InterceptAsync_NormalFlow_ReturnsExpectedResult(ICachableIntercept input, ICachableIntercept expected)
         {
             // arrange
-            InterceptorMock.Setup(obj => obj.InterceptAsync(It.IsAny<Url>(), It.IsAny<IReadOnlyInterceptContext>()))
+            InterceptorMock!.Setup(obj => obj.InterceptAsync(It.IsAny<Url>(), It.IsAny<IReadOnlyInterceptContext>()))
                            .ReturnsAsync(input);
 
             // act
-            var result = await _testSubject.InterceptAsync(Url.Parse("https://example.com"), new DefaultInterceptContext());
+            var result = await _testSubject!.InterceptAsync(Url.Parse("https://example.com"), new DefaultInterceptContext());
 
             // assert
             Assert.That(result, Is.EqualTo(expected));

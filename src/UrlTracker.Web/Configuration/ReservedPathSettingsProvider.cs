@@ -9,7 +9,7 @@ namespace UrlTracker.Web.Configuration
     public class ReservedPathSettingsProvider : IReservedPathSettingsProvider
     {
         private readonly IOptions<GlobalSettings> _globalSettings;
-        private HashSet<string> _paths = null;
+        private HashSet<string>? _paths = null;
 
         public ReservedPathSettingsProvider(IOptions<GlobalSettings> globalSettings)
         {

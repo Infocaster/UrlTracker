@@ -21,7 +21,7 @@ namespace UrlTracker.Web.Tests.Map
         {
             return new IMapDefinition[]
             {
-                new RedirectMap(UrlTrackerSettings, DomainProvider, UmbracoContextFactoryAbstractionMock.UmbracoContextFactory)
+                new RedirectMap(UrlTrackerSettings!, DomainProvider, UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory)
             };
         }
 
@@ -198,19 +198,19 @@ namespace UrlTracker.Web.Tests.Map
         public void MapToUrl_NormalFlow_MapsRedirectToUrl(string incomingUrl, IEnumerable<KeyValuePair<int, string>> contentUrls, ShallowRedirect redirect, DomainCollection domains, bool appendPortNumber, Url expectedUrl)
         {
             // arrange
-            HttpContextMock.SetupUrl(new Uri(incomingUrl));
-            UrlTrackerSettings.Value.AppendPortNumber = appendPortNumber;
+            HttpContextMock!.SetupUrl(new Uri(incomingUrl));
+            UrlTrackerSettings!.Value.AppendPortNumber = appendPortNumber;
             if (contentUrls?.Any() == true)
             {
-                foreach (var pair in contentUrls) UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetUrl(It.Is<IPublishedContent>(o => o.Id == pair.Key), It.IsAny<UrlMode>(), It.IsAny<string>())).Returns(pair.Value);
+                foreach (var pair in contentUrls) UmbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetUrl(It.Is<IPublishedContent>(o => o.Id == pair.Key), It.IsAny<UrlMode>(), It.IsAny<string>())).Returns(pair.Value);
             }
             if (domains?.Any() == true)
             {
-                DomainProviderMock.Setup(obj => obj.GetDomains()).Returns(domains);
+                DomainProviderMock!.Setup(obj => obj.GetDomains()).Returns(domains);
             }
 
             // act
-            var result = Mapper.MapToUrl(redirect, HttpContextMock.Context);
+            var result = Mapper!.MapToUrl(redirect, HttpContextMock.Context);
 
             // assert
             Assert.That(result, Is.EqualTo(expectedUrl));

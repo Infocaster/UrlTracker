@@ -5,11 +5,11 @@ namespace UrlTracker.Web.Tests.Processing
 {
     public class RedirectResponseHandlerTestCase
     {
-        public ShallowRedirect Redirect { get; set; }
+        public ShallowRedirect? Redirect { get; set; }
         public int InitialStatusCode { get; set; }
         public int ExpectedStatusCode { get; set; }
-        public string ExpectedUrl { get; set; }
-        public string InitialUrl { get; set; }
+        public string? ExpectedUrl { get; set; }
+        public string? InitialUrl { get; set; }
 
         public TestCaseData ToTestCase(string name)
         {

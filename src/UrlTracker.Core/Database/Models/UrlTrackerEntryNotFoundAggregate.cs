@@ -12,10 +12,10 @@ namespace UrlTracker.Core.Database.Models
         public int Id { get; set; }
 
         [Column("Culture"), ComputedColumn]
-        public string Culture { get; set; }
+        public string? Culture { get; set; }
 
         [Column("OldUrl"), ComputedColumn]
-        public string OldUrl { get; set; }
+        public string? OldUrl { get; set; }
 
         [Column("RedirectRootNodeId"), ComputedColumn]
         public int? RedirectRootNodeId { get; set; }
@@ -24,7 +24,7 @@ namespace UrlTracker.Core.Database.Models
         public bool Is404 { get; set; }
 
         [Column("Referrer"), ComputedColumn]
-        public string Referrer { get; set; }
+        public string? Referrer { get; set; }
 
         [Column("Inserted"), ComputedColumn]
         public DateTime Inserted { get; set; }

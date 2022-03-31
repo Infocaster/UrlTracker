@@ -9,30 +9,30 @@ namespace UrlTracker.Web.Controllers.Models
     public abstract class RedirectRequestBase
         : IValidatableObject
     {
-        public string Culture { get; set; }
+        public string? Culture { get; set; }
 
-        public string OldUrl { get; set; }
+        public string? OldUrl { get; set; }
 
-        public string OldRegex { get; set; }
+        public string? OldRegex { get; set; }
 
         public int RedirectRootNodeId { get; set; }
 
         public int? RedirectNodeId { get; set; }
 
-        public string RedirectUrl { get; set; }
+        public string? RedirectUrl { get; set; }
 
         [Required, Range(300, 399)]
         public int RedirectHttpCode { get; set; }
 
         public bool RedirectPassThroughQueryString { get; set; }
 
-        public string Notes { get; set; }
+        public string? Notes { get; set; }
 
         public bool Is404 { get; set; }
 
         public bool Remove404 { get; set; }
 
-        public string Referrer { get; set; }
+        public string? Referrer { get; set; }
 
         public int? Occurrences { get; set; }
 

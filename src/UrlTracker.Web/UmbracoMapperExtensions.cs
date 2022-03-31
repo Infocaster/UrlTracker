@@ -18,7 +18,7 @@ namespace UrlTracker.Web
         }
 
         [ExcludeFromCodeCoverage]
-        public static HttpContext GetHttpContext(this MapperContext context)
+        public static HttpContext? GetHttpContext(this MapperContext context)
         {
             return context.Items.TryGetValue(_httpContextKey, out var httpContext) ? httpContext as HttpContext : null;
         }

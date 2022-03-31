@@ -16,7 +16,7 @@ namespace UrlTracker.Web.Tests.Controllers.Models
                    from type in assembly.GetTypes()
                    where !(type.IsAbstract || type.IsInterface || type.IsGenericType) && typeof(T).IsAssignableFrom(type)
                    let ctor = type.GetConstructor(Type.EmptyTypes)
-                   where !(ctor is null)
+                   where ctor is not null
                    select (T)ctor.Invoke(Array.Empty<object>());
         }
 

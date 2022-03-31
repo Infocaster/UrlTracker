@@ -19,13 +19,13 @@ namespace UrlTracker.Web.Tests.Map
         {
             return new IMapDefinition[]
             {
-                new RequestMap(UmbracoContextFactoryAbstractionMock.UmbracoContextFactory)
+                new RequestMap(UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory)
             };
         }
 
         public override void SetUp()
         {
-            UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => new TestPublishedContent { Id = id });
+            UmbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => new TestPublishedContent { Id = id });
         }
 
         [TestCase(TestName = "Map UpdateRedirectRequest to Redirect with content")]
@@ -53,7 +53,7 @@ namespace UrlTracker.Web.Tests.Map
             };
 
             // act
-            var result = Mapper.Map<Redirect>(input);
+            var result = Mapper!.Map<Redirect>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -83,7 +83,7 @@ namespace UrlTracker.Web.Tests.Map
             };
 
             // act
-            var result = Mapper.Map<Redirect>(input);
+            var result = Mapper!.Map<Redirect>(input);
 
             // assert
             Assert.Multiple(() =>

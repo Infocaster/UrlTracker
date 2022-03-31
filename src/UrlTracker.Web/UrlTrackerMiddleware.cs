@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Web;
+using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using UrlTracker.Core;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Logging;
@@ -19,7 +20,6 @@ namespace UrlTracker.Web
         private readonly IResponseInterceptHandlerCollection _interceptHandlers;
         private readonly IRequestInterceptFilterCollection _requestFilters;
         private readonly IEventAggregator _eventAggregator;
-        private readonly IUmbracoContextAccessor _umbracoContextAccessor;
 
         public UrlTrackerMiddleware(RequestDelegate next,
                                     ILogger<UrlTrackerMiddleware> logger,
@@ -65,7 +65,15 @@ namespace UrlTracker.Web
             _logger.LogInterceptFound(intercept.GetType());
 
             var handler = _interceptHandlers.Get(intercept);
-            await handler.HandleAsync(_next, context, intercept);
+            if (handler is not null)
+            {
+                await handler.HandleAsync(_next, context, intercept);
+            }
+            else
+            {
+                _logger.LogNoHandlerFound();
+                await _next(context);
+            }
         }
     }
 
@@ -74,6 +82,12 @@ namespace UrlTracker.Web
         public static IApplicationBuilder UseUrlTracker(this IApplicationBuilder app)
         {
             app.UseMiddleware<UrlTrackerMiddleware>();
+            return app;
+        }
+
+        public static IUmbracoApplicationBuilderContext UseUrlTracker(this IUmbracoApplicationBuilderContext app)
+        {
+            app.AppBuilder.UseUrlTracker();
             return app;
         }
     }

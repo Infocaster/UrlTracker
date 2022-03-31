@@ -6,7 +6,7 @@ namespace UrlTracker.Resources.Testing.Clients.Models
     public class SeedRedirectRequest
     {
         [Required]
-        public ICollection<SeedRedirectRequestRedirect> Redirects { get; set; }
+        public ICollection<SeedRedirectRequestRedirect>? Redirects { get; set; }
     }
 
     public class SeedRedirectRequestRedirect

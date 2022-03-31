@@ -21,7 +21,7 @@ namespace UrlTracker.Core
             _interceptConverters = interceptConverters;
         }
 
-        public async Task<IIntercept> GetAsync(Url url)
+        public async Task<IIntercept?> GetAsync(Url url)
         {
             if (!url.AvailableUrlTypes.Contains(UrlType.Absolute))
             {
@@ -30,7 +30,7 @@ namespace UrlTracker.Core
 
             var intermediateIntercept = await _intermediateInterceptService.GetAsync(url);
 
-            var result = await _interceptConverters.ConvertAsync(intermediateIntercept);
+            var result = intermediateIntercept is not null ? await _interceptConverters.ConvertAsync(intermediateIntercept) : null;
             return result;
         }
     }

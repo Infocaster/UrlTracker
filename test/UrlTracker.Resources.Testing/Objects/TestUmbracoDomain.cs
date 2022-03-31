@@ -13,12 +13,12 @@ namespace UrlTracker.Resources.Testing.Objects
         }
 
         public int? LanguageId { get; set; }
-        public string DomainName { get; set; }
+        public string? DomainName { get; set; }
         public int? RootContentId { get; set; }
 
         public bool IsWildcard { get; set; }
 
-        public string LanguageIsoCode { get; set; }
+        public string? LanguageIsoCode { get; set; }
 
         public int Id { get; set; }
         public Guid Key { get; set; }
@@ -28,7 +28,12 @@ namespace UrlTracker.Resources.Testing.Objects
 
         public bool HasIdentity { get; set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        // Cleanly suppress warning for unused event handler. See: https://stackoverflow.com/a/1093351/2853950
+        public event PropertyChangedEventHandler? PropertyChanged
+        {
+            add { throw new NotSupportedException(); }
+            remove { }
+        }
 
         public object DeepClone()
         {

@@ -3,9 +3,9 @@
 @using Newtonsoft.Json.Linq
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage<dynamic>
 
-@if (Model != null && Model.GetType() == typeof(JObject) && Model.sections != null)
+@if (Model is not null && Model.GetType() == typeof(JObject) && Model!.sections is not null)
 {
-    var oneColumn = ((System.Collections.ICollection)Model.sections).Count == 1;
+    var oneColumn = ((System.Collections.ICollection)Model!.sections).Count == 1;
 
     <div class="umb-grid">
         @if (oneColumn)
@@ -54,9 +54,9 @@
                 {
                     <div class="col-md-@area.grid column">
                         <div @RenderElementAttributes(area)>
-                            @foreach (var control in area.controls)
+                            @foreach (dynamic control in area.controls)
                             {
-                                if (control != null && control.editor != null && control.editor.view != null)
+                                if (control is not null && control.editor is not null && control!.editor.view is not null)
                                 {
                                     <text>@await Html.PartialAsync("grid/editors/base", (object)control)</text>
                                 }

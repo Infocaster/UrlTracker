@@ -20,8 +20,8 @@ namespace UrlTracker.Web.Tests.Processing
 {
     public class RedirectResponseInterceptHandlerTests : TestBase
     {
-        private TestMapDefinition<ShallowRedirect, Url> _testMap;
-        private RedirectResponseInterceptHandler _testSubject;
+        private TestMapDefinition<ShallowRedirect, Url>? _testMap;
+        private RedirectResponseInterceptHandler? _testSubject;
 
         protected override ICollection<IMapDefinition> CreateMappers()
         {
@@ -33,8 +33,8 @@ namespace UrlTracker.Web.Tests.Processing
 
         public override void SetUp()
         {
-            _testSubject = new RedirectResponseInterceptHandler(new ConsoleLogger<RedirectResponseInterceptHandler>(), Mapper, ResponseAbstraction, UmbracoContextFactoryAbstractionMock.UmbracoContextFactory);
-            _testMap.To = null; // <- always reset the url on the test map to prevent urls from leaking between tests
+            _testSubject = new RedirectResponseInterceptHandler(new ConsoleLogger<RedirectResponseInterceptHandler>(), Mapper!, ResponseAbstraction, UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory);
+            _testMap!.To = null; // <- always reset the url on the test map to prevent urls from leaking between tests
         }
 
         public static IEnumerable<TestCaseData> TestCases()
@@ -123,20 +123,20 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task HandleAsync_NormalFlow_ProcessesIntercept(ShallowRedirect redirect, int initialStatusCode, int expectedStatusCode, string initialUrl, string expectedUrl)
         {
             // arrange
-            HttpContextMock.ResponseMock.SetupProperty(obj => obj.StatusCode, initialStatusCode);
+            HttpContextMock!.ResponseMock.SetupProperty(obj => obj.StatusCode, initialStatusCode);
             HttpContextMock.SetupUrl(new Uri(initialUrl));
-            UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetResponseCode()).Returns(initialStatusCode);
+            UmbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetResponseCode()).Returns(initialStatusCode);
             bool nextInvoked = false;
             Task next(HttpContext context) => Task.FromResult(nextInvoked = true);
-            if (expectedUrl != null)
+            if (expectedUrl is not null)
             {
-                _testMap.To = Url.Parse(expectedUrl);
-                ResponseAbstractionMock.Setup(obj => obj.SetRedirectLocation(HttpContextMock.Response, expectedUrl)).Verifiable();
+                _testMap!.To = Url.Parse(expectedUrl);
+                ResponseAbstractionMock!.Setup(obj => obj.SetRedirectLocation(HttpContextMock.Response, expectedUrl)).Verifiable();
             }
             var input = new InterceptBase<ShallowRedirect>(redirect);
 
             // act
-            await _testSubject.HandleAsync(next, HttpContextMock.Context, input);
+            await _testSubject!.HandleAsync(next, HttpContextMock.Context, input);
 
             // assert
             HttpContextMock.ResponseMock.Verify();
@@ -147,7 +147,7 @@ namespace UrlTracker.Web.Tests.Processing
                     Assert.That(nextInvoked, Is.True);
                 }
                 Assert.That(HttpContextMock.Response.StatusCode, Is.EqualTo(expectedStatusCode));
-                ResponseAbstractionMock.Verify();
+                ResponseAbstractionMock!.Verify();
             });
         }
     }

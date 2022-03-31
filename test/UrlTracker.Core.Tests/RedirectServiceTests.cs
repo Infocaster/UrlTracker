@@ -13,12 +13,12 @@ namespace UrlTracker.Core.Tests
 {
     public partial class RedirectServiceTests : TestBase
     {
-        private RedirectService _testSubject;
+        private RedirectService? _testSubject;
 
         public override void SetUp()
         {
             _testSubject = new RedirectService(RedirectRepository,
-                                               Mapper,
+                                               Mapper!,
                                                ValidationHelper,
                                                new ExceptionHelper());
         }
@@ -36,37 +36,37 @@ namespace UrlTracker.Core.Tests
         private Exception SetupValidationFails()
         {
             var exception = new Exception();
-            ValidationHelperMock.Setup(obj => obj.EnsureValidObject(It.IsAny<Redirect>())).Throws(exception);
+            ValidationHelperMock!.Setup(obj => obj.EnsureValidObject(It.IsAny<Redirect>())).Throws(exception);
             return exception;
         }
 
         private void SetupValidationSuccessful()
         {
-            ValidationHelperMock.Setup(obj => obj.EnsureValidObject(It.IsAny<Redirect>())).Verifiable();
+            ValidationHelperMock!.Setup(obj => obj.EnsureValidObject(It.IsAny<Redirect>())).Verifiable();
         }
 
-        private void AssertArgumentNullException(AsyncTestDelegate code, string expectedParamName)
+        private static void AssertArgumentNullException(AsyncTestDelegate code, string expectedParamName)
         {
             Assert.Multiple(() =>
             {
                 var actualException = Assert.ThrowsAsync<ArgumentNullException>(code);
-                Assert.That(actualException.ParamName, Is.EqualTo(expectedParamName));
+                Assert.That(actualException?.ParamName, Is.EqualTo(expectedParamName));
             });
         }
 
-        private void AssertValidationException(AsyncTestDelegate code, Exception expectedInnerException)
+        private static void AssertValidationException(AsyncTestDelegate code, Exception expectedInnerException)
         {
             Assert.Multiple(() =>
             {
                 var actualException = Assert.ThrowsAsync<ArgumentException>(code);
-                Assert.That(actualException.InnerException, Is.SameAs(expectedInnerException));
+                Assert.That(actualException?.InnerException, Is.SameAs(expectedInnerException));
             });
         }
 
         private void AssertValidationNoExceptions(AsyncTestDelegate code)
         {
             Assert.DoesNotThrowAsync(code);
-            ValidationHelperMock.Verify();
+            ValidationHelperMock!.Verify();
         }
     }
 }

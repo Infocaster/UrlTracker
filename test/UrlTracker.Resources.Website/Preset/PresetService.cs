@@ -12,7 +12,7 @@ namespace UrlTracker.Resources.Website.Preset
     {
         void EnsureContent();
         void Insert(IEnumerable<UrlTrackerEntry> entries);
-        void SetConfiguration(UrlTrackerSettings settings);
+        void SetConfiguration(UrlTrackerSettings? settings);
         Task WipeUrlTrackerTablesAsync();
     }
 
@@ -33,11 +33,9 @@ namespace UrlTracker.Resources.Website.Preset
 
         public async Task WipeUrlTrackerTablesAsync()
         {
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                await scope.Database.DeleteMany<UrlTrackerEntry>().ExecuteAsync().ConfigureAwait(false);
-                scope.Complete();
-            }
+            using var scope = _scopeProvider.CreateScope();
+            await scope.Database.DeleteMany<UrlTrackerEntry>().ExecuteAsync().ConfigureAwait(false);
+            scope.Complete();
         }
 
         public void EnsureContent()
@@ -82,7 +80,7 @@ namespace UrlTracker.Resources.Website.Preset
             }
         }
 
-        public void SetConfiguration(UrlTrackerSettings settings)
+        public void SetConfiguration(UrlTrackerSettings? settings)
         {
             _urlTrackerConfigurationManager.Configuration = settings;
         }

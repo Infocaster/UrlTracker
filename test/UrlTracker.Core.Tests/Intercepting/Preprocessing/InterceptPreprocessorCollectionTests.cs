@@ -11,7 +11,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
 {
     public class InterceptPreprocessorCollectionTests : TestBase
     {
-        private InterceptPreprocessorCollection _testSubject;
+        private InterceptPreprocessorCollection? _testSubject;
 
         public override void SetUp()
         {
@@ -38,14 +38,14 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
         public async Task PreprocessUrlAsync_NormalFlow_ReturnsPopulatedContext(IInterceptContext inputContext, IInterceptContext factoryContext, IInterceptContext expected)
         {
             // arrange
-            InterceptPreprocessorMock.Setup(obj => obj.PreprocessUrlAsync(It.IsAny<Url>(), It.IsAny<IInterceptContext>()))
+            InterceptPreprocessorMock!.Setup(obj => obj.PreprocessUrlAsync(It.IsAny<Url>(), It.IsAny<IInterceptContext>()))
                                      .ReturnsAsync((Url url, IInterceptContext context) => context)
                                      .Verifiable();
-            DefaultInterceptContextFactoryMock.Setup(obj => obj.Create())
+            DefaultInterceptContextFactoryMock!.Setup(obj => obj.Create())
                                               .Returns(factoryContext);
 
             // act
-            var result = await _testSubject.PreprocessUrlAsync(Url.Parse("http://example.com"), inputContext);
+            var result = await _testSubject!.PreprocessUrlAsync(Url.Parse("http://example.com"), inputContext);
 
             // assert
             Assert.That(result, Is.EqualTo(expected));

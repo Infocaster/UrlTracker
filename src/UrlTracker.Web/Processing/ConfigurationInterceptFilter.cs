@@ -20,9 +20,7 @@ namespace UrlTracker.Web.Processing
         }
 
         public ValueTask<bool> EvaluateCandidateAsync(Url url)
-        {
-            return new ValueTask<bool>(EvaluateCandidate());
-        }
+            => new(EvaluateCandidate());
 
         private bool EvaluateCandidate()
         {

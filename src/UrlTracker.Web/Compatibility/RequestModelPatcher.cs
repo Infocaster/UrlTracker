@@ -25,35 +25,33 @@ namespace UrlTracker.Web.Compatibility
 
         public AddRedirectRequest Patch(AddRedirectRequest request)
         {
-            using (var cref = _umbracoContextFactory.EnsureUmbracoContext())
+            using var cref = _umbracoContextFactory.EnsureUmbracoContext();
+            if (request.RedirectNodeId.HasValue)
             {
-                if (request.RedirectNodeId.HasValue)
+                var content = cref.UmbracoContext.Content.GetById(request.RedirectNodeId.Value);
+                if (content is not null)
                 {
-                    var content = cref.UmbracoContext.Content.GetById(request.RedirectNodeId.Value);
-                    if (!(content is null))
+                    request.RedirectRootNodeId = content.Root().Id;
+                    return request;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.OldUrl))
+            {
+                var url = Url.Parse(request.OldUrl);
+                if (url.AvailableUrlTypes.Contains(UrlType.Absolute))
+                {
+                    var domains = _domainProvider.GetDomains();
+                    var domain = domains.FirstOrDefault(d => d.Url.Host!.Equals(url.Host) && url.Path!.StartsWith(d.Url.Path!));
+                    if (domain?.NodeId is not null)
                     {
-                        request.RedirectRootNodeId = content.Root().Id;
+                        request.RedirectRootNodeId = domain.NodeId.Value;
                         return request;
                     }
                 }
-
-                if (!string.IsNullOrWhiteSpace(request.OldUrl))
-                {
-                    var url = Url.Parse(request.OldUrl);
-                    if (url.AvailableUrlTypes.Contains(UrlType.Absolute))
-                    {
-                        var domains = _domainProvider.GetDomains();
-                        var domain = domains.FirstOrDefault(d => d.Url.Host.Equals(url.Host) && url.Path.StartsWith(d.Url.Path));
-                        if (!(domain?.NodeId is null))
-                        {
-                            request.RedirectRootNodeId = domain.NodeId.Value;
-                            return request;
-                        }
-                    }
-                }
-
-                throw new ArgumentException("Unable to patch this model");
             }
+
+            throw new ArgumentException("Unable to patch this model");
         }
     }
 }

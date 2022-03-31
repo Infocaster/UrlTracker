@@ -7,7 +7,7 @@ namespace UrlTracker.Core.Intercepting.Models
     public class DefaultInterceptContext
         : IInterceptContext
     {
-        private readonly Dictionary<string, object> _features;
+        private readonly Dictionary<string, object?> _features;
 
         public int Count => _features.Count;
 
@@ -15,13 +15,13 @@ namespace UrlTracker.Core.Intercepting.Models
 
         public DefaultInterceptContext()
         {
-            _features = new Dictionary<string, object>();
+            _features = new Dictionary<string, object?>();
         }
 
-        public void Set(string key, object value)
+        public void Set(string key, object? value)
             => _features[key] = value;
 
-        public T Get<T>(string key)
-            => _features.TryGetValue(key, out var result) ? (T)result : default;
+        public T? Get<T>(string key)
+            => _features.TryGetValue(key, out var result) ? (T?)result : default;
     }
 }

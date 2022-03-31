@@ -29,19 +29,17 @@ namespace UrlTracker.Web.Map
 
         private void Map(CsvRedirect source, Redirect target, MapperContext context)
         {
-            using (var cref = _umbracoContextFactory.EnsureUmbracoContext())
-            {
-                target.Culture = source.Culture;
-                target.Force = source.Force;
-                target.Notes = source.Notes;
-                target.PassThroughQueryString = source.PassThroughQueryString;
-                target.SourceRegex = source.SourceRegex;
-                target.SourceUrl = source.SourceUrl;
-                target.TargetNode = source.TargetNodeId.HasValue ? cref.GetContentById(source.TargetNodeId.Value) : null;
-                target.TargetRootNode = source.TargetRootNodeId.HasValue ? cref.GetContentById(source.TargetRootNodeId.Value) : null;
-                target.TargetStatusCode = (HttpStatusCode)source.TargetStatusCode;
-                target.TargetUrl = source.TargetUrl;
-            }
+            using var cref = _umbracoContextFactory.EnsureUmbracoContext();
+            target.Culture = source.Culture;
+            target.Force = source.Force;
+            target.Notes = source.Notes;
+            target.PassThroughQueryString = source.PassThroughQueryString;
+            target.SourceRegex = source.SourceRegex;
+            target.SourceUrl = source.SourceUrl;
+            target.TargetNode = source.TargetNodeId.HasValue ? cref.GetContentById(source.TargetNodeId.Value) : null;
+            target.TargetRootNode = source.TargetRootNodeId.HasValue ? cref.GetContentById(source.TargetRootNodeId.Value) : null;
+            target.TargetStatusCode = (HttpStatusCode)source.TargetStatusCode;
+            target.TargetUrl = source.TargetUrl;
         }
 
         private static void Map(Redirect source, CsvRedirect target, MapperContext context)

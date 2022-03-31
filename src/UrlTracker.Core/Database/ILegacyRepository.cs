@@ -8,7 +8,7 @@ namespace UrlTracker.Core.Database
     public interface ILegacyRepository
     {
         Task DeleteAsync(UrlTrackerEntry entry);
-        Task DeleteAsync(string culture, string sourceUrl, int? targetRootNodeId, bool is404);
-        Task<UrlTrackerEntry> GetAsync(int id);
+        Task DeleteAsync(string? culture, string sourceUrl, int? targetRootNodeId, bool is404);
+        Task<UrlTrackerEntry?> GetAsync(int id);
     }
 }

@@ -30,7 +30,6 @@ namespace UrlTracker.Web.Controllers
     // FIXME: This controller is for so many things at once. Separate into redirect, notfound and dashboard or something
     [PluginController("urltracker")]
     [PatchModel]
-    //[ValidateModel]
     public class UrlTrackerManagerController
         : UmbracoAuthorizedApiController
     {
@@ -67,7 +66,7 @@ namespace UrlTracker.Web.Controllers
         [ExcludeFromCodeCoverage]
         public async Task<IActionResult> DeleteEntry([FromQuery] DeleteEntryRequest request)
         {
-            var entry = await _legacyService.GetAsync(request.Id.Value);
+            var entry = await _legacyService.GetAsync(request.Id!.Value);
             if (entry is null) return NotFound();
 
             await _legacyService.DeleteAsync(entry);
@@ -79,7 +78,7 @@ namespace UrlTracker.Web.Controllers
         {
             // ToDo: Old implementation does not account for the possibility that a provided id might not map to an actual published content item
             //    Check for content item and return 404 if no content exists for a given id
-            var domains = _domainProvider.GetDomains(request.NodeId.Value);
+            var domains = _domainProvider.GetDomains(request.NodeId!.Value);
             var uniqueDomains = from domain in domains
                                 group domain by domain.LanguageIsoCode into g
                                 select g.First();
@@ -103,22 +102,20 @@ namespace UrlTracker.Web.Controllers
         public async Task<IActionResult> AddRedirect([FromBody] AddRedirectRequest request)
         {
             // Wrap the operations inside a scope! If one of the operations fail, everything will be rolled back. This way, no data will ever get lost
-            using (var scope = _scopeProvider.CreateScope())
+            using var scope = _scopeProvider.CreateScope();
+            Task? deleteTask = null;
+            if (request.Remove404)
             {
-                Task deleteTask = null;
-                if (request.Remove404)
-                {
-                    request = _requestModelPatcher.Patch(request);
-                    deleteTask = _clientErrorService.DeleteAsync(request.OldUrl, request.Culture);
-                }
-
-                var redirect = _mapper.Map<Redirect>(request);
-                await _redirectService.AddAsync(redirect);
-                if (!(deleteTask is null)) await deleteTask;
-
-                scope.Complete();
-                return Ok();
+                request = _requestModelPatcher.Patch(request);
+                deleteTask = _clientErrorService.DeleteAsync(request.OldUrl!, request.Culture);
             }
+
+            var redirect = _mapper.Map<Redirect>(request);
+            await _redirectService.AddAsync(redirect);
+            if (deleteTask is not null) await deleteTask;
+
+            scope.Complete();
+            return Ok();
         }
 
         [HttpPost]
@@ -134,13 +131,9 @@ namespace UrlTracker.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> GetRedirects([FromQuery] GetRedirectsRequest request)
         {
-#pragma warning disable IDE0018 // Inline variable declaration
-            bool descending;
-            Core.Database.Models.OrderBy orderBy;
-#pragma warning restore IDE0018 // Inline variable declaration
-            ExtractOrderParameters(request.SortType, out descending, out orderBy);
+            ExtractOrderParameters(request.SortType, out bool descending, out Core.Database.Models.OrderBy orderBy);
 
-            var result = await _redirectService.GetAsync((uint)request.Skip.Value, (uint)request.Amount.Value, request.Query, orderBy, descending);
+            var result = await _redirectService.GetAsync((uint)request.Skip!.Value, (uint)request.Amount!.Value, request.Query, orderBy, descending);
             var model = _mapper.Map<GetRedirectsResponse>(result);
 
             return Ok(model);
@@ -150,13 +143,9 @@ namespace UrlTracker.Web.Controllers
         [ExcludeFromCodeCoverage]
         public async Task<IActionResult> GetNotFounds([FromQuery] GetNotFoundsRequest request)
         {
-#pragma warning disable IDE0018 // Inline variable declaration
-            bool descending;
-            Core.Database.Models.OrderBy orderBy;
-#pragma warning restore IDE0018 // Inline variable declaration
-            ExtractOrderParameters(request.SortType, out descending, out orderBy);
+            ExtractOrderParameters(request.SortType, out bool descending, out Core.Database.Models.OrderBy orderBy);
 
-            var result = await _clientErrorService.GetAsync((uint)request.Skip.Value, (uint)request.Amount.Value, request.Query, orderBy, descending);
+            var result = await _clientErrorService.GetAsync((uint)request.Skip!.Value, (uint)request.Amount!.Value, request.Query, orderBy, descending);
             var model = _mapper.Map<GetNotFoundsResponse>(result);
 
             return Ok(model);
@@ -176,7 +165,7 @@ namespace UrlTracker.Web.Controllers
         [ExcludeFromCodeCoverage]
         public async Task<IActionResult> AddIgnore404([FromBody] AddIgnore404Request request)
         {
-            var notFound = await _clientErrorService.GetAsync(request.Id.Value);
+            var notFound = await _clientErrorService.GetAsync(request.Id!.Value);
             if (notFound is null) return NotFound();
 
             await _clientErrorService.UpdateAsync(notFound);
@@ -203,25 +192,20 @@ namespace UrlTracker.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            using (StreamReader sr = new StreamReader(file.OpenReadStream()))
+            using StreamReader sr = new(file.OpenReadStream());
+            using CsvReader cr = new(sr, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
+            
+            var records = cr.GetRecords<CsvRedirect>();
+            var redirects = _mapper.MapEnumerable<CsvRedirect, Redirect>(records);
+            
+            using var scope = _scopeProvider.CreateScope();
+            foreach (var redirect in redirects)
             {
-                using (CsvReader cr = new CsvReader(sr, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" }))
-                {
-                    var records = cr.GetRecords<CsvRedirect>();
-                    var redirects = _mapper.MapEnumerable<CsvRedirect, Redirect>(records);
-                    using (var scope = _scopeProvider.CreateScope())
-                    {
-                        foreach (var redirect in redirects)
-                        {
-                            await _redirectService.AddAsync(redirect);
-                        }
-
-                        scope.Complete();
-                    }
-
-                    return Ok(redirects.Count);
-                }
+                await _redirectService.AddAsync(redirect);
             }
+
+            scope.Complete();
+            return Ok(redirects.Count);
         }
 
         [HttpGet]
@@ -230,26 +214,22 @@ namespace UrlTracker.Web.Controllers
         {
             var redirects = await _redirectService.GetAsync();
             var csvRedirects = _mapper.MapEnumerable<Redirect, CsvRedirect>(redirects);
-            string csvContent;
-            using (MemoryStream ms = new MemoryStream())
+            string? csvContent;
+            using MemoryStream ms = new();
+            using StreamWriter sw = new(ms);
+            using (CsvWriter cw = new(sw, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";", NewLine = Environment.NewLine }))
             {
-                using (StreamWriter sw = new StreamWriter(ms))
-                {
-                    using (CsvWriter cw = new CsvWriter(sw, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";", NewLine = Environment.NewLine }))
-                    {
-                        cw.WriteHeader<CsvRedirect>();
-                        await cw.NextRecordAsync().ConfigureAwait(false);
-                        await cw.WriteRecordsAsync<CsvRedirect>(csvRedirects).ConfigureAwait(false);
+                cw.WriteHeader<CsvRedirect>();
+                await cw.NextRecordAsync().ConfigureAwait(false);
+                await cw.WriteRecordsAsync<CsvRedirect>(csvRedirects).ConfigureAwait(false);
 
-                        await cw.FlushAsync().ConfigureAwait(false);
-                        csvContent = sw.ToString();
-                    }
-
-                    ms.Position = 0;
-
-                    return File(ms, "text/csv", $"urltracker-redirects-{DateTime.UtcNow:yyyy-MM-dd}.csv");
-                }
+                await cw.FlushAsync().ConfigureAwait(false);
+                csvContent = sw.ToString();
             }
+
+            ms.Position = 0;
+
+            return File(ms, "text/csv", $"urltracker-redirects-{DateTime.UtcNow:yyyy-MM-dd}.csv");
         }
 
         private static void ExtractOrderParameters(OrderBy sortType, out bool descending, out Core.Database.Models.OrderBy orderBy)

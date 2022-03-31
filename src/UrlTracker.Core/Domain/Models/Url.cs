@@ -20,11 +20,12 @@ namespace UrlTracker.Core.Domain.Models
     public class Url
         : IEquatable<Url>
     {
-        private Lazy<IReadOnlyCollection<UrlType>> _availableUrlTypes;
+        private IReadOnlyCollection<UrlType>? _availableUrlTypes;
         private Protocol? _protocol;
-        private string _host;
+        private string? _host;
         private int? _port;
-        private string _query;
+        private string? _query;
+        private readonly object _availableUrlTypesLock = new();
 
         public Protocol? Protocol
         {
@@ -34,7 +35,7 @@ namespace UrlTracker.Core.Domain.Models
                 _protocol = value;
             }
         }
-        public string Host
+        public string? Host
         {
             get => _host; set
             {
@@ -50,23 +51,37 @@ namespace UrlTracker.Core.Domain.Models
                 _port = value;
             }
         }
-        public string Path { get; set; }
-        public string Query { get => _query; set => _query = value?.TrimStart('?').DefaultIfNullOrWhiteSpace(null); }
+        public string? Path { get; set; }
+        public string? Query { get => _query; set => _query = value?.TrimStart('?').DefaultIfNullOrWhiteSpace(null); }
         public IReadOnlyCollection<UrlType> AvailableUrlTypes
-            => (_availableUrlTypes = _availableUrlTypes ?? new Lazy<IReadOnlyCollection<UrlType>>(() =>
+        {
+            get
             {
-                List<UrlType> result = new List<UrlType>();
-                if (!string.IsNullOrWhiteSpace(Host) && Protocol != null)
+                // Use double if pattern with lock for best performance in a multithreaded environment
+                if(_availableUrlTypes is null)
                 {
-                    result.Add(UrlType.Absolute);
+                    lock (_availableUrlTypesLock)
+                    {
+                        if(_availableUrlTypes is null)
+                        {
+                            List<UrlType> result = new();
+                            if (!string.IsNullOrWhiteSpace(Host) && Protocol is not null)
+                            {
+                                result.Add(UrlType.Absolute);
+                            }
+                            result.Add(UrlType.Relative);
+                            _availableUrlTypes = result;
+                        }
+                    }
                 }
-                result.Add(UrlType.Relative);
-                return result;
-            })).Value;
+
+                return _availableUrlTypes;
+            }
+        }
 
         #region Creation, parsing and casting
         // One may start to question the use of regex once it passes a certain threshold
-        private static readonly Regex _urlPattern = new Regex(@"^(((?<protocol>https?):\/\/)?(?<host>[a-z0-9-\.]+)(\:(?<port>\d+))?)?(?<path>\/([a-z0-9\-\._~!$&'\(\)\*\+,;=:@\/]|%[a-f0-9]{2})*)?(\?(?<query>([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})+\=([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})*(\&([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})+\=([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})*)*))?", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.ExplicitCapture);
+        private static readonly Regex _urlPattern = new(@"^(((?<protocol>https?):\/\/)?(?<host>[a-z0-9-\.]+)(\:(?<port>\d+))?)?(?<path>\/([a-z0-9\-\._~!$&'\(\)\*\+,;=:@\/]|%[a-f0-9]{2})*)?(\?(?<query>([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})+\=([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})*(\&([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})+\=([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})*)*))?", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.ExplicitCapture);
         public static Url Parse(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
@@ -115,7 +130,7 @@ namespace UrlTracker.Core.Domain.Models
                 throw new ArgumentNullException(nameof(uri));
             }
 
-            if (!uri.IsAbsoluteUri) throw new ArgumentException(nameof(uri));
+            if (!uri.IsAbsoluteUri) throw new ArgumentException(null, nameof(uri));
 
             var result = new Url
             {
@@ -140,21 +155,21 @@ namespace UrlTracker.Core.Domain.Models
         public string ToString(UrlType urlType, bool ensureTrailingSlash = false, bool excludeQuery = false)
         {
             if (!AvailableUrlTypes.Contains(urlType)) throw new ArgumentOutOfRangeException($"This url cannot be converted to a string with url type '{urlType}'");
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             if (urlType == UrlType.Absolute)
             {
-                sb.Append(Protocol.ToString().ToLowerInvariant() + "://");
+                sb.Append(Protocol.ToString()!.ToLowerInvariant() + "://");
                 sb.Append(Host);
                 if (Port.HasValue)
                 {
                     sb.Append(":" + Port);
                 }
             }
-            var path = Path.TrimEnd('/');
+            var path = Path?.TrimEnd('/');
             if (ensureTrailingSlash) path += "/";
             sb.Append(path);
 
-            if (!excludeQuery && Query != null)
+            if (!excludeQuery && Query is not null)
             {
                 sb.Append("?" + Query);
             }
@@ -163,9 +178,10 @@ namespace UrlTracker.Core.Domain.Models
         #endregion
 
         #region operators & comparison
-        public bool Equals(Url other)
+        public bool Equals(Url? other)
         {
-            return other.Protocol == Protocol
+            return other is not null
+                && other.Protocol == Protocol
                 && other.Host == Host
                 && other.Port == Port
                 && other.Path == Path
@@ -173,7 +189,7 @@ namespace UrlTracker.Core.Domain.Models
         }
 
         [ExcludeFromCodeCoverage]
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return obj is Url other && Equals(other);
         }

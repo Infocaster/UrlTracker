@@ -51,9 +51,8 @@ namespace UrlTracker.Web.Events
         [ExcludeFromCodeCoverage]
         private NotFound CreateNotFound(UrlTrackerHandled args)
         {
-            return new NotFound
+            return new NotFound(args.HttpContext.Request.GetUrl().ToString())
             {
-                Url = args.HttpContext.Request.GetUrl().ToString(),
                 Referrer = args.HttpContext.Request.GetReferrer(_requestAbstraction)?.AbsoluteUri
             };
         }

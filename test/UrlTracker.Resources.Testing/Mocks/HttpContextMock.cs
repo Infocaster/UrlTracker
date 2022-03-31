@@ -8,7 +8,7 @@ namespace UrlTracker.Resources.Testing.Mocks
     {
         private bool _urlConfigured;
 
-        public HttpContextMock(Uri incomingUrl = null)
+        public HttpContextMock(Uri? incomingUrl = null)
         {
             ContextMock = new Mock<HttpContext>();
             RequestMock = new Mock<HttpRequest>();
@@ -17,7 +17,7 @@ namespace UrlTracker.Resources.Testing.Mocks
             ContextMock.Setup(obj => obj.Request).Returns(RequestMock.Object);
             ContextMock.Setup(obj => obj.Response).Returns(ResponseMock.Object);
             _urlConfigured = false;
-            if (incomingUrl != null)
+            if (incomingUrl is not null)
             {
                 SetupUrl(incomingUrl);
             }

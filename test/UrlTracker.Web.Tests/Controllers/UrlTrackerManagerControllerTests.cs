@@ -14,22 +14,20 @@ namespace UrlTracker.Web.Tests.Controllers
 {
     public partial class UrlTrackerManagerControllerTests : TestBase
     {
-        private UrlTrackerManagerController _testSubject;
+        private UrlTrackerManagerController? _testSubject;
 
         protected override ICollection<IMapDefinition> CreateMappers()
         {
             return new IMapDefinition[]
             {
                 CreateTestMap<UrlTrackerSettings, GetSettingsResponse>(new GetSettingsResponse()),
-                CreateTestMap<Domain, GetLanguagesFromNodeResponseLanguage>(new GetLanguagesFromNodeResponseLanguage
+                CreateTestMap<Domain, GetLanguagesFromNodeResponseLanguage>(new GetLanguagesFromNodeResponseLanguage("en-us", "English (USA)")
                 {
-                    CultureName = "English (USA)",
-                    Id = 1,
-                    IsoCode = "en-us"
+                    Id = 1
                 }),
                 CreateTestMap<AddRedirectRequest, Redirect>(new Redirect()),
                 CreateTestMap<UpdateRedirectRequest, Redirect>(new Redirect()),
-                CreateTestMap<RedirectCollection, GetRedirectsResponse>(new GetRedirectsResponse())
+                CreateTestMap<RedirectCollection, GetRedirectsResponse>(new GetRedirectsResponse(new List<RedirectViewModel>(), 0))
             };
         }
 
@@ -50,9 +48,9 @@ namespace UrlTracker.Web.Tests.Controllers
                                                            RedirectService,
                                                            ClientErrorService,
                                                            LegacyService,
-                                                           ScopeProviderMock.Provider,
+                                                           ScopeProviderMock!.Provider,
                                                            RequestModelPatcher,
-                                                           Mapper);
+                                                           Mapper!);
         }
     }
 }

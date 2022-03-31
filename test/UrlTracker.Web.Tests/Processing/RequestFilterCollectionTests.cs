@@ -10,7 +10,7 @@ namespace UrlTracker.Web.Tests.Processing
 {
     public class RequestFilterCollectionTests : TestBase
     {
-        private RequestInterceptFilterCollection _testSubject;
+        private RequestInterceptFilterCollection? _testSubject;
 
         public override void SetUp()
         {
@@ -27,11 +27,11 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_NormalFlow_ReturnsResult(bool output, bool expected)
         {
             // arrange
-            RequestInterceptFilterMock.Setup(obj => obj.EvaluateCandidateAsync(It.IsAny<Url>()))
+            RequestInterceptFilterMock!.Setup(obj => obj.EvaluateCandidateAsync(It.IsAny<Url>()))
                                       .ReturnsAsync(output);
 
             // act
-            var result = await _testSubject.EvaluateCandidateAsync(Url.Parse("http://example.com"));
+            var result = await _testSubject!.EvaluateCandidateAsync(Url.Parse("http://example.com"));
 
             // assert
             Assert.That(result, Is.EqualTo(expected));

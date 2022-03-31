@@ -9,19 +9,19 @@ namespace UrlTracker.Core.Tests
 {
     public partial class ClientErrorServiceTests : TestBase
     {
-        private ClientErrorService _testSubject;
+        private ClientErrorService? _testSubject;
 
         public override void SetUp()
         {
-            _testSubject = new ClientErrorService(ClientErrorRepository, ValidationHelper, new ExceptionHelper(), Mapper);
+            _testSubject = new ClientErrorService(ClientErrorRepository, ValidationHelper, new ExceptionHelper(), Mapper!);
         }
 
         protected override ICollection<IMapDefinition> CreateMappers()
         {
             return new IMapDefinition[]
             {
-                CreateTestMap<NotFound, UrlTrackerNotFound>(new UrlTrackerNotFound()),
-                CreateTestMap<UrlTrackerNotFound, NotFound>(new NotFound())
+                CreateTestMap<NotFound, UrlTrackerNotFound>(new UrlTrackerNotFound("http://example.com")),
+                CreateTestMap<UrlTrackerNotFound, NotFound>(new NotFound("http://example.com"))
             };
         }
     }

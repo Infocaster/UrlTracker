@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Database.Models;
 
@@ -14,7 +15,7 @@ namespace UrlTracker.Core.Map
                 Map);
 
             mapper.Define<UrlTrackerEntry, UrlTrackerShallowClientError>(
-                (source, context) => new UrlTrackerShallowClientError(),
+                (source, context) => new UrlTrackerShallowClientError(GetStatusCode(source)),
                 Map);
 
             mapper.Define<UrlTrackerEntry, UrlTrackerRedirect>(
@@ -22,7 +23,7 @@ namespace UrlTracker.Core.Map
                 Map);
 
             mapper.Define<UrlTrackerEntry, UrlTrackerNotFound>(
-                (source, context) => new UrlTrackerNotFound(),
+                (source, context) => new UrlTrackerNotFound(source.OldUrl!),
                 Map);
 
             mapper.Define<UrlTrackerRedirect, UrlTrackerEntry>(
@@ -34,7 +35,7 @@ namespace UrlTracker.Core.Map
                 Map);
 
             mapper.Define<UrlTrackerEntryNotFoundAggregate, UrlTrackerRichNotFound>(
-                (source, context) => new UrlTrackerRichNotFound(),
+                (source, context) => new UrlTrackerRichNotFound(source.OldUrl!),
                 Map);
         }
 
@@ -43,7 +44,6 @@ namespace UrlTracker.Core.Map
             target.Id = source.Id;
             target.LatestOccurrence = source.Inserted;
             target.MostCommonReferrer = source.Referrer;
-            target.Url = source.OldUrl;
             target.Occurrences = source.Occurrences;
         }
 
@@ -52,7 +52,6 @@ namespace UrlTracker.Core.Map
             target.Id = source.Id;
             target.Inserted = source.Inserted;
             target.Referrer = source.Referrer;
-            target.Url = source.OldUrl;
             target.Ignored = false; // ignored can be set to false, because if a 404 is ignored, it is completely removed from this table
         }
 
@@ -101,7 +100,12 @@ namespace UrlTracker.Core.Map
         private static void Map(UrlTrackerEntry source, UrlTrackerShallowClientError target, MapperContext context)
         {
             target.Id = source.Id;
-            target.TargetStatusCode = source.Is404 ? HttpStatusCode.NotFound : (HttpStatusCode)source.RedirectHttpCode;
+            target.TargetStatusCode = GetStatusCode(source);
+        }
+
+        private static HttpStatusCode GetStatusCode(UrlTrackerEntry source)
+        {
+            return source.Is404 ? HttpStatusCode.NotFound : (HttpStatusCode)(source.RedirectHttpCode ?? throw new ArgumentException("RedirectHttpCode cannot be null if Is404 is false", nameof(source)));
         }
 
         private static void Map(UrlTrackerEntry source, UrlTrackerShallowRedirect target, MapperContext context)
@@ -114,7 +118,7 @@ namespace UrlTracker.Core.Map
             target.SourceUrl = source.OldUrl;
             target.TargetNodeId = source.RedirectNodeId;
             target.TargetRootNodeId = source.RedirectRootNodeId;
-            target.TargetStatusCode = (HttpStatusCode)source.RedirectHttpCode;
+            target.TargetStatusCode = GetStatusCode(source);
             target.TargetUrl = source.RedirectUrl;
         }
     }

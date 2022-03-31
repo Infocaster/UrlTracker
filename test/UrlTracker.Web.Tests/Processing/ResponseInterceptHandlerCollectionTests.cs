@@ -9,7 +9,7 @@ namespace UrlTracker.Web.Tests.Processing
 {
     public class ResponseInterceptHandlerCollectionTests : TestBase
     {
-        private ResponseInterceptHandlerCollection _testSubject;
+        private ResponseInterceptHandlerCollection? _testSubject;
 
         public override void SetUp()
         {
@@ -22,12 +22,12 @@ namespace UrlTracker.Web.Tests.Processing
         {
             // arrange
             var input = Mock.Of<IIntercept>();
-            ResponseInterceptHandlerMock.Setup(obj => obj.CanHandle(input))
+            ResponseInterceptHandlerMock!.Setup(obj => obj.CanHandle(input))
                 .Returns(canHandle)
                 .Verifiable();
 
             // act
-            var result = _testSubject.Get(input);
+            var result = _testSubject!.Get(input);
 
             // assert
             ResponseInterceptHandlerMock.Verify();

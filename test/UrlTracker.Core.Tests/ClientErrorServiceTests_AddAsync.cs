@@ -14,7 +14,7 @@ namespace UrlTracker.Core.Tests
             // arrange
 
             // act
-            Task result() => _testSubject.AddAsync(null);
+            Task result() => _testSubject!.AddAsync(null!);
 
             // assert
             Assert.ThrowsAsync<ArgumentNullException>(result);
@@ -25,16 +25,16 @@ namespace UrlTracker.Core.Tests
         {
             // arrange
             var exception = new Exception();
-            ValidationHelperMock.Setup(obj => obj.EnsureValidObject(It.IsAny<NotFound>())).Throws(exception);
+            ValidationHelperMock!.Setup(obj => obj.EnsureValidObject(It.IsAny<NotFound>())).Throws(exception);
 
             // act
-            Task result() => _testSubject.AddAsync(new NotFound());
+            Task result() => _testSubject!.AddAsync(new NotFound("http://example.com"));
 
             // assert
             Assert.Multiple(() =>
             {
                 var actualException = Assert.ThrowsAsync<ArgumentException>(result);
-                Assert.That(actualException.InnerException, Is.SameAs(exception));
+                Assert.That(actualException?.InnerException, Is.SameAs(exception));
             });
         }
 
@@ -42,10 +42,10 @@ namespace UrlTracker.Core.Tests
         public void AddAsync_NormalFlow_DoesNotThrow()
         {
             // arrange
-            ValidationHelperMock.Setup(obj => obj.EnsureValidObject(It.IsAny<NotFound>())).Verifiable();
+            ValidationHelperMock!.Setup(obj => obj.EnsureValidObject(It.IsAny<NotFound>())).Verifiable();
 
             // act
-            Task result() => _testSubject.AddAsync(new NotFound());
+            Task result() => _testSubject!.AddAsync(new NotFound("http://example.com"));
 
             // assert
             Assert.DoesNotThrowAsync(result);

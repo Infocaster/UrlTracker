@@ -10,7 +10,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Conversion
 {
     public class InterceptConverterCollectionTests : TestBase
     {
-        private InterceptConverterCollection _testSubject;
+        private InterceptConverterCollection? _testSubject;
 
         public override void SetUp()
         {
@@ -37,11 +37,11 @@ namespace UrlTracker.Core.Tests.Intercepting.Conversion
         public async Task ConvertAsync_NormalFlow_ReturnsIntercept(ICachableIntercept input, IIntercept output, IIntercept expected)
         {
             // arrange
-            InterceptConverterMock.Setup(obj => obj.ConvertAsync(input))
+            InterceptConverterMock!.Setup(obj => obj.ConvertAsync(input))
                                   .ReturnsAsync(output);
 
             // act
-            var result = await _testSubject.ConvertAsync(input);
+            var result = await _testSubject!.ConvertAsync(input);
 
             // assert
             Assert.That(result, Is.EqualTo(expected));

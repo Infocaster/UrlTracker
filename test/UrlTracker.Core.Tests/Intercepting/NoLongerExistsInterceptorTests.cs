@@ -14,7 +14,7 @@ namespace UrlTracker.Core.Tests.Intercepting
 {
     public class NoLongerExistsInterceptorTests : TestBase
     {
-        private NoLongerExistsInterceptor _testSubject;
+        private NoLongerExistsInterceptor? _testSubject;
 
         public override void SetUp()
         {
@@ -23,14 +23,8 @@ namespace UrlTracker.Core.Tests.Intercepting
 
         public static IEnumerable<TestCaseData> TestCases()
         {
-            var result1 = new UrlTrackerShallowClientError
-            {
-                TargetStatusCode = HttpStatusCode.Gone
-            };
-            var result2 = new UrlTrackerShallowClientError
-            {
-                TargetStatusCode = HttpStatusCode.NotFound
-            };
+            var result1 = new UrlTrackerShallowClientError(HttpStatusCode.Gone);
+            var result2 = new UrlTrackerShallowClientError(HttpStatusCode.NotFound);
 
             yield return new TestCaseData(
                 new UrlTrackerShallowClientError[] { result1, result2 }, result1
@@ -44,11 +38,11 @@ namespace UrlTracker.Core.Tests.Intercepting
         public async Task InterceptAsync_NormalFlow_ReturnsResult(UrlTrackerShallowClientError[] output, UrlTrackerShallowClientError expected)
         {
             // arrange
-            ClientErrorRepositoryMock.Setup(obj => obj.GetShallowAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<string>()))
+            ClientErrorRepositoryMock!.Setup(obj => obj.GetShallowAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<string>()))
                                      .ReturnsAsync(output);
 
             // act
-            var result = await _testSubject.InterceptAsync(Url.Parse("http://example.com"), new DefaultInterceptContext());
+            var result = await _testSubject!.InterceptAsync(Url.Parse("http://example.com"), new DefaultInterceptContext());
 
             // assert
             Assert.That(result?.Info, Is.EqualTo(expected));

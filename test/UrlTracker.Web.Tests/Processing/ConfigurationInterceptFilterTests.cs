@@ -12,11 +12,11 @@ namespace UrlTracker.Web.Tests.Processing
 {
     public class ConfigurationInterceptFilterTests : TestBase
     {
-        private ConfigurationInterceptFilter _testSubject;
+        private ConfigurationInterceptFilter? _testSubject;
 
         public override void SetUp()
         {
-            _testSubject = new ConfigurationInterceptFilter(UrlTrackerSettings, new ConsoleLogger<ConfigurationInterceptFilter>());
+            _testSubject = new ConfigurationInterceptFilter(UrlTrackerSettings!, new ConsoleLogger<ConfigurationInterceptFilter>());
         }
 
         public static IEnumerable<TestCaseData> TestCases()
@@ -29,10 +29,10 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_NormalFlow_ReturnsResult(bool disabled, bool expected)
         {
             // arrange
-            UrlTrackerSettings.Value.IsDisabled = disabled;
+            UrlTrackerSettings!.Value.IsDisabled = disabled;
 
             // act
-            var result = await _testSubject.EvaluateCandidateAsync(Url.Parse("http://example.com"));
+            var result = await _testSubject!.EvaluateCandidateAsync(Url.Parse("http://example.com"));
 
             // assert
             Assert.That(result, Is.EqualTo(expected));

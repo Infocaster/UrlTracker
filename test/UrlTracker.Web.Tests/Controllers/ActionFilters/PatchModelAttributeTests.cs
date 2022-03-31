@@ -13,15 +13,15 @@ namespace UrlTracker.Web.Tests.Controllers.ActionFilters
 {
     public class PatchModelAttributeTests : TestBase
     {
-        private PatchModelAttribute _testSubject;
-        private ActionContext _actionContext;
-        private ActionExecutingContext _actionExecutingContext;
+        private PatchModelAttribute? _testSubject;
+        private ActionContext? _actionContext;
+        private ActionExecutingContext? _actionExecutingContext;
 
         [SetUp]
-        public void SetUp()
+        public override void SetUp()
         {
             _testSubject = new PatchModelAttribute();
-            _actionContext = new ActionContext(HttpContextMock.Context, new RouteData(), new ActionDescriptor());
+            _actionContext = new ActionContext(HttpContextMock!.Context, new RouteData(), new ActionDescriptor());
             _actionExecutingContext = new ActionExecutingContext(_actionContext, new List<IFilterMetadata>(), new Dictionary<string, object>(), new object());
         }
 
@@ -38,11 +38,11 @@ namespace UrlTracker.Web.Tests.Controllers.ActionFilters
         public void OnActionExecuting_IncomingUrls_PatchesModels(string inputUrl, string expected)
         {
             // arrange
-            AddRedirectRequest input = new AddRedirectRequest { OldUrl = inputUrl, RedirectUrl = inputUrl };
-            _actionExecutingContext.ActionArguments.Add("test", input);
+            AddRedirectRequest input = new() { OldUrl = inputUrl, RedirectUrl = inputUrl };
+            _actionExecutingContext!.ActionArguments.Add("test", input);
 
             // act
-            _testSubject.OnActionExecuting(_actionExecutingContext);
+            _testSubject!.OnActionExecuting(_actionExecutingContext);
 
             // assert
             Assert.Multiple(() =>

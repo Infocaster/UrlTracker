@@ -10,10 +10,10 @@ namespace UrlTracker.E2eTests.Redirect
 {
     public class RedirectTests
     {
-        public ContentTreeViewModelCollection ContentTree { get; set; }
-        public Dictionary<string, ContentTreeViewModel> ContentTable { get; set; }
+        public ContentTreeViewModelCollection? ContentTree { get; set; }
+        public Dictionary<string, ContentTreeViewModel>? ContentTable { get; set; }
 
-        public WebsiteClient WebsiteClient => ClientSetup.WebsiteClient;
+        public static WebsiteClient WebsiteClient => ClientSetup.WebsiteClient;
 
         [SetUp]
         public void SetUp()
@@ -21,22 +21,23 @@ namespace UrlTracker.E2eTests.Redirect
             var result = WebsiteClient.ResetAsync().Result;
             result.EnsureSuccessStatusCode();
             ContentTree = WebsiteClient.GetTreeAsync().Result;
-            ContentTable = MapNames(ContentTree);
+            ContentTable = MapNames(ContentTree ?? throw new Exception("ContentTree is null"));
         }
 
-        private Dictionary<string, ContentTreeViewModel> MapNames(ContentTreeViewModelCollection contentTree)
+        private static Dictionary<string, ContentTreeViewModel> MapNames(ContentTreeViewModelCollection contentTree)
         {
-            Dictionary<string, ContentTreeViewModel> result = new Dictionary<string, ContentTreeViewModel>();
-            void DoMap(IEnumerable<ContentTreeViewModel> models, ref Dictionary<string, ContentTreeViewModel> output)
+            Dictionary<string, ContentTreeViewModel> result = new();
+
+            static void DoMap(IEnumerable<ContentTreeViewModel> models, ref Dictionary<string, ContentTreeViewModel> output)
             {
                 foreach (var model in models)
                 {
-                    output[model.Name.ToLowerInvariant()] = model;
-                    DoMap(model.Children, ref output);
+                    output[model.Name!.ToLowerInvariant()] = model;
+                    DoMap(model.Children!, ref output);
                 }
             }
 
-            DoMap(contentTree.RootContent, ref result);
+            DoMap(contentTree.RootContent!, ref result);
             return result;
         }
 
@@ -54,8 +55,8 @@ namespace UrlTracker.E2eTests.Redirect
                                  PassThroughQueryString = r.PassThroughQueryString,
                                  SourceRegex = r.SourceRegex,
                                  SourceUrl = r.SourceUrl,
-                                 TargetNodeId = r.TargetNodeName != null ? ContentTable[r.TargetNodeName].Id : (int?)null,
-                                 TargetRootNodeId = r.TargetRootNodeName != null ? ContentTable[r.TargetRootNodeName].Id : (int?)null,
+                                 TargetNodeId = r.TargetNodeName is not null ? ContentTable![r.TargetNodeName].Id : (int?)null,
+                                 TargetRootNodeId = r.TargetRootNodeName is not null ? ContentTable![r.TargetRootNodeName].Id : (int?)null,
                                  TargetStatusCode = r.TargetStatusCode,
                                  TargetUrl = r.TargetUrl
                              }).ToList()

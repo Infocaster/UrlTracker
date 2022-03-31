@@ -16,7 +16,7 @@ namespace UrlTracker.Core.Tests
         }
 
         [TestCaseSource(nameof(TestCases))]
-        public void DefaultIfNullOrWhiteSpace_NormalFlow_ReturnsCorrectValue(string input, string @default, string expected)
+        public void DefaultIfNullOrWhiteSpace_NormalFlow_ReturnsCorrectValue(string? input, string? @default, string? expected)
         {
             // arrange
             // act

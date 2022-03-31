@@ -41,10 +41,10 @@ namespace UrlTracker.Core.Intercepting
             return GetBestResult(results);
         }
 
-        private ICachableIntercept? GetBestResult(IReadOnlyCollection<UrlTrackerShallowClientError> results)
+        private static ICachableIntercept? GetBestResult(IReadOnlyCollection<UrlTrackerShallowClientError> results)
         {
             var bestResult = results.FirstOrDefault(r => r.TargetStatusCode == HttpStatusCode.Gone);
-            return !(bestResult is null) ? new CachableInterceptBase<UrlTrackerShallowClientError>(bestResult) : null;
+            return bestResult is not null ? new CachableInterceptBase<UrlTrackerShallowClientError>(bestResult) : null;
         }
     }
 }

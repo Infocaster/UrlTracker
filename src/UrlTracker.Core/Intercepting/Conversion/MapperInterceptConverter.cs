@@ -14,10 +14,10 @@ namespace UrlTracker.Core.Intercepting.Conversion
             _mapper = mapper;
         }
 
-        public ValueTask<IIntercept> ConvertAsync(ICachableIntercept cachableIntercept)
+        public ValueTask<IIntercept?> ConvertAsync(ICachableIntercept cachableIntercept)
         {
-            if (!(cachableIntercept?.Info is TFrom fromInfo)) return new ValueTask<IIntercept>();
-            return new ValueTask<IIntercept>(new InterceptBase<TTo>(_mapper.Map<TTo>(fromInfo)));
+            if (cachableIntercept.Info is not TFrom fromInfo) return new ValueTask<IIntercept?>();
+            return new ValueTask<IIntercept?>(new InterceptBase<TTo>(_mapper.Map<TTo>(fromInfo)));
         }
     }
 }

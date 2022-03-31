@@ -20,7 +20,7 @@ namespace UrlTracker.Web.Processing
         }
 
         public ValueTask<bool> EvaluateCandidateAsync(HttpContext httpContext)
-            => new ValueTask<bool>(EvaluateCandidate(httpContext));
+            => new(EvaluateCandidate(httpContext));
 
         private bool EvaluateCandidate(HttpContext httpContext)
         {
@@ -31,7 +31,7 @@ namespace UrlTracker.Web.Processing
 
             // absolute path starts with /, so patterns should also take that into account
             if (Defaults.Tracking.IgnoredUrlPaths.Any(rx
-                => rx.IsMatch(httpContext.Request.Path.Value))) return false;
+                => rx.IsMatch(httpContext.Request.Path.Value!))) return false;
 
             return true;
         }

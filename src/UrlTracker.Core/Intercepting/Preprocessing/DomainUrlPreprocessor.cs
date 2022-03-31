@@ -19,7 +19,7 @@ namespace UrlTracker.Core.Intercepting.Preprocessing
         public ValueTask<IInterceptContext> PreprocessUrlAsync(Url url, IInterceptContext context)
         {
             var domains = _domainProvider.GetDomains();
-            var interceptingDomain = domains.FirstOrDefault(d => d.Url.Host.Equals(url.Host) && url.Path.StartsWith(d.Url.Path));
+            var interceptingDomain = domains.FirstOrDefault(d => d.Url.Host!.Equals(url.Host) && url.Path!.StartsWith(d.Url.Path!));
 
             context.SetCulture(interceptingDomain?.LanguageIsoCode);
             context.SetRootNode(interceptingDomain?.NodeId);

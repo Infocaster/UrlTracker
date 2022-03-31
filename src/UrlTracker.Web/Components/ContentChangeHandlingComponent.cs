@@ -47,34 +47,32 @@ namespace UrlTracker.Web.Components
         {
             if (!TrackingEnabled()) return;
 
-            using (var cref = _umbracoContextFactory.EnsureUmbracoContext())
+            using var cref = _umbracoContextFactory.EnsureUmbracoContext();
+            List<Redirect> redirects = new();
+            foreach (var entity in notification.PublishedEntities)
             {
-                List<Redirect> redirects = new List<Redirect>();
-                foreach (var entity in notification.PublishedEntities)
+                // if content is newly created, no published content exists yet at this point,
+                //    so we also don't have to check for redirects
+                var content = cref.GetContentById(entity.Id);
+                if (content is null) continue;
+
+                var cultures = GetCulturesFromContent(content);
+
+                foreach (var c in cultures)
                 {
-                    // if content is newly created, no published content exists yet at this point,
-                    //    so we also don't have to check for redirects
-                    var content = cref.GetContentById(entity.Id);
-                    if (content is null) continue;
+                    if (entity.GetCultureName(c).Equals(content.Name(c)) &&
+                        entity.GetValue<string>(Constants.Conventions.Content.UrlName, c) == content.Value<string>(Constants.Conventions.Content.UrlName, c)) continue;
 
-                    var cultures = GetCulturesFromContent(content);
-
-                    foreach (var c in cultures)
+                    // this entity has changed, so a new redirect for it and its descendants must be created
+                    var root = content.Root();
+                    foreach (var item in content.Descendants(c).Prepend(content))
                     {
-                        if (entity.GetCultureName(c).Equals(content.Name(c)) &&
-                            entity.GetValue<string>(Constants.Conventions.Content.UrlName, c) == content.Value<string>(Constants.Conventions.Content.UrlName, c)) continue;
-
-                        // this entity has changed, so a new redirect for it and its descendants must be created
-                        var root = content.Root();
-                        foreach (var item in content.Descendants(c).Prepend(content))
-                        {
-                            redirects.Add(CreateRedirect(root, item, c, "Url has changed"));
-                        }
+                        redirects.Add(CreateRedirect(root, item, c, "Url has changed"));
                     }
                 }
-
-                notification.State.Add(_renameRedirectsKey, redirects);
             }
+
+            notification.State.Add(_renameRedirectsKey, redirects);
         }
 
         void INotificationHandler<ContentPublishedNotification>.Handle(ContentPublishedNotification notification)
@@ -82,7 +80,7 @@ namespace UrlTracker.Web.Components
             if (!TrackingEnabled()) return;
             if (!notification.State.ContainsKey(_renameRedirectsKey)) return;
 
-            var redirects = notification.State[_renameRedirectsKey] as List<Redirect>;
+            var redirects = (List<Redirect>)notification.State[_renameRedirectsKey];
             RegisterRedirects(redirects);
         }
 
@@ -92,30 +90,28 @@ namespace UrlTracker.Web.Components
 
             // In this event, it's not sure if the move operation will succeed. It might still get cancelled.
             //    Therefore, only calculate the redirects here, but don't actually register them.
-            using (var cref = _umbracoContextFactory.EnsureUmbracoContext())
+            using var cref = _umbracoContextFactory.EnsureUmbracoContext();
+            List<Redirect> redirects = new();
+            foreach (var moveInfo in notification.MoveInfoCollection)
             {
-                List<Redirect> redirects = new List<Redirect>();
-                foreach (var moveInfo in notification.MoveInfoCollection)
+                var content = cref.GetContentById(moveInfo.Entity.Id)!;
+                var newRoot = cref.GetContentById(moveInfo.NewParentId).Root();
+                foreach (var item in DescendantsForAllCultures(content).Prepend(content))
                 {
-                    var content = cref.GetContentById(moveInfo.Entity.Id);
-                    var newRoot = cref.GetContentById(moveInfo.NewParentId).Root();
-                    foreach (var item in DescendantsForAllCultures(content).Prepend(content))
-                    {
-                        List<string> cultures = GetCulturesFromContent(item);
+                    List<string?> cultures = GetCulturesFromContent(item);
 
-                        foreach (var c in cultures)
-                        {
-                            // Notice that the old IPublishedContent item is used here. This may seem questionable,
-                            //    but it's acceptable, since only the id of the published content item will be saved.
-                            //    I think it would still be better to use the new IPublishedContent, in case we might
-                            //    do more with it in the future.
-                            redirects.Add(CreateRedirect(newRoot, item, c, "This page was moved"));
-                        }
+                    foreach (var c in cultures)
+                    {
+                        // Notice that the old IPublishedContent item is used here. This may seem questionable,
+                        //    but it's acceptable, since only the id of the published content item will be saved.
+                        //    I think it would still be better to use the new IPublishedContent, in case we might
+                        //    do more with it in the future.
+                        redirects.Add(CreateRedirect(newRoot, item, c, "This page was moved"));
                     }
                 }
-
-                notification.State.Add(_moveRedirectsKey, redirects);
             }
+
+            notification.State.Add(_moveRedirectsKey, redirects);
         }
 
         void INotificationHandler<ContentMovedNotification>.Handle(ContentMovedNotification notification)
@@ -125,11 +121,11 @@ namespace UrlTracker.Web.Components
 
             // At this point we know for sure that the operation has succeeded, so now we can register the redirects
             //    Wrap everything in a scope: if anything fails, everything will be rolled back and we won't be left with partial changes
-            var redirects = notification.State[_moveRedirectsKey] as List<Redirect>;
+            var redirects = (List<Redirect>)notification.State[_moveRedirectsKey];
             RegisterRedirects(redirects);
         }
 
-        private static Redirect CreateRedirect(IPublishedContent root, IPublishedContent item, string culture, string notes)
+        private static Redirect CreateRedirect(IPublishedContent root, IPublishedContent item, string? culture, string? notes)
         {
             return new Redirect
             {
@@ -146,9 +142,9 @@ namespace UrlTracker.Web.Components
             };
         }
 
-        private static List<string> GetCulturesFromContent(IPublishedContent item)
+        private static List<string?> GetCulturesFromContent(IPublishedContent item)
         {
-            List<string> cultures = new List<string>();
+            List<string?> cultures = new();
             if (item.Cultures.Any(c => !string.IsNullOrWhiteSpace(c.Value.Culture))) cultures.AddRange(from c in item.Cultures.Values select c.Culture);
             else cultures.Add(null);
             return cultures;
@@ -156,17 +152,15 @@ namespace UrlTracker.Web.Components
 
         private void RegisterRedirects(List<Redirect> redirects)
         {
-            using (var scope = _scopeProvider.CreateScope())
+            using var scope = _scopeProvider.CreateScope();
+            foreach (var redirect in redirects)
             {
-                foreach (var redirect in redirects)
-                {
-                    // this looks hacky, but it's the only way to perform async tasks
-                    //    in a sync context without potentially creating deadlocks
-                    Task.Run(() => _redirectService.AddAsync(redirect).Wait()).Wait();
-                }
-
-                scope.Complete();
+                // this looks hacky, but it's the only way to perform async tasks
+                //    in a sync context without potentially creating deadlocks
+                Task.Run(() => _redirectService.AddAsync(redirect).Wait()).Wait();
             }
+
+            scope.Complete();
         }
 
         private bool TrackingEnabled()

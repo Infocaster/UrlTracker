@@ -44,11 +44,9 @@ namespace UrlTracker.Web.Map
             target.TargetUrl = source.RedirectUrl;
             target.Inserted = source.Inserted;
 
-            using (var cref = _umbracoContextFactory.EnsureUmbracoContext())
-            {
-                target.TargetNode = source.RedirectNodeId.HasValue ? cref.GetContentById(source.RedirectNodeId.Value) : null;
-                target.TargetRootNode = cref.GetContentById(source.RedirectRootNodeId);
-            }
+            using var cref = _umbracoContextFactory.EnsureUmbracoContext();
+            target.TargetNode = source.RedirectNodeId.HasValue ? cref.GetContentById(source.RedirectNodeId.Value) : null;
+            target.TargetRootNode = cref.GetContentById(source.RedirectRootNodeId);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace UrlTracker.Web.Processing
 
         protected override async ValueTask HandleAsync(RequestDelegate next, HttpContext context, UrlTrackerShallowClientError intercept)
         {
-            if (ShouldRedirect(context))
+            if (ShouldRedirect())
             {
                 var response = context.Response;
                 response.Clear(_responseAbstraction);
@@ -33,7 +33,7 @@ namespace UrlTracker.Web.Processing
             await next(context);
         }
 
-        private bool ShouldRedirect(HttpContext context)
+        private bool ShouldRedirect()
         {
             using var cref = _umbracoContextFactory.EnsureUmbracoContext();
             return cref.GetResponseCode() >= 400;

@@ -9,7 +9,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
 {
     public class DomainUrlPreprocessorTests : TestBase
     {
-        private DomainUrlPreprocessor _testSubject;
+        private DomainUrlPreprocessor? _testSubject;
 
         public override void SetUp()
         {
@@ -43,10 +43,10 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
         {
             // arrange
             var input = Url.Parse("http://example.com/lorem");
-            DomainProviderMock.Setup(obj => obj.GetDomains()).Returns(domains).Verifiable();
+            DomainProviderMock!.Setup(obj => obj.GetDomains()).Returns(domains).Verifiable();
 
             // act
-            var result = await _testSubject.PreprocessUrlAsync(input, DefaultInterceptContext);
+            var result = await _testSubject!.PreprocessUrlAsync(input, DefaultInterceptContext!);
 
             // assert
             Assert.That(result.GetCulture(), Is.EqualTo(culture));

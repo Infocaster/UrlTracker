@@ -22,12 +22,12 @@ namespace UrlTracker.Core
         {
             if (entry.Is404)
             {
-                return _legacyRepository.DeleteAsync(entry.Culture, entry.OldUrl, entry.RedirectRootNodeId, entry.Is404);
+                return _legacyRepository.DeleteAsync(entry.Culture, entry.OldUrl!, entry.RedirectRootNodeId, entry.Is404);
             }
             return _legacyRepository.DeleteAsync(entry);
         }
 
-        public Task<UrlTrackerEntry> GetAsync(int id)
+        public Task<UrlTrackerEntry?> GetAsync(int id)
         {
             return _legacyRepository.GetAsync(id);
         }

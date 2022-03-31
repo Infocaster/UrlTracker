@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
     <ContentTargetFolders>.</ContentTargetFolders>
     <PackageId>UrlTracker</PackageId>
     <Title>URL Tracker</Title>
@@ -45,7 +46,7 @@ Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.</Descri
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="App_Plugins\UrlTracker\**\*.*">
+    <Content Include="content\App_Plugins\UrlTracker\**\*.*">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>
       <PackagePath>content\App_Plugins\UrlTracker</PackagePath>

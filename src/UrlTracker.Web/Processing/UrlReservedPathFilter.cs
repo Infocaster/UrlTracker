@@ -29,7 +29,7 @@ namespace UrlTracker.Web.Processing
             _logger.LogStart<UrlReservedPathFilter>();
 
             // unify path for easy comparison
-            var path = url.Path.Trim('/') + '/';
+            var path = url.Path!.Trim('/') + '/';
 
             // configuration ensures that paths have the format 'my/url.aspx/'
             //    the current path also ensures this, so now we can simply compare the strings

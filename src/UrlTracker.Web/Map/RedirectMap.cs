@@ -35,9 +35,9 @@ namespace UrlTracker.Web.Map
                     var httpContext = context.GetHttpContext();
 
                     var configurationValue = _configuration.Value;
-                    Url url = null;
-                    var request = httpContext.Request;
-                    if (source.TargetNode != null)
+                    Url? url = null;
+                    var request = httpContext!.Request;
+                    if (source.TargetNode is not null)
                     {
                         url = Url.Parse(source.TargetNode.Url(_umbracoContextFactoryAbstraction, culture: !string.IsNullOrEmpty(source.Culture) ? source.Culture : null, UrlMode.Absolute));
 
@@ -45,7 +45,7 @@ namespace UrlTracker.Web.Map
                         url.Port = request.Host.Port != 80 && configurationValue.AppendPortNumber ? request.Host.Port : (int?)null;
 
                         // also from the old url tracker:
-                        if (request.Host.Host != url.Host && _domainProvider.GetDomains().Any(d => d.NodeId == source.TargetRootNode?.Id && d.Url.Host.Equals(request.Host.Host)))
+                        if (request.Host.Host != url.Host && _domainProvider.GetDomains().Any(d => d.NodeId == source.TargetRootNode?.Id && d.Url.Host!.Equals(request.Host.Host)))
                         {
                             url.Host = request.Host.Host;
                         }
@@ -57,7 +57,8 @@ namespace UrlTracker.Web.Map
                     else
                     {
                         // this occurs when the redirect points to a node, but this node has been trashed.
-                        return null;
+                        // HACK: I am required to return a non-null value, while the output can actually be null. Use null terminator to pretend as if the null is not actually a null.
+                        return null!;
                     }
 
                     // then make changes to the url, based on the configuration

@@ -6,18 +6,32 @@ namespace UrlTracker.E2eTests
     [SetUpFixture]
     public class ClientSetup
     {
-        public static WebsiteClient WebsiteClient;
+        private static WebsiteClient? _websiteClient;
+        private static readonly object _websiteClientLock = new();
 
-        [OneTimeSetUp]
-        public void SetUp()
+        public static WebsiteClient WebsiteClient
         {
-            WebsiteClient = WebsiteClient.Create("http://urltracker.ic");
+            get
+            {
+                if(_websiteClient is null)
+                {
+                    lock (_websiteClientLock)
+                    {
+                        if(_websiteClient is null)
+                        {
+                            _websiteClient = WebsiteClient.Create("http://urltracker.ic");
+                        }
+                    }
+                }
+
+                return _websiteClient;
+            }
         }
 
         [OneTimeTearDown]
         public void TearDown()
         {
-            WebsiteClient?.Dispose();
+            _websiteClient?.Dispose();
         }
     }
 }

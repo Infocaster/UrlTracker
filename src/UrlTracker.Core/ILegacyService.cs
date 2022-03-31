@@ -8,6 +8,6 @@ namespace UrlTracker.Core
     public interface ILegacyService
     {
         Task DeleteAsync(UrlTrackerEntry entry);
-        Task<UrlTrackerEntry> GetAsync(int id);
+        Task<UrlTrackerEntry?> GetAsync(int id);
     }
 }

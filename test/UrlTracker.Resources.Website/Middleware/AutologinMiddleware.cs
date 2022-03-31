@@ -38,13 +38,12 @@ namespace UrlTracker.Resources.Website.Middleware
 
         private static bool IsAuthenticated(HttpContext httpContext)
         {
-            return httpContext.User.Identity.IsAuthenticated;
+            return httpContext.User.Identity?.IsAuthenticated ?? false;
         }
 
         private static bool RequestIsLocal(HttpContext httpContext)
         {
-            var localAddress = httpContext.Connection.LocalIpAddress.ToString();
-            var remoteAddress = httpContext.Connection.RemoteIpAddress.ToString();
+            var remoteAddress = httpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
 
             // The requester may automatically sign in if the connect from a local ip or a local network ip
             //    (read as: connect from same device or device in infocaster network)

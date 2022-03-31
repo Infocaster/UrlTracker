@@ -27,7 +27,7 @@ namespace UrlTracker.Core
             logger.LogDebug(new EventId(1004), "{source} found {resultCount} results", typeof(T), resultCount);
         }
 
-        public static void LogParameters(this ILogger logger, string culture, int? rootnodeid, List<string> urls)
+        public static void LogParameters(this ILogger logger, string? culture, int? rootnodeid, List<string> urls)
         {
             logger.LogDebug(new EventId(1005), "No longer available parameters: culture: {culture}, rootnodeid: {rootnodeid}, urls: {urls}", culture, rootnodeid, urls);
         }

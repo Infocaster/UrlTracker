@@ -11,8 +11,8 @@ namespace UrlTracker.Core.Tests.Intercepting.Conversion
 {
     public class MapperInterceptConverterTests : TestBase
     {
-        private TestMapDefinition<TestResponseIntercept1, TestResponseIntercept2> _testMapDefinition;
-        private MapperInterceptConverter<TestResponseIntercept1, TestResponseIntercept2> _testSubject;
+        private TestMapDefinition<TestResponseIntercept1, TestResponseIntercept2>? _testMapDefinition;
+        private MapperInterceptConverter<TestResponseIntercept1, TestResponseIntercept2>? _testSubject;
 
         protected override ICollection<IMapDefinition> CreateMappers()
         {
@@ -24,7 +24,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Conversion
 
         public override void SetUp()
         {
-            _testSubject = new MapperInterceptConverter<TestResponseIntercept1, TestResponseIntercept2>(Mapper);
+            _testSubject = new MapperInterceptConverter<TestResponseIntercept1, TestResponseIntercept2>(Mapper!);
         }
 
         [TestCase(TestName = "ConvertAsync returns null if it is not a converter for the given argument")]
@@ -34,7 +34,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Conversion
             var input = new CachableInterceptBase<object>(new object());
 
             // act
-            var result = await _testSubject.ConvertAsync(input);
+            var result = await _testSubject!.ConvertAsync(input);
 
             // assert
             Assert.That(result, Is.Null);
@@ -46,25 +46,13 @@ namespace UrlTracker.Core.Tests.Intercepting.Conversion
             // arrange
             var input = new TestResponseIntercept1();
             var output = new TestResponseIntercept2();
-            _testMapDefinition.To = output;
+            _testMapDefinition!.To = output;
 
             // act
-            var result = await _testSubject.ConvertAsync(new CachableInterceptBase<TestResponseIntercept1>(input));
+            var result = await _testSubject!.ConvertAsync(new CachableInterceptBase<TestResponseIntercept1>(input));
 
             // assert
-            Assert.That(result.Info, Is.SameAs(output));
-        }
-
-        [TestCase(TestName = "ConvertAsync returns null if the argument is null")]
-        public async Task ConvertAsync_ArgumentNull_ReturnsNull()
-        {
-            // arrange
-
-            // act
-            var result = await _testSubject.ConvertAsync(null);
-
-            // assert
-            Assert.That(result, Is.Null);
+            Assert.That(result!.Info, Is.SameAs(output));
         }
     }
 }

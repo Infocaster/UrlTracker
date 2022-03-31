@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
 namespace UrlTracker.Core.Intercepting.Models
@@ -10,12 +11,12 @@ namespace UrlTracker.Core.Intercepting.Models
     {
         public InterceptBase(T info)
         {
-            Info = info;
+            Info = info ?? throw new ArgumentNullException(nameof(info));
         }
 
         public T Info { get; }
 
-        object IIntercept.Info => Info;
+        object IIntercept.Info => Info!;
 
         #region overrides
         public override string ToString()

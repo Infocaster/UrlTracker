@@ -25,22 +25,22 @@ namespace UrlTracker.Core.Compatibility
             return columns.Select(x => x + " DESC").ToArray();
         }
 
-        internal static string[] GetColumns<TDto>(this Sql<ISqlContext> sql, string tableAlias = null, string referenceName = null, Expression<Func<TDto, object>>[] columnExpressions = null, bool withAlias = true)
+        internal static string[] GetColumns<TDto>(this Sql<ISqlContext> sql, string? tableAlias = null, string? referenceName = null, Expression<Func<TDto, object>>[]? columnExpressions = null, bool withAlias = true)
         {
             var pd = sql.SqlContext.PocoDataFactory.ForType(typeof(TDto));
             var tableName = tableAlias ?? pd.TableInfo.TableName;
             var queryColumns = pd.QueryColumns.ToList();
 
-            Dictionary<string, string> aliases = null;
+            Dictionary<string, string>? aliases = null;
 
-            if (columnExpressions != null && columnExpressions.Length > 0)
+            if (columnExpressions is not null && columnExpressions.Length > 0)
             {
                 var names = columnExpressions.Select(x =>
                 {
                     (var member, var alias) = ExpressionHelper.FindProperty(x);
-                    var field = member as PropertyInfo;
+                    var field = (PropertyInfo)member;
                     var fieldName = field.GetColumnName();
-                    if (alias != null)
+                    if (alias is not null)
                     {
                         if (aliases == null)
                             aliases = new Dictionary<string, string>();
@@ -56,9 +56,9 @@ namespace UrlTracker.Core.Compatibility
                 queryColumns.Sort((a, b) => names.IndexOf(a.Key).CompareTo(names.IndexOf(b.Key)));
             }
 
-            string GetAlias(PocoColumn column)
+            string? GetAlias(PocoColumn column)
             {
-                if (aliases != null && aliases.TryGetValue(column.ColumnName, out var alias))
+                if (aliases is not null && aliases.TryGetValue(column.ColumnName, out var alias))
                     return alias;
 
                 return withAlias ? (string.IsNullOrEmpty(column.ColumnAlias) ? column.MemberInfoKey : column.ColumnAlias) : null;
@@ -69,7 +69,7 @@ namespace UrlTracker.Core.Compatibility
                 .ToArray();
         }
 
-        private static string GetColumn(DatabaseType dbType, string tableName, string columnName, string columnAlias, string referenceName = null)
+        private static string GetColumn(DatabaseType dbType, string tableName, string columnName, string? columnAlias, string? referenceName = null)
         {
             tableName = dbType.EscapeTableName(tableName);
             columnName = dbType.EscapeSqlIdentifier(columnName);
@@ -90,7 +90,7 @@ namespace UrlTracker.Core.Compatibility
 
         private static class ExpressionHelper
         {
-            public static (MemberInfo, string) FindProperty(LambdaExpression lambda)
+            public static (MemberInfo, string?) FindProperty(LambdaExpression lambda)
             {
                 void Throw()
                 {
@@ -99,7 +99,7 @@ namespace UrlTracker.Core.Compatibility
 
                 Expression expr = lambda;
                 var loop = true;
-                string alias = null;
+                string? alias = null;
                 while (loop)
                 {
                     switch (expr.NodeType)
@@ -113,14 +113,14 @@ namespace UrlTracker.Core.Compatibility
                         case ExpressionType.Call:
                             var callExpr = (MethodCallExpression)expr;
                             var method = callExpr.Method;
-                            if (method.DeclaringType != typeof(SqlExtensionsStatics) || method.Name != "Alias" || !(callExpr.Arguments[1] is ConstantExpression aliasExpr))
+                            if (method.DeclaringType != typeof(SqlExtensionsStatics) || method.Name != "Alias" || callExpr.Arguments[1] is not ConstantExpression aliasExpr)
                                 Throw();
                             expr = callExpr.Arguments[0];
-                            alias = aliasExpr.Value.ToString();
+                            alias = aliasExpr.Value?.ToString();
                             break;
                         case ExpressionType.MemberAccess:
                             var memberExpr = (MemberExpression)expr;
-                            if (memberExpr.Expression.NodeType != ExpressionType.Parameter && memberExpr.Expression.NodeType != ExpressionType.Convert)
+                            if (memberExpr.Expression?.NodeType != ExpressionType.Parameter && memberExpr.Expression?.NodeType != ExpressionType.Convert)
                                 Throw();
                             return (memberExpr.Member, alias);
                         default:

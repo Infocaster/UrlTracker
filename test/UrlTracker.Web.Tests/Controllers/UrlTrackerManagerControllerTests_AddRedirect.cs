@@ -15,12 +15,12 @@ namespace UrlTracker.Web.Tests.Controllers
         {
             // arrange
             var input = new AddRedirectRequest();
-            RedirectServiceMock.Setup(obj => obj.AddAsync(It.IsAny<Redirect>()))
+            RedirectServiceMock!.Setup(obj => obj.AddAsync(It.IsAny<Redirect>()))
                                .ReturnsAsync((Redirect redirect) => redirect)
                                .Verifiable();
 
             // act
-            var result = await _testSubject.AddRedirect(input);
+            var result = await _testSubject!.AddRedirect(input);
 
             // assert
             RedirectServiceMock.Verify();
@@ -38,16 +38,16 @@ namespace UrlTracker.Web.Tests.Controllers
             {
                 Remove404 = true
             };
-            RedirectServiceMock.Setup(obj => obj.AddAsync(It.IsAny<Redirect>()))
+            RedirectServiceMock!.Setup(obj => obj.AddAsync(It.IsAny<Redirect>()))
                                .ReturnsAsync((Redirect redirect) => redirect)
                                .Verifiable();
-            ClientErrorServiceMock.Setup(obj => obj.DeleteAsync(It.IsAny<string>(), It.IsAny<string>()))
+            ClientErrorServiceMock!.Setup(obj => obj.DeleteAsync(It.IsAny<string>(), It.IsAny<string>()))
                                   .Verifiable();
-            RequestModelPatcherMock.Setup(obj => obj.Patch(It.IsAny<AddRedirectRequest>()))
+            RequestModelPatcherMock!.Setup(obj => obj.Patch(It.IsAny<AddRedirectRequest>()))
                                    .Returns((AddRedirectRequest request) => request);
 
             // act
-            var result = await _testSubject.AddRedirect(input);
+            var result = await _testSubject!.AddRedirect(input);
 
             // assert
             RedirectServiceMock.Verify();

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Extensions.Options;
@@ -49,12 +50,10 @@ namespace UrlTracker.Core.Domain
 
         private DomainCollection CreateCollection(UrlTrackerSettings configurationValue, IEnumerable<IDomain> domains)
         {
-            using (var cref = _umbracoContextFactory.EnsureUmbracoContext())
-            {
-                return DomainCollection.Create(from domain in domains
-                                               let url = GetUrlFromDomain(domain, configurationValue, cref)
-                                               select new Models.Domain(domain.Id, domain.RootContentId, domain.DomainName, domain.LanguageIsoCode, url));
-            }
+            using var cref = _umbracoContextFactory.EnsureUmbracoContext();
+            return DomainCollection.Create(from domain in domains
+                                           let url = GetUrlFromDomain(domain, configurationValue, cref)
+                                           select new Models.Domain(domain.Id, domain.RootContentId, domain.DomainName, domain.LanguageIsoCode, url));
         }
 
         /*
@@ -66,13 +65,13 @@ namespace UrlTracker.Core.Domain
         {
             // I'm taking some liberties on the original logic. The old logic ensured that the url starts with a protocol.
             //    I am parsing the url into an object to make comparisons with incoming requests easier and more straight forward
-            string result = null;
+            string? result = null;
 
             // This condition is taken from the old logic. I'm not sure why it works like this...
             if (settings.HasDomainOnChildNode && domain.RootContentId.HasValue)
             {
                 var node = cref.GetContentById(domain.RootContentId.Value);
-                if (node != null && node.Level > 1)
+                if (node is not null && node.Level > 1)
                 {
                     result = node.Url(_umbracoContextFactory, mode: UrlMode.Absolute);
                 }
@@ -83,7 +82,7 @@ namespace UrlTracker.Core.Domain
                 result = domain.DomainName;
             }
 
-            return Url.Parse(result);
+            return Url.Parse(result ?? throw new ArgumentException("The umbraco domain could not be interpreted.", nameof(domain)));
         }
     }
 }

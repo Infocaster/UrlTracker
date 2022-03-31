@@ -28,7 +28,7 @@ namespace UrlTracker.Core.Intercepting.Preprocessing
 
         public async ValueTask<IInterceptContext> PreprocessUrlAsync(Url url, IInterceptContext? context = null)
         {
-            context = context ?? _contextFactory.Create();
+            context ??= _contextFactory.Create();
             foreach (var preprocessor in this)
             {
                 context = await preprocessor.PreprocessUrlAsync(url, context);

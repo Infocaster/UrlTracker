@@ -13,6 +13,16 @@ namespace UrlTracker.Core
     [ExcludeFromCodeCoverage]
     public static class NPocoSqlExtensions
     {
+        public static Sql<ISqlContext> From(this Sql<ISqlContext> sql, string alias, Action<Sql<ISqlContext>> subQuery)
+        {
+            sql.Append("FROM (");
+            var sub = sql.SqlContext.Sql();
+            subQuery(sub);
+            sql.Append(sub);
+            sql.Append(") AS " + sql.SqlContext.SqlSyntax.GetQuotedColumnName(alias));
+            return sql;
+        }
+
         public static Sql<ISqlContext> GenericOrderBy(this Sql<ISqlContext> sql, bool descending, params string[] fields)
         {
             return descending
@@ -42,7 +52,7 @@ namespace UrlTracker.Core
             return sql.AndSelect(text);
         }
 
-        private static string CreateAggregateField<TDto>(Sql<ISqlContext> sql, string alias, string tableAlias, string aggregator, Expression<Func<TDto, object>> field)
+        private static string CreateAggregateField<TDto>(Sql<ISqlContext> sql, string? alias, string tableAlias, string aggregator, Expression<Func<TDto, object>> field)
         {
             if (sql is null)
             {
@@ -57,7 +67,7 @@ namespace UrlTracker.Core
             ISqlSyntaxProvider sqlSyntax = sql.SqlContext.SqlSyntax;
             string value = sqlSyntax.GetFieldName(field, tableAlias);
             string text = $"{aggregator} ({value})";
-            if (alias != null)
+            if (alias is not null)
             {
                 text = text + " AS " + sql.SqlContext.SqlSyntax.GetQuotedColumnName(alias);
             }

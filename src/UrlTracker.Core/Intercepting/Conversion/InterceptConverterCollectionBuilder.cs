@@ -35,7 +35,7 @@ namespace UrlTracker.Core.Intercepting.Conversion
             foreach (var converter in this)
             {
                 var result = await converter.ConvertAsync(cachableIntercept);
-                if (result != null) return result;
+                if (result is not null) return result;
             }
 
             return cachableIntercept;

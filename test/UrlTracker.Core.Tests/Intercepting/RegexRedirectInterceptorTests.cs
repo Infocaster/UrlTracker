@@ -13,12 +13,12 @@ namespace UrlTracker.Core.Tests.Intercepting
 {
     public class RegexRedirectInterceptorTests : TestBase
     {
-        private RegexRedirectInterceptor _testSubject;
+        private RegexRedirectInterceptor? _testSubject;
 
         public override void SetUp()
         {
             _testSubject = new RegexRedirectInterceptor(RedirectRepository, new ConsoleLogger<RegexRedirectInterceptor>());
-            DefaultInterceptContext.SetRootNode(9999);
+            DefaultInterceptContext!.SetRootNode(9999);
         }
 
         public static IEnumerable<TestCaseData> NormalFlowTestCases()
@@ -71,11 +71,11 @@ namespace UrlTracker.Core.Tests.Intercepting
         public async Task InterceptAsync_NormalFlow_ReturnsMatch(UrlTrackerShallowRedirect redirect, Url input, UrlTrackerShallowRedirect expected)
         {
             // arrange
-            RedirectRepositoryMock.Setup(obj => obj.GetShallowWithRegexAsync())
+            RedirectRepositoryMock!.Setup(obj => obj.GetShallowWithRegexAsync())
                                   .ReturnsAsync(new List<UrlTrackerShallowRedirect> { redirect });
 
             // act
-            var result = await _testSubject.InterceptAsync(input, DefaultInterceptContext);
+            var result = await _testSubject!.InterceptAsync(input, DefaultInterceptContext!);
 
             // assert
             Assert.That(result?.Info, Is.EqualTo(expected));

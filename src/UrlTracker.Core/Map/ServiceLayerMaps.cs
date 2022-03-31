@@ -35,18 +35,18 @@ namespace UrlTracker.Core.Map
                 Map);
 
             mapper.Define<NotFound, UrlTrackerNotFound>(
-                (source, context) => new UrlTrackerNotFound(),
+                (source, context) => new UrlTrackerNotFound(source.Url),
                 Map);
 
             mapper.Define<UrlTrackerNotFound, NotFound>(
-                (source, context) => new NotFound(),
+                (source, context) => new NotFound(source.Url),
                 Map);
 
             mapper.Define<UrlTrackerRichNotFoundCollection, RichNotFoundCollection>(
                 (source, context) => RichNotFoundCollection.Create(context.MapEnumerable<UrlTrackerRichNotFound, RichNotFound>(source), source.Total));
 
             mapper.Define<UrlTrackerRichNotFound, RichNotFound>(
-                (source, context) => new RichNotFound(),
+                (source, context) => new RichNotFound(source.Url),
                 Map);
         }
 
@@ -55,7 +55,6 @@ namespace UrlTracker.Core.Map
             target.Id = source.Id ?? 0;
             target.LatestOccurrence = source.LatestOccurrence;
             target.MostCommonReferrer = source.MostCommonReferrer;
-            target.Url = source.Url;
             target.Occurrences = source.Occurrences;
         }
 
@@ -64,7 +63,6 @@ namespace UrlTracker.Core.Map
             target.Id = source.Id;
             target.Inserted = source.Inserted;
             target.Referrer = source.Referrer;
-            target.Url = source.Url;
             target.Ignored = source.Ignored;
         }
 
@@ -73,7 +71,6 @@ namespace UrlTracker.Core.Map
             target.Id = source.Id;
             target.Inserted = source.Inserted;
             target.Referrer = source.Referrer;
-            target.Url = source.Url;
             target.Ignored = source.Ignored;
         }
 
@@ -101,19 +98,18 @@ namespace UrlTracker.Core.Map
 
         private void Map(UrlTrackerShallowRedirect source, ShallowRedirect target, MapperContext context)
         {
-            using (var cref = _umbracoContextFactory.EnsureUmbracoContext())
-            {
-                target.Culture = source.Culture;
-                target.Force = source.Force;
-                target.Id = source.Id;
-                target.PassThroughQueryString = source.PassThroughQueryString;
-                target.SourceRegex = source.SourceRegex;
-                target.SourceUrl = source.SourceUrl;
-                target.TargetNode = source.TargetNodeId.HasValue ? cref.GetContentById(source.TargetNodeId.Value) : null;
-                target.TargetRootNode = source.TargetRootNodeId.HasValue ? cref.GetContentById(source.TargetRootNodeId.Value) : null;
-                target.TargetStatusCode = source.TargetStatusCode;
-                target.TargetUrl = source.TargetUrl;
-            }
+            using var cref = _umbracoContextFactory.EnsureUmbracoContext();
+
+            target.Culture = source.Culture;
+            target.Force = source.Force;
+            target.Id = source.Id;
+            target.PassThroughQueryString = source.PassThroughQueryString;
+            target.SourceRegex = source.SourceRegex;
+            target.SourceUrl = source.SourceUrl;
+            target.TargetNode = source.TargetNodeId.HasValue ? cref.GetContentById(source.TargetNodeId.Value) : null;
+            target.TargetRootNode = source.TargetRootNodeId.HasValue ? cref.GetContentById(source.TargetRootNodeId.Value) : null;
+            target.TargetStatusCode = source.TargetStatusCode;
+            target.TargetUrl = source.TargetUrl;
         }
     }
 }

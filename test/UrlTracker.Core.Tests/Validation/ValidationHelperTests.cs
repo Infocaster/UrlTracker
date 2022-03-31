@@ -6,7 +6,7 @@ namespace UrlTracker.Core.Tests.Validation
 {
     public class ValidationHelperTests
     {
-        private ValidationHelper _testSubject;
+        private ValidationHelper? _testSubject;
 
         [SetUp]
         public void SetUp()
@@ -21,7 +21,7 @@ namespace UrlTracker.Core.Tests.Validation
             var input = new TestValidationObject();
 
             // act
-            void result() => _testSubject.EnsureValidObject(input);
+            void result() => _testSubject!.EnsureValidObject(input);
 
             // assert
             Assert.Throws<ValidationException>(result);
@@ -37,7 +37,7 @@ namespace UrlTracker.Core.Tests.Validation
             };
 
             // act
-            void result() => _testSubject.EnsureValidObject(input);
+            void result() => _testSubject!.EnsureValidObject(input);
 
             // assert
             Assert.DoesNotThrow(result);
@@ -47,6 +47,6 @@ namespace UrlTracker.Core.Tests.Validation
     public class TestValidationObject
     {
         [Required]
-        public string Parameter { get; set; }
+        public string? Parameter { get; set; }
     }
 }

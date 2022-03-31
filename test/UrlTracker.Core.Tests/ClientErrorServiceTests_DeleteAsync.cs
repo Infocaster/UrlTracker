@@ -12,13 +12,13 @@ namespace UrlTracker.Core.Tests
             // arrange
 
             // act
-            Task result() => _testSubject.DeleteAsync(string.Empty, "nl-nl");
+            Task result() => _testSubject!.DeleteAsync(string.Empty, "nl-nl");
 
             // assert
             Assert.Multiple(() =>
             {
                 var actualException = Assert.ThrowsAsync<ArgumentException>(result);
-                Assert.That(actualException.ParamName, Is.EqualTo("url"));
+                Assert.That(actualException?.ParamName, Is.EqualTo("url"));
             });
         }
 
@@ -28,7 +28,7 @@ namespace UrlTracker.Core.Tests
             // arrange
 
             // act
-            Task result() => _testSubject.DeleteAsync("http://example.com", string.Empty);
+            Task result() => _testSubject!.DeleteAsync("http://example.com", string.Empty);
 
             // assert
             Assert.DoesNotThrowAsync(result);

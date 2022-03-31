@@ -14,19 +14,16 @@ namespace UrlTracker.Web.Tests.Processing
 {
     public class NoLongerExistsResponseInterceptHandlerTests : TestBase
     {
-        private NoLongerExistsResponseInterceptHandler _testSubject;
+        private NoLongerExistsResponseInterceptHandler? _testSubject;
 
         public override void SetUp()
         {
-            _testSubject = new NoLongerExistsResponseInterceptHandler(ResponseAbstraction, UmbracoContextFactoryAbstractionMock.UmbracoContextFactory);
+            _testSubject = new NoLongerExistsResponseInterceptHandler(ResponseAbstraction, UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory);
         }
 
         public static IEnumerable<TestCaseData> TestCases()
         {
-            var notFound = new UrlTrackerShallowClientError
-            {
-                TargetStatusCode = HttpStatusCode.Gone
-            };
+            var notFound = new UrlTrackerShallowClientError(HttpStatusCode.Gone);
             yield return new TestCaseData(notFound, 404, 410);
             yield return new TestCaseData(notFound, 200, 200);
         }
@@ -35,21 +32,20 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task HandleAsync_NormalFlow_PerformsAction(UrlTrackerShallowClientError notFound, int initialStatusCode, int expectedStatusCode)
         {
             // arrange
-            HttpContextMock.ResponseMock.SetupProperty(obj => obj.StatusCode, initialStatusCode);
-            UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetResponseCode()).Returns(initialStatusCode);
+            HttpContextMock!.ResponseMock.SetupProperty(obj => obj.StatusCode, initialStatusCode);
+            UmbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetResponseCode()).Returns(initialStatusCode);
             if (expectedStatusCode != initialStatusCode)
             {
-                ResponseAbstractionMock.Setup(obj => obj.Clear(HttpContextMock.Response)).Verifiable();
+                ResponseAbstractionMock!.Setup(obj => obj.Clear(HttpContextMock.Response)).Verifiable();
             }
             var input = new InterceptBase<UrlTrackerShallowClientError>(notFound);
-            bool nextIsCalled = false;
 
             // act
-            await _testSubject.HandleAsync(context => Task.FromResult(nextIsCalled = true), HttpContextMock.Context, input);
+            await _testSubject!.HandleAsync(context => Task.CompletedTask, HttpContextMock.Context, input);
 
             // assert
             HttpContextMock.ResponseMock.Verify();
-            ResponseAbstractionMock.Verify();
+            ResponseAbstractionMock!.Verify();
             Assert.That(HttpContextMock.Response.StatusCode, Is.EqualTo(expectedStatusCode));
         }
     }

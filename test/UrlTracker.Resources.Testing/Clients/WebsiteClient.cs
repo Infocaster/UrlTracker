@@ -27,7 +27,7 @@ namespace UrlTracker.Resources.Testing.Clients
 
         public Task<HttpResponseMessage> ResetAsync()
         {
-            return PostAsync("/api/preset/reset", null);
+            return PostAsync("/api/preset/reset", new StringContent(string.Empty));
         }
 
         public Task<HttpResponseMessage> SeedRedirectAsync(SeedRedirectRequest request)
@@ -35,7 +35,7 @@ namespace UrlTracker.Resources.Testing.Clients
             return PostAsync("/api/preset/seedredirect", new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json"));
         }
 
-        public async Task<ContentTreeViewModelCollection> GetTreeAsync()
+        public async Task<ContentTreeViewModelCollection?> GetTreeAsync()
         {
             var result = await GetAsync("/api/preset/tree").ConfigureAwait(false);
             result.EnsureSuccessStatusCode();
