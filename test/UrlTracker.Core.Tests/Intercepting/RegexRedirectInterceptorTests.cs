@@ -5,7 +5,6 @@ using NUnit.Framework;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting;
-using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Logging;
 

@@ -1,10 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using UrlTracker.Core;
-using UrlTracker.Core.Configuration;
 using UrlTracker.Core.Configuration.Models;
 
 namespace UrlTracker.Web.Processing

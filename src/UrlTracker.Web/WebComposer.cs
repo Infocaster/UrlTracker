@@ -54,7 +54,8 @@ namespace UrlTracker.Web
         {
             builder.ResponseInterceptHandlers()
                 .Append<RedirectResponseInterceptHandler>()
-                .Append<NoLongerExistsResponseInterceptHandler>();
+                .Append<NoLongerExistsResponseInterceptHandler>()
+                .Append<NullInterceptHandler>();
             return builder;
         }
 

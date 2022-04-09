@@ -32,7 +32,7 @@ namespace UrlTracker.Core.Components
 
         public void Initialize()
         {
-            if(_runtimeState.Level < RuntimeLevel.Run) return;
+            if (_runtimeState.Level < RuntimeLevel.Run) return;
 
             var migrationPlan = new MigrationPlan("UrlTracker");
             migrationPlan.From(string.Empty)

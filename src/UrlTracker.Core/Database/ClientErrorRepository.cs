@@ -87,7 +87,7 @@ namespace UrlTracker.Core.Database
 
                     sql = sql.GroupBy<UrlTrackerEntry>(tableAlias, e => e.OldUrl!, e => e.Culture!, e => e.RedirectRootNodeId!, e => e.Is404);
                 });
-            
+
             Task<int> totalRecordsTask = scope.Database.ExecuteScalarAsync<int>(countQuery);
             var selectQuery = scope.SqlContext.Sql()
                                               .SelectMax<UrlTrackerEntry>("Id", tableAlias, e => e.Id)

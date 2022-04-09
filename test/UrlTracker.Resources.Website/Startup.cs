@@ -6,8 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Extensions;
-using UrlTracker.Web;
 using UrlTracker.Resources.Website.Middleware;
+using UrlTracker.Web;
 
 namespace UrlTracker.Resources.Website
 {

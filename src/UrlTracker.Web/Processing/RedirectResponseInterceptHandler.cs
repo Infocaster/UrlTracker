@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Umbraco.Cms.Core.Mapping;
-using Umbraco.Cms.Core.Web;
 using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Logging;

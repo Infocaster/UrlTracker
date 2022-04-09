@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Umbraco.Cms.Core.Events;
-using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using UrlTracker.Core;
 using UrlTracker.Core.Domain.Models;

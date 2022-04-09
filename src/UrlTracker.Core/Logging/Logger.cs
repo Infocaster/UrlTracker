@@ -31,7 +31,7 @@ namespace UrlTracker.Core.Logging
 
         public void Log<TState>(LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            if(IsEnabled(logLevel)) _logger.Log<TState>(logLevel, eventId, state, exception, formatter);
+            if (IsEnabled(logLevel)) _logger.Log<TState>(logLevel, eventId, state, exception, formatter);
         }
     }
 }

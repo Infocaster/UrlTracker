@@ -126,7 +126,7 @@ namespace UrlTracker.Core.Database
         public async Task<IReadOnlyCollection<UrlTrackerShallowRedirect>> GetShallowAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
-            
+
             // get base query
             var query = scope.SqlContext.Sql()
                 .SelectAll()

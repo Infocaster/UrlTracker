@@ -4,8 +4,8 @@ using UrlTracker.Core.Intercepting.Models;
 
 namespace UrlTracker.Core.Intercepting
 {
-    public interface IIntermediateInterceptService
+    public interface ILastChanceInterceptor
     {
-        Task<ICachableIntercept> GetAsync(Url url, IInterceptContext? context = null);
+        ValueTask<ICachableIntercept> InterceptAsync(Url url, IReadOnlyInterceptContext context);
     }
 }

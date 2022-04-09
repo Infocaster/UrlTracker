@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Umbraco.Cms.Core.Web;
 using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Web.Abstraction;

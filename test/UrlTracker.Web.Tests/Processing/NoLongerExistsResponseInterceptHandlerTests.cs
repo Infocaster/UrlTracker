@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using Moq;
 using NUnit.Framework;
-using Umbraco.Cms.Core.Web;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Resources.Testing;

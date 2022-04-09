@@ -5,7 +5,6 @@ using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing;

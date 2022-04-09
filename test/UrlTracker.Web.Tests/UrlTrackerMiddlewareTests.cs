@@ -9,8 +9,6 @@ using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Resources.Testing.Mocks;
-using UrlTracker.Web.Events;
-using UrlTracker.Web.Events.Models;
 
 namespace UrlTracker.Web.Tests.Events
 {

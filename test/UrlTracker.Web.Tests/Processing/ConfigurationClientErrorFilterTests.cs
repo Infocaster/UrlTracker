@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
 using NUnit.Framework;
-using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Web.Processing;

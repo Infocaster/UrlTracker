@@ -3,10 +3,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -194,10 +190,10 @@ namespace UrlTracker.Web.Controllers
 
             using StreamReader sr = new(file.OpenReadStream());
             using CsvReader cr = new(sr, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
-            
+
             var records = cr.GetRecords<CsvRedirect>();
             var redirects = _mapper.MapEnumerable<CsvRedirect, Redirect>(records);
-            
+
             using var scope = _scopeProvider.CreateScope();
             foreach (var redirect in redirects)
             {

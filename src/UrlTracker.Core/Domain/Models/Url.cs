@@ -58,11 +58,11 @@ namespace UrlTracker.Core.Domain.Models
             get
             {
                 // Use double if pattern with lock for best performance in a multithreaded environment
-                if(_availableUrlTypes is null)
+                if (_availableUrlTypes is null)
                 {
                     lock (_availableUrlTypesLock)
                     {
-                        if(_availableUrlTypes is null)
+                        if (_availableUrlTypes is null)
                         {
                             List<UrlType> result = new();
                             if (!string.IsNullOrWhiteSpace(Host) && Protocol is not null)
@@ -197,7 +197,7 @@ namespace UrlTracker.Core.Domain.Models
         [ExcludeFromCodeCoverage]
         public override int GetHashCode()
         {
-            return System.HashCode.Combine(Protocol, Host, Port, Path);
+            return System.HashCode.Combine(Protocol, Host, Port, Path, Query);
         }
 
         [ExcludeFromCodeCoverage]

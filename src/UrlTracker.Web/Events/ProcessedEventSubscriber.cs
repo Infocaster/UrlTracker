@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Umbraco.Cms.Core.Events;
 using UrlTracker.Core;
 using UrlTracker.Core.Logging;

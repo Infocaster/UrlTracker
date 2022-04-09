@@ -6,7 +6,6 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing;
-using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Resources.Testing.Objects;
 using UrlTracker.Web.Controllers.Models;
 using UrlTracker.Web.Map;

@@ -39,4 +39,10 @@ namespace UrlTracker.Core.Intercepting.Models
             : base(info)
         { }
     }
+
+    public static class CachableInterceptBase
+    {
+        // create a static single instance for easy identification
+        public static readonly ICachableIntercept NullIntercept = new CachableInterceptBase<object>(new object());
+    }
 }

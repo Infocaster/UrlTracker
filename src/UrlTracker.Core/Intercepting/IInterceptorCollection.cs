@@ -6,6 +6,6 @@ namespace UrlTracker.Core.Intercepting
 {
     public interface IInterceptorCollection
     {
-        ValueTask<ICachableIntercept?> InterceptAsync(Url url, IReadOnlyInterceptContext context);
+        ValueTask<ICachableIntercept> InterceptAsync(Url url, IReadOnlyInterceptContext context);
     }
 }

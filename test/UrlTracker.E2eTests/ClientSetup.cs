@@ -13,11 +13,11 @@ namespace UrlTracker.E2eTests
         {
             get
             {
-                if(_websiteClient is null)
+                if (_websiteClient is null)
                 {
                     lock (_websiteClientLock)
                     {
-                        if(_websiteClient is null)
+                        if (_websiteClient is null)
                         {
                             _websiteClient = WebsiteClient.Create("http://urltracker.ic");
                         }

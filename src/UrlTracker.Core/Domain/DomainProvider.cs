@@ -7,7 +7,6 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
 using UrlTracker.Core.Abstractions;
-using UrlTracker.Core.Configuration;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Domain.Models;
 

@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Options;
-using Moq;
 using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing;
-using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Web.Controllers;
 using UrlTracker.Web.Controllers.Models;
 

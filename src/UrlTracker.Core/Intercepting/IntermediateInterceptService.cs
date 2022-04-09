@@ -20,7 +20,7 @@ namespace UrlTracker.Core.Intercepting
             _interceptors = interceptors;
         }
 
-        public async Task<ICachableIntercept?> GetAsync(Url url, IInterceptContext? context = null)
+        public async Task<ICachableIntercept> GetAsync(Url url, IInterceptContext? context = null)
         {
             context = await _preprocessors.PreprocessUrlAsync(url, context);
             return await _interceptors.InterceptAsync(url, context);

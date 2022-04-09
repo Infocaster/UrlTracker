@@ -9,7 +9,6 @@ using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Map;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing;
-using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Resources.Testing.Objects;
 
 namespace UrlTracker.Core.Tests.Map

@@ -5,9 +5,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using NPoco;
-using Umbraco.Cms.Infrastructure.Persistence;
-using Umbraco.Core;
 using Umbraco.Cms.Core.Persistence;
+using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Extensions;
 
 namespace UrlTracker.Core.Compatibility

@@ -34,6 +34,7 @@ namespace UrlTracker.Resources.Website.Controllers
             _presetService.EnsureContent();
             await _presetService.WipeUrlTrackerTablesAsync();
             _presetService.SetConfiguration(null);
+            _presetService.ResetCache();
             return Ok();
         }
 
@@ -45,6 +46,7 @@ namespace UrlTracker.Resources.Website.Controllers
 
             var entries = _mapper.MapEnumerable<SeedRedirectRequestRedirect, UrlTrackerEntry>(request.Redirects);
             _presetService.Insert(entries);
+            _presetService.ResetCache();
             return Ok();
         }
 

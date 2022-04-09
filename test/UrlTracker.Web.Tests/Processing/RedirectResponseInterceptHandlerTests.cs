@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Mapping;
-using Umbraco.Cms.Core.Web;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Core.Models;
@@ -142,7 +140,7 @@ namespace UrlTracker.Web.Tests.Processing
             HttpContextMock.ResponseMock.Verify();
             Assert.Multiple(() =>
             {
-                if(initialStatusCode == expectedStatusCode)
+                if (initialStatusCode == expectedStatusCode)
                 {
                     Assert.That(nextInvoked, Is.True);
                 }
