@@ -11,18 +11,18 @@ using UrlTracker.Web.Processing;
 
 namespace UrlTracker.Web.Events
 {
-    public class ProcessedEventSubscriber
+    public class UrlTrackerHandledNotificationHandler
         : INotificationAsyncHandler<UrlTrackerHandled>
     {
         private readonly IClientErrorService _clientErrorService;
         private readonly IClientErrorFilterCollection _clientErrorFilterCollection;
-        private readonly ILogger<ProcessedEventSubscriber> _logger;
+        private readonly ILogger<UrlTrackerHandledNotificationHandler> _logger;
         private readonly IRequestAbstraction _requestAbstraction;
 
-        public ProcessedEventSubscriber(IClientErrorService clientErrorService,
-                                        IClientErrorFilterCollection clientErrorFilterCollection,
-                                        ILogger<ProcessedEventSubscriber> logger,
-                                        IRequestAbstraction requestAbstraction)
+        public UrlTrackerHandledNotificationHandler(IClientErrorService clientErrorService,
+                                                    IClientErrorFilterCollection clientErrorFilterCollection,
+                                                    ILogger<UrlTrackerHandledNotificationHandler> logger,
+                                                    IRequestAbstraction requestAbstraction)
         {
             _clientErrorService = clientErrorService;
             _clientErrorFilterCollection = clientErrorFilterCollection;

@@ -21,6 +21,7 @@ namespace UrlTracker.Core.Models
         // id cannot be validated, because in some cases it's mandatory, but in others it's not
         public int? Id { get; set; }
 
+        [RegularExpression(@"^[a-z]{2}(?:-[A-Z]{2})?$")]
         public string? Culture { get; set; }
 
         [Required]

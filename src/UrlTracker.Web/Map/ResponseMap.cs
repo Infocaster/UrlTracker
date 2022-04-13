@@ -30,7 +30,7 @@ namespace UrlTracker.Web.Map
                 (source, context) =>
                 {
                     var language = _localizationService.GetLanguageByIsoCode(source.LanguageIsoCode);
-                    return new GetLanguagesFromNodeResponseLanguage(source.LanguageIsoCode.ToLower(), language.CultureName);
+                    return new GetLanguagesFromNodeResponseLanguage(source.LanguageIsoCode, language.CultureName);
                 },
                 Map);
 
@@ -76,7 +76,7 @@ namespace UrlTracker.Web.Map
 
         private void Map(Redirect source, RedirectViewModel target, MapperContext context)
         {
-            target.CalculatedRedirectUrl = source.TargetNode?.Url(_umbracoContextFactoryAbstraction) ?? source.TargetUrl;
+            target.CalculatedRedirectUrl = source.TargetNode?.Url(_umbracoContextFactoryAbstraction, source.Culture) ?? source.TargetUrl;
             target.Culture = source.Culture;
             target.ForceRedirect = source.Force;
             target.Id = source.Id!.Value;

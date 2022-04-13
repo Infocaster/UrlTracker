@@ -11,3 +11,5 @@ TODO.txt
 /packages
 /TestResults
 /test/UrlTracker.Resources.Website/App_Data
+/test/UrlTracker.Resources.Website/Smidge/Cache
+/test/UrlTracker.Resources.Website/App_Plugins/UrlTracker

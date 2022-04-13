@@ -52,7 +52,7 @@ namespace UrlTracker.Core.Domain
             using var cref = _umbracoContextFactory.EnsureUmbracoContext();
             return DomainCollection.Create(from domain in domains
                                            let url = GetUrlFromDomain(domain, configurationValue, cref)
-                                           select new Models.Domain(domain.Id, domain.RootContentId, domain.DomainName, domain.LanguageIsoCode, url));
+                                           select new Models.Domain(domain.Id, domain.RootContentId, domain.DomainName, domain.LanguageIsoCode.NormalizeCulture()!, url));
         }
 
         /*

@@ -15,11 +15,11 @@ using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Models;
 
-namespace UrlTracker.Web.Components
+namespace UrlTracker.Web.Events
 {
-    // ToDo: 
+    // ToDo: Make this logic testable
     [ExcludeFromCodeCoverage]
-    public class ContentChangeHandlingComponent
+    public class ContentChangeNotificationHandler
     : INotificationHandler<ContentMovingNotification>,
       INotificationHandler<ContentMovedNotification>,
       INotificationHandler<ContentPublishingNotification>,
@@ -29,18 +29,21 @@ namespace UrlTracker.Web.Components
         private readonly IRedirectService _redirectService;
         private readonly IScopeProvider _scopeProvider;
         private readonly IOptions<UrlTrackerSettings> _configuration;
+        private readonly IContentValueReaderFactory _contentValueReaderFactory;
         private const string _moveRedirectsKey = "ic:MoveRedirects";
         private const string _renameRedirectsKey = "ic:RenameRedirects";
 
-        public ContentChangeHandlingComponent(IUmbracoContextFactoryAbstraction umbracoContextFactory,
-                                              IRedirectService redirectService,
-                                              IScopeProvider scopeProvider,
-                                              IOptions<UrlTrackerSettings> configuration)
+        public ContentChangeNotificationHandler(IUmbracoContextFactoryAbstraction umbracoContextFactory,
+                                                IRedirectService redirectService,
+                                                IScopeProvider scopeProvider,
+                                                IOptions<UrlTrackerSettings> configuration,
+                                                IContentValueReaderFactory contentValueReaderFactory)
         {
             _umbracoContextFactory = umbracoContextFactory;
             _redirectService = redirectService;
             _scopeProvider = scopeProvider;
             _configuration = configuration;
+            _contentValueReaderFactory = contentValueReaderFactory;
         }
 
         void INotificationHandler<ContentPublishingNotification>.Handle(ContentPublishingNotification notification)
@@ -56,18 +59,19 @@ namespace UrlTracker.Web.Components
                 var content = cref.GetContentById(entity.Id);
                 if (content is null) continue;
 
-                var cultures = GetCulturesFromContent(content);
+                var valueReaders = _contentValueReaderFactory.Create(entity, onlyChanged: true);
 
-                foreach (var c in cultures)
+                foreach (var valueReader in valueReaders)
                 {
-                    if (entity.GetCultureName(c).Equals(content.Name(c)) &&
-                        entity.GetValue<string>(Constants.Conventions.Content.UrlName, c) == content.Value<string>(Constants.Conventions.Content.UrlName, c)) continue;
+                    if (!content.IsPublished(valueReader.GetCulture())) continue;
+                    if (valueReader.GetName().Equals(valueReader.GetName(content)) &&
+                        valueReader.GetValue(Constants.Conventions.Content.UrlName) == valueReader.GetValue(content, Constants.Conventions.Content.UrlName)) continue;
 
                     // this entity has changed, so a new redirect for it and its descendants must be created
                     var root = content.Root();
-                    foreach (var item in content.Descendants(c).Prepend(content))
+                    foreach (var item in content.Descendants(valueReader.GetCulture()).Prepend(content))
                     {
-                        redirects.Add(CreateRedirect(root, item, c, "Url has changed"));
+                        redirects.Add(CreateRedirect(root, item, valueReader.GetCulture(), "Url has changed"));
                     }
                 }
             }
@@ -84,6 +88,10 @@ namespace UrlTracker.Web.Components
             RegisterRedirects(redirects);
         }
 
+        /* For now the approach is to create working code.
+         *     Event management needs to be fleshed out a lot better though.
+         *     TODO: identify all different cases for each event and what action should be taken by the url tracker.
+         */
         void INotificationHandler<ContentMovingNotification>.Handle(ContentMovingNotification notification)
         {
             if (!TrackingEnabled()) return;
@@ -94,19 +102,30 @@ namespace UrlTracker.Web.Components
             List<Redirect> redirects = new();
             foreach (var moveInfo in notification.MoveInfoCollection)
             {
-                var content = cref.GetContentById(moveInfo.Entity.Id)!;
-                var newRoot = cref.GetContentById(moveInfo.NewParentId).Root();
+                // Content may not have been published yet. If it's not published, then it's not necessary to register redirects
+                var content = cref.GetContentById(moveInfo.Entity.Id);
+                if (content is null) continue;
+
+                // Parent or root might also not be published yet.
+                var newParent = cref.GetContentById(moveInfo.NewParentId);
+                if (newParent is null) continue;
+
+                var newRoot = newParent.Root();
+                if (newRoot is null) continue;
+
                 foreach (var item in DescendantsForAllCultures(content).Prepend(content))
                 {
                     List<string?> cultures = GetCulturesFromContent(item);
 
-                    foreach (var c in cultures)
+                    // make sure to only consider cultures for which a change is actually noticable.
+                    //    That is: if a node that can be routed moves to a node that also can be routed.
+                    foreach (var c in cultures.Where(c => newParent.AncestorsOrSelf().All(i => i.IsPublished(c)) && item.AncestorsOrSelf().All(i => i.IsPublished(c))))
                     {
                         // Notice that the old IPublishedContent item is used here. This may seem questionable,
                         //    but it's acceptable, since only the id of the published content item will be saved.
                         //    I think it would still be better to use the new IPublishedContent, in case we might
                         //    do more with it in the future.
-                        redirects.Add(CreateRedirect(newRoot, item, c, "This page was moved"));
+                        redirects.Add(CreateRedirect(newRoot, item, c, "This page or an ancestor was moved"));
                     }
                 }
             }
@@ -145,8 +164,19 @@ namespace UrlTracker.Web.Components
         private static List<string?> GetCulturesFromContent(IPublishedContent item)
         {
             List<string?> cultures = new();
-            if (item.Cultures.Any(c => !string.IsNullOrWhiteSpace(c.Value.Culture))) cultures.AddRange(from c in item.Cultures.Values select c.Culture);
-            else cultures.Add(null);
+
+            if (item.ContentType.VariesByCulture())
+            {
+                cultures.AddRange(from c in item.Cultures.Values
+                                  let cultureString = c.Culture.NormalizeCulture()
+                                  where item.IsPublished(cultureString)
+                                  select cultureString);
+            }
+            else
+            {
+                cultures.Add(null);
+            }
+
             return cultures;
         }
 

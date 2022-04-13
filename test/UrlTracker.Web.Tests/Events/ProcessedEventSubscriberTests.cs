@@ -14,11 +14,11 @@ namespace UrlTracker.Web.Tests.Events
 {
     public class ProcessedEventSubscriberTests : TestBase
     {
-        private ProcessedEventSubscriber? _testSubject;
+        private UrlTrackerHandledNotificationHandler? _testSubject;
 
         public override void SetUp()
         {
-            _testSubject = new ProcessedEventSubscriber(ClientErrorService, ClientErrorFilterCollection, new ConsoleLogger<ProcessedEventSubscriber>(), RequestAbstraction);
+            _testSubject = new UrlTrackerHandledNotificationHandler(ClientErrorService, ClientErrorFilterCollection, new ConsoleLogger<UrlTrackerHandledNotificationHandler>(), RequestAbstraction);
         }
 
         [TestCase(TestName = "HandleAsync aborts processing if response is not 404")]

@@ -37,7 +37,8 @@ namespace UrlTracker.Core.Components
             var migrationPlan = new MigrationPlan("UrlTracker");
             migrationPlan.From(string.Empty)
                 .To("urlTracker") // Add empty migration to support the original database that didn't use migrations as they were supposed to.
-                .To<M202111081155_UrlTracker>("urltracker-initial-db");
+                .To<M202111081155_UrlTracker>("urltracker-initial-db")
+                .To<M202204091707_AddIndexes>("urltracker-add-indexes");
 
             var upgrader = new Upgrader(migrationPlan);
             upgrader.Execute(_migrationPlanExecutor, _scopeProvider, _keyValueService);

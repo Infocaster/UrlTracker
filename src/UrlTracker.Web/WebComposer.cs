@@ -5,7 +5,6 @@ using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
 using UrlTracker.Web.Abstraction;
 using UrlTracker.Web.Compatibility;
-using UrlTracker.Web.Components;
 using UrlTracker.Web.Configuration;
 using UrlTracker.Web.Events;
 using UrlTracker.Web.Events.Models;
@@ -34,6 +33,7 @@ namespace UrlTracker.Web
             builder.Services.AddSingleton<IRequestInterceptFilterCollection>(factory => factory.GetRequiredService<RequestInterceptFilterCollection>());
             builder.Services.AddSingleton<IClientErrorFilterCollection>(factory => factory.GetRequiredService<ClientErrorFilterCollection>());
             builder.Services.AddSingleton<IReservedPathSettingsProvider, ReservedPathSettingsProvider>();
+            builder.Services.AddSingleton<IContentValueReaderFactory, ContentValueReaderFactory>();
         }
     }
 
@@ -42,11 +42,11 @@ namespace UrlTracker.Web
     {
         public static IUmbracoBuilder ComposeUrlTrackerWebComponents(this IUmbracoBuilder builder)
         {
-            builder.AddNotificationHandler<ContentMovingNotification, ContentChangeHandlingComponent>();
-            builder.AddNotificationHandler<ContentMovedNotification, ContentChangeHandlingComponent>();
-            builder.AddNotificationHandler<ContentPublishingNotification, ContentChangeHandlingComponent>();
-            builder.AddNotificationHandler<ContentPublishedNotification, ContentChangeHandlingComponent>();
-            builder.AddNotificationAsyncHandler<UrlTrackerHandled, ProcessedEventSubscriber>();
+            builder.AddNotificationHandler<ContentMovingNotification, ContentChangeNotificationHandler>();
+            builder.AddNotificationHandler<ContentMovedNotification, ContentChangeNotificationHandler>();
+            builder.AddNotificationHandler<ContentPublishingNotification, ContentChangeNotificationHandler>();
+            builder.AddNotificationHandler<ContentPublishedNotification, ContentChangeNotificationHandler>();
+            builder.AddNotificationAsyncHandler<UrlTrackerHandled, UrlTrackerHandledNotificationHandler>();
             return builder;
         }
 

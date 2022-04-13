@@ -426,7 +426,7 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 }
 
 .urltracker-setting-box {
-	box-shadow: 0 1px 3px 1px rgb(0 0 0 / 11%);
+	box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 11%);
 }
 
 .urltracker-setting-box p {
