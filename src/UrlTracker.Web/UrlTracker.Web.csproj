@@ -283,6 +283,10 @@
     <Compile Include="Compatibility\IRequestModelPatcher.cs" />
     <Compile Include="Compatibility\RequestModelPatcher.cs" />
     <Compile Include="Components\ContentChangeHandlingComponent.cs" />
+    <Compile Include="Components\ContentValueReaderFactory.cs" />
+    <Compile Include="Components\ContentWithCultureValueReader.cs" />
+    <Compile Include="Components\IContentValueReader.cs" />
+    <Compile Include="Components\IContentValueReaderFactory.cs" />
     <Compile Include="Components\IncomingUrlHandlingComponent.cs" />
     <Compile Include="Configuration\Models\ReservedPathSettings.cs" />
     <Compile Include="Configuration\ReservedPathSettingsProvider.cs" />

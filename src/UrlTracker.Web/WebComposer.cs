@@ -29,6 +29,7 @@ namespace UrlTracker.Web
                        .ComposeDefaultRequestInterceptFilters()
                        .ComposeDefaultClientErrorFilters();
 
+            composition.RegisterUnique<IContentValueReaderFactory, ContentValueReaderFactory>();
             composition.RegisterUnique<IRequestModelPatcher, RequestModelPatcher>();
 
             composition.RegisterUnique<IResponseInterceptHandlerCollection>(factory => factory.GetInstance<ResponseInterceptHandlerCollection>());

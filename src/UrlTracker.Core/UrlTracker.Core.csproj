@@ -314,6 +314,7 @@
     <Compile Include="Components\MigrationComponent.cs" />
     <Compile Include="Database\Migrations\M202111081155_UrlTracker.cs" />
     <Compile Include="Database\Migrations\M202111081155_UrlTrackerSchema.cs" />
+    <Compile Include="Database\Migrations\M202204091707_AddIndexes.cs" />
     <Compile Include="Database\Models\UrlTrackerEntryNotFoundAggregate.cs" />
     <Compile Include="Database\Models\UrlTrackerIgnoreEntry.cs" />
     <Compile Include="Database\Models\UrlTrackerClientError.cs" />

@@ -87,7 +87,7 @@ namespace UrlTracker.Web.Map
 
         private void Map(Redirect source, RedirectViewModel target, MapperContext context)
         {
-            target.CalculatedRedirectUrl = source.TargetNode?.Url(_umbracoContextFactoryAbstraction) ?? source.TargetUrl;
+            target.CalculatedRedirectUrl = source.TargetNode?.Url(_umbracoContextFactoryAbstraction, culture: source.Culture) ?? source.TargetUrl;
             target.Culture = source.Culture;
             target.ForceRedirect = source.Force;
             target.Id = source.Id.Value;
