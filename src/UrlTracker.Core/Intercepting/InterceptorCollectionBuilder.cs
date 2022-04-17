@@ -17,9 +17,13 @@ namespace UrlTracker.Core.Intercepting
     public class InterceptorCollection
         : BuilderCollectionBase<IInterceptor>, IInterceptorCollection
     {
-        public InterceptorCollection(IEnumerable<IInterceptor> items)
+        private readonly ILastChanceInterceptor _lastChance;
+
+        public InterceptorCollection(IEnumerable<IInterceptor> items, ILastChanceInterceptor lastChance)
             : base(items)
-        { }
+        {
+            _lastChance = lastChance;
+        }
 
         public async ValueTask<ICachableIntercept> InterceptAsync(Url url, IReadOnlyInterceptContext context)
         {
@@ -29,7 +33,7 @@ namespace UrlTracker.Core.Intercepting
                 if (!(result is null)) return result;
             }
 
-            return null;
+            return await _lastChance.InterceptAsync(url, context);
         }
     }
 }

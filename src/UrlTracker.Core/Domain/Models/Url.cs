@@ -169,7 +169,7 @@ namespace UrlTracker.Core.Domain.Models
         [ExcludeFromCodeCoverage]
         public override int GetHashCode()
         {
-            return System.HashCode.Combine(Protocol, Host, Port, Path);
+            return System.HashCode.Combine(Protocol, Host, Port, Path, Query);
         }
 
         [ExcludeFromCodeCoverage]

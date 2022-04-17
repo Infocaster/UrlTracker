@@ -28,7 +28,7 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_NormalFlow_ReturnsResult(bool disabled, bool expected)
         {
             // arrange
-            UrlTrackerSettings.Value = new UrlTrackerSettings(disabled, default, default, default, default, default);
+            UrlTrackerSettings.Value = new UrlTrackerSettings(disabled, default, default, default, default, default, 5000, true, 60 * 48, true);
 
             // act
             var result = await _testSubject.EvaluateCandidateAsync(Url.Parse("http://example.com"));

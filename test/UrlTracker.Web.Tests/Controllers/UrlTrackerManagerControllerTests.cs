@@ -40,7 +40,7 @@ namespace UrlTracker.Web.Tests.Controllers
         public override void SetUp()
         {
             base.SetUp();
-            UrlTrackerSettings.Value = new UrlTrackerSettings(true, true, true, true, true, true);
+            UrlTrackerSettings.Value = new UrlTrackerSettings(true, true, true, true, true, true, 5000, true, 60 * 48, true);
             _testSubject = new UrlTrackerManagerController(Mock.Of<IGlobalSettings>(),
                                                            Mock.Of<IUmbracoContextAccessor>(),
                                                            Mock.Of<ISqlContext>(),

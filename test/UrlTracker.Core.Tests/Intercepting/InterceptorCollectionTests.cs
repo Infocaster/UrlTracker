@@ -15,7 +15,7 @@ namespace UrlTracker.Core.Tests.Intercepting
 
         public override void SetUp()
         {
-            _testSubject = new InterceptorCollection(new List<IInterceptor> { Interceptor });
+            _testSubject = new InterceptorCollection(new List<IInterceptor> { Interceptor }, new NullInterceptor());
         }
 
         public static TestCaseData[] TestCases()
@@ -24,7 +24,7 @@ namespace UrlTracker.Core.Tests.Intercepting
             return new TestCaseData[]
             {
                 new TestCaseData(intercept, intercept).SetName("InterceptAsync returns intercept if one is found"),
-                new TestCaseData(null, null).SetName("InterceptAsync returns null if none is found")
+                new TestCaseData(null, CachableInterceptBase.NullIntercept).SetName("InterceptAsync returns NullIntercept if none is found")
             };
         }
 

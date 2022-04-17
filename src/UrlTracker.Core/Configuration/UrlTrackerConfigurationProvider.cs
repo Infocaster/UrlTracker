@@ -1,4 +1,5 @@
-﻿using UrlTracker.Core.Abstractions;
+﻿using System;
+using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Configuration.Models;
 
 namespace UrlTracker.Core.Configuration
@@ -10,7 +11,6 @@ namespace UrlTracker.Core.Configuration
     public class UrlTrackerConfigurationProvider
         : IConfiguration<UrlTrackerSettings>
     {
-        private const string _prefix = "urlTracker:";
         private readonly IAppSettingsAbstraction _appSettingsAbstraction;
 
         public UrlTrackerConfigurationProvider(IAppSettingsAbstraction appSettingsAbstraction)
@@ -22,19 +22,27 @@ namespace UrlTracker.Core.Configuration
         {
             get
             {
-                bool disabled = GetBooleanSetting("disabled");
-                bool trackingDisabled = GetBooleanSetting("trackingDisabled");
-                bool notFoundTrackingDisabled = GetBooleanSetting("notFoundTrackingDisabled");
-                bool loggingEnabled = GetBooleanSetting("enableLogging");
-                bool appendPortNumber = GetBooleanSetting("appendPortNumber");
-                bool hasDomainOnChildNode = GetBooleanSetting("hasDomainOnChildNode");
+                bool disabled = GetBooleanSetting(Defaults.Configuration.Disabled);
+                bool trackingDisabled = GetBooleanSetting(Defaults.Configuration.TrackingDisabled);
+                bool notFoundTrackingDisabled = GetBooleanSetting(Defaults.Configuration.NotFoundTrackingDisabled);
+                bool loggingEnabled = GetBooleanSetting(Defaults.Configuration.EnableLogging);
+                bool appendPortNumber = GetBooleanSetting(Defaults.Configuration.AppendPortNumber);
+                bool hasDomainOnChildNode = GetBooleanSetting(Defaults.Configuration.HasDomainOnChildNode);
+                long maxCachedIntercepts = GetLongSetting(Defaults.Configuration.MaxCachedIntercepts, 5000);
+                bool cacheRegexRedirects = GetBooleanSetting(Defaults.Configuration.CacheRegexRedirects);
+                int? interceptSlidingCacheMinutes = GetMaybeIntSetting(Defaults.Configuration.InterceptSlidingCacheMinutes, 60 * 24 * 2);
+                bool enableInterceptCaching = GetBooleanSetting(Defaults.Configuration.EnableInterceptCaching, true);
 
                 return new UrlTrackerSettings(disabled,
                                               trackingDisabled,
                                               loggingEnabled,
                                               notFoundTrackingDisabled,
                                               appendPortNumber,
-                                              hasDomainOnChildNode);
+                                              hasDomainOnChildNode,
+                                              maxCachedIntercepts,
+                                              cacheRegexRedirects,
+                                              interceptSlidingCacheMinutes,
+                                              enableInterceptCaching);
             }
         }
 
@@ -43,9 +51,21 @@ namespace UrlTracker.Core.Configuration
             return bool.TryParse(GetAppSetting(name), out var result) ? result : @default;
         }
 
+        private long GetLongSetting(string name, long @default = 0)
+        {
+            return long.TryParse(GetAppSetting(name), out var result) ? result : @default;
+        }
+
+        private int? GetMaybeIntSetting(string name, int? @default = null)
+        {
+            string stringValue = GetAppSetting(name);
+            if ("null".Equals(stringValue, StringComparison.InvariantCultureIgnoreCase)) return null;
+            return int.TryParse(stringValue, out var result) ? result : @default;
+        }
+
         private string GetAppSetting(string name)
         {
-            return _appSettingsAbstraction.Get(_prefix + name);
+            return _appSettingsAbstraction.Get(Defaults.Configuration.Prefix + name);
         }
     }
 }

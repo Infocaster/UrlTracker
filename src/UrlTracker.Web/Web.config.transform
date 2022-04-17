@@ -7,5 +7,9 @@
     <add key="urlTracker:enableLogging" value="false" />
     <add key="urlTracker:appendPortNumber" value="false" />
     <add key="urlTracker:hasDomainOnChildNode" value="false" />
+    <add key="urlTracker:maxCachedIntercepts" value="5000" />
+    <add key="urlTracker:cacheRegexRedirects" value="true" />
+    <add key="urlTracker:interceptSlidingCacheMinutes" value="2880" />
+    <add key="urlTracker:enableInterceptCaching" value="true" />
   </appSettings>
 </configuration>

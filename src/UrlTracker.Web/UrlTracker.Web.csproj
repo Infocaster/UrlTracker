@@ -328,6 +328,7 @@
     <Compile Include="Map\RedirectMap.cs" />
     <Compile Include="Processing\IRequestInterceptFilter.cs" />
     <Compile Include="Processing\NoLongerExistsResponseInterceptHandler.cs" />
+    <Compile Include="Processing\NullInterceptHandler.cs" />
     <Compile Include="Processing\RedirectResponseInterceptHandler.cs" />
     <Compile Include="Processing\ResponseInterceptHandlerBase.cs" />
     <Compile Include="Processing\ResponseInterceptHandlerCollectionBuilder.cs" />

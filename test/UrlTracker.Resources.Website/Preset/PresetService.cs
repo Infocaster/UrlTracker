@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Umbraco.Core.Cache;
 using Umbraco.Core.Logging;
 using Umbraco.Core.Scoping;
 using Umbraco.Core.Services;
+using UrlTracker.Core.Caching;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Database.Models;
 
@@ -12,6 +14,7 @@ namespace UrlTracker.Resources.Website.Preset
     {
         void EnsureContent();
         void Insert(IEnumerable<UrlTrackerEntry> entries);
+        void ResetCache();
         void SetConfiguration(UrlTrackerSettings settings);
         Task WipeUrlTrackerTablesAsync();
     }
@@ -22,13 +25,25 @@ namespace UrlTracker.Resources.Website.Preset
         private readonly IContentService _contentService;
         private readonly IUrlTrackerConfigurationManager _urlTrackerConfigurationManager;
         private readonly ILogger _logger;
+        private readonly IRegexRedirectCache _regexRedirectCache;
+        private readonly IInterceptCache _interceptCache;
+        private readonly AppCaches _appCaches;
 
-        public PresetService(IScopeProvider scopeProvider, IContentService contentService, IUrlTrackerConfigurationManager urlTrackerConfigurationManager, ILogger logger)
+        public PresetService(IScopeProvider scopeProvider,
+                             IContentService contentService,
+                             IUrlTrackerConfigurationManager urlTrackerConfigurationManager,
+                             ILogger logger,
+                             IRegexRedirectCache regexRedirectCache,
+                             IInterceptCache interceptCache,
+                             AppCaches appCaches)
         {
             _scopeProvider = scopeProvider;
             _contentService = contentService;
             _urlTrackerConfigurationManager = urlTrackerConfigurationManager;
             _logger = logger;
+            _regexRedirectCache = regexRedirectCache;
+            _interceptCache = interceptCache;
+            _appCaches = appCaches;
         }
 
         public async Task WipeUrlTrackerTablesAsync()
@@ -80,6 +95,13 @@ namespace UrlTracker.Resources.Website.Preset
             {
                 _logger.Debug<PresetService>("Inserted entry: {entry}", entry);
             }
+        }
+
+        public void ResetCache()
+        {
+            _regexRedirectCache.Clear();
+            _interceptCache.Clear();
+            _appCaches.RuntimeCache.Clear(Core.Defaults.Cache.DomainKey);
         }
 
         public void SetConfiguration(UrlTrackerSettings settings)

@@ -33,14 +33,24 @@ Upon installation, the URL Tracker will have added several configurations in you
 <add key="urlTracker:enableLogging" value="false" />
 <add key="urlTracker:appendPortNumber" value="false" />
 <add key="urlTracker:hasDomainOnChildNode" value="false" />
+<add key="urlTracker:maxCachedIntercepts" value="5000" />
+<add key="urlTracker:cacheRegexRedirects" value="true" />
+<add key="urlTracker:interceptSlidingCacheMinutes" value="2880" />
+<add key="urlTracker:enableInterceptCaching" value="true" />
 ```
 
-- **Disabled** | Set this value to `true` to completely disable the URL Tracker. The URL Tracker will not intercept any requests nor track any content updates
-- **Tracking disabled** | Set this value to `true` to disable tracking of content changes. The URL Tracker will not automatically create redirects when content is updated
-- **Not found tracking disabled** | Set this value to `true` to disable tracking of Not Found responses.
-- **Enable logging** | Set this value to `true` to allow the URL Tracker to write logs to the Umbraco native logger. Most logs from the URL Tracker are written at Debug or Verbose level.
-- **Append port number** | Set this value to `true` to add a port number behind the host component of a redirect url. This setting is ignored when the application is hosted on the default port 80.
-- **Has domain on child node** | Set this value to `true` if your website has domains configured on pages that are not in the root of the website.
+|Setting|Type|Description|
+|------:|:---|:----------|
+|Disabled | bool | Set this value to `true` to completely disable the URL Tracker. The URL Tracker will not intercept any requests nor track any content updates|
+|Tracking disabled | bool | Set this value to `true` to disable tracking of content changes. The URL Tracker will not automatically create redirects when content is updated|
+|Not found tracking disabled | bool | Set this value to `true` to disable tracking of Not Found responses.|
+|Enable logging | bool | Set this value to `true` to allow the URL Tracker to write logs to the Umbraco native logger. Most logs from the URL Tracker are written at Debug or Verbose level.|
+|Append port number | bool | Set this value to `true` to add a port number behind the host component of a redirect url. This setting is ignored when the application is hosted on the default port 80.|
+|Has domain on child node | bool | Set this value to `true` if your website has domains configured on pages that are not in the root of the website.|
+|Cache regex redirects | bool | Set this value to `false` to disable caching of regex redirects. The URL Tracker will read all the regex redirects from the database on each request.|
+|Max cached intercepts | long | The maximum amount of intercepts to cache. This not only includes redirects, but also pass through and gone responses.|
+|Intercept sliding cache minutes | int? | Set this value to the amount of minutes that an intercept should be cached after the last use before it expires. Set this value to `null` to cache forever|
+|Enable intercept caching | bool | set this value to `false` to completely disable caching of intercepts. The intercept will be recalculated for each url on every request.|
 
 ## Contributing
 The URL Tracker is open for contributions. If you want to contribute to the source code, please check out our [guide to contributing](https://github.com/Infocaster/.github/blob/main/CONTRIBUTING.md).  
