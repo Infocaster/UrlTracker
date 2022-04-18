@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using Umbraco.Core.Mapping;
@@ -40,6 +41,15 @@ namespace UrlTracker.Web.Processing
             response.Clear();
             if (!(url is null))
             {
+                // If redirect is a regex match, ensure that potential capture tokens are replaced in the target url
+                // TODO: Evaluate side effects!
+                //    This logic has been taken from the old code base. It has a potential side effect.
+                //    If a pattern matches on a partial string, the non-matched part will stay in the url
+                //    example: regex:"(ipsum)" targeturl: "http://example.com/$1" input: "lorem/ipsum/dolor" result: "lorem/http://example.com/ipsum/dolor"
+                if (string.IsNullOrWhiteSpace(intercept.SourceUrl) && !string.IsNullOrWhiteSpace(intercept.SourceRegex))
+                {
+                    url = Regex.Replace(context.Request.Url.PathAndQuery.TrimStart('/'), intercept.SourceRegex, url);
+                }
                 response.RedirectLocation = url;
             }
             response.StatusCode = url is null ? 410 : ((int)intercept.TargetStatusCode);

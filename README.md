@@ -53,7 +53,7 @@ Upon installation, the URL Tracker will have added several configurations in you
 |Enable intercept caching | bool | set this value to `false` to completely disable caching of intercepts. The intercept will be recalculated for each url on every request.|
 
 ## Contributing
-The URL Tracker is open for contributions. If you want to contribute to the source code, please check out our [guide to contributing](https://github.com/Infocaster/.github/blob/main/CONTRIBUTING.md).  
+The URL Tracker is open for contributions. If you want to contribute to the source code, please check out our [guide to contributing](/docs/CONTRIBUTING.md).  
 Many people have already contributed to this awesome project:
 
 <a href="https://github.com/Infocaster/UrlTracker/graphs/contributors">
