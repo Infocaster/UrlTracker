@@ -15,7 +15,7 @@
     <Copyright>Copyright © Infocaster 2022</Copyright>
     <PackageProjectUrl>https://github.com/infocaster/urltracker</PackageProjectUrl>
     <PackageIcon>infocaster_nuget_yellow.png</PackageIcon>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/infocaster/urltracker</RepositoryUrl>
     <PackageReleaseNotes>First release for Umbraco 9</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -27,7 +27,7 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Include="..\..\README.md">
+    <None Include="..\..\README-NUGET.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

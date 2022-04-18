@@ -17,7 +17,7 @@ Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.</Descri
     <Copyright>Copyright © Infocaster 2022</Copyright>
     <PackageProjectUrl>https://github.com/infocaster/urltracker</PackageProjectUrl>
     <PackageIcon>infocaster_nuget_yellow.png</PackageIcon>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/infocaster/urltracker</RepositoryUrl>
     <PackageReleaseNotes>First release for Umbraco 9</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -29,7 +29,7 @@ Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.</Descri
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Include="..\..\README.md">
+    <None Include="..\..\README-NUGET.md">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>

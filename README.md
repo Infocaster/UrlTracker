@@ -55,19 +55,21 @@ The URL Tracker has several configurable properties that can be changed in appse
 }
 ```
 
-- **Is disabled** | Set this value to `true` to completely disable the URL Tracker. The URL Tracker will not intercept any requests nor track any content updates
-- **Is tracking disabled** | Set this value to `true` to disable tracking of content changes. The URL Tracker will not automatically create redirects when content is updated
-- **Is not found tracking disabled** | Set this value to `true` to disable tracking of Not Found responses.
-- **Enable logging** | Set this value to `true` to allow the URL Tracker to write logs to the Umbraco native logger. Most logs from the URL Tracker are written at Debug or Verbose level.
-- **Append port number** | Set this value to `true` to add a port number behind the host component of a redirect url. This setting is ignored when the application is hosted on the default port 80.
-- **Has domain on child node** | Set this value to `true` if your website has domains configured on pages that are not in the root of the website.
-- **Cache regex redirects** | Set this value to `false` to disable caching of regex redirects. By default, all regex redirects are cached in memory to improve performance.
-- **Intercept sliding cache minutes** | Set this value to the time in minutes that all redirects should be cached. By default, all redirects are cached for 2 days. Set to `null` to cache indefinitely.
-- **Max cached intercepts** | Set this value to the amount of intercepts that should be cached by the UrlTracker. This not only includes redirects, but also 200 OK responses, 410 GONE responses and 404 NOT FOUND responses.
-- **Enable intercept caching** | Set this value to `false` to completely disable redirect caching.
+|                            Name | Type | Description |
+|--------------------------------:|:-----|:------------|
+|                     Is disabled | bool | Set this value to `true` to completely disable the URL Tracker. The URL Tracker will not intercept any requests nor track any content updates
+|            Is tracking disabled | bool | Set this value to `true` to disable tracking of content changes. The URL Tracker will not automatically create redirects when content is updated
+|  Is not found tracking disabled | bool | Set this value to `true` to disable tracking of Not Found responses.
+|                  Enable logging | bool | Set this value to `true` to allow the URL Tracker to write logs to the Umbraco native logger. Most logs from the URL Tracker are written at Debug or Verbose level.
+|              Append port number | bool | Set this value to `true` to add a port number behind the host component of a redirect url. This setting is ignored when the application is hosted on the default port 80.
+|        Has domain on child node | bool | Set this value to `true` if your website has domains configured on pages that are not in the root of the website.
+|           Cache regex redirects | bool | Set this value to `false` to disable caching of regex redirects. By default, all regex redirects are cached in memory to improve performance.
+| Intercept sliding cache minutes | int? | Set this value to the time in minutes that all redirects should be cached. By default, all redirects are cached for 2 days. Set to `null` to cache indefinitely.
+|           Max cached intercepts | long | Set this value to the amount of intercepts that should be cached by the UrlTracker. This not only includes redirects, but also 200 OK responses, 410 GONE responses and 404 NOT FOUND responses.
+|        Enable intercept caching | bool | Set this value to `false` to completely disable redirect caching.
 
 ## Contributing
-The URL Tracker is open for contributions. If you want to contribute to the source code, please check out our [guide to contributing](https://github.com/Infocaster/.github/blob/main/CONTRIBUTING.md).  
+The URL Tracker is open for contributions. If you want to contribute to the source code, please check out our [guide to contributing](/docs/CONTRIBUTING.md).  
 Many people have already contributed to this awesome project:
 
 <a href="https://github.com/Infocaster/UrlTracker/graphs/contributors">

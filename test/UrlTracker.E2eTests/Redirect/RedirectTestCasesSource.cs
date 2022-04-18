@@ -74,17 +74,17 @@ namespace UrlTracker.E2eTests.Redirect
                             Id = 0,
                             Notes = "lorem",
                             PassThroughQueryString = false,
-                            SourceRegex = @"^[0-9]{6}\?lorem=ipsum$",
+                            SourceRegex = @"^[0-9]{6}\?lorem=(\w+)",
                             SourceUrl = null,
-                            TargetNodeName = "lorem",
+                            TargetNodeName = null,
                             TargetRootNodeName = "root",
                             TargetStatusCode = 302,
-                            TargetUrl = null
+                            TargetUrl = "/$1"
                         }
                     },
                     RequestUrl = new Uri(baseAddress, "/182579?lorem=ipsum"),
                     ExpectedResponseStatusCode = 302,
-                    ExpectedResponseUri = new Uri(baseAddress, "/lorem")
+                    ExpectedResponseUri = new Uri(baseAddress, "/ipsum")
                 }.ToTestCase("Regex redirect rule", "A redirect with a regex should match on any url of which the path matches the regex"),
 
                 // a redirect on a url that has an existing response should not redirect if it's not forced
