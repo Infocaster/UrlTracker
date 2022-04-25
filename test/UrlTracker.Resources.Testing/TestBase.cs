@@ -8,6 +8,7 @@ using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Core.Services;
 using UrlTracker.Core;
+using UrlTracker.Core.Caching;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Domain;
@@ -64,8 +65,8 @@ namespace UrlTracker.Resources.Testing
         protected IInterceptService InterceptService => InterceptServiceMock!.Object;
         protected Mock<IResponseInterceptHandlerCollection>? ResponseInterceptHandlerCollectionMock { get; set; }
         protected IResponseInterceptHandlerCollection ResponseInterceptHandlerCollection => ResponseInterceptHandlerCollectionMock!.Object;
-        protected Mock<IResponseInterceptHandler>? ResponseInterceptHandlerMock { get; set; }
-        protected IResponseInterceptHandler ResponseInterceptHandler => ResponseInterceptHandlerMock!.Object;
+        protected Mock<ISpecificResponseInterceptHandler>? ResponseInterceptHandlerMock { get; set; }
+        protected ISpecificResponseInterceptHandler ResponseInterceptHandler => ResponseInterceptHandlerMock!.Object;
         protected Mock<IRequestInterceptFilterCollection>? RequestInterceptFilterCollectionMock { get; set; }
         protected IRequestInterceptFilterCollection RequestInterceptFilterCollection => RequestInterceptFilterCollectionMock!.Object;
         protected Mock<IClientErrorFilterCollection>? ClientErrorFilterCollectionMock { get; set; }
@@ -78,6 +79,8 @@ namespace UrlTracker.Resources.Testing
         protected IRequestAbstraction RequestAbstraction => RequestAbstractionMock!.Object;
         protected Mock<IResponseAbstraction>? ResponseAbstractionMock { get; set; }
         protected IResponseAbstraction ResponseAbstraction => ResponseAbstractionMock!.Object;
+        protected Mock<IInterceptCache>? InterceptCacheMock { get; set; }
+        protected IInterceptCache InterceptCache => InterceptCacheMock!.Object;
 
 
 
@@ -131,13 +134,14 @@ namespace UrlTracker.Resources.Testing
             RequestModelPatcherMock = new Mock<IRequestModelPatcher>();
             InterceptServiceMock = new Mock<IInterceptService>();
             ResponseInterceptHandlerCollectionMock = new Mock<IResponseInterceptHandlerCollection>();
-            ResponseInterceptHandlerMock = new Mock<IResponseInterceptHandler>();
+            ResponseInterceptHandlerMock = new Mock<ISpecificResponseInterceptHandler>();
             RequestInterceptFilterCollectionMock = new Mock<IRequestInterceptFilterCollection>();
             ClientErrorFilterCollectionMock = new Mock<IClientErrorFilterCollection>();
             LocalizationServiceMock = new Mock<ILocalizationService>();
             RequestInterceptFilterMock = new Mock<IRequestInterceptFilter>();
             RequestAbstractionMock = new Mock<IRequestAbstraction>();
             ResponseAbstractionMock = new Mock<IResponseAbstraction>();
+            InterceptCacheMock = new Mock<IInterceptCache>();
 
             HttpContextMock = CreateHttpContextMock();
 

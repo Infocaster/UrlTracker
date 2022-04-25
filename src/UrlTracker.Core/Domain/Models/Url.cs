@@ -25,6 +25,7 @@ namespace UrlTracker.Core.Domain.Models
         private string? _host;
         private int? _port;
         private string? _query;
+        private string? _path;
         private readonly object _availableUrlTypesLock = new();
 
         public Protocol? Protocol
@@ -51,7 +52,7 @@ namespace UrlTracker.Core.Domain.Models
                 _port = value;
             }
         }
-        public string? Path { get; set; }
+        public string? Path { get => _path; set => _path = value.DefaultIfNullOrWhiteSpace("/"); }
         public string? Query { get => _query; set => _query = value?.TrimStart('?').DefaultIfNullOrWhiteSpace(null); }
         public IReadOnlyCollection<UrlType> AvailableUrlTypes
         {
@@ -97,7 +98,7 @@ namespace UrlTracker.Core.Domain.Models
             var portGroup = intercept.Groups["port"];
             var port = portGroup.Success ? (int?)int.Parse(portGroup.Value) : null;
             var pathGroup = intercept.Groups["path"];
-            var path = pathGroup.Success ? pathGroup.Value : "/";
+            var path = pathGroup.Success ? pathGroup.Value : null;
             var queryGroup = intercept.Groups["query"];
             var query = queryGroup.Success ? queryGroup.Value : null;
 
@@ -165,7 +166,7 @@ namespace UrlTracker.Core.Domain.Models
                     sb.Append(":" + Port);
                 }
             }
-            var path = Path?.TrimEnd('/');
+            var path = Path!.TrimEnd('/');
             if (ensureTrailingSlash) path += "/";
             sb.Append(path);
 

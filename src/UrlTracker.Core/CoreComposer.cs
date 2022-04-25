@@ -13,6 +13,7 @@ using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Domain;
+using UrlTracker.Core.Events;
 using UrlTracker.Core.Exceptions;
 using UrlTracker.Core.Intercepting;
 using UrlTracker.Core.Intercepting.Conversion;
@@ -126,8 +127,8 @@ namespace UrlTracker.Core
 
         public static IUmbracoBuilder ComposeUrlTrackerCoreNotifications(this IUmbracoBuilder builder)
         {
-            builder.AddNotificationHandler<DomainDeletedNotification, ContentChangeHandlerComponent>();
-            builder.AddNotificationHandler<DomainSavedNotification, ContentChangeHandlerComponent>();
+            builder.AddNotificationHandler<DomainDeletedNotification, ContentChangeNotificationHandler>();
+            builder.AddNotificationHandler<DomainSavedNotification, ContentChangeNotificationHandler>();
             return builder;
         }
 

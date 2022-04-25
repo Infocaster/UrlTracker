@@ -31,5 +31,10 @@ namespace UrlTracker.Core
         {
             return _legacyRepository.GetAsync(id);
         }
+
+        public Task<bool> IsIgnoredAsync(string url)
+        {
+            return _legacyRepository.IsIgnoredAsync(url);
+        }
     }
 }

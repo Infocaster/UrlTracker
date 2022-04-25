@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Umbraco.Cms.Core.Events;
@@ -41,7 +42,7 @@ namespace UrlTracker.Web
             _logger.LogRequestDetected(url.ToString());
 
             await DoInterceptAsync(context, url);
-            await _eventAggregator.PublishAsync(new UrlTrackerHandled(context));
+            await _eventAggregator.PublishAsync(new UrlTrackerHandled(context, url));
         }
 
         public async Task DoInterceptAsync(HttpContext context, Url url)
@@ -54,28 +55,15 @@ namespace UrlTracker.Web
             }
 
             var intercept = await _interceptService.GetAsync(url);
-            if (intercept is null)
-            {
-                _logger.LogAbortHandling("No intercept was found");
-                await _next(context);
-                return;
-            }
 
             _logger.LogInterceptFound(intercept.GetType());
 
             var handler = _interceptHandlers.Get(intercept);
-            if (handler is not null)
-            {
-                await handler.HandleAsync(_next, context, intercept);
-            }
-            else
-            {
-                _logger.LogNoHandlerFound();
-                await _next(context);
-            }
+            await handler.HandleAsync(_next, context, intercept);
         }
     }
 
+    [ExcludeFromCodeCoverage]
     public static class IApplicationBuilderExtensions
     {
         public static IApplicationBuilder UseUrlTracker(this IApplicationBuilder app)

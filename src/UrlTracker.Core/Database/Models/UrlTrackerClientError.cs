@@ -16,6 +16,7 @@ namespace UrlTracker.Core.Database.Models
         public HttpStatusCode TargetStatusCode { get; set; }
     }
 
+    [ExcludeFromCodeCoverage]
     public class UrlTrackerClientError
         : UrlTrackerShallowClientError
     {

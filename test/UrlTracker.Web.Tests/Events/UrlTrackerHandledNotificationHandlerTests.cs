@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Logging;
@@ -12,7 +13,7 @@ using UrlTracker.Web.Events.Models;
 
 namespace UrlTracker.Web.Tests.Events
 {
-    public class ProcessedEventSubscriberTests : TestBase
+    public class UrlTrackerHandledNotificationHandlerTests : TestBase
     {
         private UrlTrackerHandledNotificationHandler? _testSubject;
 
@@ -28,7 +29,7 @@ namespace UrlTracker.Web.Tests.Events
             HttpContextMock!.ResponseMock.Setup(obj => obj.StatusCode).Returns(200);
 
             // act
-            await _testSubject!.HandleAsync(new UrlTrackerHandled(HttpContextMock.Context), CancellationToken.None);
+            await _testSubject!.HandleAsync(new UrlTrackerHandled(HttpContextMock.Context, Url.Parse("http://example.com/")), CancellationToken.None);
 
             // assert
             ClientErrorServiceMock!.VerifyNoOtherCalls();
@@ -39,10 +40,10 @@ namespace UrlTracker.Web.Tests.Events
         {
             // arrange
             HttpContextMock!.ResponseMock.Setup(obj => obj.StatusCode).Returns(404);
-            ClientErrorFilterCollectionMock!.Setup(obj => obj.EvaluateCandidacyAsync(HttpContextMock.Context)).ReturnsAsync(false);
+            ClientErrorFilterCollectionMock!.Setup(obj => obj.EvaluateCandidacyAsync(It.Is<UrlTrackerHandled>(h => h.HttpContext == HttpContextMock!.Context))).ReturnsAsync(false);
 
             // act
-            await _testSubject!.HandleAsync(new UrlTrackerHandled(HttpContextMock.Context), CancellationToken.None);
+            await _testSubject!.HandleAsync(new UrlTrackerHandled(HttpContextMock.Context, Url.Parse("http://example.com/")), CancellationToken.None);
 
             // assert
             ClientErrorServiceMock!.VerifyNoOtherCalls();
@@ -55,11 +56,11 @@ namespace UrlTracker.Web.Tests.Events
             HttpContextMock = new HttpContextMock(new Uri("http://example.com"));
             HttpContextMock.ResponseMock.Setup(obj => obj.StatusCode).Returns(404);
             RequestAbstractionMock!.Setup(obj => obj.GetReferrer(HttpContextMock.Request)).Returns(new Uri("http://example.com/lorem"));
-            ClientErrorFilterCollectionMock!.Setup(obj => obj.EvaluateCandidacyAsync(HttpContextMock.Context)).ReturnsAsync(true);
+            ClientErrorFilterCollectionMock!.Setup(obj => obj.EvaluateCandidacyAsync(It.Is<UrlTrackerHandled>(h => h.HttpContext == HttpContextMock.Context))).ReturnsAsync(true);
             ClientErrorServiceMock!.Setup(obj => obj.AddAsync(It.IsAny<NotFound>())).ReturnsAsync((NotFound notFound) => notFound).Verifiable();
 
             // act
-            await _testSubject!.HandleAsync(new UrlTrackerHandled(HttpContextMock.Context), CancellationToken.None);
+            await _testSubject!.HandleAsync(new UrlTrackerHandled(HttpContextMock.Context, Url.Parse("http://example.com/")), CancellationToken.None);
 
             // assert
             ClientErrorServiceMock.Verify();

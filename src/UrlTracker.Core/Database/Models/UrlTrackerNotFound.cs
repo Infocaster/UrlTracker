@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace UrlTracker.Core.Database.Models
 {
+    [ExcludeFromCodeCoverage]
     public class UrlTrackerNotFound
     {
         public UrlTrackerNotFound(string url)
@@ -16,6 +18,7 @@ namespace UrlTracker.Core.Database.Models
         public DateTime Inserted { get; set; }
     }
 
+    [ExcludeFromCodeCoverage]
     public class UrlTrackerRichNotFound
     {
         public UrlTrackerRichNotFound(string url)

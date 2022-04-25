@@ -40,6 +40,7 @@ namespace UrlTracker.Core.Intercepting.Models
         { }
     }
 
+    [ExcludeFromCodeCoverage]
     public static class CachableInterceptBase
     {
         // create a static single instance for easy identification

@@ -9,5 +9,6 @@ namespace UrlTracker.Core
     {
         Task DeleteAsync(UrlTrackerEntry entry);
         Task<UrlTrackerEntry?> GetAsync(int id);
+        Task<bool> IsIgnoredAsync(string url);
     }
 }

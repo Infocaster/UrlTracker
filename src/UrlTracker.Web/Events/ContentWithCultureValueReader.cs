@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Extensions;
@@ -10,6 +6,7 @@ using UrlTracker.Core;
 
 namespace UrlTracker.Web.Events
 {
+    [ExcludeFromCodeCoverage]
     public class ContentWithCultureValueReader : IContentValueReader
     {
         private readonly IContent _content;

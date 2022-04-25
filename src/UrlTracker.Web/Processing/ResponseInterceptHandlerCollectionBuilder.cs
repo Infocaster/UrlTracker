@@ -9,21 +9,27 @@ namespace UrlTracker.Web.Processing
 {
     [ExcludeFromCodeCoverage]
     public class ResponseInterceptHandlerCollectionBuilder
-        : OrderedCollectionBuilderBase<ResponseInterceptHandlerCollectionBuilder, ResponseInterceptHandlerCollection, IResponseInterceptHandler>
+        : OrderedCollectionBuilderBase<ResponseInterceptHandlerCollectionBuilder, ResponseInterceptHandlerCollection, ISpecificResponseInterceptHandler>
     {
         protected override ResponseInterceptHandlerCollectionBuilder This => this;
     }
 
     public class ResponseInterceptHandlerCollection
-        : BuilderCollectionBase<IResponseInterceptHandler>, IResponseInterceptHandlerCollection
+        : BuilderCollectionBase<ISpecificResponseInterceptHandler>, IResponseInterceptHandlerCollection
     {
-        public ResponseInterceptHandlerCollection(Func<IEnumerable<IResponseInterceptHandler>> items)
-            : base(items)
-        { }
+        private readonly ILastChanceResponseInterceptHandler _lastChance;
 
-        public IResponseInterceptHandler? Get(IIntercept intercept)
+        public ResponseInterceptHandlerCollection(Func<IEnumerable<ISpecificResponseInterceptHandler>> items,
+                                                  ILastChanceResponseInterceptHandler lastChance)
+            : base(items)
         {
-            return this.FirstOrDefault(handler => handler.CanHandle(intercept));
+            _lastChance = lastChance;
+        }
+
+        public IResponseInterceptHandler Get(IIntercept intercept)
+        {
+            return this.FirstOrDefault(handler => handler.CanHandle(intercept))
+                ?? (IResponseInterceptHandler)_lastChance;
         }
     }
 }

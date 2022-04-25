@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using NPoco;
 
 namespace UrlTracker.Core.Database.Models
@@ -6,6 +7,7 @@ namespace UrlTracker.Core.Database.Models
     /* This model is read only!
      *     The purpose of this model is to read data from the UrlTrackerEntry table, aggregated for counting occurrences
      */
+    [ExcludeFromCodeCoverage]
     public class UrlTrackerEntryNotFoundAggregate
     {
         [Column("Id"), ComputedColumn]

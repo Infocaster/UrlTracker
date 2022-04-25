@@ -56,6 +56,8 @@ namespace UrlTracker.Web
                 .Append<RedirectResponseInterceptHandler>()
                 .Append<NoLongerExistsResponseInterceptHandler>()
                 .Append<NullInterceptHandler>();
+
+            builder.Services.AddSingleton<ILastChanceResponseInterceptHandler, LastChanceResponseInterceptHandler>();
             return builder;
         }
 
@@ -69,7 +71,8 @@ namespace UrlTracker.Web
         public static IUmbracoBuilder ComposeDefaultClientErrorFilters(this IUmbracoBuilder builder)
         {
             builder.ClientErrorFilters()
-                .Append<ConfigurationClientErrorFilter>();
+                .Append<ConfigurationClientErrorFilter>()
+                .Append<IgnoredClientErrorFilter>();
             return builder;
         }
 

@@ -3,15 +3,15 @@ using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Notifications;
 
-namespace UrlTracker.Core.Components
+namespace UrlTracker.Core.Events
 {
     [ExcludeFromCodeCoverage]
-    public class ContentChangeHandlerComponent
+    public class ContentChangeNotificationHandler
         : INotificationHandler<DomainDeletedNotification>, INotificationHandler<DomainSavedNotification>
     {
         private readonly IAppPolicyCache _runtimeCache;
 
-        public ContentChangeHandlerComponent(AppCaches appCaches)
+        public ContentChangeNotificationHandler(AppCaches appCaches)
         {
             _runtimeCache = appCaches.RuntimeCache;
         }

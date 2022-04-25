@@ -4,6 +4,6 @@ namespace UrlTracker.Web.Processing
 {
     public interface IResponseInterceptHandlerCollection
     {
-        IResponseInterceptHandler? Get(IIntercept intercept);
+        IResponseInterceptHandler Get(IIntercept intercept);
     }
 }

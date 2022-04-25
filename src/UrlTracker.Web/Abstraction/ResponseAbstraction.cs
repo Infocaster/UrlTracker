@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Http;
 
 namespace UrlTracker.Web.Abstraction
 {
+    [ExcludeFromCodeCoverage]
     public class ResponseAbstraction : IResponseAbstraction
     {
         public void Clear(HttpResponse response)

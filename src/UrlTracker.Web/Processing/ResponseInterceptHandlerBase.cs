@@ -7,7 +7,7 @@ namespace UrlTracker.Web.Processing
 {
     [ExcludeFromCodeCoverage]
     public abstract class ResponseInterceptHandlerBase<TInput>
-        : IResponseInterceptHandler
+        : ISpecificResponseInterceptHandler
     {
         public virtual bool CanHandle(IIntercept intercept)
             => intercept.Info is TInput;

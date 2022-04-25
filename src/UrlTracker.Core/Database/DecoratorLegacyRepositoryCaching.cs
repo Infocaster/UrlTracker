@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using UrlTracker.Core.Caching;
@@ -7,6 +8,7 @@ using UrlTracker.Core.Database.Models;
 namespace UrlTracker.Core.Database
 {
     [Obsolete("Introduced because any entry might be removed through this service. Do not use for new features.")]
+    [ExcludeFromCodeCoverage]
     public class DecoratorLegacyRepositoryCaching : ILegacyRepository
     {
         private readonly ILegacyRepository _decoratee;
@@ -37,6 +39,11 @@ namespace UrlTracker.Core.Database
         public Task<UrlTrackerEntry?> GetAsync(int id)
         {
             return _decoratee.GetAsync(id);
+        }
+
+        public Task<bool> IsIgnoredAsync(string url)
+        {
+            return _decoratee.IsIgnoredAsync(url);
         }
     }
 }

@@ -24,16 +24,10 @@ namespace UrlTracker.Web.Tests.Controllers.ActionFilters
             _actionExecutingContext = new ActionExecutingContext(_actionContext, new List<IFilterMetadata>(), new Dictionary<string, object>(), new object());
         }
 
-
-        public static IEnumerable<TestCaseData> TestCases()
-        {
-            yield return new TestCaseData(null, null).SetName("OnActionExecuting doesn't touch urls that are null");
-            yield return new TestCaseData("lorem/ipsum", "/lorem/ipsum").SetName("OnActionExecuting prepends a slash if the url seems relative without a slash");
-            yield return new TestCaseData("https://example.com", "https://example.com").SetName("OnActionExecuting doesn't touch absolute urls");
-            yield return new TestCaseData("/lorem/ipsum", "/lorem/ipsum").SetName("OnActionExecuting doesn't touch relative urls with a leading slash");
-        }
-
-        [TestCaseSource(nameof(TestCases))]
+        [TestCase(null, null, TestName = "OnActionExecuting doesn't touch urls that are null")]
+        [TestCase("lorem/ipsum", "/lorem/ipsum", TestName = "OnActionExecuting prepends a slash if the url seems relative without a slash")]
+        [TestCase("https://example.com", "https://example.com", TestName = "OnActionExecuting doesn't touch absolute urls")]
+        [TestCase("/lorem/ipsum", "/lorem/ipsum", TestName = "OnActionExecuting doesn't touch relative urls with a leading slash")]
         public void OnActionExecuting_IncomingUrls_PatchesModels(string inputUrl, string expected)
         {
             // arrange

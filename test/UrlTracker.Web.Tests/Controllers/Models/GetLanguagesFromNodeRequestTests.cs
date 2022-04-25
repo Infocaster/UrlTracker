@@ -22,7 +22,7 @@ namespace UrlTracker.Web.Tests.Controllers.Models
                 new GetLanguagesFromNodeRequest { },
                 new[] { nameof(GetLanguagesFromNodeRequest.NodeId) },
                 Array.Empty<string>()
-                ).SetName("TryValidateObject retursn false on a request model if node id is not given");
+                ).SetName("TryValidateObject returns false on a request model if node id is not given");
         }
 
         [TestCaseSource(nameof(TestCases))]

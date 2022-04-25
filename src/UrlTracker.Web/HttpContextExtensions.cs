@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Http;
 using UrlTracker.Core.Domain.Models;
 
@@ -5,6 +6,7 @@ namespace UrlTracker.Web
 {
     public static class HttpContextExtensions
     {
+        [ExcludeFromCodeCoverage]
         public static Url GetUrl(this HttpRequest request)
         {
             return Url.Create(

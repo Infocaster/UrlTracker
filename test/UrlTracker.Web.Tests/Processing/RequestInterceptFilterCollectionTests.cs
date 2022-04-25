@@ -8,7 +8,7 @@ using UrlTracker.Web.Processing;
 
 namespace UrlTracker.Web.Tests.Processing
 {
-    public class RequestFilterCollectionTests : TestBase
+    public class RequestInterceptFilterCollectionTests : TestBase
     {
         private RequestInterceptFilterCollection? _testSubject;
 
@@ -17,13 +17,8 @@ namespace UrlTracker.Web.Tests.Processing
             _testSubject = new RequestInterceptFilterCollection(() => new List<IRequestInterceptFilter> { RequestInterceptFilter });
         }
 
-        public static IEnumerable<TestCaseData> TestCases()
-        {
-            yield return new TestCaseData(true, true).SetName("EvaluateCandidateAsync returns true if filters return true");
-            yield return new TestCaseData(false, false).SetName("EvaluateCandidateAsync returns false if any filter returns false");
-        }
-
-        [TestCaseSource(nameof(TestCases))]
+        [TestCase(true, true, TestName = "EvaluateCandidateAsync returns true if all filters return true")]
+        [TestCase(false, false, TestName = "EvaluateCandidateAsync returns false if any filter returns false")]
         public async Task EvaluateCandidateAsync_NormalFlow_ReturnsResult(bool output, bool expected)
         {
             // arrange

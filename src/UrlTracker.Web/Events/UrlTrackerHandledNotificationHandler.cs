@@ -38,7 +38,7 @@ namespace UrlTracker.Web.Events
                 return;
             }
 
-            if (!await _clientErrorFilterCollection.EvaluateCandidacyAsync(notification.HttpContext))
+            if (!await _clientErrorFilterCollection.EvaluateCandidacyAsync(notification))
             {
                 _logger.LogAbortClientErrorHandling("Incoming request failed client error candidacy check");
                 return;
@@ -50,7 +50,7 @@ namespace UrlTracker.Web.Events
         [ExcludeFromCodeCoverage]
         private NotFound CreateNotFound(UrlTrackerHandled args)
         {
-            return new NotFound(args.HttpContext.Request.GetUrl().ToString())
+            return new NotFound(args.Url.ToString())
             {
                 Referrer = args.HttpContext.Request.GetReferrer(_requestAbstraction)?.AbsoluteUri
             };

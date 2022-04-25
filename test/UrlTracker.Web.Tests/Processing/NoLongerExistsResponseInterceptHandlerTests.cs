@@ -22,8 +22,8 @@ namespace UrlTracker.Web.Tests.Processing
         public static IEnumerable<TestCaseData> TestCases()
         {
             var notFound = new UrlTrackerShallowClientError(HttpStatusCode.Gone);
-            yield return new TestCaseData(notFound, 404, 410);
-            yield return new TestCaseData(notFound, 200, 200);
+            yield return new TestCaseData(notFound, 404, 410).SetName("HandleAsync rewrites response to 410 if status code is 404");
+            yield return new TestCaseData(notFound, 200, 200).SetName("HandleAsync does nothing if status code is 200");
         }
 
         [TestCaseSource(nameof(TestCases))]

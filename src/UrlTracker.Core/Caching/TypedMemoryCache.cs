@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
@@ -26,6 +27,7 @@ namespace UrlTracker.Core.Caching
         }
 
         // Implementation inspired by stack overflow: https://stackoverflow.com/a/65683029/2853950
+        [ExcludeFromCodeCoverage]
         public Task<TValue> GetOrCreateAsync(TKey key, Func<Task<TValue>> factory, MemoryCacheEntryOptions? options = null)
         {
             if (!_cache.TryGetValue(key, out Task<TValue> task))
@@ -41,12 +43,7 @@ namespace UrlTracker.Core.Caching
 
                 // a cancellation token will help ensure that no faulty or double entries make it into the cache.
                 var cts = new CancellationTokenSource();
-                var newTaskTask = new Task<Task<TValue>>(async () =>
-                {
-                    try { return await factory().ConfigureAwait(false); }
-                    catch { cts.Cancel(); throw; }
-                    finally { cts.Dispose(); }
-                });
+                var newTaskTask = new Task<Task<TValue>>(() => ExecuteFactory(factory, cts));
                 var newTask = newTaskTask.Unwrap();
                 entry.ExpirationTokens.Add(new CancellationChangeToken(cts.Token));
                 entry.Value = newTask;
@@ -68,6 +65,14 @@ namespace UrlTracker.Core.Caching
             return task;
         }
 
+        [ExcludeFromCodeCoverage]
+        private static async Task<TValue> ExecuteFactory(Func<Task<TValue>> factory, CancellationTokenSource cts)
+        {
+            try { return await factory().ConfigureAwait(false); }
+            catch { cts.Cancel(); throw; }
+            finally { cts.Dispose(); }
+        }
+
         public void Clear()
         {
             lock (_lock)
@@ -79,6 +84,7 @@ namespace UrlTracker.Core.Caching
         }
 
         #region IDisposable implementation
+        [ExcludeFromCodeCoverage]
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -93,6 +99,7 @@ namespace UrlTracker.Core.Caching
             }
         }
 
+        [ExcludeFromCodeCoverage]
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method

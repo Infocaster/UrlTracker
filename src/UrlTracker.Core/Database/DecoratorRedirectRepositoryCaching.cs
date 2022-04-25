@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Core.Database
 {
+    [ExcludeFromCodeCoverage]
     public class DecoratorRedirectRepositoryCaching
         : IRedirectRepository
     {

@@ -21,16 +21,16 @@ namespace UrlTracker.Core
             _interceptConverters = interceptConverters;
         }
 
-        public async Task<IIntercept?> GetAsync(Url url)
+        public async Task<IIntercept> GetAsync(Url url)
         {
             if (!url.AvailableUrlTypes.Contains(UrlType.Absolute))
             {
                 throw new ArgumentException("Url must be absolute", nameof(url));
             }
 
-            var intermediateIntercept = await _intermediateInterceptService.GetAsync(url);
+            ICachableIntercept intermediateIntercept = await _intermediateInterceptService.GetAsync(url);
 
-            var result = intermediateIntercept is not null ? await _interceptConverters.ConvertAsync(intermediateIntercept) : null;
+            var result = await _interceptConverters.ConvertAsync(intermediateIntercept);
             return result;
         }
     }

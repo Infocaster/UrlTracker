@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
 using Umbraco.Cms.Infrastructure.Migrations;
 
 namespace UrlTracker.Core.Database.Migrations
 {
+    [ExcludeFromCodeCoverage]
     public class M202204091707_AddIndexes
         : MigrationBase
     {

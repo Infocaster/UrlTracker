@@ -1,10 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Configuration;
 using UrlTracker.Core.Configuration.Models;
 
 namespace UrlTracker.Core
 {
     public static class IConfigurationExtensions
     {
+        [ExcludeFromCodeCoverage]
         public static UrlTrackerSettings GetUrlTrackerSettings(this IConfiguration configuration)
         {
             var settings = new UrlTrackerSettings();

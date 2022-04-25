@@ -6,6 +6,6 @@ namespace UrlTracker.Core
 {
     public interface IInterceptService
     {
-        Task<IIntercept?> GetAsync(Url url);
+        Task<IIntercept> GetAsync(Url url);
     }
 }

@@ -11,12 +11,6 @@ namespace UrlTracker.Web
         public static void LogUrlTrackerDisabled(this ILogger logger)
             => logger.LogDebug(new EventId(2001), "Url tracker is disabled by config");
 
-        public static void LogEventPublished(this ILogger logger, Type eventType, Type source)
-            => logger.LogDebug(new EventId(2002), "{eventType} event published", eventType, source);
-
-        public static void LogSubscriberError(this ILogger logger, Exception exception, Type subscriberType, Type eventType)
-            => logger.LogError(new EventId(2003), exception, "{subscriberType} threw an exception while handling {eventType} event", subscriberType, eventType);
-
         public static void LogRequestDetected(this ILogger logger, string url)
             => logger.LogDebug(new EventId(2004), "Incoming url detected: '{url}'", url);
 
@@ -25,11 +19,6 @@ namespace UrlTracker.Web
 
         public static void LogInterceptFound(this ILogger logger, Type interceptType)
             => logger.LogDebug(new EventId(2006), "Found an intercept of type '{interceptType}'", interceptType);
-
-        public static void LogRegisteredEventHandlers(this ILogger logger)
-        {
-            logger.LogDebug(new EventId(2007), "Registered eventhandlers");
-        }
 
         public static void LogAbortClientErrorHandling(this ILogger logger, string reason)
             => logger.LogDebug(new EventId(2008), "Client error handling aborted: {reason}", reason);
@@ -51,5 +40,8 @@ namespace UrlTracker.Web
 
         public static void LogNoHandlerFound(this ILogger logger)
             => logger.LogError(new EventId(2014), "No handler was found to handle the intercept.");
+
+        public static void LogLastChance(this ILogger logger, Type interceptType)
+            => logger.LogWarning(new EventId(2014), "Last chance handler invoked for intercept of type {interceptType}. Did you forget to register a handler?", interceptType);
     }
 }

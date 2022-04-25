@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using NUnit.Framework;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Resources.Testing;
@@ -17,13 +16,8 @@ namespace UrlTracker.Web.Tests.Processing
             _testSubject = new ConfigurationInterceptFilter(UrlTrackerSettings!, new ConsoleLogger<ConfigurationInterceptFilter>());
         }
 
-        public static IEnumerable<TestCaseData> TestCases()
-        {
-            yield return new TestCaseData(true, false).SetName("EvaluateCandidateAsync returns false if url tracker is disabled");
-            yield return new TestCaseData(false, true).SetName("EvaluateCandidateAsync returns true if url tracker is not disabled");
-        }
-
-        [TestCaseSource(nameof(TestCases))]
+        [TestCase(true, false, TestName = "EvaluateCandidateAsync returns false if url tracker is disabled")]
+        [TestCase(false, true, TestName = "EvaluateCandidateAsync returns true if url tracker is not disabled")]
         public async Task EvaluateCandidateAsync_NormalFlow_ReturnsResult(bool disabled, bool expected)
         {
             // arrange

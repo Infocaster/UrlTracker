@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Database.Models;
@@ -103,6 +104,7 @@ namespace UrlTracker.Core.Map
             target.TargetStatusCode = GetStatusCode(source);
         }
 
+        [ExcludeFromCodeCoverage]
         private static HttpStatusCode GetStatusCode(UrlTrackerEntry source)
         {
             return source.Is404 ? HttpStatusCode.NotFound : (HttpStatusCode)(source.RedirectHttpCode ?? throw new ArgumentException("RedirectHttpCode cannot be null if Is404 is false", nameof(source)));

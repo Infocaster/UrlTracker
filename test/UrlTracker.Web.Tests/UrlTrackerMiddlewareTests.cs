@@ -48,23 +48,6 @@ namespace UrlTracker.Web.Tests.Events
             ResponseInterceptHandlerMock.Verify();
         }
 
-        [TestCase(TestName = "HandleAsync cuts the intercept short if no intercept was found")]
-        public async Task HandleAsync_NoIntercept_InterceptCutShort()
-        {
-            // arrange
-            RequestInterceptFilterCollectionMock!.Setup(obj => obj.EvaluateCandidateAsync(It.IsAny<Url>())).ReturnsAsync(true);
-            InterceptServiceMock!.Setup(obj => obj.GetAsync(It.IsAny<Url>()))
-                .ReturnsAsync(null as IIntercept)
-                .Verifiable();
-
-            // act
-            await _testSubject!.InvokeAsync(HttpContextMock!.Context);
-
-            // assert
-            InterceptServiceMock.Verify();
-            ResponseInterceptHandlerCollectionMock!.VerifyNoOtherCalls();
-        }
-
         [TestCase(TestName = "HandleAsync cuts intercept short if the incoming request is not a candidate")]
         public async Task HandleAsync_NoValidCandidate_InterceptCutShort()
         {

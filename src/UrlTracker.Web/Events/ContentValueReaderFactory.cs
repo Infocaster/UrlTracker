@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Umbraco.Cms.Core.Models;
-using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Extensions;
 
 namespace UrlTracker.Web.Events
 {
+    [ExcludeFromCodeCoverage]
     public class ContentValueReaderFactory
         : IContentValueReaderFactory
     {
@@ -18,7 +15,7 @@ namespace UrlTracker.Web.Events
 
             if (content.ContentType.VariesByCulture())
             {
-                foreach(var culture in content.CultureInfos)
+                foreach (var culture in content.CultureInfos)
                 {
                     if (!onlyChanged || culture.IsDirty())
                     {

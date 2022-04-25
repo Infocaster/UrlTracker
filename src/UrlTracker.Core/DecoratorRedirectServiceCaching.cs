@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using UrlTracker.Core.Caching;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core
 {
+    [ExcludeFromCodeCoverage]
     public class DecoratorRedirectServiceCaching : IRedirectService
     {
         private readonly IRedirectService _decoratee;

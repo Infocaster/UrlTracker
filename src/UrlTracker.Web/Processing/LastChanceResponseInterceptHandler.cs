@@ -2,20 +2,24 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using UrlTracker.Core.Intercepting.Models;
+using UrlTracker.Core.Logging;
 
 namespace UrlTracker.Web.Processing
 {
     [ExcludeFromCodeCoverage]
-    public class NullInterceptHandler
-        : ISpecificResponseInterceptHandler
+    public class LastChanceResponseInterceptHandler
+        : ILastChanceResponseInterceptHandler
     {
-        public bool CanHandle(IIntercept intercept)
+        private readonly ILogger<LastChanceResponseInterceptHandler> _logger;
+
+        public LastChanceResponseInterceptHandler(ILogger<LastChanceResponseInterceptHandler> logger)
         {
-            return object.ReferenceEquals(intercept, CachableInterceptBase.NullIntercept);
+            _logger = logger;
         }
 
         public ValueTask HandleAsync(RequestDelegate next, HttpContext context, IIntercept intercept)
         {
+            _logger.LogLastChance(intercept.GetType());
             return new ValueTask(next(context));
         }
     }

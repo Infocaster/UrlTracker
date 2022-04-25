@@ -9,7 +9,7 @@ namespace UrlTracker.Web
 {
     public static class UmbracoMapperExtensions
     {
-        const string _httpContextKey = "ic:urltracker:httpcontext";
+        private const string _httpContextKey = "ic:urltracker:httpcontext";
 
         [ExcludeFromCodeCoverage]
         public static void SetHttpContext(this MapperContext context, HttpContext httpContext)
