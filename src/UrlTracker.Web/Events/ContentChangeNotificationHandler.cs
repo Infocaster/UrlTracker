@@ -113,7 +113,7 @@ namespace UrlTracker.Web.Events
                 var newRoot = newParent.Root();
                 if (newRoot is null) continue;
 
-                foreach (var item in DescendantsForAllCultures(content).Prepend(content))
+                foreach (var item in DescendantsAndSelfForAllCultures(content))
                 {
                     List<string?> cultures = GetCulturesFromContent(item);
 
@@ -199,9 +199,9 @@ namespace UrlTracker.Web.Events
             return !(configurationValue.IsDisabled || configurationValue.IsTrackingDisabled);
         }
 
-        private IEnumerable<IPublishedContent> DescendantsForAllCultures(IPublishedContent content)
+        private IEnumerable<IPublishedContent> DescendantsAndSelfForAllCultures(IPublishedContent content)
         {
-            return content.ChildrenForAllCultures.SelectMany(child => DescendantsForAllCultures(child));
+            return content.ChildrenForAllCultures.SelectMany(child => DescendantsAndSelfForAllCultures(child)).Prepend(content);
         }
     }
 }
