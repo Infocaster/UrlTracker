@@ -184,11 +184,17 @@ namespace UrlTracker.Web.Controllers
 
         [HttpPost]
         [ExcludeFromCodeCoverage]
-        public async Task<IHttpActionResult> AddIgnore404([FromBody] AddIgnore404Request request)
+        public async Task<IHttpActionResult> AddIgnore404([FromBody] int id)
         {
+            var request = new AddIgnore404Request
+            {
+                Id = id
+            };
+
             var notFound = await _clientErrorService.GetAsync(request.Id.Value);
             if (notFound is null) return NotFound();
 
+            notFound.Ignored = true;
             await _clientErrorService.UpdateAsync(notFound);
             return StatusCode(HttpStatusCode.NoContent);
         }

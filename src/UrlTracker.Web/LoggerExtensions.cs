@@ -67,5 +67,10 @@ namespace UrlTracker.Web
         {
             logger.Debug<T>("Incoming url is reserved by umbraco settings.");
         }
+
+        public static void LogLastChance<T>(this ILogger logger, Type interceptType)
+        {
+            logger.Warn<T>("Last chance handler invoked for intercept of type {interceptType}. Did you forget to register a handler?", interceptType);
+        }
     }
 }

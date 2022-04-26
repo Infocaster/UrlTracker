@@ -5,7 +5,7 @@ using UrlTracker.Core.Intercepting.Models;
 namespace UrlTracker.Web.Processing
 {
     public class NullInterceptHandler
-        : IResponseInterceptHandler
+        : ISpecificResponseInterceptHandler
     {
         public bool CanHandle(IIntercept intercept)
         {

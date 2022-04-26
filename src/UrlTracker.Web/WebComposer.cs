@@ -68,6 +68,8 @@ namespace UrlTracker.Web
                 .Append<RedirectResponseInterceptHandler>()
                 .Append<NoLongerExistsResponseInterceptHandler>()
                 .Append<NullInterceptHandler>();
+
+            composition.RegisterUnique<ILastChanceResponseInterceptHandler, LastChanceResponseInterceptHandler>();
             return composition;
         }
 
@@ -81,7 +83,8 @@ namespace UrlTracker.Web
         public static Composition ComposeDefaultClientErrorFilters(this Composition composition)
         {
             composition.ClientErrorFilters()
-                .Append<ConfigurationClientErrorFilter>();
+                .Append<ConfigurationClientErrorFilter>()
+                .Append<IgnoredClientErrorFilter>();
             return composition;
         }
 

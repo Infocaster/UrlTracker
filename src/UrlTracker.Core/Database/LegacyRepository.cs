@@ -59,5 +59,16 @@ namespace UrlTracker.Core.Database
                 scope.Complete();
             }
         }
+
+        public async Task<bool> IsIgnoredAsync(string url)
+        {
+            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+            {
+                var query = scope.SqlContext.Sql().SelectCount()
+                    .From<UrlTrackerIgnoreEntry>()
+                    .Where<UrlTrackerIgnoreEntry>(e => e.Url == url);
+                return (await scope.Database.ExecuteScalarAsync<int>(query)) > 0;
+            }
+        }
     }
 }

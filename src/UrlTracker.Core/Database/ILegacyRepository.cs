@@ -10,5 +10,6 @@ namespace UrlTracker.Core.Database
         Task DeleteAsync(UrlTrackerEntry entry);
         Task DeleteAsync(string culture, string sourceUrl, int? targetRootNodeId, bool is404);
         Task<UrlTrackerEntry> GetAsync(int id);
+        Task<bool> IsIgnoredAsync(string url);
     }
 }

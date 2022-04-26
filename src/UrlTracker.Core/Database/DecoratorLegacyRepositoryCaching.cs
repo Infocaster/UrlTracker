@@ -33,5 +33,10 @@ namespace UrlTracker.Core.Database
         {
             return _decoratee.GetAsync(id);
         }
+
+        public Task<bool> IsIgnoredAsync(string url)
+        {
+            return _decoratee.IsIgnoredAsync(url);
+        }
     }
 }

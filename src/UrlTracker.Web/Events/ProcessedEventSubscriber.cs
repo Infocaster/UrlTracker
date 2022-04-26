@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 using UrlTracker.Core;
 using UrlTracker.Core.Models;
@@ -40,7 +39,7 @@ namespace UrlTracker.Web.Events
                 return;
             }
 
-            if (!await _clientErrorFilterCollection.EvaluateCandidacyAsync(args.HttpContext))
+            if (!await _clientErrorFilterCollection.EvaluateCandidacyAsync(args))
             {
                 _logger.LogAbortClientErrorHandling<ProcessedEventSubscriber>("Incoming request failed client error candidacy check");
                 return;
@@ -57,7 +56,7 @@ namespace UrlTracker.Web.Events
         {
             return new NotFound
             {
-                Url = args.HttpContext.Request.Url.AbsoluteUri,
+                Url = args.Url.ToString(),
                 Referrer = args.HttpContext.Request.UrlReferrer?.AbsoluteUri
             };
         }

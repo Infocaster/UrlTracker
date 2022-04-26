@@ -6,7 +6,16 @@ namespace UrlTracker.Web.Processing
 {
     public interface IResponseInterceptHandler
     {
-        bool CanHandle(IIntercept intercept);
         ValueTask HandleAsync(HttpContextBase context, IIntercept intercept);
     }
+
+    public interface ISpecificResponseInterceptHandler
+        : IResponseInterceptHandler
+    {
+        bool CanHandle(IIntercept intercept);
+    }
+
+    public interface ILastChanceResponseInterceptHandler
+        : IResponseInterceptHandler
+    { }
 }

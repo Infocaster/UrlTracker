@@ -37,7 +37,7 @@ namespace UrlTracker.Web.Events
             _logger.LogRequestDetected<IncomingRequestEventSubscriber>(context.Request.Url.AbsoluteUri);
 
             await DoInterceptAsync(context, url);
-            await _onProcessedEvent.PublishAsync(this, new ProcessedEventArgs(context));
+            await _onProcessedEvent.PublishAsync(this, new ProcessedEventArgs(context, url));
         }
 
         public async Task DoInterceptAsync(HttpContextBase context, Url url)
@@ -49,11 +49,6 @@ namespace UrlTracker.Web.Events
             }
 
             var intercept = await _interceptService.GetAsync(url);
-            if (intercept is null)
-            {
-                _logger.LogAbortHandling<IncomingRequestEventSubscriber>("No intercept was found");
-                return;
-            }
 
             _logger.LogInterceptFound<IncomingRequestEventSubscriber>(intercept.GetType());
 

@@ -68,8 +68,8 @@ namespace UrlTracker.Resources.Testing
         protected IInterceptService InterceptService => InterceptServiceMock.Object;
         protected Mock<IResponseInterceptHandlerCollection> ResponseInterceptHandlerCollectionMock { get; set; }
         protected IResponseInterceptHandlerCollection ResponseInterceptHandlerCollection => ResponseInterceptHandlerCollectionMock.Object;
-        protected Mock<IResponseInterceptHandler> ResponseInterceptHandlerMock { get; set; }
-        protected IResponseInterceptHandler ResponseInterceptHandler => ResponseInterceptHandlerMock.Object;
+        protected Mock<ISpecificResponseInterceptHandler> ResponseInterceptHandlerMock { get; set; }
+        protected ISpecificResponseInterceptHandler ResponseInterceptHandler => ResponseInterceptHandlerMock.Object;
         protected Mock<IRequestInterceptFilterCollection> RequestInterceptFilterCollectionMock { get; set; }
         protected IRequestInterceptFilterCollection RequestInterceptFilterCollection => RequestInterceptFilterCollectionMock.Object;
         protected Mock<IClientErrorFilterCollection> ClientErrorFilterCollectionMock { get; set; }
@@ -139,7 +139,7 @@ namespace UrlTracker.Resources.Testing
             RequestModelPatcherMock = new Mock<IRequestModelPatcher>();
             InterceptServiceMock = new Mock<IInterceptService>();
             ResponseInterceptHandlerCollectionMock = new Mock<IResponseInterceptHandlerCollection>();
-            ResponseInterceptHandlerMock = new Mock<IResponseInterceptHandler>();
+            ResponseInterceptHandlerMock = new Mock<ISpecificResponseInterceptHandler>();
             RequestInterceptFilterCollectionMock = new Mock<IRequestInterceptFilterCollection>();
             ClientErrorFilterCollectionMock = new Mock<IClientErrorFilterCollection>();
             HttpContextAccessorAbstractionMock = new Mock<IHttpContextAccessorAbstraction>();

@@ -15,7 +15,7 @@ namespace UrlTracker.Core.Database.Models
     {
         [Column("Id")]
         [PrimaryKeyColumn(AutoIncrement = true, IdentitySeed = 1)]
-        public int? Id { get; set; }
+        public int Id { get; set; }
 
         [Column("RootNodeId"), NullSetting(NullSetting = NullSettings.Null)]
         public int? RootNodeId { get; set; }

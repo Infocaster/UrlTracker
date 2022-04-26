@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using UrlTracker.Core;
 using UrlTracker.Core.Configuration;
 using UrlTracker.Core.Configuration.Models;
+using UrlTracker.Web.Events.Models;
 
 namespace UrlTracker.Web.Processing
 {
@@ -17,10 +17,10 @@ namespace UrlTracker.Web.Processing
             _configuration = configuration;
         }
 
-        public ValueTask<bool> EvaluateCandidateAsync(HttpContextBase httpContext)
-            => new ValueTask<bool>(EvaluateCandidate(httpContext));
+        public ValueTask<bool> EvaluateCandidateAsync(ProcessedEventArgs e)
+            => new ValueTask<bool>(EvaluateCandidate(e));
 
-        private bool EvaluateCandidate(HttpContextBase httpContext)
+        private bool EvaluateCandidate(ProcessedEventArgs e)
         {
             // all 404 tracking should be cancelled if not found tracking or the entire URL Tracker is disabled
             var configurationValue = _configuration.Value;
@@ -29,7 +29,7 @@ namespace UrlTracker.Web.Processing
 
             // absolute path starts with /, so patterns should also take that into account
             if (Defaults.Tracking.IgnoredUrlPaths.Any(rx
-                => rx.IsMatch(httpContext.Request.Url.AbsolutePath))) return false;
+                => rx.IsMatch(e.Url.Path))) return false;
 
             return true;
         }

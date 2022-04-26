@@ -3,6 +3,7 @@ using Moq;
 using NUnit.Framework;
 using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Resources.Testing;
+using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Web.Processing;
 
 namespace UrlTracker.Web.Tests.Processing
@@ -13,11 +14,11 @@ namespace UrlTracker.Web.Tests.Processing
 
         public override void SetUp()
         {
-            _testSubject = new ResponseInterceptHandlerCollection(new List<IResponseInterceptHandler> { ResponseInterceptHandler });
+            _testSubject = new ResponseInterceptHandlerCollection(new List<ISpecificResponseInterceptHandler> { ResponseInterceptHandler }, new LastChanceResponseInterceptHandler(new ConsoleLogger()));
         }
 
         [TestCase(true, TestName = "Get returns handler if it can handle the intercept")]
-        [TestCase(false, TestName = "Get returns null if no handler can handle the intercept")]
+        [TestCase(false, TestName = "Get returns last chance if no handler can handle the intercept")]
         public void Get_NormalFlow_PassesInterceptToHandler(bool canHandle)
         {
             // arrange
@@ -32,7 +33,7 @@ namespace UrlTracker.Web.Tests.Processing
             // assert
             ResponseInterceptHandlerMock.Verify();
             ResponseInterceptHandlerMock.VerifyNoOtherCalls();
-            Assert.That(result is null, Is.Not.EqualTo(canHandle));
+            Assert.That(result is LastChanceResponseInterceptHandler, Is.Not.EqualTo(canHandle));
         }
     }
 }

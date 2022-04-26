@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Web;
+using UrlTracker.Core.Domain.Models;
 
 namespace UrlTracker.Web.Events.Models
 {
@@ -8,11 +9,13 @@ namespace UrlTracker.Web.Events.Models
     public class ProcessedEventArgs
         : EventArgs
     {
-        public ProcessedEventArgs(HttpContextBase httpContext)
+        public ProcessedEventArgs(HttpContextBase httpContext, Url url)
         {
             HttpContext = httpContext;
+            Url = url;
         }
 
         public HttpContextBase HttpContext { get; }
+        public Url Url { get; }
     }
 }
