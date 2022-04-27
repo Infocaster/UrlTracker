@@ -1,0 +1,39 @@
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
+using Umbraco.Core.Composing;
+using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Intercepting.Models;
+
+namespace UrlTracker.Core.Intercepting
+{
+    [ExcludeFromCodeCoverage]
+    public class InterceptorCollectionBuilder
+        : OrderedCollectionBuilderBase<InterceptorCollectionBuilder, InterceptorCollection, IInterceptor>
+    {
+        protected override InterceptorCollectionBuilder This => this;
+    }
+
+    public class InterceptorCollection
+        : BuilderCollectionBase<IInterceptor>, IInterceptorCollection
+    {
+        private readonly ILastChanceInterceptor _lastChance;
+
+        public InterceptorCollection(IEnumerable<IInterceptor> items, ILastChanceInterceptor lastChance)
+            : base(items)
+        {
+            _lastChance = lastChance;
+        }
+
+        public async ValueTask<ICachableIntercept> InterceptAsync(Url url, IReadOnlyInterceptContext context)
+        {
+            foreach (var interceptor in this)
+            {
+                var result = await interceptor.InterceptAsync(url, context);
+                if (!(result is null)) return result;
+            }
+
+            return await _lastChance.InterceptAsync(url, context);
+        }
+    }
+}

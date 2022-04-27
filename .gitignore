@@ -9,3 +9,5 @@ TODO.txt
 /.vs
 /artifacts
 /packages
+/TestResults
+/test/UrlTracker.Resources.Website/App_Data
