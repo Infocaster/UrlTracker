@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Umbraco.Core;
 using Umbraco.Core.Composing;
+using Umbraco.Core.Mapping;
 using UrlTracker.Core;
 using UrlTracker.Web.Abstractions;
 using UrlTracker.Web.Compatibility;
@@ -90,7 +91,7 @@ namespace UrlTracker.Web
 
         public static Composition ComposeUrlTrackerWebMaps(this Composition composition)
         {
-            composition.MapDefinitions()
+            composition.WithCollectionBuilder<MapDefinitionCollectionBuilder>()
                 .Add<RedirectMap>()
                 .Add<ResponseMap>()
                 .Add<RequestMap>()
