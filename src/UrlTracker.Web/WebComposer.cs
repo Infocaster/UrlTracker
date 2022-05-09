@@ -47,6 +47,7 @@ namespace UrlTracker.Web
             builder.AddNotificationHandler<ContentPublishingNotification, ContentChangeNotificationHandler>();
             builder.AddNotificationHandler<ContentPublishedNotification, ContentChangeNotificationHandler>();
             builder.AddNotificationAsyncHandler<UrlTrackerHandled, UrlTrackerHandledNotificationHandler>();
+            builder.AddNotificationHandler<ServerVariablesParsingNotification, ServerVariablesNotificationHandler>();
             return builder;
         }
 

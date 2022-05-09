@@ -159,13 +159,8 @@ namespace UrlTracker.Web.Controllers
 
         [HttpPost]
         [ExcludeFromCodeCoverage]
-        public async Task<IActionResult> AddIgnore404([FromBody] int id)
+        public async Task<IActionResult> AddIgnore404([FromBody] AddIgnore404Request request)
         {
-            // Unfortunate solution, but required to stay compatible with the existing javascript
-            var request = new AddIgnore404Request
-            {
-                Id = id
-            };
             var notFound = await _clientErrorService.GetAsync(request.Id!.Value);
             if (notFound is null) return NotFound();
 
@@ -217,21 +212,26 @@ namespace UrlTracker.Web.Controllers
             var redirects = await _redirectService.GetAsync();
             var csvRedirects = _mapper.MapEnumerable<Redirect, CsvRedirect>(redirects);
             string? csvContent;
-            using MemoryStream ms = new();
-            using StreamWriter sw = new(ms);
-            using (CsvWriter cw = new(sw, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";", NewLine = Environment.NewLine }))
-            {
-                cw.WriteHeader<CsvRedirect>();
-                await cw.NextRecordAsync().ConfigureAwait(false);
-                await cw.WriteRecordsAsync<CsvRedirect>(csvRedirects).ConfigureAwait(false);
 
-                await cw.FlushAsync().ConfigureAwait(false);
-                csvContent = sw.ToString();
-            }
+            // File stream result will close and dispose the stream. The stream must be kept open here or else the file result will throw exceptions
+            MemoryStream ms = new();
+            using StreamWriter sw = new(ms, leaveOpen: true);
+            using CsvWriter cw = new(sw, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";", NewLine = Environment.NewLine });
+
+            cw.WriteHeader<CsvRedirect>();
+            await cw.NextRecordAsync().ConfigureAwait(false);
+            await cw.WriteRecordsAsync<CsvRedirect>(csvRedirects).ConfigureAwait(false);
+
+            await cw.FlushAsync().ConfigureAwait(false);
+            csvContent = sw.ToString();
 
             ms.Position = 0;
 
-            return File(ms, "text/csv", $"urltracker-redirects-{DateTime.UtcNow:yyyy-MM-dd}.csv");
+            string filename = $"urltracker-redirects-{DateTime.UtcNow:yyyy-MM-dd}.csv";
+
+            // set this header so that umbraco javascript understands how to name the file
+            Response.Headers.Add("x-filename", filename);
+            return base.File(ms, "text/csv", filename);
         }
 
         private static void ExtractOrderParameters(OrderBy sortType, out bool descending, out Core.Database.Models.OrderBy orderBy)

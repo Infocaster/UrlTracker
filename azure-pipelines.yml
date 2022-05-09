@@ -16,6 +16,7 @@ variables:
   BuildConfiguration: 'release'
   BuildPlatform: 'any cpu'
   Solution: '**\*.sln'
+  NpmWorkingDirectory: 'src\UrlTracker.Web'
 
 stages:
 - stage: build
@@ -24,18 +25,37 @@ stages:
   - job: build
     displayName: Build
     steps:
+    - task: GitVersion@5
+      displayName: GitVersion
+      inputs:
+        configFilePath: GitVersion.yml
+        updateAssemblyInfo: true
+
+    - task: NodeTool@0
+      displayName: 'Use node 12.x'
+      inputs:
+        versionSpec: '12.x'
+
+    - task: Npm@1
+      displayName: 'Install front end packages'
+      inputs:
+        command: 'custom'
+        workingDir: $(NpmWorkingDirectory)
+        customCommand: 'ci --prefer-offline --no-audit'
+
+    - task: Npm@1
+      displayName: 'Build front end'
+      inputs:
+        command: 'custom'
+        workingDir: $(NpmWorkingDirectory)
+        customCommand: 'run build:webpack-production'
+
     - task: DotNetCoreCLI@2
       displayName: 'dotnet restore'
       inputs:
         command: restore
         feedsToUse: config
         nugetConfigPath: nuget.config
-                
-    - task: GitVersion@5
-      displayName: GitVersion
-      inputs:
-        configFilePath: GitVersion.yml
-        updateAssemblyInfo: true
 
     - task: DotNetCoreCLI@2
       displayName: 'dotnet build'

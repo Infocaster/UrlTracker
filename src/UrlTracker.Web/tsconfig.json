@@ -1,0 +1,18 @@
+﻿{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": false,
+    "module": "es6",
+    "moduleResolution": "node",
+    "target": "es5",
+    "allowJs": true,
+    "removeComments": true,
+    "lib": ["ES2015", "DOM"]
+  },
+  "include": [
+    "./frontend/js/**/*"
+  ]
+}
