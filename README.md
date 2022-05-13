@@ -21,7 +21,7 @@ The URL Tracker is guaranteed to work with SQL Server databases. The URL Tracker
 
 ## Getting Started
 The URL Tracker is available via NuGet. Visit [the URL Tracker on NuGet](https://www.nuget.org/packages/UrlTracker/) for instructions on how to install the URL Tracker package in your website.
-Once installed, you'll have to actually use it in your request pipeline (Often found in the file `Startup.cs`). For the best performance, you should insert the UrlTracker as high in the pipeline as possible. The UrlTracker requires an instantiated umbraco context, so make sure it is inserted after the umbraco context is initialized. We recommend that you insert the UrlTracker like this:
+Once installed, you'll have to actually use it in your request pipeline (Often found in the file `Startup.cs`). For the best performance, you should insert the URL Tracker as high in the pipeline as possible. The URL Tracker requires an instantiated umbraco context, so make sure it is inserted after the umbraco context is initialized. We recommend that you insert the URL Tracker like this:
 ```csharp
 app.UseUmbraco()
     .WithMiddleware(u =>
@@ -68,6 +68,8 @@ The URL Tracker has several configurable properties that can be changed in appse
 |           Max cached intercepts | long | Set this value to the amount of intercepts that should be cached by the UrlTracker. This not only includes redirects, but also 200 OK responses, 410 GONE responses and 404 NOT FOUND responses.
 |        Enable intercept caching | bool | Set this value to `false` to completely disable redirect caching.
 
+Read more in-depth documentation in [the URL Tracker wiki](https://github.com/Infocaster/UrlTracker/wiki).
+
 ## Contributing
 The URL Tracker is open for contributions. If you want to contribute to the source code, please check out our [guide to contributing](/docs/CONTRIBUTING.md).  
 Many people have already contributed to this awesome project:
@@ -86,5 +88,5 @@ Credits from the original developer:
 *   **Richard Soeteman** | Richard came up with the idea for a package which keeps track of URLs of umbraco nodes.
 *   **The uComponents project** | For inspiring me to create a single-assembly package solution.
 <a href="https://infocaster.net">
-<img align="right" height="200" src="docs/assets/Infocaster_Corner.png">
+<img align="right" height="200" src="https://github.com/Infocaster/.github/blob/cba580027a6761844ddab7267f85debe31e96f1a/assets/Infocaster_Corner.png?raw=true">
 </a>
