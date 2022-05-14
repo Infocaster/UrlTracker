@@ -81,6 +81,8 @@ namespace UrlTracker.Resources.Testing
         protected IResponseAbstraction ResponseAbstraction => ResponseAbstractionMock!.Object;
         protected Mock<IInterceptCache>? InterceptCacheMock { get; set; }
         protected IInterceptCache InterceptCache => InterceptCacheMock!.Object;
+        protected Mock<IRuntimeState>? RuntimeStateMock { get; set; }
+        protected IRuntimeState RuntimeState => RuntimeStateMock!.Object;
 
 
 
@@ -142,6 +144,7 @@ namespace UrlTracker.Resources.Testing
             RequestAbstractionMock = new Mock<IRequestAbstraction>();
             ResponseAbstractionMock = new Mock<IResponseAbstraction>();
             InterceptCacheMock = new Mock<IInterceptCache>();
+            RuntimeStateMock = new Mock<IRuntimeState>();
 
             HttpContextMock = CreateHttpContextMock();
 
