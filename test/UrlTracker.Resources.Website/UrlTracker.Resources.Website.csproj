@@ -399,6 +399,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Composing\AttributeRoutingComposer.cs" />
+    <Compile Include="Composing\NewtonsoftVulnerabilityComposer.cs" />
     <Compile Include="Composing\PresetComposer.cs" />
     <Compile Include="Composing\DashboardComposer.cs" />
     <Compile Include="Composing\SwaggerComposer.cs" />
