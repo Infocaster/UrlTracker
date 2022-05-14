@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Events;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 using UrlTracker.Core;
 using UrlTracker.Core.Domain.Models;
@@ -20,13 +22,15 @@ namespace UrlTracker.Web
         private readonly IResponseInterceptHandlerCollection _interceptHandlers;
         private readonly IRequestInterceptFilterCollection _requestFilters;
         private readonly IEventAggregator _eventAggregator;
+        private readonly IRuntimeState _runtimeState;
 
         public UrlTrackerMiddleware(RequestDelegate next,
                                     ILogger<UrlTrackerMiddleware> logger,
                                     IInterceptService interceptService,
                                     IResponseInterceptHandlerCollection interceptHandlers,
                                     IRequestInterceptFilterCollection requestFilters,
-                                    IEventAggregator eventAggregator)
+                                    IEventAggregator eventAggregator,
+                                    IRuntimeState runtimeState)
         {
             _next = next;
             _logger = logger;
@@ -34,10 +38,18 @@ namespace UrlTracker.Web
             _interceptHandlers = interceptHandlers;
             _requestFilters = requestFilters;
             _eventAggregator = eventAggregator;
+            _runtimeState = runtimeState;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
+            // ignore this middleware as long as umbraco hasn't been initialised yet
+            if (_runtimeState.Level < RuntimeLevel.Run)
+            {
+                await _next(context);
+                return;
+            }
+
             Url url = context.Request.GetUrl();
             _logger.LogRequestDetected(url.ToString());
 

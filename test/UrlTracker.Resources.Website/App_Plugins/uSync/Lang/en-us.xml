@@ -35,7 +35,7 @@
 		<key alias="everything">Everything</key>
 		<key alias="everything-description">All Settings, Content, and other things</key>
 
-		<key alias="settings-description">DataTypes, Doctypes and all setttings</key>
+		<key alias="settings-description">DataTypes, Doctypes and all settings</key>
 		<key alias="content-description">Content, Media and related items</key>
 		<key alias="members-description">Members and Member groups</key>
 		<key alias="users-description">Users and User groups</key>
@@ -51,7 +51,7 @@
 		<key alias="tableMessage">Message</key>
 
 		<key alias="nochange"><![CDATA[<h4>No Changes</h4>]]></key>
-		<key alias="nochange_quote"><![CDATA[True life is lived when tiny changes occur.]]></key>
+		<key alias="nochange_quote"><![CDATA[Things don't have to change the world to be important]]></key>
 
 		<!-- warning messages -->
 		<key alias="oldformat">
