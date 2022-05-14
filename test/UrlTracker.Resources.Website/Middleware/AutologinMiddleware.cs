@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Security;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.BackOffice.Security;
 using UrlTracker.Resources.Website.Extensions;
@@ -12,14 +13,23 @@ namespace UrlTracker.Resources.Website.Middleware
     public class AutoLoginMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly IRuntimeState _runtimeState;
 
-        public AutoLoginMiddleware(RequestDelegate next)
+        public AutoLoginMiddleware(RequestDelegate next, IRuntimeState runtimeState)
         {
             _next = next;
+            _runtimeState = runtimeState;
         }
 
         public async Task InvokeAsync(HttpContext httpContext, IBackOfficeSignInManager signInManager, IBackOfficeUserManager backOfficeUserManager, IUmbracoContextAccessor umbracoContextAccessor)
         {
+            // ignore this middleware as long as umbraco hasn't been initialised yet
+            if (_runtimeState.Level < RuntimeLevel.Run)
+            {
+                await _next(httpContext);
+                return;
+            }
+
             //if PublishedRequest is null, request is not from frontend
             if (!IsAuthenticated(httpContext) && IsBackofficeRequest(umbracoContextAccessor) && RequestIsLocal(httpContext))
             {
