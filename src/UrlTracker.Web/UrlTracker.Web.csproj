@@ -58,7 +58,7 @@
   <!-- External references -->
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="27.2.1" />
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="9.2.0" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="9.5.0" />
     <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.2.0" />
   </ItemGroup>
 
