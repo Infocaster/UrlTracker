@@ -11,6 +11,8 @@ updates:
       interval: "daily"
     ignore:
       - dependency-name: "Umbraco.*"
+      - dependency-name: "Microsoft.Extensions.Caching.Memory"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "npm"
     directory: "/src/UrlTracker.Web/"
     schedule:
