@@ -24,7 +24,7 @@ namespace UrlTracker.Web.Tests.Map
 
         public override void SetUp()
         {
-            UmbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => new TestPublishedContent { Id = id });
+            UmbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => TestPublishedContent.Create(id));
         }
 
         [TestCase(TestName = "Map Redirect to CsvRedirect with content")]
@@ -41,14 +41,14 @@ namespace UrlTracker.Web.Tests.Map
                 PassThroughQueryString = true,
                 SourceRegex = "dolor sit",
                 SourceUrl = "http://example.com",
-                TargetNode = new TestPublishedContent { Id = 1001 },
-                TargetRootNode = new TestPublishedContent { Id = 1002 },
+                TargetNode = TestPublishedContent.Create(1001),
+                TargetRootNode = TestPublishedContent.Create(1002),
                 TargetStatusCode = HttpStatusCode.Redirect,
                 TargetUrl = "http://example.com/lorem"
             };
 
             // act
-            var result = Mapper!.Map<CsvRedirect>(input);
+            var result = Mapper!.Map<CsvRedirect>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -73,7 +73,7 @@ namespace UrlTracker.Web.Tests.Map
             var input = new Redirect();
 
             // act
-            var result = Mapper!.Map<CsvRedirect>(input);
+            var result = Mapper!.Map<CsvRedirect>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -103,7 +103,7 @@ namespace UrlTracker.Web.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<Redirect>(input);
+            var result = Mapper!.Map<Redirect>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -130,7 +130,7 @@ namespace UrlTracker.Web.Tests.Map
             var input = new CsvRedirect();
 
             // act
-            var result = Mapper!.Map<Redirect>(input);
+            var result = Mapper!.Map<Redirect>(input)!;
 
             // assert
             Assert.Multiple(() =>

@@ -44,7 +44,7 @@ namespace UrlTracker.Resources.Website.Controllers
             if (request is null) return BadRequest();
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var entries = _mapper.MapEnumerable<SeedRedirectRequestRedirect, UrlTrackerEntry>(request.Redirects);
+            var entries = _mapper.MapEnumerable<SeedRedirectRequestRedirect, UrlTrackerEntry>(request.Redirects!);
             _presetService.Insert(entries);
             _presetService.ResetCache();
             return Ok();

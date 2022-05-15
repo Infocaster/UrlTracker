@@ -20,7 +20,7 @@ namespace UrlTracker.Web.Events
 
         public void Handle(ServerVariablesParsingNotification notification)
         {
-            Dictionary<string, string> urlTrackerVariables = new()
+            Dictionary<string, string?> urlTrackerVariables = new()
             {
                 { "base", _linkGenerator.GetUmbracoApiServiceBaseUrl<UrlTrackerManagerController>(controller => controller.GetSettings()) },
                 { "deleteEntry", nameof(UrlTrackerManagerController.DeleteEntry) },

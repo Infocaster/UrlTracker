@@ -29,7 +29,7 @@ namespace UrlTracker.Web.Map
             mapper.Define<Domain, GetLanguagesFromNodeResponseLanguage>(
                 (source, context) =>
                 {
-                    var language = _localizationService.GetLanguageByIsoCode(source.LanguageIsoCode);
+                    var language = _localizationService.GetLanguageByIsoCode(source.LanguageIsoCode)!;
                     return new GetLanguagesFromNodeResponseLanguage(source.LanguageIsoCode, language.CultureName);
                 },
                 Map);
@@ -100,7 +100,7 @@ namespace UrlTracker.Web.Map
 
         private void Map(Domain source, GetLanguagesFromNodeResponseLanguage target, MapperContext context)
         {
-            var language = _localizationService.GetLanguageByIsoCode(source.LanguageIsoCode);
+            var language = _localizationService.GetLanguageByIsoCode(source.LanguageIsoCode)!;
             target.Id = language.Id;
         }
 

@@ -26,7 +26,7 @@ namespace UrlTracker.Core.Tests.Map
             UrlTrackerEntry input = BaseUrlTrackerEntry;
 
             // act
-            var result = Mapper!.Map<UrlTrackerShallowRedirect>(input);
+            var result = Mapper!.Map<UrlTrackerShallowRedirect>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -52,7 +52,7 @@ namespace UrlTracker.Core.Tests.Map
             input.Is404 = true;
 
             // act
-            var result = Mapper!.Map<UrlTrackerShallowClientError>(input);
+            var result = Mapper!.Map<UrlTrackerShallowClientError>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -70,7 +70,7 @@ namespace UrlTracker.Core.Tests.Map
             input.RedirectHttpCode = 410;
 
             // act
-            var result = Mapper!.Map<UrlTrackerShallowClientError>(input);
+            var result = Mapper!.Map<UrlTrackerShallowClientError>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -87,7 +87,7 @@ namespace UrlTracker.Core.Tests.Map
             var input = BaseUrlTrackerEntry;
 
             // act
-            var result = Mapper!.Map<UrlTrackerRedirect>(input);
+            var result = Mapper!.Map<UrlTrackerRedirect>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -106,7 +106,7 @@ namespace UrlTracker.Core.Tests.Map
             input.Is404 = true;
 
             // act
-            var result = Mapper!.Map<UrlTrackerNotFound>(input);
+            var result = Mapper!.Map<UrlTrackerNotFound>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -140,7 +140,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<UrlTrackerEntry>(input);
+            var result = Mapper!.Map<UrlTrackerEntry>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -174,7 +174,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<UrlTrackerEntry>(input);
+            var result = Mapper!.Map<UrlTrackerEntry>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -213,7 +213,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<UrlTrackerRichNotFound>(input);
+            var result = Mapper!.Map<UrlTrackerRichNotFound>(input)!;
 
             // assert
             Assert.Multiple(() =>

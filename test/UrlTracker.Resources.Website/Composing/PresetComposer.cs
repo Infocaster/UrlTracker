@@ -13,7 +13,7 @@ namespace UrlTracker.Resources.Website.Composing
             builder.Services.AddSingleton<IPresetService, PresetService>();
             builder.Services.AddSingleton<IUrlTrackerConfigurationManager, UrlTrackerConfigurationManager>();
 
-            builder.MapDefinitions()
+            builder.MapDefinitions()!
                 .Add<PresetMaps>();
         }
     }
