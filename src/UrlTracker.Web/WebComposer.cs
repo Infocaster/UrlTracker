@@ -52,7 +52,7 @@ namespace UrlTracker.Web
 
         public static IUmbracoBuilder ComposeDefaultResponseIntercepts(this IUmbracoBuilder builder)
         {
-            builder.ResponseInterceptHandlers()
+            builder.ResponseInterceptHandlers()!
                 .Append<RedirectResponseInterceptHandler>()
                 .Append<NoLongerExistsResponseInterceptHandler>()
                 .Append<NullInterceptHandler>();
@@ -63,14 +63,14 @@ namespace UrlTracker.Web
 
         public static IUmbracoBuilder ComposeDefaultRequestInterceptFilters(this IUmbracoBuilder builder)
         {
-            builder.RequestInterceptFilters()
+            builder.RequestInterceptFilters()!
                 .Append<UrlReservedPathFilter>();
             return builder;
         }
 
         public static IUmbracoBuilder ComposeDefaultClientErrorFilters(this IUmbracoBuilder builder)
         {
-            builder.ClientErrorFilters()
+            builder.ClientErrorFilters()!
                 .Append<ConfigurationClientErrorFilter>()
                 .Append<IgnoredClientErrorFilter>();
             return builder;
@@ -78,7 +78,7 @@ namespace UrlTracker.Web
 
         public static IUmbracoBuilder ComposeUrlTrackerWebMaps(this IUmbracoBuilder builder)
         {
-            builder.MapDefinitions()
+            builder.MapDefinitions()!
                 .Add<RedirectMap>()
                 .Add<ResponseMap>()
                 .Add<RequestMap>()
@@ -86,13 +86,13 @@ namespace UrlTracker.Web
             return builder;
         }
 
-        public static ResponseInterceptHandlerCollectionBuilder ResponseInterceptHandlers(this IUmbracoBuilder builder)
+        public static ResponseInterceptHandlerCollectionBuilder? ResponseInterceptHandlers(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<ResponseInterceptHandlerCollectionBuilder>();
 
-        public static RequestInterceptFilterCollectionBuilder RequestInterceptFilters(this IUmbracoBuilder builder)
+        public static RequestInterceptFilterCollectionBuilder? RequestInterceptFilters(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<RequestInterceptFilterCollectionBuilder>();
 
-        public static ClientErrorFilterCollectionBuilder ClientErrorFilters(this IUmbracoBuilder builder)
+        public static ClientErrorFilterCollectionBuilder? ClientErrorFilters(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<ClientErrorFilterCollectionBuilder>();
     }
 }

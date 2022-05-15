@@ -59,10 +59,10 @@ namespace UrlTracker.Core.Database
 
         public async Task<UrlTrackerNotFound> AddAsync(UrlTrackerNotFound notFound)
         {
-            var entry = _mapper.Map<UrlTrackerEntry>(notFound);
+            var entry = _mapper.Map<UrlTrackerEntry>(notFound)!;
             using var scope = _scopeProvider.CreateScope();
             await scope.Database.InsertAsync(entry).ConfigureAwait(false);
-            var result = _mapper.Map<UrlTrackerNotFound>(entry);
+            var result = _mapper.Map<UrlTrackerNotFound>(entry)!;
 
             scope.Complete();
             return result;

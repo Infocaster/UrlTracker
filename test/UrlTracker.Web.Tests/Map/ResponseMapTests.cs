@@ -50,14 +50,14 @@ namespace UrlTracker.Web.Tests.Map
                 PassThroughQueryString = true,
                 SourceRegex = "dolor sit",
                 SourceUrl = "http://example.com/ipsum",
-                TargetNode = new TestPublishedContent { Id = 1001, ItemType = PublishedItemType.Content },
-                TargetRootNode = new TestPublishedContent { Id = 1002, ItemType = PublishedItemType.Content },
+                TargetNode = TestPublishedContent.Create(1001, PublishedItemType.Content),
+                TargetRootNode = TestPublishedContent.Create(1002, PublishedItemType.Content),
                 TargetStatusCode = HttpStatusCode.Redirect,
                 TargetUrl = "http://example.com/dolor"
             };
 
             // act
-            var result = Mapper!.Map<RedirectViewModel>(input);
+            var result = Mapper!.Map<RedirectViewModel>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -94,7 +94,7 @@ namespace UrlTracker.Web.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<RedirectViewModel>(input);
+            var result = Mapper!.Map<RedirectViewModel>(input)!;
 
             // assert
             Assert.That(result.OldUrlWithoutQuery, Is.EqualTo("http://example.com/"));
@@ -113,7 +113,7 @@ namespace UrlTracker.Web.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<RedirectViewModel>(input);
+            var result = Mapper!.Map<RedirectViewModel>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -146,7 +146,7 @@ namespace UrlTracker.Web.Tests.Map
             var input = new RichNotFound("http://example.com/?lorem=ipsum");
 
             // act
-            var result = Mapper!.Map<RedirectViewModel>(input);
+            var result = Mapper!.Map<RedirectViewModel>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -170,7 +170,7 @@ namespace UrlTracker.Web.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<GetSettingsResponse>(input);
+            var result = Mapper!.Map<GetSettingsResponse>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -187,11 +187,11 @@ namespace UrlTracker.Web.Tests.Map
         public void Map_Domain_GetLanguagesFromNodeResponseLanguage()
         {
             // arrange
-            LocalizationServiceMock!.Setup(obj => obj.GetLanguageByIsoCode(It.IsAny<string>())).Returns((string isoCode) => new TestLanguage { IsoCode = isoCode, CultureName = "Dutch", Id = 1003 });
+            LocalizationServiceMock!.Setup(obj => obj.GetLanguageByIsoCode(It.IsAny<string>())).Returns((string isoCode) => TestLanguage.Create(1003, isoCode, "Dutch"));
             var input = new Domain(1000, 1001, "lorem ipsum", "nl-nl", Url.Parse("http://example.com"));
 
             // act
-            var result = Mapper!.Map<GetLanguagesFromNodeResponseLanguage>(input);
+            var result = Mapper!.Map<GetLanguagesFromNodeResponseLanguage>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -209,7 +209,7 @@ namespace UrlTracker.Web.Tests.Map
             var input = RedirectCollection.Create(new[] { new Redirect { Id = 1000 } }, 3);
 
             // act
-            var result = Mapper!.Map<GetRedirectsResponse>(input);
+            var result = Mapper!.Map<GetRedirectsResponse>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -226,7 +226,7 @@ namespace UrlTracker.Web.Tests.Map
             var input = RichNotFoundCollection.Create(new[] { new RichNotFound("http://example.com") { Id = 1000 } }, 3);
 
             // act
-            var result = Mapper!.Map<GetNotFoundsResponse>(input);
+            var result = Mapper!.Map<GetNotFoundsResponse>(input)!;
 
             // assert
             Assert.Multiple(() =>

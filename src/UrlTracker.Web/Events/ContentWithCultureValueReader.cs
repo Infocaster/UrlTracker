@@ -18,12 +18,12 @@ namespace UrlTracker.Web.Events
             _culture = culture?.Culture.NormalizeCulture();
         }
 
-        public string GetName()
+        public string? GetName()
         {
             return _content.GetCultureName(_culture);
         }
 
-        public string GetName(IPublishedContent content)
+        public string? GetName(IPublishedContent content)
         {
             return content.Name(_culture);
         }

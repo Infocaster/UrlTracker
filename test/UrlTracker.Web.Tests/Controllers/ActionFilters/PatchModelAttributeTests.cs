@@ -21,7 +21,7 @@ namespace UrlTracker.Web.Tests.Controllers.ActionFilters
         {
             _testSubject = new PatchModelAttribute();
             _actionContext = new ActionContext(HttpContextMock!.Context, new RouteData(), new ActionDescriptor());
-            _actionExecutingContext = new ActionExecutingContext(_actionContext, new List<IFilterMetadata>(), new Dictionary<string, object>(), new object());
+            _actionExecutingContext = new ActionExecutingContext(_actionContext, new List<IFilterMetadata>(), new Dictionary<string, object?>(), new object());
         }
 
         [TestCase(null, null, TestName = "OnActionExecuting doesn't touch urls that are null")]

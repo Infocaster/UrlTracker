@@ -25,7 +25,7 @@ namespace UrlTracker.Core.Tests.Map
 
         public override void SetUp()
         {
-            UmbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => new TestPublishedContent { Id = id });
+            UmbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => TestPublishedContent.Create(id));
         }
 
         [TestCase(TestName = "Map UrlTrackerShallowRedirect to ShallowRedirect")]
@@ -47,7 +47,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<ShallowRedirect>(input);
+            var result = Mapper!.Map<ShallowRedirect>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -76,7 +76,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<Redirect>(input);
+            var result = Mapper!.Map<Redirect>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -93,7 +93,7 @@ namespace UrlTracker.Core.Tests.Map
             var input = UrlTrackerRedirectCollection.Create(new[] { new UrlTrackerRedirect() }, 3);
 
             // act
-            var result = Mapper!.Map<RedirectCollection>(input);
+            var result = Mapper!.Map<RedirectCollection>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -118,14 +118,14 @@ namespace UrlTracker.Core.Tests.Map
                 PassThroughQueryString = true,
                 SourceRegex = "dolor sit",
                 SourceUrl = "http://example.com",
-                TargetNode = new TestPublishedContent { Id = 1001 },
-                TargetRootNode = new TestPublishedContent { Id = 1002 },
+                TargetNode = TestPublishedContent.Create(1001),
+                TargetRootNode = TestPublishedContent.Create(1002),
                 TargetStatusCode = HttpStatusCode.Redirect,
                 TargetUrl = "http://example.com/lorem"
             };
 
             // act
-            var result = Mapper!.Map<UrlTrackerRedirect>(input);
+            var result = Mapper!.Map<UrlTrackerRedirect>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -152,7 +152,7 @@ namespace UrlTracker.Core.Tests.Map
             var input = new Redirect();
 
             // act
-            var result = Mapper!.Map<UrlTrackerRedirect>(input);
+            var result = Mapper!.Map<UrlTrackerRedirect>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -176,7 +176,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<UrlTrackerNotFound>(input);
+            var result = Mapper!.Map<UrlTrackerNotFound>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -202,7 +202,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<NotFound>(input);
+            var result = Mapper!.Map<NotFound>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -222,7 +222,7 @@ namespace UrlTracker.Core.Tests.Map
             var input = UrlTrackerRichNotFoundCollection.Create(new[] { new UrlTrackerRichNotFound("http://example.com") }, 3);
 
             // act
-            var result = Mapper!.Map<RichNotFoundCollection>(input);
+            var result = Mapper!.Map<RichNotFoundCollection>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -246,7 +246,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<RichNotFound>(input);
+            var result = Mapper!.Map<RichNotFound>(input)!;
 
             // assert
             Assert.Multiple(() =>

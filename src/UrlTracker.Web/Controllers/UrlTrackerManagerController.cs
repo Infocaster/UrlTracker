@@ -106,7 +106,7 @@ namespace UrlTracker.Web.Controllers
                 deleteTask = _clientErrorService.DeleteAsync(request.OldUrl!, request.Culture);
             }
 
-            var redirect = _mapper.Map<Redirect>(request);
+            var redirect = _mapper.Map<Redirect>(request)!;
             await _redirectService.AddAsync(redirect);
             if (deleteTask is not null) await deleteTask;
 
@@ -118,7 +118,7 @@ namespace UrlTracker.Web.Controllers
         [ExcludeFromCodeCoverage]
         public async Task<IActionResult> UpdateRedirect([FromBody] UpdateRedirectRequest request)
         {
-            var redirect = _mapper.Map<Redirect>(request);
+            var redirect = _mapper.Map<Redirect>(request)!;
             await _redirectService.UpdateAsync(redirect);
 
             return NoContent();

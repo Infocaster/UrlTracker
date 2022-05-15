@@ -28,10 +28,10 @@ namespace UrlTracker.Web.Compatibility
             using var cref = _umbracoContextFactory.EnsureUmbracoContext();
             if (request.RedirectNodeId.HasValue)
             {
-                var content = cref.UmbracoContext.Content.GetById(request.RedirectNodeId.Value);
+                var content = cref.UmbracoContext.Content?.GetById(request.RedirectNodeId.Value);
                 if (content is not null)
                 {
-                    request.RedirectRootNodeId = content.Root().Id;
+                    request.RedirectRootNodeId = content.Root()!.Id;
                     return request;
                 }
             }

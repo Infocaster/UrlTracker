@@ -5,6 +5,6 @@ namespace UrlTracker.Web.Abstraction
 {
     public interface IRequestAbstraction
     {
-        Uri GetReferrer(HttpRequest request);
+        Uri? GetReferrer(HttpRequest request);
     }
 }

@@ -34,23 +34,23 @@ namespace UrlTracker.Core
         public async Task<RedirectCollection> GetAsync()
         {
             var redirects = await _redirectRepository.GetAsync().ConfigureAwait(false);
-            return _mapper.Map<RedirectCollection>(redirects);
+            return _mapper.Map<RedirectCollection>(redirects)!;
         }
 
         [ExcludeFromCodeCoverage]
         public async Task<RedirectCollection> GetAsync(uint skip, uint take, string? query = null, OrderBy order = OrderBy.Created, bool descending = true)
         {
             var redirects = await _redirectRepository.GetAsync(skip, take, query, order, descending).ConfigureAwait(false);
-            return _mapper.Map<RedirectCollection>(redirects);
+            return _mapper.Map<RedirectCollection>(redirects)!;
         }
 
         public async Task<Redirect> AddAsync(Redirect redirect)
         {
             EnsureValidModel(redirect, nameof(redirect));
 
-            var urlTrackerRedirect = _mapper.Map<UrlTrackerRedirect>(redirect);
+            var urlTrackerRedirect = _mapper.Map<UrlTrackerRedirect>(redirect)!;
             urlTrackerRedirect = await _redirectRepository.AddAsync(urlTrackerRedirect);
-            var result = _mapper.Map<Redirect>(urlTrackerRedirect);
+            var result = _mapper.Map<Redirect>(urlTrackerRedirect)!;
 
             return result;
         }
@@ -63,9 +63,9 @@ namespace UrlTracker.Core
                 if (!redirect.Id.HasValue) throw new ValidationException(new ValidationResult("This field is required", new[] { nameof(Redirect.Id) }), new RequiredAttribute(), redirect.Id);
             });
 
-            var urlTrackerRedirect = _mapper.Map<UrlTrackerRedirect>(redirect);
+            var urlTrackerRedirect = _mapper.Map<UrlTrackerRedirect>(redirect)!;
             urlTrackerRedirect = await _redirectRepository.UpdateAsync(urlTrackerRedirect);
-            var result = _mapper.Map<Redirect>(urlTrackerRedirect);
+            var result = _mapper.Map<Redirect>(urlTrackerRedirect)!;
 
             return result;
         }

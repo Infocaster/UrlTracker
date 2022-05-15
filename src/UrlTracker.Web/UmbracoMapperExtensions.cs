@@ -33,7 +33,7 @@ namespace UrlTracker.Web
             return mapper.Map<Url>(redirect, context =>
             {
                 context.SetHttpContext(httpContext);
-            });
+            })!;
         }
 
 
@@ -45,7 +45,7 @@ namespace UrlTracker.Web
             }
 
             context.SetHttpContext(httpContext);
-            return context.Map<Url>(redirect);
+            return context.Map<Url>(redirect)!;
         }
     }
 }

@@ -64,11 +64,11 @@ namespace UrlTracker.Web.Events
                 foreach (var valueReader in valueReaders)
                 {
                     if (!content.IsPublished(valueReader.GetCulture())) continue;
-                    if (valueReader.GetName().Equals(valueReader.GetName(content)) &&
+                    if (valueReader.GetName() == valueReader.GetName(content) &&
                         valueReader.GetValue(Constants.Conventions.Content.UrlName) == valueReader.GetValue(content, Constants.Conventions.Content.UrlName)) continue;
 
                     // this entity has changed, so a new redirect for it and its descendants must be created
-                    var root = content.Root();
+                    var root = content.Root()!;
                     foreach (var item in content.Descendants(valueReader.GetCulture()).Prepend(content))
                     {
                         redirects.Add(CreateRedirect(root, item, valueReader.GetCulture(), "Url has changed"));
@@ -84,7 +84,7 @@ namespace UrlTracker.Web.Events
             if (!TrackingEnabled()) return;
             if (!notification.State.ContainsKey(_renameRedirectsKey)) return;
 
-            var redirects = (List<Redirect>)notification.State[_renameRedirectsKey];
+            var redirects = (List<Redirect>)notification.State[_renameRedirectsKey]!;
             RegisterRedirects(redirects);
         }
 
@@ -140,7 +140,7 @@ namespace UrlTracker.Web.Events
 
             // At this point we know for sure that the operation has succeeded, so now we can register the redirects
             //    Wrap everything in a scope: if anything fails, everything will be rolled back and we won't be left with partial changes
-            var redirects = (List<Redirect>)notification.State[_moveRedirectsKey];
+            var redirects = (List<Redirect>)notification.State[_moveRedirectsKey]!;
             RegisterRedirects(redirects);
         }
 
@@ -201,7 +201,7 @@ namespace UrlTracker.Web.Events
 
         private IEnumerable<IPublishedContent> DescendantsAndSelfForAllCultures(IPublishedContent content)
         {
-            return content.ChildrenForAllCultures.SelectMany(child => DescendantsAndSelfForAllCultures(child)).Prepend(content);
+            return content.AsEnumerableOfOne().Concat(content.ChildrenForAllCultures?.SelectMany(child => DescendantsAndSelfForAllCultures(child)) ?? Enumerable.Empty<IPublishedContent>());
         }
     }
 }
