@@ -15,7 +15,7 @@ namespace UrlTracker.Web.Events
 
             if (content.ContentType.VariesByCulture())
             {
-                foreach (var culture in content.CultureInfos)
+                foreach (var culture in content.CultureInfos!)
                 {
                     if (!onlyChanged || culture.IsDirty())
                     {

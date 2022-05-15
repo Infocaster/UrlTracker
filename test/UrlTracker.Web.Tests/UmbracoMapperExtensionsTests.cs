@@ -23,7 +23,7 @@ namespace UrlTracker.Web.Tests
 
         public override void SetUp()
         {
-            _mapperContext = new MapperContext(Mapper);
+            _mapperContext = new MapperContext(Mapper!);
         }
 
         [TestCase(TestName = "Mapper.MapToUrl throws NullReferenceException when no HttpContext was provided")]

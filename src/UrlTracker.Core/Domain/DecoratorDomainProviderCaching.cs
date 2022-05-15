@@ -19,7 +19,7 @@ namespace UrlTracker.Core.Domain
 
         public DomainCollection GetDomains()
         {
-            return _runtimeCache.GetCacheItem(Defaults.Cache.DomainKey, () => _decoratee.GetDomains());
+            return _runtimeCache.GetCacheItem(Defaults.Cache.DomainKey, () => _decoratee.GetDomains())!;
         }
 
         [ExcludeFromCodeCoverage]

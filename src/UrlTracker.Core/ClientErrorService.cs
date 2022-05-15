@@ -43,16 +43,16 @@ namespace UrlTracker.Core
                 _validationHelper.EnsureValidObject(notFound);
             });
 
-            var urlTrackerNotFound = _mapper.Map<UrlTrackerNotFound>(notFound);
+            var urlTrackerNotFound = _mapper.Map<UrlTrackerNotFound>(notFound)!;
             urlTrackerNotFound = await _clientErrorRepository.AddAsync(urlTrackerNotFound);
-            return _mapper.Map<NotFound>(urlTrackerNotFound);
+            return _mapper.Map<NotFound>(urlTrackerNotFound)!;
         }
 
         [ExcludeFromCodeCoverage]
         public async Task<RichNotFoundCollection> GetAsync(uint skip, uint take, string? query, OrderBy orderBy, bool descending)
         {
             var urlTrackerRichNotFounds = await _clientErrorRepository.GetAsync(skip, take, query, orderBy, descending);
-            return _mapper.Map<RichNotFoundCollection>(urlTrackerRichNotFounds);
+            return _mapper.Map<RichNotFoundCollection>(urlTrackerRichNotFounds)!;
         }
 
         public Task DeleteAsync(string url, string? culture)
@@ -77,7 +77,7 @@ namespace UrlTracker.Core
         [ExcludeFromCodeCoverage]
         public Task UpdateAsync(NotFound notFound)
         {
-            var entry = _mapper.Map<UrlTrackerNotFound>(notFound);
+            var entry = _mapper.Map<UrlTrackerNotFound>(notFound)!;
             return _clientErrorRepository.UpdateAsync(entry);
         }
     }

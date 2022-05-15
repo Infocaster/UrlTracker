@@ -23,7 +23,7 @@ namespace UrlTracker.Web.Map
                 Map);
 
             mapper.Define<UpdateRedirectRequest, Redirect>(
-                (source, context) => context.Map<RedirectRequestBase, Redirect>(source),
+                (source, context) => context.Map<RedirectRequestBase, Redirect>(source)!,
                 Map);
         }
 

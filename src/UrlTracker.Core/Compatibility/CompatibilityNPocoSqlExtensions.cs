@@ -15,7 +15,7 @@ namespace UrlTracker.Core.Compatibility
     public static class CompatibilityNPocoSqlExtensions
     {
         // taken straight from umbraco source. This method is bugged since before 8.6.1, so I take over the code and add the fix myself
-        public static object[] OrderByDescending<TDto>(Sql<ISqlContext> sql, params Expression<Func<TDto, object>>[] fields)
+        public static object[] OrderByDescending<TDto>(Sql<ISqlContext> sql, params Expression<Func<TDto, object?>>[] fields)
         {
             var sqlSyntax = sql.SqlContext.SqlSyntax;
             var columns = fields.Length == 0

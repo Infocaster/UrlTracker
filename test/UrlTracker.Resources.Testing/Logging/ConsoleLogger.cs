@@ -15,12 +15,12 @@ namespace UrlTracker.Resources.Testing.Logging
             return true;
         }
 
-        public void Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(Microsoft.Extensions.Logging.LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
             ConsoleLogger<T>.Log(logLevel.ToString(), exception, formatter(state, exception));
         }
 
-        private static void Log(string severity, Exception exception, string message)
+        private static void Log(string severity, Exception? exception, string message)
         {
             Console.WriteLine($"[{DateTime.UtcNow} {severity,10}] <{typeof(T)}> {exception} | {message}");
         }

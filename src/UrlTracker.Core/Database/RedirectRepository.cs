@@ -28,11 +28,11 @@ namespace UrlTracker.Core.Database
 
         public async Task<UrlTrackerRedirect> AddAsync(UrlTrackerRedirect redirect)
         {
-            var entry = _mapper.Map<UrlTrackerEntry>(redirect);
+            var entry = _mapper.Map<UrlTrackerEntry>(redirect)!;
             using var scope = _scopeProvider.CreateScope();
             await scope.Database.InsertAsync(entry);
 
-            var result = _mapper.Map<UrlTrackerRedirect>(entry);
+            var result = _mapper.Map<UrlTrackerRedirect>(entry)!;
 
             scope.Complete();
             return result;
@@ -40,11 +40,11 @@ namespace UrlTracker.Core.Database
 
         public async Task<UrlTrackerRedirect> UpdateAsync(UrlTrackerRedirect redirect)
         {
-            var entry = _mapper.Map<UrlTrackerEntry>(redirect);
+            var entry = _mapper.Map<UrlTrackerEntry>(redirect)!;
             using var scope = _scopeProvider.CreateScope();
             await scope.Database.UpdateAsync(entry);
 
-            var result = _mapper.Map<UrlTrackerRedirect>(entry);
+            var result = _mapper.Map<UrlTrackerRedirect>(entry)!;
 
             scope.Complete();
             return result;
@@ -75,7 +75,7 @@ namespace UrlTracker.Core.Database
 
             var selectQuery = scope.SqlContext.Sql().SelectAll();
             selectQuery = PopulateRedirectQuery(selectQuery);
-            Expression<Func<UrlTrackerEntry, object>> orderParameter = order switch
+            Expression<Func<UrlTrackerEntry, object?>> orderParameter = order switch
             {
                 OrderBy.Created => e => e.Inserted,
                 OrderBy.Culture => e => e.Culture!,

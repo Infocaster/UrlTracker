@@ -40,13 +40,14 @@ namespace UrlTracker.Core.Abstractions
             _urlProvider = urlProvider;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             _cref.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         public IPublishedContent? GetContentById(int id)
-            => _cref.UmbracoContext.Content.GetById(id);
+            => _cref.UmbracoContext.Content?.GetById(id);
 
         public string GetUrl(IPublishedContent content, UrlMode mode, string? culture)
             => content.Url(_urlProvider, culture, mode);
@@ -56,7 +57,7 @@ namespace UrlTracker.Core.Abstractions
 
         public int? GetResponseCode()
         {
-            return _cref.UmbracoContext.PublishedRequest.ResponseStatusCode;
+            return _cref.UmbracoContext.PublishedRequest?.ResponseStatusCode;
         }
     }
 

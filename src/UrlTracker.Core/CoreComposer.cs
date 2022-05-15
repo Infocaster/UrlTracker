@@ -79,42 +79,42 @@ namespace UrlTracker.Core
     [ExcludeFromCodeCoverage]
     public static class IUmbracoBuilderExtensions
     {
-        public static InterceptorCollectionBuilder Interceptors(this IUmbracoBuilder builder)
+        public static InterceptorCollectionBuilder? Interceptors(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<InterceptorCollectionBuilder>();
 
-        public static InterceptPreprocessorCollectionBuilder InterceptPreprocessors(this IUmbracoBuilder builder)
+        public static InterceptPreprocessorCollectionBuilder? InterceptPreprocessors(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<InterceptPreprocessorCollectionBuilder>();
 
-        public static StaticUrlProviderCollectionBuilder StaticUrlProviders(this IUmbracoBuilder builder)
+        public static StaticUrlProviderCollectionBuilder? StaticUrlProviders(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<StaticUrlProviderCollectionBuilder>();
 
-        public static InterceptConverterCollectionBuilder InterceptConverters(this IUmbracoBuilder builder)
+        public static InterceptConverterCollectionBuilder? InterceptConverters(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<InterceptConverterCollectionBuilder>();
 
         public static IUmbracoBuilder ComposeDefaultInterceptors(this IUmbracoBuilder builder)
         {
-            builder.Interceptors()
+            builder.Interceptors()!
                 .Append<StaticUrlRedirectInterceptor>()
                 .Append<RegexRedirectInterceptor>()
                 .Append<NoLongerExistsInterceptor>();
 
             builder.Services.AddSingleton<ILastChanceInterceptor, NullInterceptor>();
 
-            builder.StaticUrlProviders()
+            builder.StaticUrlProviders()!
                 .Append<StaticUrlProvider>();
             return builder;
         }
 
         public static IUmbracoBuilder ComposeDefaultInterceptPreprocessors(this IUmbracoBuilder builder)
         {
-            builder.InterceptPreprocessors()
+            builder.InterceptPreprocessors()!
                 .Append<DomainUrlPreprocessor>();
             return builder;
         }
 
         public static IUmbracoBuilder ComposeDefaultInterceptConverters(this IUmbracoBuilder builder)
         {
-            builder.InterceptConverters()
+            builder.InterceptConverters()!
                 .Append<MapperInterceptConverter<UrlTrackerShallowRedirect, ShallowRedirect>>();
             return builder;
         }
@@ -142,7 +142,7 @@ namespace UrlTracker.Core
 
         public static IUmbracoBuilder ComposeUrlTrackerCoreMaps(this IUmbracoBuilder builder)
         {
-            builder.MapDefinitions()
+            builder.MapDefinitions()!
                 .Add<LegacyDatabaseMap>()
                 .Add<ServiceLayerMaps>();
             return builder;
