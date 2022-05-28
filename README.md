@@ -1,5 +1,5 @@
 <h3 align="center">
-<img height="100" src="docs/assets/infocaster_nuget_yellow.svg">
+<img height="100" src="https://raw.githubusercontent.com/Infocaster/.github/main/assets/infocaster_nuget_yellow.svg">
 </h3>
 
 <h1 align="center">
@@ -88,5 +88,5 @@ Credits from the original developer:
 *   **Richard Soeteman** | Richard came up with the idea for a package which keeps track of URLs of umbraco nodes.
 *   **The uComponents project** | For inspiring me to create a single-assembly package solution.
 <a href="https://infocaster.net">
-<img align="right" height="200" src="https://github.com/Infocaster/.github/blob/cba580027a6761844ddab7267f85debe31e96f1a/assets/Infocaster_Corner.png?raw=true">
+<img align="right" height="200" src="https://raw.githubusercontent.com/Infocaster/.github/main/assets/Infocaster_Corner.png?raw=true">
 </a>
