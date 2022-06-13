@@ -9,8 +9,8 @@
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
-    <PackageReference Include="Umbraco.Cms" Version="10.0.0-rc4" />
-    <PackageReference Include="uSync" Version="10.0.0-beta1" />
+    <PackageReference Include="Umbraco.Cms" Version="10.0.0-rc5" />
+    <PackageReference Include="uSync" Version="10.0.0-rc5" />
   </ItemGroup>
 
   <!-- Force windows to use ICU. Otherwise Windows 10 2019H1+ will do it, but older windows 10 and most if not all winodws servers will run NLS -->
