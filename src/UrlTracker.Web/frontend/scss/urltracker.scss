@@ -125,11 +125,6 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 	border-bottom-right-radius: 300px;
 }
 
-/*Last tab item (info tab)*/
-.urltracker-body .umb-tabs-nav > li:nth-child(4) {
-	float: right;
-}
-
 .urltracker-dashboard-table .umb-table-cell:first-of-type {
 	flex: 1 1 5%;
 	margin: auto 0;
@@ -423,10 +418,6 @@ form[name="UrlTrackerEntryForm"] select:disabled {
 
 .urltracker-red-label {
 	background-color: #d42054;
-}
-
-.urltracker-setting-box {
-	box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 11%);
 }
 
 .urltracker-setting-box p {
