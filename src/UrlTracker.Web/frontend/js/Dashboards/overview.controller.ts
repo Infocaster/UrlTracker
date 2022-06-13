@@ -82,10 +82,6 @@
                 "alias": "redirects",
                 "label": "Redirects"
             },
-            {
-                "alias": "info",
-                "label": "Info"
-            }
         ];
 
         this.pageSizeOptions = [

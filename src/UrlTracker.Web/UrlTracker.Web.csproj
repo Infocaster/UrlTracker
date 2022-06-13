@@ -90,10 +90,16 @@
   
   
   <!-- Exclusions -->
+
   <ItemGroup>
+    <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
     <Compile Remove="node_modules\**" />
     <EmbeddedResource Remove="node_modules\**" />
     <None Remove="node_modules\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="content\" />
   </ItemGroup>
   <!-- END Exclusions -->
 
