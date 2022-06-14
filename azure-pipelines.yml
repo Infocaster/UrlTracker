@@ -125,21 +125,10 @@ stages:
     - download: current
       patterns: '**/*.nupkg'
       displayName: Download build artifact
-
-    - task: NuGetToolInstaller@1
-      displayName: 'install nuget tool'
-      inputs:
-        versionSpec: 6.x
-
-    - task: NuGetAuthenticate@0
-      displayName: 'use nuget service connection'
-      inputs:
-        nuGetServiceConnections: 'NuGet.org'
     
-    - task: NuGetCommand@2
+    - task: DotNetCoreCLI@2
       displayName: 'push to nuget.org'
       inputs:
-        command: push
-        nuGetFeedType: external
-        versioningScheme: byBuildNumber
-        packagesToPush: $(packageGlob)
+        command: custom
+        custom: nuget
+        arguments: 'push $(packageGlob) -s https://api.nuget.org/v3/index.json --api-key $(NuGetApiKey)'
