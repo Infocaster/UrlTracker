@@ -95,7 +95,6 @@ stages:
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   variables:
     packageGlob: '$(Pipeline.Workspace)/**/UrlTracker*.nupkg'
-    nugetServiceConnectionName: 'NuGet.org'
   jobs:
   - job: releaseArtifact
     displayName: Push to artifacts
@@ -135,7 +134,7 @@ stages:
     - task: NuGetAuthenticate@0
       displayName: 'use nuget service connection'
       inputs:
-        nuGetServiceConnections: $(nugetServiceConnectionName)
+        nuGetServiceConnections: 'NuGet.org'
     
     - task: NuGetCommand@2
       displayName: 'push to nuget.org'
