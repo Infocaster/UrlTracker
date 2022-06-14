@@ -2,6 +2,7 @@
 
 export class UrlResource implements urltracker.services.IUrlResource {
 
+    public static $inject = ["umbRequestHelper"];
     constructor(private umbRequestHelper: any) { }
 
     public verify<T>(promise: angular.IHttpPromise<T>, errorMessage: string): angular.IPromise<T> {
