@@ -93,8 +93,11 @@ stages:
   displayName: Release
   dependsOn: build
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+  variables:
+    packageGlob: '$(Pipeline.Workspace)/**/UrlTracker*.nupkg'
+    nugetServiceConnectionName: 'NuGet.org'
   jobs:
-  - job: release
+  - job: releaseArtifact
     displayName: Push to artifacts
     workspace:
       clean: all
@@ -111,4 +114,33 @@ stages:
         command: push
         publishVstsFeed: '3356baca-d7d8-497c-a5fa-ebd93f79f7c7'
         versioningScheme: byBuildNumber
-        packagesToPush: '$(Pipeline.Workspace)/**/UrlTracker*.nupkg'
+        packagesToPush: $(packageGlob)
+
+  - job: releaseNuget
+    displayName: Push to nuget
+    workspace:
+      clean: all
+    steps:
+    - checkout: none
+    
+    - download: current
+      patterns: '**/*.nupkg'
+      displayName: Download build artifact
+
+    - task: NuGetToolInstaller@1
+      displayName: 'install nuget tool'
+      inputs:
+        versionSpec: 6.x
+
+    - task: NuGetAuthenticate@0
+      displayName: 'use nuget service connection'
+      inputs:
+        nuGetServiceConnections: $(nugetServiceConnectionName)
+    
+    - task: NuGetCommand@2
+      displayName: 'push to nuget.org'
+      inputs:
+        command: push
+        nuGetFeedType: external
+        versioningScheme: byBuildNumber
+        packagesToPush: $(packageGlob)
