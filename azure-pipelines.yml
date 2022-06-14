@@ -93,8 +93,10 @@ stages:
   displayName: Release
   dependsOn: build
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+  variables:
+    packageGlob: '$(Pipeline.Workspace)/**/UrlTracker*.nupkg'
   jobs:
-  - job: release
+  - job: releaseArtifact
     displayName: Push to artifacts
     workspace:
       clean: all
@@ -111,4 +113,22 @@ stages:
         command: push
         publishVstsFeed: '3356baca-d7d8-497c-a5fa-ebd93f79f7c7'
         versioningScheme: byBuildNumber
-        packagesToPush: '$(Pipeline.Workspace)/**/UrlTracker*.nupkg'
+        packagesToPush: $(packageGlob)
+
+  - job: releaseNuget
+    displayName: Push to nuget
+    workspace:
+      clean: all
+    steps:
+    - checkout: none
+    
+    - download: current
+      patterns: '**/*.nupkg'
+      displayName: Download build artifact
+    
+    - task: DotNetCoreCLI@2
+      displayName: 'push to nuget.org'
+      inputs:
+        command: custom
+        custom: nuget
+        arguments: 'push $(packageGlob) -s https://api.nuget.org/v3/index.json --api-key $(NuGetApiKey)'
