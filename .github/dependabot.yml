@@ -8,12 +8,14 @@ updates:
   - package-ecosystem: "nuget" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
-      interval: "daily"
+      interval: "weekly"
     ignore:
       - dependency-name: "Umbraco.*"
       - dependency-name: "Microsoft.Extensions.Caching.Memory"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "Scrutor"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "npm"
     directory: "/src/UrlTracker.Web/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
