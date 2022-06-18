@@ -1,7 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Services;
@@ -76,17 +78,45 @@ namespace UrlTracker.Web
     }
 
     [ExcludeFromCodeCoverage]
-    public static class IApplicationBuilderExtensions
+    public class ConfigurePipelineOptions : IConfigureOptions<UmbracoPipelineOptions>
     {
-        public static IApplicationBuilder UseUrlTracker(this IApplicationBuilder app)
+        public void Configure(UmbracoPipelineOptions options)
+        {
+            options.AddFilter(new UrlTrackerStartupFilter());
+        }
+    }
+
+    [ExcludeFromCodeCoverage]
+    public class UrlTrackerStartupFilter : IUmbracoPipelineFilter
+    {
+        public string Name => "URL Tracker";
+
+        public void OnEndpoints(IApplicationBuilder app)
+        { }
+
+        public void OnPostPipeline(IApplicationBuilder app)
         {
             app.UseMiddleware<UrlTrackerMiddleware>();
+        }
+
+        public void OnPrePipeline(IApplicationBuilder app)
+        { }
+    }
+
+    [ExcludeFromCodeCoverage]
+    public static class IApplicationBuilderExtensions
+    {
+        [Obsolete("This call is no longer required as the middleware is now automatically registered. This method in fact doesn't do anything anymore.")]
+        public static IApplicationBuilder UseUrlTracker(this IApplicationBuilder app)
+        {
+            // Leave this method up for the next major release to allow users some space to adapt to the change
             return app;
         }
 
+        [Obsolete("This call is no longer required as the middleware is now automatically registered. This method in fact doesn't do anything anymore.")]
         public static IUmbracoApplicationBuilderContext UseUrlTracker(this IUmbracoApplicationBuilderContext app)
         {
-            app.AppBuilder.UseUrlTracker();
+            // Leave this method up for the next major release to allow users some space to adapt to the change
             return app;
         }
     }

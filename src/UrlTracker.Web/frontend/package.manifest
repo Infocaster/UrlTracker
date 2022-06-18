@@ -1,16 +1,1 @@
-﻿{
-	"dashboards": [
-		{
-			"alias": "UrlTracker",
-			"view": "~/App_Plugins/UrlTracker/Dashboards/overview.html",
-			"sections": [ "content" ],
-			"weight": 15
-		}
-	],
-	"css": [
-		"~/App_Plugins/UrlTracker/style.css"
-	],
-	"javascript": [
-		"~/App_Plugins/UrlTracker/script.bundle.js"
-	]
-}
+﻿{ }

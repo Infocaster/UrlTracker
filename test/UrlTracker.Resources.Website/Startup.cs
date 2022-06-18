@@ -7,7 +7,6 @@ using Microsoft.Extensions.Hosting;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Extensions;
 using UrlTracker.Resources.Website.Middleware;
-using UrlTracker.Web;
 
 namespace UrlTracker.Resources.Website
 {
@@ -68,7 +67,6 @@ namespace UrlTracker.Resources.Website
                 {
                     u.UseBackOffice();
                     u.UseWebsite();
-                    u.UseUrlTracker();
                     u.AppBuilder.UseAutomatedBackOfficeAuthentication();
                 })
                 .WithEndpoints(u =>
