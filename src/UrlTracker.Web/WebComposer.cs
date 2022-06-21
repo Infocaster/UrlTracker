@@ -9,6 +9,7 @@ using UrlTracker.Web.Configuration;
 using UrlTracker.Web.Events;
 using UrlTracker.Web.Events.Models;
 using UrlTracker.Web.Map;
+using UrlTracker.Web.Package;
 using UrlTracker.Web.Processing;
 
 namespace UrlTracker.Web
@@ -23,7 +24,10 @@ namespace UrlTracker.Web
                    .ComposeUrlTrackerWebMaps()
                    .ComposeDefaultResponseIntercepts()
                    .ComposeDefaultRequestInterceptFilters()
-                   .ComposeDefaultClientErrorFilters();
+                   .ComposeDefaultClientErrorFilters()
+                   .ComposeUrlTrackerPackage();
+
+            builder.Services.ConfigureOptions<ConfigurePipelineOptions>();
 
             builder.Services.AddSingleton<IRequestModelPatcher, RequestModelPatcher>();
             builder.Services.AddTransient<IRequestAbstraction, RequestAbstraction>();
@@ -84,6 +88,15 @@ namespace UrlTracker.Web
                 .Add<ResponseMap>()
                 .Add<RequestMap>()
                 .Add<CsvMap>();
+            return builder;
+        }
+
+        public static IUmbracoBuilder ComposeUrlTrackerPackage(this IUmbracoBuilder builder)
+        {
+            builder.AddDashboard<UrlTrackerDashboard>();
+            builder.BackOfficeAssets()
+                .Append<UrlTrackerScript>()
+                .Append<UrlTrackerStyle>();
             return builder;
         }
 
