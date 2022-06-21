@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ContentTargetFolders>.</ContentTargetFolders>
     <PackageId>UrlTracker.Core</PackageId>
@@ -17,7 +17,7 @@
     <PackageIcon>infocaster_nuget_yellow.png</PackageIcon>
     <PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/infocaster/urltracker</RepositoryUrl>
-    <PackageReleaseNotes>First release for Umbraco 10</PackageReleaseNotes>
+    <PackageReleaseNotes>First release for Umbraco 9</PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
@@ -38,9 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
-    <PackageReference Include="Scrutor" Version="4.1.0" />
-    <PackageReference Include="Umbraco.Cms.Infrastructure" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0" />
+    <PackageReference Include="Scrutor" Version="3.3.0" />
+    <PackageReference Include="Umbraco.Cms.Infrastructure" Version="9.2.0" />
   </ItemGroup>
 
 </Project>

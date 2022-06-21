@@ -1,13 +1,13 @@
 trigger:
   branches:
     include:
-    - v10/main
-    - v10/develop
-    - v10/release/*
-    - v10/hotfix
+    - v9/main
+    - v9/develop
+    - v9/release/*
+    - v9/hotfix
   tags:
     include:
-    - 10.*
+    - 9.*
 
 pool:
   name: Default
@@ -51,10 +51,10 @@ stages:
         customCommand: 'run build:webpack-production'
 
     - task: UseDotNet@2
-      displayName: 'Use .NET 6'
+      displayName: 'Use .NET 5'
       inputs:
         packageType: 'sdk'
-        version: '6.x'
+        version: '5.x'
 
     - task: DotNetCoreCLI@2
       displayName: 'dotnet restore'
