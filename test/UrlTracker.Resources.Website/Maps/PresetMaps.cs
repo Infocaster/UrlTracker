@@ -2,7 +2,6 @@
 using System.Linq;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Extensions;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Resources.Testing.Clients.Models;
 
