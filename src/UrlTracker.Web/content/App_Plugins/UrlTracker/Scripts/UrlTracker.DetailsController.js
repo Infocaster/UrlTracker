@@ -108,21 +108,25 @@
                 });
             } else {
                 return $q((resolve, reject) => {
-                    entityResource.getChildren(-1, 'Document')
-                        .then(function (rootNodes) {
-                            var languagesPromise = [];
-                            vm.rootNodes = rootNodes;
 
-                            if (vm.rootNodes != null) {
-                                vm.rootNodes.forEach(function (n) {
-                                    languagesPromise.push(urlTrackerEntryService.getLanguagesOutNodeDomains(n, n.id));
+                    urlTrackerEntryService.getNodesWithDomains().then(function (data) {
+
+                        entityResource.getByIds(data, 'Document')
+                            .then(function (rootNodes) {
+                                var languagesPromise = [];
+                                vm.rootNodes = rootNodes;
+
+                                if (vm.rootNodes != null) {
+                                    vm.rootNodes.forEach(function (n) {
+                                        languagesPromise.push(urlTrackerEntryService.getLanguagesOutNodeDomains(n, n.id));
+                                    });
+                                }
+
+                                $q.all(languagesPromise).then(() => {
+                                    resolve();
                                 });
-                            }
-
-                            $q.all(languagesPromise).then(() => {
-                                resolve();
                             });
-                        });
+                    });
                 });
             }
         }

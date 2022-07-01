@@ -50,6 +50,21 @@
 			loading: false
 		};
 
+		entityResource.getAll("Document").then(function (data) {
+			console.log(data);
+		})
+
+		entityResource.getAll("Domain").then(function (data) {
+			console.log(data);
+		})
+
+		urlTrackerEntryService.getNodesWithDomains().then(function (data) {
+
+			entityResource.getByIds(data, "Document").then(function (rootNodes) {
+				vm.allRootNodes = rootNodes;
+			});
+        })
+
 		entityResource.getChildren(-1, "Document").then(function (rootNodes) {
 			vm.allRootNodes = rootNodes;
 		});
