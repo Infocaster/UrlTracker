@@ -15,7 +15,7 @@
     "mini-css-extract-plugin": "^2.6.0",
     "node-sass": "^7.0.1",
     "node-sass-magic-importer": "^5.3.2",
-    "prettier": "^2.6.2",
+    "prettier": "^2.7.1",
     "sass-loader": "^13.0.0",
     "style-loader": "^3.3.1",
     "ts-loader": "^9.3.0",
