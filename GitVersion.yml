@@ -14,5 +14,8 @@ branches:
     tag: 'beta'
     regex: ^v9/hotfix
     source-branches: [ 'master' ]
+  release:
+    tag: 'rc'
+    regex: ^v9/release
 ignore:
   sha: []
