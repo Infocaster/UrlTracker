@@ -133,23 +133,26 @@
             });
         } else {
             return this.$q((resolve, reject) => {
-                this.entityResource.getChildren(-1, 'Document')
-                    .then(function (rootNodes) {
-                        var languagesPromise: angular.IPromise<any>[] = [];
-                        $this.rootNodes = rootNodes;
+                this.urlTrackerEntryService.getNodesWithDomains().then(function (data) {
 
-                        if ($this.rootNodes != null) {
-                            $this.rootNodes.forEach(function (n) {
-                                languagesPromise.push($this.urlTrackerEntryService.getLanguagesOutNodeDomains(n.id).then((response) => {
-                                    n.domainLanguages = response;
-                                }));
+                    $this.entityResource.getByIds(data, 'Document')
+                        .then(function (rootNodes) {
+                            var languagesPromise: angular.IPromise<any>[] = [];
+                            $this.rootNodes = rootNodes;
+
+                            if ($this.rootNodes != null) {
+                                $this.rootNodes.forEach(function (n) {
+                                    languagesPromise.push($this.urlTrackerEntryService.getLanguagesOutNodeDomains(n.id).then((response) => {
+                                        n.domainLanguages = response;
+                                    }));
+                                });
+                            }
+
+                            $this.$q.all(languagesPromise).then(() => {
+                                resolve();
                             });
-                        }
-
-                        $this.$q.all(languagesPromise).then(() => {
-                            resolve();
                         });
-                    });
+                })
             });
         }
     }
