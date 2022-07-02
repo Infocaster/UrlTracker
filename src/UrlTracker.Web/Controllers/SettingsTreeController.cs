@@ -37,7 +37,7 @@ namespace UrlTracker.Web.Controllers
             return _menuItemCollectionFactory.Create();
         }
 
-        protected override ActionResult<TreeNode> CreateRootNode(FormCollection queryStrings)
+        protected override ActionResult<TreeNode?> CreateRootNode(FormCollection queryStrings)
         {
             var rootResult = base.CreateRootNode(queryStrings);
             if (rootResult.Result is not null)
@@ -45,7 +45,7 @@ namespace UrlTracker.Web.Controllers
                 return rootResult;
             }
 
-            var root = rootResult.Value;
+            var root = rootResult.Value!;
             root.RoutePath = string.Format("{0}/{1}/{2}", Constants.Applications.Settings, Defaults.SettingsTree.UrlTrackerSettingsTreeName, "overview"); ;
             root.Icon = "icon-umb-developer";
             root.HasChildren = false;

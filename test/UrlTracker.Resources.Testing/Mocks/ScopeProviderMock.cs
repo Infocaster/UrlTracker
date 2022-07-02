@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Moq;
 using Umbraco.Cms.Core.Events;
-using Umbraco.Cms.Core.Scoping;
+using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace UrlTracker.Resources.Testing.Mocks
 {
@@ -13,7 +13,7 @@ namespace UrlTracker.Resources.Testing.Mocks
             ScopeMock = new Mock<IScope>();
 
             ProviderMock.Setup(obj => obj.CreateScope(It.IsAny<IsolationLevel>(),
-                                                      It.IsAny<RepositoryCacheMode>(),
+                                                      It.IsAny<Umbraco.Cms.Core.Scoping.RepositoryCacheMode>(),
                                                       It.IsAny<IEventDispatcher>(),
                                                       It.IsAny<IScopedNotificationPublisher>(),
                                                       It.IsAny<bool?>(),
