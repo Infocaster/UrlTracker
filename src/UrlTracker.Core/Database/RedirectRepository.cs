@@ -6,8 +6,8 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using NPoco;
 using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Infrastructure.Persistence;
-using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Extensions;
 using UrlTracker.Core.Database.Models;
 

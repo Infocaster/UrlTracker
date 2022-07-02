@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.DependencyInjection;
 using UrlTracker.Resources.Website.Maps;
 using UrlTracker.Resources.Website.Preset;
 

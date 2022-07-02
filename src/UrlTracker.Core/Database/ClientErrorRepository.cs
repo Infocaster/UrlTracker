@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Mapping;
-using Umbraco.Cms.Infrastructure.Scoping;
+using Umbraco.Cms.Core.Scoping;
 using Umbraco.Extensions;
 using UrlTracker.Core.Database.Models;
 

@@ -8,7 +8,7 @@ using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Notifications;
-using Umbraco.Cms.Infrastructure.Scoping;
+using Umbraco.Cms.Core.Scoping;
 using Umbraco.Extensions;
 using UrlTracker.Core;
 using UrlTracker.Core.Abstractions;

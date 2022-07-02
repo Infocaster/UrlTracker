@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Core.Caching;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Database.Models;

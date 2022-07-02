@@ -9,7 +9,7 @@ using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Mapping;
-using Umbraco.Cms.Infrastructure.Scoping;
+using Umbraco.Cms.Core.Scoping;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Cms.Web.Common.Attributes;

@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Moq;
 using Umbraco.Cms.Core.Events;
-using Umbraco.Cms.Infrastructure.Scoping;
+using Umbraco.Cms.Core.Scoping;
 
 namespace UrlTracker.Resources.Testing.Mocks
 {
