@@ -11,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Cms.Web.BackOffice.Controllers;
+using Umbraco.Cms.Web.Common;
 using Umbraco.Cms.Web.Common.Attributes;
 using UrlTracker.Core;
 using UrlTracker.Core.Configuration.Models;
@@ -37,6 +38,7 @@ namespace UrlTracker.Web.Controllers
         private readonly IScopeProvider _scopeProvider;
         private readonly IRequestModelPatcher _requestModelPatcher;
         private readonly IUmbracoMapper _mapper;
+        private readonly UmbracoHelper _umbracoHelper;
 
         public UrlTrackerManagerController(IOptions<UrlTrackerSettings> configuration,
                                            IDomainProvider domainProvider,
@@ -45,7 +47,8 @@ namespace UrlTracker.Web.Controllers
                                            ILegacyService legacyService,
                                            IScopeProvider scopeProvider,
                                            IRequestModelPatcher requestModelPatcher,
-                                           IUmbracoMapper mapper)
+                                           IUmbracoMapper mapper,
+                                           UmbracoHelper umbracoHelper)
             : base()
         {
             _configuration = configuration;
@@ -56,6 +59,7 @@ namespace UrlTracker.Web.Controllers
             _scopeProvider = scopeProvider;
             _requestModelPatcher = requestModelPatcher;
             _mapper = mapper;
+            _umbracoHelper = umbracoHelper;
         }
 
         [HttpPost]
@@ -83,6 +87,21 @@ namespace UrlTracker.Web.Controllers
             //    Replace list with a real response model
             var model = _mapper.MapEnumerable<Domain, GetLanguagesFromNodeResponseLanguage>(uniqueDomains);
             return Ok(model);
+        }
+
+        [HttpGet]
+        [ExcludeFromCodeCoverage]
+        public IActionResult GetNodesWithDomains()
+        {
+            var domains = _domainProvider.GetDomains();
+            var uniqueNodes = from domain in domains
+                              group domain by domain.NodeId into g
+                              where g.Key.HasValue
+                              select g.Key!.Value;
+
+            uniqueNodes = uniqueNodes.Union(_umbracoHelper.ContentAtRoot().Select(c => c.Id));
+
+            return Ok(uniqueNodes.ToList());
         }
 
         [HttpGet]

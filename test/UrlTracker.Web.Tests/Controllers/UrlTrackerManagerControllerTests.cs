@@ -48,7 +48,8 @@ namespace UrlTracker.Web.Tests.Controllers
                                                            LegacyService,
                                                            ScopeProviderMock!.Provider,
                                                            RequestModelPatcher,
-                                                           Mapper!);
+                                                           Mapper!,
+                                                           null);
         }
     }
 }
