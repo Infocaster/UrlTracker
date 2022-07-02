@@ -84,6 +84,13 @@
         }), "Failed to get languages");
     }
 
+    public getNodesWithDomains() {
+        return this.urlResource.verify(this.$http({
+            url: this.urlResource.getUrl("getNodesWithDomains"),
+            method: "GET"
+        }), "Failed to get nodes with domains");
+    }
+
     public countNotFoundsThisWeek() {
         return this.urlResource.verify(this.$http({
             url: this.urlResource.getUrl("countNotFoundsThisWeek"),

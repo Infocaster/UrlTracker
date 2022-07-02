@@ -14,6 +14,7 @@
         updateRedirect(entry: any): angular.IPromise<any>;
         deleteEntry(entryId: number, is404?: boolean): angular.IPromise<any>;
         getLanguagesOutNodeDomains(nodeId: number): angular.IPromise<any>;
+        getNodesWithDomains(): angular.IPromise<any>;
         countNotFoundsThisWeek(): angular.IPromise<any>;
         getSettings(): angular.IPromise<any>;
         importRedirects(file: any): angular.IPromise<any>;

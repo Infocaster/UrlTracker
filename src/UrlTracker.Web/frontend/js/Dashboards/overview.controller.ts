@@ -60,9 +60,12 @@
             loading: false
         };
 
-        entityResource.getChildren(-1, "Document").then(function (rootNodes) {
-            $this.allRootNodes = rootNodes;
-        });
+        urlTrackerEntryService.getNodesWithDomains().then(function (data) {
+
+            entityResource.getByIds(data, "Document").then(function (rootNodes) {
+                $this.allRootNodes = rootNodes;
+            });
+        })
 
         this.UpdateDashboard();
         this.GetRedirects(this.redirects);
