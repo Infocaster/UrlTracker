@@ -18,6 +18,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
 
         public static IEnumerable<TestCaseData> NormalFlowTestCases()
         {
+            string inputUrl = "http://example.com/lorem";
             yield return new TestCaseData
             (
                 DomainCollection.Create(new List<Core.Domain.Models.Domain>
@@ -25,7 +26,8 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
                     new Core.Domain.Models.Domain(0, 1, "example domain", "en-us", Url.Parse("example.com"))
                 }),
                 "en-us",
-                (int?)1
+                (int?)1,
+                inputUrl
             ).SetName("PreprocessUrlAsync sets root node id and culture if url maps to a known domain");
             yield return new TestCaseData
             (
@@ -34,15 +36,76 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
                     new Core.Domain.Models.Domain(1, 2, "www example domain", "en-us", Url.Parse("www.example.com"))
                 }),
                 null,
-                null
+                null,
+                inputUrl
             ).SetName("PreprocessUrlAsync does nothing if the url does not map to a known domain");
+            yield return new TestCaseData
+            (
+                DomainCollection.Create(new List<Core.Domain.Models.Domain>
+                {
+                    new Core.Domain.Models.Domain(1, 2, "example domain", "en-us", Url.Parse("https://example.com"))
+                }),
+                null,
+                null,
+                inputUrl
+            ).SetName("PreprocessUrlAsync matches on protocol if provided");
+            yield return new TestCaseData
+            (
+                DomainCollection.Create(new List<Core.Domain.Models.Domain>
+                {
+                    new Core.Domain.Models.Domain(1, 2, "example domain", "en-us", Url.Parse("/lorem"))
+                }),
+                "en-us",
+                (int?)2,
+                inputUrl
+            ).SetName("PreprocessUrlAsync matches on relative url");
+            yield return new TestCaseData
+            (
+                DomainCollection.Create(new List<Core.Domain.Models.Domain>
+                {
+                    new Core.Domain.Models.Domain(1, 2, "example domain", "en-us", Url.Parse("/lorem"))
+                }),
+                "en-us",
+                (int?)2,
+                "http://example.com:443/lorem"
+            ).SetName("PreprocessUrlAsync ignores port if host is not given");
+            yield return new TestCaseData
+            (
+                DomainCollection.Create(new List<Core.Domain.Models.Domain>
+                {
+                    new Core.Domain.Models.Domain(1, 2, "example domain", "en-us", Url.Parse("example.com/lorem"))
+                }),
+                null,
+                null,
+                "http://example.com:443/lorem"
+            ).SetName("PreprocessUrlAsync enforces port if host is given");
+            yield return new TestCaseData
+            (
+                DomainCollection.Create(new List<Core.Domain.Models.Domain>
+                {
+                    new Core.Domain.Models.Domain(1, 2, "example domain", "en-us", Url.Parse("example.com:443/lorem"))
+                }),
+                null,
+                null,
+                "http://example.com:8080/lorem"
+            ).SetName("PreprocessUrlAsync refuses domain if port is unequal");
+            yield return new TestCaseData
+            (
+                DomainCollection.Create(new List<Core.Domain.Models.Domain>
+                {
+                    new Core.Domain.Models.Domain(1, 2, "example domain", "en-us", Url.Parse("example.com:443/lorem"))
+                }),
+                "en-us",
+                (int?)2,
+                "http://example.com:443/lorem"
+            ).SetName("PreprocessUrlAsync accepts domain of port is equal");
         }
 
         [TestCaseSource(nameof(NormalFlowTestCases))]
-        public async Task PreprocessUrlAsync_NormalFlow_InsertsDomainMatches(DomainCollection domains, string culture, int? rootNodeId)
+        public async Task PreprocessUrlAsync_NormalFlow_InsertsDomainMatches(DomainCollection domains, string culture, int? rootNodeId, string inputUrl)
         {
             // arrange
-            var input = Url.Parse("http://example.com/lorem");
+            var input = Url.Parse(inputUrl);
             DomainProviderMock!.Setup(obj => obj.GetDomains()).Returns(domains).Verifiable();
 
             // act

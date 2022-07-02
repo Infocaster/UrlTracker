@@ -138,6 +138,17 @@
 	        });
 		}
 
+		var getNodesWithDomains = function () {
+			return $http({
+				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/GetNodesWithDomains",
+				method: "GET"
+			}).then(function (response) {
+				return response.data;
+			}).catch(function (response) {
+				$log.log(response);
+            })
+        }
+
 		var countNotFoundsThisWeek = function(scope) {
 			return $http({
 				url: "/umbraco/BackOffice/UrlTracker/UrlTrackerManager/CountNotFoundsThisWeek",
@@ -193,6 +204,7 @@
 			updateRedirect: updateRedirect,
             addRedirect: addRedirect,
 			getLanguagesOutNodeDomains: getLanguagesOutNodeDomains,
+			getNodesWithDomains: getNodesWithDomains,
 			countNotFoundsThisWeek: countNotFoundsThisWeek,
 			getSettings: getSettings,
 			importRedirects: importRedirects,

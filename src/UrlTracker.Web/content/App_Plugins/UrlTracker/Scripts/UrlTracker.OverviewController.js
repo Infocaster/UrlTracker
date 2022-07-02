@@ -50,9 +50,12 @@
 			loading: false
 		};
 
-		entityResource.getChildren(-1, "Document").then(function (rootNodes) {
-			vm.allRootNodes = rootNodes;
-		});
+		urlTrackerEntryService.getNodesWithDomains().then(function (data) {
+
+			entityResource.getByIds(data, "Document").then(function (rootNodes) {
+				vm.allRootNodes = rootNodes;
+			});
+        })
 
 		UpdateDashboard();
 		GetRedirects(vm.redirects);
