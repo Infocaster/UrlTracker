@@ -16,6 +16,6 @@ branches:
     source-branches: [ 'master' ]
   release:
     tag: 'rc'
-    regex: ^v9/release
+    regex: ^v10/release
 ignore:
   sha: []
