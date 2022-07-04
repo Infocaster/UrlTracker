@@ -21,7 +21,7 @@ namespace UrlTracker.Core.Tests.Domain
 
         public override void TearDown()
         {
-            _runtimeCache?.Dispose();
+            _runtimeCache?.Clear();
         }
 
         [TestCase(TestName = "GetDomains calls decoratee only once")]
