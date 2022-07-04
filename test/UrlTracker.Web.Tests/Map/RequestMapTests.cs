@@ -4,7 +4,6 @@ using System.Net;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Core.Mapping;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Mocks;
@@ -26,7 +25,7 @@ namespace UrlTracker.Web.Tests.Map
 
         public override void SetUp()
         {
-            UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => new TestPublishedContent { Id = id });
+            UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => TestPublishedContent.Create(id));
         }
 
         [TestCase(TestName = "Map UpdateRedirectRequest to Redirect with content")]

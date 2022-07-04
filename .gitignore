@@ -11,3 +11,6 @@ TODO.txt
 /packages
 /TestResults
 /test/UrlTracker.Resources.Website/App_Data
+/src/UrlTracker.Frontend/node_modules
+/test/UrlTracker.Resources.Website/App_Plugins/UrlTracker
+/App_Plugins/UrlTracker

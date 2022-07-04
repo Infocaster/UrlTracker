@@ -2,6 +2,7 @@
 using Umbraco.Core;
 using Umbraco.Core.Composing;
 using Umbraco.Core.Mapping;
+using Umbraco.Web;
 using UrlTracker.Core;
 using UrlTracker.Web.Abstractions;
 using UrlTracker.Web.Compatibility;
@@ -11,6 +12,7 @@ using UrlTracker.Web.Configuration.Models;
 using UrlTracker.Web.Events;
 using UrlTracker.Web.Events.Models;
 using UrlTracker.Web.Map;
+using UrlTracker.Web.Package;
 using UrlTracker.Web.Processing;
 
 namespace UrlTracker.Web
@@ -29,6 +31,8 @@ namespace UrlTracker.Web
                        .ComposeDefaultResponseIntercepts()
                        .ComposeDefaultRequestInterceptFilters()
                        .ComposeDefaultClientErrorFilters();
+
+            composition.Dashboards().Add<UrlTrackerDashboard>();
 
             composition.RegisterUnique<IContentValueReaderFactory, ContentValueReaderFactory>();
             composition.RegisterUnique<IRequestModelPatcher, RequestModelPatcher>();
@@ -59,7 +63,8 @@ namespace UrlTracker.Web
         {
             composition.Components()
                 .Append<IncomingUrlHandlingComponent>()
-                .Append<ContentChangeHandlingComponent>();
+                .Append<ContentChangeHandlingComponent>()
+                .Append<ServerVariablesComponent>();
             return composition;
         }
 

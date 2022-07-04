@@ -15,7 +15,8 @@ pool:
 variables: 
   BuildConfiguration: 'release'
   BuildPlatform: 'any cpu'
-  Solution: '**\*.sln'
+  Solution: '**\UrlTracker.sln'
+  NpmWorkingDirectory: 'src\UrlTracker.Frontend'
 
 stages:
 - stage: build
@@ -23,7 +24,32 @@ stages:
   jobs:
   - job: build
     displayName: Build
-    steps:
+    steps:      
+    - task: GitVersion@5
+      displayName: GitVersion
+      inputs:
+        configFilePath: GitVersion.yml
+        updateAssemblyInfo: true
+
+    - task: NodeTool@0
+      displayName: 'Use node 16.x'
+      inputs:
+        versionSpec: '16.x'
+
+    - task: Npm@1
+      displayName: 'Install front end packages'
+      inputs:
+        command: 'custom'
+        workingDir: $(NpmWorkingDirectory)
+        customCommand: 'ci --prefer-offline --no-audit'
+
+    - task: Npm@1
+      displayName: 'Build front end'
+      inputs:
+        command: 'custom'
+        workingDir: $(NpmWorkingDirectory)
+        customCommand: 'run build:webpack-production'
+    
     - task: NuGetToolInstaller@0
       displayName: 'Use NuGet 5.8'
       inputs:
@@ -35,12 +61,6 @@ stages:
         restoreSolution: '$(Solution)'
         feedsToUse: config
         nugetConfigPath: nuget.config
-                
-    - task: GitVersion@5
-      displayName: GitVersion
-      inputs:
-        configFilePath: GitVersion.yml
-        updateAssemblyInfo: true
 
     - task: VSBuild@1
       displayName: 'Build solution **\*.sln'
@@ -87,8 +107,10 @@ stages:
   displayName: Release
   dependsOn: build
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+  variables:
+    packageGlob: '$(Pipeline.Workspace)/drop/*.nupkg'
   jobs:
-  - job: release
+  - job: releaseArtifact
     displayName: Push to artifacts
     workspace:
       clean: all
@@ -102,4 +124,20 @@ stages:
       inputs:
         command: push
         publishVstsFeed: '3356baca-d7d8-497c-a5fa-ebd93f79f7c7'
-        packagesToPush: '$(Pipeline.Workspace)/drop/*.nupkg'
+        packagesToPush: $(packageGlob)
+
+  - job: releaseNuget
+    displayName: Push to nuget
+    workspace:
+      clean: all
+    steps:
+    - checkout: none
+    
+    - download: current
+      patterns: '**/*.nupkg'
+      displayName: Download build artifact
+    
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: 'nuget push $(packageGlob) -ApiKey $(NuGetApiKey) -Source https://api.nuget.org/v3/index.json'

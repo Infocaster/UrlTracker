@@ -298,7 +298,6 @@
     <Compile Include="Objects\TestLanguage.cs" />
     <Compile Include="Objects\TestPublishedContent.cs" />
     <Compile Include="Objects\TestResponseInterceptHandler.cs" />
-    <Compile Include="Objects\TestUmbracoDomain.cs" />
     <Compile Include="Mocks\HttpContextMock.cs" />
     <Compile Include="Logging\ConsoleLogger.cs" />
     <Compile Include="Objects\TestMapDefinition.cs" />

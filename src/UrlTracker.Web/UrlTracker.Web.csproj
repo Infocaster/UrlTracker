@@ -297,6 +297,7 @@
     <Compile Include="Components\IContentValueReader.cs" />
     <Compile Include="Components\IContentValueReaderFactory.cs" />
     <Compile Include="Components\IncomingUrlHandlingComponent.cs" />
+    <Compile Include="Components\ServerVariablesComponent.cs" />
     <Compile Include="Configuration\Models\ReservedPathSettings.cs" />
     <Compile Include="Configuration\ReservedPathSettingsProvider.cs" />
     <Compile Include="Controllers\ActionFilters\PatchModelAttribute.cs" />
@@ -318,6 +319,7 @@
     <Compile Include="Controllers\Models\RedirectViewModel.cs" />
     <Compile Include="Controllers\Models\UpdateRedirectRequest.cs" />
     <Compile Include="Controllers\Models\RedirectRequestBase.cs" />
+    <Compile Include="Controllers\SettingsTreeController.cs" />
     <Compile Include="Controllers\UrlTrackerManagerController.cs" />
     <Compile Include="Events\EventPublisher.cs" />
     <Compile Include="Events\IEventPublisher.cs" />
@@ -330,6 +332,7 @@
     <Compile Include="Map\CsvMap.cs" />
     <Compile Include="Map\RequestMap.cs" />
     <Compile Include="Map\ResponseMap.cs" />
+    <Compile Include="Package\UrlTrackerDashboard.cs" />
     <Compile Include="Processing\ClientErrorFilterCollectionBuilder.cs" />
     <Compile Include="Processing\ConfigurationClientErrorFilter.cs" />
     <Compile Include="Processing\ConfigurationInterceptFilter.cs" />

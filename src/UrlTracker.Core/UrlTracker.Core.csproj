@@ -336,6 +336,7 @@
     <Compile Include="Defaults\Defaults_Cache.cs" />
     <Compile Include="Defaults\Defaults_Configuration.cs" />
     <Compile Include="Defaults\Defaults_Parameters.cs" />
+    <Compile Include="Defaults\Defaults_SettingsTree.cs" />
     <Compile Include="Defaults\Defaults_Tracking.cs" />
     <Compile Include="Defaults\Defaults_Validation.cs" />
     <Compile Include="Exceptions\ExceptionHelper.cs" />

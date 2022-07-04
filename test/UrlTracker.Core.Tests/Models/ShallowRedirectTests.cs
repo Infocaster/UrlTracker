@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using NUnit.Framework;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing.Objects;
 
@@ -16,7 +15,7 @@ namespace UrlTracker.Core.Tests.Models
             yield return new TestCaseData(
                 new ShallowRedirect
                 {
-                    TargetRootNode = new TestPublishedContent(),
+                    TargetRootNode = TestPublishedContent.Create(1),
                     TargetStatusCode = HttpStatusCode.Redirect,
                     SourceUrl = "http://example.com",
                     TargetUrl = "http://example.com/lorem"
@@ -26,8 +25,8 @@ namespace UrlTracker.Core.Tests.Models
             yield return new TestCaseData(
                 new ShallowRedirect
                 {
-                    TargetRootNode = new TestPublishedContent(),
-                    TargetNode = new TestPublishedContent(),
+                    TargetRootNode = TestPublishedContent.Create(1),
+                    TargetNode = TestPublishedContent.Create(2),
                     TargetStatusCode = HttpStatusCode.Redirect,
                     SourceRegex = "lorem ipsum"
                 },
@@ -36,9 +35,9 @@ namespace UrlTracker.Core.Tests.Models
             yield return new TestCaseData(
                 new ShallowRedirect
                 {
-                    TargetRootNode = new TestPublishedContent(),
+                    TargetRootNode = TestPublishedContent.Create(1),
                     TargetStatusCode = HttpStatusCode.OK,
-                    TargetNode = new TestPublishedContent(),
+                    TargetNode = TestPublishedContent.Create(2),
                     SourceUrl = "http://example.com"
                 },
                 false,
@@ -48,7 +47,7 @@ namespace UrlTracker.Core.Tests.Models
                 {
                     TargetRootNode = null,
                     TargetStatusCode = HttpStatusCode.Redirect,
-                    TargetNode = new TestPublishedContent(),
+                    TargetNode = TestPublishedContent.Create(1),
                     SourceUrl = "http://example.com"
                 },
                 false,
@@ -56,7 +55,7 @@ namespace UrlTracker.Core.Tests.Models
             yield return new TestCaseData(
                 new ShallowRedirect
                 {
-                    TargetRootNode = new TestPublishedContent(),
+                    TargetRootNode = TestPublishedContent.Create(1),
                     TargetStatusCode = HttpStatusCode.Redirect,
                     SourceUrl = "http://example.com"
                 },
@@ -65,9 +64,9 @@ namespace UrlTracker.Core.Tests.Models
             yield return new TestCaseData(
                 new ShallowRedirect
                 {
-                    TargetRootNode = new TestPublishedContent(),
+                    TargetRootNode = TestPublishedContent.Create(1),
                     TargetStatusCode = HttpStatusCode.Redirect,
-                    TargetNode = new TestPublishedContent()
+                    TargetNode = TestPublishedContent.Create(2)
                 },
                 false,
                 new[] { "SourceUrl", "SourceRegex" }).SetName("Model is invalid if no source condition is specified");

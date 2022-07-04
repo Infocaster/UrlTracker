@@ -60,16 +60,8 @@ namespace UrlTracker.Web.Tests.Map
                 },
                 Redirect = new ShallowRedirect
                 {
-                    TargetRootNode = new TestPublishedContent
-                    {
-                        Id = 1,
-                        ItemType = PublishedItemType.Content
-                    },
-                    TargetNode = new TestPublishedContent
-                    {
-                        Id = 2,
-                        ItemType = PublishedItemType.Content
-                    }
+                    TargetRootNode = TestPublishedContent.Create(1, PublishedItemType.Content),
+                    TargetNode = TestPublishedContent.Create(2, PublishedItemType.Content)
                 }
             }.ToTestCase("MapToUrl redirect to node returns node url");
 
@@ -88,16 +80,8 @@ namespace UrlTracker.Web.Tests.Map
                 }),
                 Redirect = new ShallowRedirect
                 {
-                    TargetRootNode = new TestPublishedContent
-                    {
-                        Id = 1,
-                        ItemType = PublishedItemType.Content
-                    },
-                    TargetNode = new TestPublishedContent
-                    {
-                        Id = 2,
-                        ItemType = PublishedItemType.Content
-                    },
+                    TargetRootNode = TestPublishedContent.Create(1, PublishedItemType.Content),
+                    TargetNode = TestPublishedContent.Create(2, PublishedItemType.Content),
                     Culture = "nl"
                 }
             }.ToTestCase("MapToUrl redirect to node returns node url with root host");
@@ -129,16 +113,8 @@ namespace UrlTracker.Web.Tests.Map
                 ExpectedUrl = Url.Parse("http://example.com:81/lorem"),
                 Redirect = new ShallowRedirect
                 {
-                    TargetNode = new TestPublishedContent
-                    {
-                        Id = 1,
-                        ItemType = PublishedItemType.Content
-                    },
-                    TargetRootNode = new TestPublishedContent
-                    {
-                        Id = 2,
-                        ItemType = PublishedItemType.Content
-                    }
+                    TargetNode = TestPublishedContent.Create(1, PublishedItemType.Content),
+                    TargetRootNode = TestPublishedContent.Create(2, PublishedItemType.Content)
                 },
                 ContentUrls = new[]
                 {
@@ -153,16 +129,8 @@ namespace UrlTracker.Web.Tests.Map
                 ExpectedUrl = Url.Parse("http://example.com/lorem"),
                 Redirect = new ShallowRedirect
                 {
-                    TargetNode = new TestPublishedContent
-                    {
-                        Id = 1,
-                        ItemType = PublishedItemType.Content
-                    },
-                    TargetRootNode = new TestPublishedContent
-                    {
-                        Id = 2,
-                        ItemType = PublishedItemType.Content
-                    }
+                    TargetNode = TestPublishedContent.Create(1, PublishedItemType.Content),
+                    TargetRootNode = TestPublishedContent.Create(2, PublishedItemType.Content)
                 },
                 ContentUrls = new[]
                 {
@@ -177,11 +145,7 @@ namespace UrlTracker.Web.Tests.Map
                 ExpectedUrl = Url.Parse("http://urltracker.ic/ipsum"),
                 Redirect = new ShallowRedirect
                 {
-                    TargetNode = new TestPublishedContent
-                    {
-                        Id = 1,
-                        ItemType = PublishedItemType.Content
-                    }
+                    TargetNode = TestPublishedContent.Create(1, PublishedItemType.Content)
                 },
                 ContentUrls = new[]
                 {

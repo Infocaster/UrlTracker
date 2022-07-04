@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Umbraco.Core.Mapping;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Web;
@@ -38,7 +39,7 @@ namespace UrlTracker.Resources.Website.Maps
                     target.Name = source.Name;
                     target.Url = source.Url();
                     target.Id = source.Id;
-                    target.Children = context.MapEnumerable<IPublishedContent, ContentTreeViewModel>(source.Children);
+                    target.Children = context.MapEnumerable<IPublishedContent, ContentTreeViewModel>(source.Children ?? Enumerable.Empty<IPublishedContent>());
                 });
         }
     }
