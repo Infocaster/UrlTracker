@@ -108,7 +108,7 @@ stages:
   dependsOn: build
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   variables:
-    packageGlob: '$(Pipeline.Workspace)/drop/*.nupkg'
+    packageGlob: '$(Pipeline.Workspace)/**/UrlTracker*.nupkg'
   jobs:
   - job: releaseArtifact
     displayName: Push to artifacts
@@ -132,11 +132,9 @@ stages:
       clean: all
     steps:
     - checkout: none
-    
     - download: current
       patterns: '**/*.nupkg'
       displayName: Download build artifact
-    
     - task: PowerShell@2
       inputs:
         targetType: 'inline'
