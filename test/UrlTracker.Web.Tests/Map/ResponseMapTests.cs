@@ -180,6 +180,7 @@ namespace UrlTracker.Web.Tests.Map
                 Assert.That(result.IsDisabled, Is.True);
                 Assert.That(result.IsNotFoundTrackingDisabled, Is.True);
                 Assert.That(result.TrackingDisabled, Is.True);
+                Assert.That(result.BlockedUrlsList, Is.Not.Null);
             });
         }
 

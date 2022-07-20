@@ -111,6 +111,7 @@ namespace UrlTracker.Web.Map
             target.IsDisabled = source.IsDisabled;
             target.IsNotFoundTrackingDisabled = source.IsNotFoundTrackingDisabled;
             target.TrackingDisabled = source.IsTrackingDisabled;
+            target.BlockedUrlsList = source.BlockedUrlsList;
         }
     }
 }

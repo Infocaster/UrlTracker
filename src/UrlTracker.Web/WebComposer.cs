@@ -76,6 +76,7 @@ namespace UrlTracker.Web
         public static IUmbracoBuilder ComposeDefaultClientErrorFilters(this IUmbracoBuilder builder)
         {
             builder.ClientErrorFilters()!
+                .Append<BlacklistedUrlsClientErrorFilter>()
                 .Append<ConfigurationClientErrorFilter>()
                 .Append<IgnoredClientErrorFilter>();
             return builder;

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
 namespace UrlTracker.Core.Configuration.Models
@@ -18,5 +19,6 @@ namespace UrlTracker.Core.Configuration.Models
         public int? InterceptSlidingCacheMinutes { get; set; } = 60 * 24 * 2; // cache for 2 days by default
         public bool EnableInterceptCaching { get; set; } = true;
         public long MaxCachedIntercepts { get; set; } = 5000;
+        public List<string> BlockedUrlsList { get; set; } = new List<string>();
     }
 }
