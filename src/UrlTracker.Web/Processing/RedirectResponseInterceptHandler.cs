@@ -2,6 +2,8 @@
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Domain.Models;
@@ -18,16 +20,19 @@ namespace UrlTracker.Web.Processing
         private readonly IUmbracoMapper _mapper;
         private readonly IResponseAbstraction _responseAbstraction;
         private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactory;
+        private readonly IOptionsMonitor<RequestHandlerSettings> _requestHandlerOptions;
 
         public RedirectResponseInterceptHandler(ILogger<RedirectResponseInterceptHandler> logger,
                                                 IUmbracoMapper mapper,
                                                 IResponseAbstraction responseAbstraction,
-                                                IUmbracoContextFactoryAbstraction umbracoContextFactory)
+                                                IUmbracoContextFactoryAbstraction umbracoContextFactory,
+                                                IOptionsMonitor<RequestHandlerSettings> requestHandlerOptions)
         {
             _logger = logger;
             _mapper = mapper;
             _responseAbstraction = responseAbstraction;
             _umbracoContextFactory = umbracoContextFactory;
+            _requestHandlerOptions = requestHandlerOptions;
         }
 
         protected override async ValueTask HandleAsync(RequestDelegate next, HttpContext context, ShallowRedirect intercept)
@@ -76,8 +81,10 @@ namespace UrlTracker.Web.Processing
 
         private string? GetUrl(HttpContext context, ShallowRedirect intercept)
         {
-            Url url = _mapper.MapToUrl(intercept, context);
-            var result = url?.ToString(UrlType.Absolute);
+            var requestHandlerOptionsValue = _requestHandlerOptions.CurrentValue;
+
+            var url = _mapper.MapToUrl(intercept, context);
+            var result = url?.ToString(UrlType.Absolute, requestHandlerOptionsValue.AddTrailingSlash);
             return result;
         }
 

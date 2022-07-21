@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using NUnit.Framework;
+using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
@@ -31,7 +32,8 @@ namespace UrlTracker.Web.Tests.Processing
 
         public override void SetUp()
         {
-            _testSubject = new RedirectResponseInterceptHandler(new ConsoleLogger<RedirectResponseInterceptHandler>(), Mapper!, ResponseAbstraction, UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory);
+            RequestHandlerSettingsMock.Setup(obj => obj.CurrentValue).Returns(new RequestHandlerSettings { AddTrailingSlash = false });
+            _testSubject = new RedirectResponseInterceptHandler(new ConsoleLogger<RedirectResponseInterceptHandler>(), Mapper!, ResponseAbstraction, UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory, RequestHandlerSettings);
             _testMap!.To = null; // <- always reset the url on the test map to prevent urls from leaking between tests
         }
 
