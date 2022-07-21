@@ -48,7 +48,7 @@ namespace UrlTracker.IntegrationTests
             OneTimeTeardown();
         }
 
-        [OneTimeTearDown]
+        //[OneTimeTearDown]
         public virtual void OneTimeTeardown()
         {
             Database.Dispose();
