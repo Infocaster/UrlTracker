@@ -50,7 +50,8 @@ The URL Tracker has several configurable properties that can be changed in appse
         "CacheRegexRedirects": true,
         "InterceptSlidingCacheMinutes": 2880,
         "MaxCachedIntercepts": 5000,
-        "EnableInterceptCaching": true
+        "EnableInterceptCaching": true,
+        "BlockedUrlsList": []
     }
 }
 ```
@@ -67,6 +68,7 @@ The URL Tracker has several configurable properties that can be changed in appse
 | Intercept sliding cache minutes | int? | Set this value to the time in minutes that all redirects should be cached. By default, all redirects are cached for 2 days. Set to `null` to cache indefinitely.
 |           Max cached intercepts | long | Set this value to the amount of intercepts that should be cached by the UrlTracker. This not only includes redirects, but also 200 OK responses, 410 GONE responses and 404 NOT FOUND responses.
 |        Enable intercept caching | bool | Set this value to `false` to completely disable redirect caching.
+|       Blocked Urls List         |String array| Add strings to this array that should be blocked from the UrlTracker. The strings in this array will be filtered out and shall never appear as a 404. This is great for things that crawlers search for like wpadmin and prevents the UrlTracker from getting clogged. Keep in mind that the filter works with String.Contains so there is no need to use entire urls.
 
 Read more in-depth documentation in [the URL Tracker wiki](https://github.com/Infocaster/UrlTracker/wiki).
 

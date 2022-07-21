@@ -88,6 +88,26 @@
                                     <p class="mt-2">Set this value to true to add a port number behind the host component of a redirect url. This setting is ignored when the application is hosted on the default port 80.</p>
                                 </div>
                             </div>
+                            <div class="col-12">
+                                <div class="umb-box urltracker-setting-box p-3">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h4 class="m-0">UrlTracker:BlockedUrlsList</h4>
+                                        </div>
+                                        <div class="col-auto">
+                                            <span class="urltracker-label" ng-class="vm.settings.BlockedUrlsList.length > 0 ? 'urltracker-green-label' : 'urltracker-red-label'">{{(vm.settings.BlockedUrlsList.length > 0) ? vm.settings.BlockedUrlsList.length : 'Empty'}}</span>
+                                        </div>
+                                    </div>
+                                    <small>List of strings, currently {{vm.settings.BlockedUrlsList.length}}</small>
+                                    <p class="mt-2">All the items in this list will be ignored by the UrlTracker. This is an useful way to prevent getting 404's on things like wp-admin, which webcrawlers can generate. 
+                                        <ul>
+                                            <li ng-repeat="item in vm.settings.BlockedUrlsList">
+                                                {{item}}
+                                            </li>
+                                        </ul>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

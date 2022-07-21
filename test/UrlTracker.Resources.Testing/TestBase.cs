@@ -28,69 +28,71 @@ namespace UrlTracker.Resources.Testing
 {
     public abstract class TestBase
     {
-        protected UmbracoContextFactoryAbstractionMock? UmbracoContextFactoryAbstractionMock { get; set; }
-        protected ScopeProviderMock? ScopeProviderMock { get; private set; }
-        protected HttpContextMock? HttpContextMock { get; set; }
-        protected IOptions<GlobalSettings>? GlobalSettings { get; set; }
+        protected UmbracoContextFactoryAbstractionMock UmbracoContextFactoryAbstractionMock { get; set; } = null!;
+        protected ScopeProviderMock ScopeProviderMock { get; set; } = null!;
+        protected HttpContextMock HttpContextMock { get; set; } = null!;
+        protected IOptions<GlobalSettings> GlobalSettings { get; set; } = null!;
 
-        protected Mock<IDomainProvider>? DomainProviderMock { get; set; }
-        protected IDomainProvider DomainProvider => DomainProviderMock!.Object;
-        protected Mock<IInterceptConverter>? InterceptConverterMock { get; set; }
-        protected IInterceptConverter InterceptConverter => InterceptConverterMock!.Object;
-        protected Mock<IInterceptPreprocessor>? InterceptPreprocessorMock { get; set; }
-        protected IInterceptPreprocessor InterceptPreprocessor => InterceptPreprocessorMock!.Object;
-        protected Mock<IDefaultInterceptContextFactory>? DefaultInterceptContextFactoryMock { get; set; }
-        protected IDefaultInterceptContextFactory DefaultInterceptContextFactory => DefaultInterceptContextFactoryMock!.Object;
-        protected Mock<IInterceptor>? InterceptorMock { get; set; }
-        protected IInterceptor Interceptor => InterceptorMock!.Object;
-        protected Mock<IClientErrorRepository>? ClientErrorRepositoryMock { get; set; }
-        protected IClientErrorRepository ClientErrorRepository => ClientErrorRepositoryMock!.Object;
-        protected Mock<IRedirectRepository>? RedirectRepositoryMock { get; set; }
-        protected IRedirectRepository RedirectRepository => RedirectRepositoryMock!.Object;
-        protected Mock<IValidationHelper>? ValidationHelperMock { get; set; }
-        protected IValidationHelper ValidationHelper => ValidationHelperMock!.Object;
-        protected Mock<IIntermediateInterceptService>? IntermediateInterceptServiceMock { get; set; }
-        protected IIntermediateInterceptService IntermediateInterceptService => IntermediateInterceptServiceMock!.Object;
-        protected Mock<IInterceptConverterCollection>? InterceptConverterCollectionMock { get; set; }
-        protected IInterceptConverterCollection InterceptConverterCollection => InterceptConverterCollectionMock!.Object;
-        protected Mock<IRedirectService>? RedirectServiceMock { get; set; }
-        protected IRedirectService RedirectService => RedirectServiceMock!.Object;
-        protected Mock<IClientErrorService>? ClientErrorServiceMock { get; set; }
-        protected IClientErrorService ClientErrorService => ClientErrorServiceMock!.Object;
-        protected Mock<ILegacyService>? LegacyServiceMock { get; set; }
-        protected ILegacyService LegacyService => LegacyServiceMock!.Object;
-        protected Mock<IRequestModelPatcher>? RequestModelPatcherMock { get; set; }
-        protected IRequestModelPatcher RequestModelPatcher => RequestModelPatcherMock!.Object;
-        protected Mock<IInterceptService>? InterceptServiceMock { get; set; }
-        protected IInterceptService InterceptService => InterceptServiceMock!.Object;
-        protected Mock<IResponseInterceptHandlerCollection>? ResponseInterceptHandlerCollectionMock { get; set; }
-        protected IResponseInterceptHandlerCollection ResponseInterceptHandlerCollection => ResponseInterceptHandlerCollectionMock!.Object;
-        protected Mock<ISpecificResponseInterceptHandler>? ResponseInterceptHandlerMock { get; set; }
-        protected ISpecificResponseInterceptHandler ResponseInterceptHandler => ResponseInterceptHandlerMock!.Object;
-        protected Mock<IRequestInterceptFilterCollection>? RequestInterceptFilterCollectionMock { get; set; }
-        protected IRequestInterceptFilterCollection RequestInterceptFilterCollection => RequestInterceptFilterCollectionMock!.Object;
-        protected Mock<IClientErrorFilterCollection>? ClientErrorFilterCollectionMock { get; set; }
-        protected IClientErrorFilterCollection ClientErrorFilterCollection => ClientErrorFilterCollectionMock!.Object;
-        protected Mock<ILocalizationService>? LocalizationServiceMock { get; set; }
-        protected ILocalizationService LocalizationService => LocalizationServiceMock!.Object;
-        protected Mock<IRequestInterceptFilter>? RequestInterceptFilterMock { get; set; }
-        protected IRequestInterceptFilter RequestInterceptFilter => RequestInterceptFilterMock!.Object;
-        protected Mock<IRequestAbstraction>? RequestAbstractionMock { get; set; }
-        protected IRequestAbstraction RequestAbstraction => RequestAbstractionMock!.Object;
-        protected Mock<IResponseAbstraction>? ResponseAbstractionMock { get; set; }
-        protected IResponseAbstraction ResponseAbstraction => ResponseAbstractionMock!.Object;
-        protected Mock<IInterceptCache>? InterceptCacheMock { get; set; }
-        protected IInterceptCache InterceptCache => InterceptCacheMock!.Object;
-        protected Mock<IRuntimeState>? RuntimeStateMock { get; set; }
-        protected IRuntimeState RuntimeState => RuntimeStateMock!.Object;
+        protected Mock<IOptionsMonitor<RequestHandlerSettings>> RequestHandlerSettingsMock { get; set; } = null!;
+        protected IOptionsMonitor<RequestHandlerSettings> RequestHandlerSettings => RequestHandlerSettingsMock.Object;
+        protected Mock<IDomainProvider> DomainProviderMock { get; set; } = null!;
+        protected IDomainProvider DomainProvider => DomainProviderMock.Object;
+        protected Mock<IInterceptConverter> InterceptConverterMock { get; set; } = null!;
+        protected IInterceptConverter InterceptConverter => InterceptConverterMock.Object;
+        protected Mock<IInterceptPreprocessor> InterceptPreprocessorMock { get; set; } = null!;
+        protected IInterceptPreprocessor InterceptPreprocessor => InterceptPreprocessorMock.Object;
+        protected Mock<IDefaultInterceptContextFactory> DefaultInterceptContextFactoryMock { get; set; } = null!;
+        protected IDefaultInterceptContextFactory DefaultInterceptContextFactory => DefaultInterceptContextFactoryMock.Object;
+        protected Mock<IInterceptor> InterceptorMock { get; set; } = null!;
+        protected IInterceptor Interceptor => InterceptorMock.Object;
+        protected Mock<IClientErrorRepository> ClientErrorRepositoryMock { get; set; } = null!;
+        protected IClientErrorRepository ClientErrorRepository => ClientErrorRepositoryMock.Object;
+        protected Mock<IRedirectRepository> RedirectRepositoryMock { get; set; } = null!;
+        protected IRedirectRepository RedirectRepository => RedirectRepositoryMock.Object;
+        protected Mock<IValidationHelper> ValidationHelperMock { get; set; } = null!;
+        protected IValidationHelper ValidationHelper => ValidationHelperMock.Object;
+        protected Mock<IIntermediateInterceptService> IntermediateInterceptServiceMock { get; set; } = null!;
+        protected IIntermediateInterceptService IntermediateInterceptService => IntermediateInterceptServiceMock.Object;
+        protected Mock<IInterceptConverterCollection> InterceptConverterCollectionMock { get; set; } = null!;
+        protected IInterceptConverterCollection InterceptConverterCollection => InterceptConverterCollectionMock.Object;
+        protected Mock<IRedirectService> RedirectServiceMock { get; set; } = null!;
+        protected IRedirectService RedirectService => RedirectServiceMock.Object;
+        protected Mock<IClientErrorService> ClientErrorServiceMock { get; set; } = null!;
+        protected IClientErrorService ClientErrorService => ClientErrorServiceMock.Object;
+        protected Mock<ILegacyService> LegacyServiceMock { get; set; } = null!;
+        protected ILegacyService LegacyService => LegacyServiceMock.Object;
+        protected Mock<IRequestModelPatcher> RequestModelPatcherMock { get; set; } = null!;
+        protected IRequestModelPatcher RequestModelPatcher => RequestModelPatcherMock.Object;
+        protected Mock<IInterceptService> InterceptServiceMock { get; set; } = null!;
+        protected IInterceptService InterceptService => InterceptServiceMock.Object;
+        protected Mock<IResponseInterceptHandlerCollection> ResponseInterceptHandlerCollectionMock { get; set; } = null!;
+        protected IResponseInterceptHandlerCollection ResponseInterceptHandlerCollection => ResponseInterceptHandlerCollectionMock.Object;
+        protected Mock<ISpecificResponseInterceptHandler> ResponseInterceptHandlerMock { get; set; } = null!;
+        protected ISpecificResponseInterceptHandler ResponseInterceptHandler => ResponseInterceptHandlerMock.Object;
+        protected Mock<IRequestInterceptFilterCollection> RequestInterceptFilterCollectionMock { get; set; } = null!;
+        protected IRequestInterceptFilterCollection RequestInterceptFilterCollection => RequestInterceptFilterCollectionMock.Object;
+        protected Mock<IClientErrorFilterCollection> ClientErrorFilterCollectionMock { get; set; } = null!;
+        protected IClientErrorFilterCollection ClientErrorFilterCollection => ClientErrorFilterCollectionMock.Object;
+        protected Mock<ILocalizationService> LocalizationServiceMock { get; set; } = null!;
+        protected ILocalizationService LocalizationService => LocalizationServiceMock.Object;
+        protected Mock<IRequestInterceptFilter> RequestInterceptFilterMock { get; set; } = null!;
+        protected IRequestInterceptFilter RequestInterceptFilter => RequestInterceptFilterMock.Object;
+        protected Mock<IRequestAbstraction> RequestAbstractionMock { get; set; } = null!;
+        protected IRequestAbstraction RequestAbstraction => RequestAbstractionMock.Object;
+        protected Mock<IResponseAbstraction> ResponseAbstractionMock { get; set; } = null!;
+        protected IResponseAbstraction ResponseAbstraction => ResponseAbstractionMock.Object;
+        protected Mock<IInterceptCache> InterceptCacheMock { get; set; } = null!;
+        protected IInterceptCache InterceptCache => InterceptCacheMock.Object;
+        protected Mock<IRuntimeState> RuntimeStateMock { get; set; } = null!;
+        protected IRuntimeState RuntimeState => RuntimeStateMock.Object;
 
 
 
-        protected IOptions<UrlTrackerSettings>? UrlTrackerSettings { get; set; }
-        protected Mock<IReservedPathSettingsProvider>? ReservedPathSettingsProviderMock { get; set; }
-        protected IReservedPathSettingsProvider ReservedPathSettingsProvider => ReservedPathSettingsProviderMock!.Object;
-        protected IUmbracoMapper? Mapper { get; set; }
-        protected DefaultInterceptContext? DefaultInterceptContext { get; set; }
+        protected IOptions<UrlTrackerSettings> UrlTrackerSettings { get; set; } = null!;
+        protected Mock<IReservedPathSettingsProvider> ReservedPathSettingsProviderMock { get; set; } = null!;
+        protected IReservedPathSettingsProvider ReservedPathSettingsProvider => ReservedPathSettingsProviderMock.Object;
+        protected IUmbracoMapper Mapper { get; set; } = null!;
+        protected DefaultInterceptContext DefaultInterceptContext { get; set; } = null!;
 
         [OneTimeSetUp]
         public void OneTimeSetUpBase()
@@ -116,6 +118,7 @@ namespace UrlTracker.Resources.Testing
             UrlTrackerSettings = Options.Create<UrlTrackerSettings>(new UrlTrackerSettings());
             GlobalSettings = Options.Create<GlobalSettings>(new GlobalSettings());
 
+            RequestHandlerSettingsMock = new Mock<IOptionsMonitor<RequestHandlerSettings>>();
             ReservedPathSettingsProviderMock = new Mock<IReservedPathSettingsProvider>();
             UmbracoContextFactoryAbstractionMock = new UmbracoContextFactoryAbstractionMock();
             DomainProviderMock = new Mock<IDomainProvider>();
