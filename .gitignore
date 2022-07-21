@@ -17,3 +17,6 @@ TODO.txt
 /src/UrlTracker.Web/content
 /src/UrlTracker.Web/frontend/.build-stamp
 /test/UrlTracker.Resources.Website/App_Plugins/uSync
+/test/UrlTracker.IntegrationTests/App_Plugins
+/test/UrlTracker.IntegrationTests/umbraco
+/test/UrlTracker.IntegrationTests/wwwroot

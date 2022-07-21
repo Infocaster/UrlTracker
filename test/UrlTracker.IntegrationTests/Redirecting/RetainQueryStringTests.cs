@@ -1,4 +1,9 @@
-﻿namespace UrlTracker.IntegrationTests.Redirecting
+﻿using System;
+using System.Net.Http;
+using System.Threading.Tasks;
+using NUnit.Framework;
+
+namespace UrlTracker.IntegrationTests.Redirecting
 {
     public class RetainQueryStringTests : RedirectTestBase
     {

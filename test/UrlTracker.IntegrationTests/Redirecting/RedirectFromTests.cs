@@ -1,5 +1,9 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
+using NUnit.Framework;
 using UrlTracker.Core.Models;
 
 namespace UrlTracker.IntegrationTests.Redirecting

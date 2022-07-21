@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
+using NUnit.Framework;
 using Polly;
 using Polly.Extensions.Http;
 using ThrowawayDb;
@@ -11,7 +13,7 @@ namespace UrlTracker.IntegrationTests
         protected ThrowawayDatabase Database { get; private set; }
         public SnapshotScope SnapshotScope { get; private set; }
         protected UrlTrackerWebApplicationFactory WebsiteFactory { get; private set; }
-        protected AsyncServiceScope Scope { get; private set; }
+        protected IServiceScope Scope { get; private set; }
         protected IServiceProvider ServiceProvider => Scope.ServiceProvider;
 
         //[OneTimeSetUp]
@@ -34,7 +36,7 @@ namespace UrlTracker.IntegrationTests
             //SnapshotScope = Database.CreateSnapshotScope();
             OneTimeSetup();
             WebsiteFactory = new UrlTrackerWebApplicationFactory(Database);
-            Scope = WebsiteFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
+            Scope = WebsiteFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         }
 
         [TearDown]
@@ -48,7 +50,7 @@ namespace UrlTracker.IntegrationTests
             OneTimeTeardown();
         }
 
-        [OneTimeTearDown]
+        //[OneTimeTearDown]
         public virtual void OneTimeTeardown()
         {
             Database.Dispose();

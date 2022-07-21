@@ -1,7 +1,11 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using NUnit.Framework;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Routing;
+using Umbraco.Extensions;
 using UrlTracker.Core.Models;
 
 namespace UrlTracker.IntegrationTests.Redirecting
