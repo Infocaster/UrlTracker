@@ -4,7 +4,6 @@ using Moq;
 using NUnit.Framework;
 using Umbraco.Core.Configuration;
 using Umbraco.Core.Mapping;
-using Umbraco.Core.Scoping;
 using Umbraco.Core.Services;
 using UrlTracker.Core;
 using UrlTracker.Core.Abstractions;
@@ -149,7 +148,7 @@ namespace UrlTracker.Resources.Testing
 
             HttpContextMock = CreateHttpContextMock();
 
-            Mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers()), Mock.Of<IScopeProvider>());
+            Mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers()));
 
             SetUp();
         }

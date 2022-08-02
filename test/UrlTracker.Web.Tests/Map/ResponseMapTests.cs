@@ -50,8 +50,8 @@ namespace UrlTracker.Web.Tests.Map
                 PassThroughQueryString = true,
                 SourceRegex = "dolor sit",
                 SourceUrl = "http://example.com/ipsum",
-                TargetNode = new TestPublishedContent { Id = 1001, ItemType = PublishedItemType.Content },
-                TargetRootNode = new TestPublishedContent { Id = 1002, ItemType = PublishedItemType.Content },
+                TargetNode = TestPublishedContent.Create(1001, PublishedItemType.Content),
+                TargetRootNode = TestPublishedContent.Create(1002, PublishedItemType.Content),
                 TargetStatusCode = HttpStatusCode.Redirect,
                 TargetUrl = "http://example.com/dolor"
             };
@@ -163,7 +163,7 @@ namespace UrlTracker.Web.Tests.Map
         public void Map_UrlTrackerSettings_GetSettingsResponse()
         {
             // arrange
-            var input = new UrlTrackerSettings(true, true, true, true, true, true, 5000, true, 60 * 48, true);
+            var input = new UrlTrackerSettings(true, true, true, true, true, true, 5000, true, 60 * 48, true, new List<string>());
 
             // act
             var result = Mapper.Map<GetSettingsResponse>(input);
@@ -183,7 +183,7 @@ namespace UrlTracker.Web.Tests.Map
         public void Map_Domain_GetLanguagesFromNodeResponseLanguage()
         {
             // arrange
-            LocalizationServiceMock.Setup(obj => obj.GetLanguageByIsoCode(It.IsAny<string>())).Returns((string isoCode) => new TestLanguage { IsoCode = isoCode, CultureName = "Dutch", Id = 1003 });
+            LocalizationServiceMock.Setup(obj => obj.GetLanguageByIsoCode(It.IsAny<string>())).Returns((string isoCode) => TestLanguage.Create(1003, isoCode, "Dutch"));
             var input = new Domain(1000, 1001, "lorem ipsum", "nl-nl", Url.Parse("http://example.com"));
 
             // act

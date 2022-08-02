@@ -118,8 +118,8 @@
     <Reference Include="Microsoft.IO.RecyclableMemoryStream, Version=1.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.IO.RecyclableMemoryStream.1.2.2\lib\net45\Microsoft.IO.RecyclableMemoryStream.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Owin, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Owin.4.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    <Reference Include="Microsoft.Owin, Version=4.2.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Microsoft.Owin.4.2.2\lib\net45\Microsoft.Owin.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Owin.Host.SystemWeb, Version=4.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Microsoft.Owin.Host.SystemWeb.4.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
@@ -143,7 +143,7 @@
       <HintPath>..\..\packages\MiniProfiler.Shared.4.0.138\lib\net461\MiniProfiler.Shared.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NPoco, Version=3.9.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NPoco.3.9.4\lib\net45\NPoco.dll</HintPath>
@@ -234,7 +234,7 @@
       <HintPath>..\..\packages\System.Threading.Tasks.Dataflow.4.9.0\lib\netstandard2.0\System.Threading.Tasks.Dataflow.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.5.3\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+      <HintPath>..\..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System.Transactions" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -311,41 +311,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Plugins\UrlTracker\assets\images\import-export-icon.svg" />
+    <Content Include="App_Plugins\UrlTracker\backoffice\urlTrackerSettingsTree\overview.html" />
+    <Content Include="App_Plugins\UrlTracker\Dashboards\overview.html" />
     <Content Include="App_Plugins\UrlTracker\lang\en-US.user.xml" />
     <Content Include="App_Plugins\UrlTracker\lang\nl-NL.user.xml" />
-    <Content Include="App_Plugins\UrlTracker\res\css\urltracker-grid.min.css" />
-    <Content Include="App_Plugins\UrlTracker\res\css\urltracker.css" />
-    <Content Include="App_Plugins\UrlTracker\res\img\asc-hover.png" />
-    <Content Include="App_Plugins\UrlTracker\res\img\asc.png" />
-    <Content Include="App_Plugins\UrlTracker\res\img\cross.png" />
-    <Content Include="App_Plugins\UrlTracker\res\img\desc-hover.png" />
-    <Content Include="App_Plugins\UrlTracker\res\img\desc.png" />
-    <Content Include="App_Plugins\UrlTracker\res\img\edit.png" />
-    <Content Include="App_Plugins\UrlTracker\res\img\glyphicons-halflings-white.png" />
-    <Content Include="App_Plugins\UrlTracker\res\img\glyphicons-halflings.png" />
-    <Content Include="App_Plugins\UrlTracker\res\img\import-export-icon.svg" />
-    <Content Include="App_Plugins\UrlTracker\res\img\info.png" />
-    <Content Include="App_Plugins\UrlTracker\res\img\trash.png" />
-    <Content Include="App_Plugins\UrlTracker\res\img\urltracker-icon.png" />
-    <Content Include="App_Plugins\UrlTracker\res\img\urltracker.png" />
-    <Content Include="App_Plugins\UrlTracker\res\js\bootstrap.js" />
-    <Content Include="App_Plugins\UrlTracker\res\js\bootstrap.min.js" />
-    <Content Include="App_Plugins\UrlTracker\res\js\installer.js" />
-    <Content Include="App_Plugins\UrlTracker\res\js\jquery-1.11.2.min.js" />
-    <Content Include="App_Plugins\UrlTracker\res\js\jquery-migrate-1.2.1.min.js" />
-    <Content Include="App_Plugins\UrlTracker\res\js\jquery.validate.additional-methods.js" />
-    <Content Include="App_Plugins\UrlTracker\res\js\jquery.validate.additional-methods.min.js" />
-    <Content Include="App_Plugins\UrlTracker\res\js\jquery.validate.js" />
-    <Content Include="App_Plugins\UrlTracker\res\js\jquery.validate.min.js" />
-    <Content Include="App_Plugins\UrlTracker\res\js\main.js" />
-    <Content Include="App_Plugins\UrlTracker\res\js\urltracker.js" />
-    <Content Include="App_Plugins\UrlTracker\Scripts\Overlays\UrlTracker.ImportExportOverlayController.js" />
-    <Content Include="App_Plugins\UrlTracker\Scripts\UrlTracker.DetailsController.js" />
-    <Content Include="App_Plugins\UrlTracker\Scripts\UrlTracker.OverviewController.js" />
-    <Content Include="App_Plugins\UrlTracker\Scripts\UrlTrackerEntryService.js" />
-    <Content Include="App_Plugins\UrlTracker\Views\UrlTrackerDetails.html" />
-    <Content Include="App_Plugins\UrlTracker\Views\UrlTrackerImportExportOverlay.html" />
-    <Content Include="App_Plugins\UrlTracker\Views\UrlTrackerManager.html" />
+    <Content Include="App_Plugins\UrlTracker\Overlays\importexport.html" />
+    <Content Include="App_Plugins\UrlTracker\Panels\details.html" />
+    <Content Include="App_Plugins\UrlTracker\script.bundle.js" />
+    <Content Include="App_Plugins\UrlTracker\style.css" />
     <Content Include="App_Plugins\uSync8\backoffice\uSync8\dashboard.html" />
     <Content Include="App_Plugins\uSync8\backoffice\uSync8\uSyncDashboardController.js" />
     <Content Include="App_Plugins\uSync8\changeDialog.html" />
@@ -399,6 +373,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Composing\AttributeRoutingComposer.cs" />
+    <Compile Include="Composing\NewtonsoftVulnerabilityComposer.cs" />
     <Compile Include="Composing\PresetComposer.cs" />
     <Compile Include="Composing\DashboardComposer.cs" />
     <Compile Include="Composing\SwaggerComposer.cs" />
@@ -431,8 +406,8 @@
     <Content Include="config\uSync8.config" />
     <Content Include="App_Plugins\uSync8\package.manifest" />
     <Content Include="App_Plugins\uSync8\addons.json" />
+    <Content Include="App_Plugins\UrlTracker\assets\urltracker-redirects-import.csv" />
     <Content Include="App_Plugins\UrlTracker\package.manifest" />
-    <Content Include="App_Plugins\UrlTracker\res\urltracker-redirects-import.csv" />
     <None Include="packages.config" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Partials\Grid\Editors\Textstring.cshtml" />

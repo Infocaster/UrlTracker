@@ -15,6 +15,7 @@
             public const string CacheRegexRedirects = "cacheRegexRedirects";
             public const string InterceptSlidingCacheMinutes = "interceptSlidingCacheMinutes";
             public const string EnableInterceptCaching = "enableInterceptCaching";
+            public const string BlockedUrlsList = "blockedUrlsList";
         }
     }
 }

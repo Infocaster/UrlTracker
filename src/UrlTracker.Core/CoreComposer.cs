@@ -4,6 +4,7 @@ using LightInject;
 using Umbraco.Core;
 using Umbraco.Core.Cache;
 using Umbraco.Core.Composing;
+using Umbraco.Core.Mapping;
 using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Caching;
 using UrlTracker.Core.Components;
@@ -145,7 +146,7 @@ namespace UrlTracker.Core
 
         public static Composition ComposeUrlTrackerCoreMaps(this Composition composition)
         {
-            composition.MapDefinitions()
+            composition.WithCollectionBuilder<MapDefinitionCollectionBuilder>()
                 .Add<LegacyDatabaseMap>()
                 .Add<ServiceLayerMaps>();
             return composition;

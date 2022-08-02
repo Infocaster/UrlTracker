@@ -1,0 +1,8 @@
+﻿{
+    "css": [
+		"~/App_Plugins/UrlTracker/style.css"
+	],
+	"javascript": [
+		"~/App_Plugins/UrlTracker/script.bundle.js"
+	]
+}

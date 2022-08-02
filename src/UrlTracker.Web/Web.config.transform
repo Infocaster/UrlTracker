@@ -1,15 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <configuration>
-  <appSettings>
-    <add key="urlTracker:disabled" value="false" />
-    <add key="urlTracker:trackingDisabled" value="false" />
-    <add key="urlTracker:notFoundTrackingDisabled" value="false" />
-    <add key="urlTracker:enableLogging" value="false" />
-    <add key="urlTracker:appendPortNumber" value="false" />
-    <add key="urlTracker:hasDomainOnChildNode" value="false" />
-    <add key="urlTracker:maxCachedIntercepts" value="5000" />
-    <add key="urlTracker:cacheRegexRedirects" value="true" />
-    <add key="urlTracker:interceptSlidingCacheMinutes" value="2880" />
-    <add key="urlTracker:enableInterceptCaching" value="true" />
-  </appSettings>
+	<appSettings>
+		<add key="urlTracker:disabled" value="false" />
+		<add key="urlTracker:trackingDisabled" value="false" />
+		<add key="urlTracker:notFoundTrackingDisabled" value="false" />
+		<add key="urlTracker:enableLogging" value="false" />
+		<add key="urlTracker:appendPortNumber" value="false" />
+		<add key="urlTracker:hasDomainOnChildNode" value="false" />
+		<add key="urlTracker:maxCachedIntercepts" value="5000" />
+		<add key="urlTracker:cacheRegexRedirects" value="true" />
+		<add key="urlTracker:interceptSlidingCacheMinutes" value="2880" />
+		<add key="urlTracker:enableInterceptCaching" value="true" />
+		<add key="urlTracker:blockedUrlsList" value="" />
+	</appSettings>
 </configuration>

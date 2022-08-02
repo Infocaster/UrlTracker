@@ -33,13 +33,14 @@ namespace UrlTracker.Core.Abstractions
             _cref = cref;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             _cref.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         public IPublishedContent GetContentById(int id)
-            => _cref.UmbracoContext.Content.GetById(id);
+            => _cref.UmbracoContext.Content?.GetById(id);
 
         public string GetUrl(IPublishedContent content, UrlMode mode, string culture)
             => _cref.UmbracoContext.UrlProvider.GetUrl(content, mode, culture);

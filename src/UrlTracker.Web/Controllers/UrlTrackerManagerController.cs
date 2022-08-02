@@ -102,6 +102,19 @@ namespace UrlTracker.Web.Controllers
 
         [HttpGet]
         [ExcludeFromCodeCoverage]
+        public IHttpActionResult GetNodesWithDomains()
+        {
+            var domains = _domainProvider.GetDomains();
+            var uniqueNodes = from domain in domains
+                              group domain by domain.NodeId into g
+                              where g.Key.HasValue
+                              select g.Key.Value;
+            uniqueNodes = uniqueNodes.Union(Umbraco.ContentAtRoot().Select(c => c.Id));
+            return Ok(uniqueNodes.ToList());
+        }
+
+        [HttpGet]
+        [ExcludeFromCodeCoverage]
         public IHttpActionResult GetSettings()
         {
             var result = _configuration.Value;

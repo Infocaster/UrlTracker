@@ -28,7 +28,7 @@ namespace UrlTracker.Web.Compatibility
             {
                 if (request.RedirectNodeId.HasValue)
                 {
-                    var content = cref.UmbracoContext.Content.GetById(request.RedirectNodeId.Value);
+                    var content = cref.UmbracoContext.Content?.GetById(request.RedirectNodeId.Value);
                     if (!(content is null))
                     {
                         request.RedirectRootNodeId = content.Root().Id;

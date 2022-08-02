@@ -23,6 +23,7 @@ namespace UrlTracker.Core.Tests.Configuration
             AppSettingsAbstractionMock.Setup(obj => obj.Get("urlTracker:enableLogging")).Returns("true");
             AppSettingsAbstractionMock.Setup(obj => obj.Get("urlTracker:appendPortNumber")).Returns("true");
             AppSettingsAbstractionMock.Setup(obj => obj.Get("urlTracker:hasDomainOnChildNode")).Returns("true");
+            AppSettingsAbstractionMock.Setup(obj => obj.Get("urlTracker:blockedUrlsList")).Returns("testa, testb");
 
             // act
             var result = _testSubject.Value;
@@ -36,6 +37,7 @@ namespace UrlTracker.Core.Tests.Configuration
                 Assert.That(result.IsNotFoundTrackingDisabled, Is.True);
                 Assert.That(result.IsTrackingDisabled, Is.True);
                 Assert.That(result.LoggingEnabled, Is.True);
+                Assert.That(result.BlockedUrlsList, Is.Not.Null);
             });
         }
 
@@ -56,6 +58,7 @@ namespace UrlTracker.Core.Tests.Configuration
                 Assert.That(result.IsNotFoundTrackingDisabled, Is.False);
                 Assert.That(result.IsTrackingDisabled, Is.False);
                 Assert.That(result.LoggingEnabled, Is.False);
+                Assert.That(result.BlockedUrlsList, Is.Empty);
             });
         }
     }

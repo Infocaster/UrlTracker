@@ -78,7 +78,7 @@ namespace UrlTracker.Web.Components
                     foreach (var valueReader in valueReaders)
                     {
                         if (!content.IsPublished(valueReader.GetCulture())) continue;
-                        if (valueReader.GetName().Equals(valueReader.GetName(content)) &&
+                        if (valueReader.GetName() == valueReader.GetName(content) &&
                             valueReader.GetValue(Constants.Conventions.Content.UrlName) == valueReader.GetValue(content, Constants.Conventions.Content.UrlName)) continue;
 
                         // this entity has changed, so a new redirect for it and its descendants must be created
@@ -219,7 +219,7 @@ namespace UrlTracker.Web.Components
 
         private IEnumerable<IPublishedContent> DescendantsAndSelfForAllCultures(IPublishedContent content)
         {
-            return content.ChildrenForAllCultures.SelectMany(child => DescendantsAndSelfForAllCultures(child)).Prepend(content);
+            return content.AsEnumerableOfOne().Concat(content.ChildrenForAllCultures?.SelectMany(child => DescendantsAndSelfForAllCultures(child)) ?? Enumerable.Empty<IPublishedContent>());
         }
     }
 }
