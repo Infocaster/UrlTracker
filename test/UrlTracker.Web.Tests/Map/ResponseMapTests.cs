@@ -163,7 +163,7 @@ namespace UrlTracker.Web.Tests.Map
         public void Map_UrlTrackerSettings_GetSettingsResponse()
         {
             // arrange
-            var input = new UrlTrackerSettings(true, true, true, true, true, true, 5000, true, 60 * 48, true);
+            var input = new UrlTrackerSettings(true, true, true, true, true, true, 5000, true, 60 * 48, true, new List<string>());
 
             // act
             var result = Mapper.Map<GetSettingsResponse>(input);

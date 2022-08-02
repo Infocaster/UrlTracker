@@ -163,7 +163,7 @@ namespace UrlTracker.Web.Tests.Map
         {
             // arrange
             HttpContextMock.RequestMock.SetupGet(obj => obj.Url).Returns(new Uri(incomingUrl));
-            UrlTrackerSettings.Value = new UrlTrackerSettings(false, false, true, false, appendPortNumber, false, 5000, true, 60 * 48, true);
+            UrlTrackerSettings.Value = new UrlTrackerSettings(false, false, true, false, appendPortNumber, false, 5000, true, 60 * 48, true, new List<string>());
             if (contentUrls?.Any() == true)
             {
                 foreach (var pair in contentUrls) UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetUrl(It.Is<IPublishedContent>(o => o.Id == pair.Key), It.IsAny<UrlMode>(), It.IsAny<string>())).Returns(pair.Value);

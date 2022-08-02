@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using UrlTracker.Core.Configuration.Models;
@@ -25,7 +26,7 @@ namespace UrlTracker.Web.Tests.Processing
             // arrange
             Uri url = new Uri("http://example.com/lorem");
             HttpContextMock = new HttpContextMock(url);
-            UrlTrackerSettings.Value = new UrlTrackerSettings(false, false, true, false, false, false, 5000, true, 60 * 48, true);
+            UrlTrackerSettings.Value = new UrlTrackerSettings(false, false, true, false, false, false, 5000, true, 60 * 48, true, new List<string>());
 
             // act
             bool result = await _testSubject.EvaluateCandidateAsync(new ProcessedEventArgs(HttpContextMock.Context, Url.FromAbsoluteUri(url)));
@@ -38,7 +39,7 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_PluginDisabled_ReturnsFalse()
         {
             // arrange
-            UrlTrackerSettings.Value = new UrlTrackerSettings(true, false, true, false, false, false, 5000, true, 60 * 48, true);
+            UrlTrackerSettings.Value = new UrlTrackerSettings(true, false, true, false, false, false, 5000, true, 60 * 48, true, new List<string>());
 
             // act
             bool result = await _testSubject.EvaluateCandidateAsync(new ProcessedEventArgs(HttpContextMock.Context, Url.Parse("http://example.com")));
@@ -51,7 +52,7 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_TrackingDisabled_ReturnsFalse()
         {
             // arrange
-            UrlTrackerSettings.Value = new UrlTrackerSettings(false, false, true, true, false, false, 5000, true, 60 * 48, true);
+            UrlTrackerSettings.Value = new UrlTrackerSettings(false, false, true, true, false, false, 5000, true, 60 * 48, true, new List<string>());
 
             // act
             bool result = await _testSubject.EvaluateCandidateAsync(new ProcessedEventArgs(HttpContextMock.Context, Url.Parse("http://example.com")));
@@ -66,7 +67,7 @@ namespace UrlTracker.Web.Tests.Processing
             // arrange
             Uri url = new Uri("http://example.com/favicon.ico");
             HttpContextMock = new HttpContextMock(url);
-            UrlTrackerSettings.Value = new UrlTrackerSettings(false, false, true, false, false, false, 5000, true, 60 * 48, true);
+            UrlTrackerSettings.Value = new UrlTrackerSettings(false, false, true, false, false, false, 5000, true, 60 * 48, true, new List<string>());
 
             // act
             bool result = await _testSubject.EvaluateCandidateAsync(new ProcessedEventArgs(HttpContextMock.Context, Url.FromAbsoluteUri(url)));

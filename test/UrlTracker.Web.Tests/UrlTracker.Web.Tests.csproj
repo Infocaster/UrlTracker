@@ -313,6 +313,7 @@
     <Compile Include="Map\MapToUrlTests.cs" />
     <Compile Include="Map\RequestMapTests.cs" />
     <Compile Include="Map\ResponseMapTests.cs" />
+    <Compile Include="Processing\BlacklistedUrlsClientErrorFilterTests.cs" />
     <Compile Include="Processing\ConfigurationClientErrorFilterTests.cs" />
     <Compile Include="Processing\ConfigurationInterceptFilterTests.cs" />
     <Compile Include="Processing\NoLongerExistsResponseInterceptHandlerTests.cs" />

@@ -1,11 +1,12 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace UrlTracker.Core.Configuration.Models
 {
     [ExcludeFromCodeCoverage]
     public class UrlTrackerSettings
     {
-        public UrlTrackerSettings(bool isDisabled, bool isTrackingDisabled, bool loggingEnabled, bool isNotFoundTrackingDisabled, bool appendPortNumber, bool hasDomainOnChildNode, long maxCachedIntercepts, bool cacheRegexRedirects, int? interceptSlidingCacheMinutes, bool enableInterceptCaching)
+        public UrlTrackerSettings(bool isDisabled, bool isTrackingDisabled, bool loggingEnabled, bool isNotFoundTrackingDisabled, bool appendPortNumber, bool hasDomainOnChildNode, long maxCachedIntercepts, bool cacheRegexRedirects, int? interceptSlidingCacheMinutes, bool enableInterceptCaching, List<string> blockedUrlsList)
         {
             IsDisabled = isDisabled;
             IsTrackingDisabled = isTrackingDisabled;
@@ -17,6 +18,7 @@ namespace UrlTracker.Core.Configuration.Models
             CacheRegexRedirects = cacheRegexRedirects;
             InterceptSlidingCacheMinutes = interceptSlidingCacheMinutes;
             EnableInterceptCaching = enableInterceptCaching;
+            BlockedUrlsList = blockedUrlsList;
         }
 
         public bool IsDisabled { get; }
@@ -29,5 +31,6 @@ namespace UrlTracker.Core.Configuration.Models
         public bool CacheRegexRedirects { get; }
         public int? InterceptSlidingCacheMinutes { get; }
         public bool EnableInterceptCaching { get; }
+        public List<string> BlockedUrlsList { get; set; } = new List<string>();
     }
 }

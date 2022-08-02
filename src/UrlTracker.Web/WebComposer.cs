@@ -89,6 +89,7 @@ namespace UrlTracker.Web
         public static Composition ComposeDefaultClientErrorFilters(this Composition composition)
         {
             composition.ClientErrorFilters()
+                .Append<BlacklistedUrlsClientErrorFilter>()
                 .Append<ConfigurationClientErrorFilter>()
                 .Append<IgnoredClientErrorFilter>();
             return composition;

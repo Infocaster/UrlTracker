@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Configuration.Models;
 
@@ -32,6 +34,7 @@ namespace UrlTracker.Core.Configuration
                 bool cacheRegexRedirects = GetBooleanSetting(Defaults.Configuration.CacheRegexRedirects);
                 int? interceptSlidingCacheMinutes = GetMaybeIntSetting(Defaults.Configuration.InterceptSlidingCacheMinutes, 60 * 24 * 2);
                 bool enableInterceptCaching = GetBooleanSetting(Defaults.Configuration.EnableInterceptCaching, true);
+                List<string> blockedUrlsList = GetStringListSetting(Defaults.Configuration.BlockedUrlsList);
 
                 return new UrlTrackerSettings(disabled,
                                               trackingDisabled,
@@ -42,8 +45,20 @@ namespace UrlTracker.Core.Configuration
                                               maxCachedIntercepts,
                                               cacheRegexRedirects,
                                               interceptSlidingCacheMinutes,
-                                              enableInterceptCaching);
+                                              enableInterceptCaching,
+                                              blockedUrlsList);
             }
+        }
+
+        private List<string> GetStringListSetting(string name)
+        {
+            //get the items as string and remove all whitespaces
+            var appSetting = GetAppSetting(name);
+            if (string.IsNullOrEmpty(appSetting)) return new List<string>();
+            return appSetting
+                .Replace(" ", String.Empty)
+                .Split(',')
+                .ToList();
         }
 
         private bool GetBooleanSetting(string name, bool @default = false)

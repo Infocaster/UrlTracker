@@ -37,6 +37,7 @@ Upon installation, the URL Tracker will have added several configurations in you
 <add key="urlTracker:cacheRegexRedirects" value="true" />
 <add key="urlTracker:interceptSlidingCacheMinutes" value="2880" />
 <add key="urlTracker:enableInterceptCaching" value="true" />
+<add key="urlTracker:blockedUrlsList" value="" />
 ```
 
 |Setting|Type|Description|
@@ -51,6 +52,7 @@ Upon installation, the URL Tracker will have added several configurations in you
 |Max cached intercepts | long | The maximum amount of intercepts to cache. This not only includes redirects, but also pass through and gone responses.|
 |Intercept sliding cache minutes | int? | Set this value to the amount of minutes that an intercept should be cached after the last use before it expires. Set this value to `null` to cache forever|
 |Enable intercept caching | bool | set this value to `false` to completely disable caching of intercepts. The intercept will be recalculated for each url on every request.|
+|BlockedUrlsList | List of string | Add strings to this array that should be blocked from the UrlTracker. The strings in this array will be filtered out and shall never appear as a 404. This is great for things that crawlers search for like wpadmin and prevents the UrlTracker from getting clogged. Keep in mind that the filter works with String.Contains so there is no need to use entire urls.|
 
 ## Contributing
 The URL Tracker is open for contributions. If you want to contribute to the source code, please check out our [guide to contributing](/docs/CONTRIBUTING.md).  

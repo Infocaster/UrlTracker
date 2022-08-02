@@ -333,6 +333,7 @@
     <Compile Include="Map\RequestMap.cs" />
     <Compile Include="Map\ResponseMap.cs" />
     <Compile Include="Package\UrlTrackerDashboard.cs" />
+    <Compile Include="Processing\BlacklistedUrlsClientErrorFilter.cs" />
     <Compile Include="Processing\ClientErrorFilterCollectionBuilder.cs" />
     <Compile Include="Processing\ConfigurationClientErrorFilter.cs" />
     <Compile Include="Processing\ConfigurationInterceptFilter.cs" />

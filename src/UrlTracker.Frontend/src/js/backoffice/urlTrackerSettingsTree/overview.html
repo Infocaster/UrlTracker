@@ -88,12 +88,62 @@
                                     <p class="mt-2">Set this value to true to add a port number behind the host component of a redirect url. This setting is ignored when the application is hosted on the default port 80.</p>
                                 </div>
                             </div>
+							<div class="col-12">
+                                <div class="umb-box urltracker-setting-box p-3">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h4 class="m-0">UrlTracker:BlockedUrlsList</h4>
+                                        </div>
+                                        <div class="col-auto">
+                                            <span class="urltracker-label" ng-class="vm.settings.BlockedUrlsList.length > 0 ? 'urltracker-green-label' : 'urltracker-red-label'">{{(vm.settings.BlockedUrlsList.length > 0) ? vm.settings.BlockedUrlsList.length : 'Empty'}}</span>
+                                        </div>
+                                    </div>
+                                    <small>List of strings, currently {{vm.settings.BlockedUrlsList.length}}</small>
+                                    <p class="mt-2">All the items in this list will be ignored by the UrlTracker. This is an useful way to prevent getting 404's on things like wp-admin, which webcrawlers can generate. 
+                                        <ul>
+                                            <li ng-repeat="item in vm.settings.BlockedUrlsList">
+                                                {{item}}
+                                            </li>
+                                        </ul>
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-4 ml-auto">
                     <!--#region Timeline-->
                     <ul class="urltracker-timeline">
+						<li class="urltracker-timeline-item">
+							<div class="urltracker-timeline-figure">
+								<span class="urltracker-timeline-dot">•</span>
+							</div>
+							<div class="urltracker-timeline-body">
+								<div class="urltracker-timeline-header">
+									<h5>V. 5.1.0</h5>
+									<div class="urltracker-timeline-date">
+										2022/08/02
+									</div>
+								</div>
+								<div class="urltracker-timeline-content">
+									<ul>
+										<li>Blocking 404's and frontend framework</li>
+										<li>
+											<span class="urltracker-green-label urltracker-label">Feature</span>
+											Items can be be blocked by using the BlockedUrlsList config setting. This helps preventing spam
+										</li>
+										<li>
+											<span class="urltracker-pink-label urltracker-label">Improvement</span>
+											Improved the frontend by adding a framework for better maintainability and future development
+										</li>
+										<li>
+											<span class="urltracker-orange-label urltracker-label">BugFix</span>
+											Several smaller bugs are fixed
+										</li>
+									</ul>
+								</div>
+							</div>
+						</li>
 						<li class="urltracker-timeline-item">
 							<div class="urltracker-timeline-figure">
 								<span class="urltracker-timeline-dot">•</span>
