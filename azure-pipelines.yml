@@ -113,7 +113,8 @@ stages:
   dependsOn: build
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   variables:
-    packageGlob: '$(Pipeline.Workspace)/**/UrlTracker*.?snupkg'
+    packageGlob: '$(Pipeline.Workspace)/**/UrlTracker*.nupkg'
+    symbolsGlob: '$(Pipeline.Workspace)/**/UrlTracker*.snupkg'
   jobs:
   - job: releaseArtifact
     displayName: Push to artifacts
@@ -127,12 +128,20 @@ stages:
       displayName: Download build artifact
     
     - task: DotNetCoreCLI@2
-      displayName: 'dotnet push'
+      displayName: 'Push package to artifacts'
       inputs:
         command: push
         publishVstsFeed: '3356baca-d7d8-497c-a5fa-ebd93f79f7c7'
         versioningScheme: byBuildNumber
         packagesToPush: $(packageGlob)
+    
+    - task: DotNetCoreCLI@2
+      displayName: 'Push symbols to artifacts'
+      inputs:
+        command: push
+        publishVstsFeed: '3356baca-d7d8-497c-a5fa-ebd93f79f7c7'
+        versioningScheme: byBuildNumber
+        packagesToPush: $(symbolsGlob)
 
   - job: releaseNuget
     displayName: Push to nuget
@@ -146,8 +155,15 @@ stages:
       displayName: Download build artifact
     
     - task: DotNetCoreCLI@2
-      displayName: 'push to nuget.org'
+      displayName: 'push package to nuget.org'
       inputs:
         command: custom
         custom: nuget
         arguments: 'push $(packageGlob) -s https://api.nuget.org/v3/index.json --api-key $(NuGetApiKey)'
+    
+    - task: DotNetCoreCLI@2
+      displayName: 'push symbols to nuget.org'
+      inputs:
+        command: custom
+        custom: nuget
+        arguments: 'push $(symbolsGlob) -s https://api.nuget.org/v3/index.json --api-key $(NuGetApiKey)'
