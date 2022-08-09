@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using UrlTracker.Core.Abstractions;
-using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Web.Abstraction;
 
 namespace UrlTracker.Web.Processing
 {
     public class NoLongerExistsResponseInterceptHandler
-        : ResponseInterceptHandlerBase<UrlTrackerShallowClientError>
+        : ResponseInterceptHandlerBase<IClientError>
     {
         private readonly IResponseAbstraction _responseAbstraction;
         private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactory;
@@ -18,7 +18,7 @@ namespace UrlTracker.Web.Processing
             _umbracoContextFactory = umbracoContextFactory;
         }
 
-        protected override async ValueTask HandleAsync(RequestDelegate next, HttpContext context, UrlTrackerShallowClientError intercept)
+        protected override async ValueTask HandleAsync(RequestDelegate next, HttpContext context, IClientError intercept)
         {
             if (ShouldRedirect())
             {

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace UrlTracker.Web.Controllers.Models
 {
+    [ExcludeFromCodeCoverage]
     public class GetSettingsResponse
     {
         public bool IsDisabled { get; set; }

@@ -7,11 +7,13 @@ namespace UrlTracker.Core
 {
     public interface IClientErrorService
     {
-        Task<NotFound> AddAsync(NotFound notFound);
+        Task<ClientError> AddAsync(ClientError ClientError);
         Task<int> CountAsync(DateTime? start, DateTime? end);
-        Task DeleteAsync(string url, string? culture);
-        Task<RichNotFoundCollection> GetAsync(uint skip, uint take, string? query, OrderBy orderBy, bool descending);
-        Task<NotFound?> GetAsync(int id);
-        Task UpdateAsync(NotFound notFound);
+        Task DeleteAsync(ClientError ClientError);
+        Task<Models.ClientErrorCollection> GetAsync(uint skip, uint take, string? query, OrderBy orderBy, bool descending);
+        Task<ClientError?> GetAsync(int id);
+        Task<ClientError?> GetAsync(string url);
+        Task UpdateAsync(ClientError ClientError);
+        Task ReportAsync(string url, DateTime moment, string? referrer);
     }
 }

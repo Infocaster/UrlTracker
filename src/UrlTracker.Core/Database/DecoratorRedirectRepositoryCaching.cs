@@ -2,7 +2,11 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
+using Umbraco.Cms.Core.Persistence.Querying;
+using UrlTracker.Core.Caching;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Models.Entities;
 
 namespace UrlTracker.Core.Database
 {
@@ -12,49 +16,76 @@ namespace UrlTracker.Core.Database
     {
         private readonly IRedirectRepository _decoratee;
         private readonly IMemoryCache _memoryCache;
+        private readonly IInterceptCache _interceptCache;
 
         public DecoratorRedirectRepositoryCaching(IRedirectRepository decoratee,
-                                                  IMemoryCache memoryCache)
+                                                  IMemoryCache memoryCache,
+                                                  IInterceptCache interceptCache)
         {
             _decoratee = decoratee;
             _memoryCache = memoryCache;
+            _interceptCache = interceptCache;
         }
 
-        public async Task<UrlTrackerRedirect> AddAsync(UrlTrackerRedirect redirect)
+        public int Count(IQuery<IRedirect> query)
         {
-            var result = await _decoratee.AddAsync(redirect);
-            _memoryCache.Remove(Defaults.Cache.RegexRedirectKey);
-            return result;
+            return _decoratee.Count(query);
         }
 
-        public Task<UrlTrackerRedirectCollection> GetAsync(uint skip, uint take, string? query, OrderBy order, bool descending)
+        public void Delete(IRedirect entity)
+        {
+            _decoratee.Delete(entity);
+            ClearCaches();
+        }
+
+        public bool Exists(int id)
+        {
+            return _decoratee.Exists(id);
+        }
+
+        public IRedirect? Get(int id)
+        {
+            return _decoratee.Get(id);
+        }
+
+        public IEnumerable<IRedirect> Get(IQuery<IRedirect> query)
+        {
+            return _decoratee.Get(query);
+        }
+
+        public Task<IReadOnlyCollection<IRedirect>> GetAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
+        {
+            return _decoratee.GetAsync(urlsAndPaths, rootNodeId, culture);
+        }
+
+        public Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, OrderBy order, bool descending)
         {
             return _decoratee.GetAsync(skip, take, query, order, descending);
         }
 
-        public Task<UrlTrackerRedirectCollection> GetAsync()
+        public IEnumerable<IRedirect> GetMany(params int[]? ids)
         {
-            return _decoratee.GetAsync();
+            return _decoratee.GetMany(ids);
         }
 
-        public Task<IReadOnlyCollection<UrlTrackerShallowRedirect>> GetShallowAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
+        public Task<IReadOnlyCollection<IRedirect>> GetWithRegexAsync()
         {
-            return _decoratee.GetShallowAsync(urlsAndPaths, rootNodeId, culture);
-        }
-
-        public Task<IReadOnlyCollection<UrlTrackerShallowRedirect>> GetShallowWithRegexAsync()
-        {
-            return _memoryCache.GetOrCreateAsync<IReadOnlyCollection<UrlTrackerShallowRedirect>>(Defaults.Cache.RegexRedirectKey, e =>
+            return _memoryCache.GetOrCreateAsync<IReadOnlyCollection<IRedirect>>(Defaults.Cache.RegexRedirectKey, e =>
             {
-                return _decoratee.GetShallowWithRegexAsync();
+                return _decoratee.GetWithRegexAsync();
             });
         }
 
-        public async Task<UrlTrackerRedirect> UpdateAsync(UrlTrackerRedirect redirect)
+        public void Save(IRedirect entity)
         {
-            var result = await _decoratee.UpdateAsync(redirect);
+            _decoratee.Save(entity);
+            ClearCaches();
+        }
+
+        private void ClearCaches()
+        {
             _memoryCache.Remove(Defaults.Cache.RegexRedirectKey);
-            return result;
+            _interceptCache.Clear();
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace UrlTracker.Web.Controllers.Models
 {
+    [ExcludeFromCodeCoverage]
     public class GetRedirectsResponse
     {
         public GetRedirectsResponse(IReadOnlyCollection<RedirectViewModel> entries, int numberOfEntries)

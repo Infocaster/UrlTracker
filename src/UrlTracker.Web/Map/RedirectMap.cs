@@ -29,7 +29,7 @@ namespace UrlTracker.Web.Map
 
         public void DefineMaps(IUmbracoMapper mapper)
         {
-            mapper.Define<ShallowRedirect, Url>(
+            mapper.Define<Redirect, Url>(
                 (source, context) =>
                 {
                     var httpContext = context.GetHttpContext();
@@ -67,7 +67,7 @@ namespace UrlTracker.Web.Map
 
                     if (!url.Protocol.HasValue) url.Protocol = (Protocol)Enum.Parse(typeof(Protocol), request.Scheme, true);
 
-                    if (source.PassThroughQueryString) url.Query = httpContext.Request.QueryString.Value;
+                    if (source.RetainQuery) url.Query = httpContext.Request.QueryString.Value;
 
                     return url;
                 });

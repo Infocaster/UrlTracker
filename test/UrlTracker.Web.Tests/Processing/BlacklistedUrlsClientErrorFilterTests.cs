@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Mocks;
@@ -17,7 +13,7 @@ namespace UrlTracker.Web.Tests.Processing
     public class BlacklistedUrlsClientErrorFilterTests : TestBase
     {
         private BlacklistedUrlsClientErrorFilter? _testSubject;
-        
+
         public override void SetUp()
         {
             _testSubject = new BlacklistedUrlsClientErrorFilter(UrlTrackerSettings!);

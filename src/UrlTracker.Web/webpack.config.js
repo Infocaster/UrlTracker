@@ -57,7 +57,6 @@ const config = {
         new CopyPlugin({
             patterns: [
                 { from: '**/*.{html,svg}', to: '.', context: 'frontend/js' },
-                { from: 'package.manifest', to: '.', context: 'frontend' },
                 { from: 'lang/**/*.*', to: '.', context: 'frontend' },
                 { from: 'assets/**/*.*', to: '.', context: 'frontend' }
             ]

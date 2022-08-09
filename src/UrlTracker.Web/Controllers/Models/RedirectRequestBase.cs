@@ -40,7 +40,7 @@ namespace UrlTracker.Web.Controllers.Models
 
         public bool ForceRedirect { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (string.IsNullOrWhiteSpace(OldUrl) && string.IsNullOrWhiteSpace(OldRegex))
             {

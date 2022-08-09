@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Umbraco.Cms.Core.Persistence;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Core.Database
 {
     public interface IClientErrorRepository
+        : IReadWriteQueryRepository<int, IClientError>
     {
-        Task<UrlTrackerNotFound> AddAsync(UrlTrackerNotFound notFound);
         Task<int> CountAsync(DateTime start, DateTime end);
-        Task<UrlTrackerRichNotFoundCollection> GetAsync(uint skip, uint take, string? query, OrderBy order, bool descending);
-        Task<UrlTrackerNotFound?> GetAsync(int id);
-        Task<IReadOnlyCollection<UrlTrackerShallowClientError>> GetShallowAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null);
-        Task DeleteAsync(string url, string? culture);
-
-        // We can't return the updated 404 here, because secretly it's actually deleted
-        Task UpdateAsync(UrlTrackerNotFound entry);
+        Task<ClientErrorEntityCollection> GetAsync(uint skip, uint take, string? query, OrderBy order, bool descending);
+        Task<IReadOnlyCollection<IClientError>> GetAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null);
+        void Report(IClientError clientError, DateTime moment, IReferrer? referrer);
     }
 }

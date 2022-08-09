@@ -15,7 +15,7 @@ namespace UrlTracker.Web.Tests.Processing
         [SetUp]
         public void Setup()
         {
-            _urlReservedPathFilter = new UrlReservedPathFilter(ReservedPathSettingsProvider, new ConsoleLogger<UrlReservedPathFilter>());
+            _urlReservedPathFilter = new UrlReservedPathFilter(ReservedPathSettingsProvider, new VoidLogger<UrlReservedPathFilter>());
         }
 
         [TestCase("http://example.com/lorem/ipsum", "lorem/ipsum/", false, TestName = "EvaluateCandidateAsync returns false if the url path matches a filter")]

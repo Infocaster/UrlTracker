@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using UrlTracker.Core.Domain.Models;
 
 namespace UrlTracker.Core.Intercepting
@@ -24,7 +25,7 @@ namespace UrlTracker.Core.Intercepting
                 url.ToString(UrlType.Relative, true, false).TrimStart('/'),
                 url.ToString(UrlType.Relative, false, true).TrimStart('/'),
                 url.ToString(UrlType.Relative, false, false).TrimStart('/'),
-            };
+            }.Where(u => !string.IsNullOrWhiteSpace(u));
         }
     }
 }

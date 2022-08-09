@@ -3,8 +3,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Models.Entities;
 using UrlTracker.Core.Exceptions;
 using UrlTracker.Core.Models;
 using UrlTracker.Core.Validation;
@@ -17,63 +19,92 @@ namespace UrlTracker.Core
         private readonly IRedirectRepository _redirectRepository;
         private readonly IUmbracoMapper _mapper;
         private readonly IValidationHelper _validationHelper;
-        private readonly IExceptionHelper _exceptionHelper;
+        private readonly IScopeProvider _scopeProvider;
 
         public RedirectService(IRedirectRepository redirectRepository,
                                IUmbracoMapper mapper,
                                IValidationHelper validationHelper,
-                               IExceptionHelper exceptionHelper)
+                               IScopeProvider scopeProvider)
         {
             _redirectRepository = redirectRepository;
             _mapper = mapper;
             _validationHelper = validationHelper;
-            _exceptionHelper = exceptionHelper;
+            _scopeProvider = scopeProvider;
         }
 
         [ExcludeFromCodeCoverage]
-        public async Task<RedirectCollection> GetAsync()
+        public Task<RedirectCollection> GetAsync()
         {
-            var redirects = await _redirectRepository.GetAsync().ConfigureAwait(false);
-            return _mapper.Map<RedirectCollection>(redirects)!;
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+
+            var redirects = _redirectRepository.GetMany();
+            return Task.FromResult(RedirectCollection.Create(_mapper.MapEnumerable<IRedirect, Redirect>(redirects)!));
+        }
+
+        [ExcludeFromCodeCoverage]
+        public Task<Redirect?> GetAsync(int id)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+
+            var redirect = _redirectRepository.Get(id);
+            return Task.FromResult(_mapper.Map<Redirect>(redirect));
         }
 
         [ExcludeFromCodeCoverage]
         public async Task<RedirectCollection> GetAsync(uint skip, uint take, string? query = null, OrderBy order = OrderBy.Created, bool descending = true)
         {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+
             var redirects = await _redirectRepository.GetAsync(skip, take, query, order, descending).ConfigureAwait(false);
             return _mapper.Map<RedirectCollection>(redirects)!;
         }
 
-        public async Task<Redirect> AddAsync(Redirect redirect)
+        public Task<Redirect> AddAsync(Redirect redirect)
         {
+            using var scope = _scopeProvider.CreateScope();
+
             EnsureValidModel(redirect, nameof(redirect));
 
-            var urlTrackerRedirect = _mapper.Map<UrlTrackerRedirect>(redirect)!;
-            urlTrackerRedirect = await _redirectRepository.AddAsync(urlTrackerRedirect);
-            var result = _mapper.Map<Redirect>(urlTrackerRedirect)!;
+            var redirectEntity = _mapper.Map<IRedirect>(redirect)!;
+            _redirectRepository.Save(redirectEntity);
+            var result = _mapper.Map<Redirect>(redirectEntity)!;
 
-            return result;
+            scope.Complete();
+            return Task.FromResult(result);
         }
 
-        public async Task<Redirect> UpdateAsync(Redirect redirect)
+        public Task<Redirect> UpdateAsync(Redirect redirect)
         {
+            using var scope = _scopeProvider.CreateScope();
+
             EnsureValidModel(redirect, nameof(redirect));
-            _exceptionHelper.WrapAsArgumentException(nameof(redirect), () =>
+            ExceptionHelper.WrapAsArgumentException(nameof(redirect), () =>
             {
                 if (!redirect.Id.HasValue) throw new ValidationException(new ValidationResult("This field is required", new[] { nameof(Redirect.Id) }), new RequiredAttribute(), redirect.Id);
             });
 
-            var urlTrackerRedirect = _mapper.Map<UrlTrackerRedirect>(redirect)!;
-            urlTrackerRedirect = await _redirectRepository.UpdateAsync(urlTrackerRedirect);
-            var result = _mapper.Map<Redirect>(urlTrackerRedirect)!;
+            var redirectEntity = _mapper.Map<IRedirect>(redirect)!;
+            _redirectRepository.Save(redirectEntity);
+            var result = _mapper.Map<Redirect>(redirectEntity)!;
 
-            return result;
+            scope.Complete();
+            return Task.FromResult(result);
+        }
+
+        [ExcludeFromCodeCoverage]
+        public Task DeleteAsync(Redirect redirect)
+        {
+            using var scope = _scopeProvider.CreateScope();
+
+            _redirectRepository.Delete(_mapper.Map<IRedirect>(redirect)!);
+            scope.Complete();
+            return Task.CompletedTask;
         }
 
         private void EnsureValidModel(object obj, string parameter)
         {
             if (obj is null) throw new ArgumentNullException(parameter);
-            _exceptionHelper.WrapAsArgumentException(parameter, () =>
+            ExceptionHelper.WrapAsArgumentException(parameter, () =>
             {
                 _validationHelper.EnsureValidObject(obj);
             });

@@ -13,7 +13,7 @@ namespace UrlTracker.Web.Tests.Processing
 
         public override void SetUp()
         {
-            _testSubject = new ConfigurationInterceptFilter(UrlTrackerSettings!, new ConsoleLogger<ConfigurationInterceptFilter>());
+            _testSubject = new ConfigurationInterceptFilter(UrlTrackerSettings!, new VoidLogger<ConfigurationInterceptFilter>());
         }
 
         [TestCase(true, false, TestName = "EvaluateCandidateAsync returns false if url tracker is disabled")]

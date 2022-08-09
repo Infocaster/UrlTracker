@@ -12,7 +12,7 @@ namespace UrlTracker.Web.Tests.Controllers
 {
     public partial class UrlTrackerManagerControllerTests : TestBase
     {
-        private UrlTrackerManagerController? _testSubject;
+        private UrlTrackerManagerController _testSubject = null!;
 
         protected override ICollection<IMapDefinition> CreateMappers()
         {
@@ -45,11 +45,10 @@ namespace UrlTracker.Web.Tests.Controllers
                                                            DomainProvider,
                                                            RedirectService,
                                                            ClientErrorService,
-                                                           LegacyService,
                                                            ScopeProviderMock!.Provider,
                                                            RequestModelPatcher,
                                                            Mapper!,
-                                                           null);
+                                                           UmbracoContextFactoryAbstractionMock.UmbracoContextFactory);
         }
     }
 }

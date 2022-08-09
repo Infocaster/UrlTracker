@@ -23,7 +23,7 @@ namespace UrlTracker.Web
         public static void LogAbortClientErrorHandling(this ILogger logger, string reason)
             => logger.LogDebug(new EventId(2008), "Client error handling aborted: {reason}", reason);
 
-        public static void LogInterceptCancelled(this ILogger logger, string reason, ShallowRedirect redirect)
+        public static void LogInterceptCancelled(this ILogger logger, string reason, Redirect redirect)
             => logger.LogDebug(new EventId(2009), "Intercept cancelled: {reason}, {redirect}", reason, redirect.Id);
 
         public static void LogRequestRedirected(this ILogger logger, string targetUrl)

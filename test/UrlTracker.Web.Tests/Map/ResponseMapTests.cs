@@ -47,7 +47,7 @@ namespace UrlTracker.Web.Tests.Map
                 Id = 1000,
                 Inserted = new DateTime(2022, 1, 26),
                 Notes = "lorem ipsum",
-                PassThroughQueryString = true,
+                RetainQuery = true,
                 SourceRegex = "dolor sit",
                 SourceUrl = "http://example.com/ipsum",
                 TargetNode = TestPublishedContent.Create(1001, PublishedItemType.Content),
@@ -75,7 +75,7 @@ namespace UrlTracker.Web.Tests.Map
                 Assert.That(result.OldUrlWithoutQuery, Is.EqualTo("http://example.com/ipsum"));
                 Assert.That(result.RedirectHttpCode, Is.EqualTo(302));
                 Assert.That(result.RedirectNodeId, Is.EqualTo(1001));
-                Assert.That(result.RedirectPassThroughQueryString, Is.EqualTo(input.PassThroughQueryString));
+                Assert.That(result.RedirectPassThroughQueryString, Is.EqualTo(input.RetainQuery));
                 Assert.That(result.RedirectRootNodeId, Is.EqualTo(1002));
                 Assert.That(result.RedirectUrl, Is.EqualTo(input.TargetUrl));
                 Assert.That(result.Referrer, Is.Null);
@@ -100,11 +100,11 @@ namespace UrlTracker.Web.Tests.Map
             Assert.That(result.OldUrlWithoutQuery, Is.EqualTo("http://example.com/"));
         }
 
-        [TestCase(TestName = "Map RichNotFound to RedirectViewModel")]
-        public void Map_RichNotFound_RedirectViewModel()
+        [TestCase(TestName = "Map ClientError to RedirectViewModel")]
+        public void Map_ClientError_RedirectViewModel()
         {
             // arrange
-            var input = new RichNotFound("http://example.com/lorem")
+            var input = new ClientError("http://example.com/lorem")
             {
                 Id = 1000,
                 LatestOccurrence = new DateTime(2022, 1, 26),
@@ -139,11 +139,11 @@ namespace UrlTracker.Web.Tests.Map
             });
         }
 
-        [TestCase(TestName = "Map RichNotFound to RedirectViewModel with query string")]
-        public void Map_RichNotFound_RedirectViewModel_QueryString()
+        [TestCase(TestName = "Map ClientError to RedirectViewModel with query string")]
+        public void Map_ClientError_RedirectViewModel_QueryString()
         {
             // arrange
-            var input = new RichNotFound("http://example.com/?lorem=ipsum");
+            var input = new ClientError("http://example.com/?lorem=ipsum");
 
             // act
             var result = Mapper!.Map<RedirectViewModel>(input)!;
@@ -220,11 +220,11 @@ namespace UrlTracker.Web.Tests.Map
             });
         }
 
-        [TestCase(TestName = "Map RichNotFoundCollection to GetNotFoundsResponse")]
-        public void Map_RichNotFoundCollection_GetNotFoundsResponse()
+        [TestCase(TestName = "Map ClientErrorCollection to GetClientErrorsResponse")]
+        public void Map_ClientErrorCollection_GetClientErrorsResponse()
         {
             // arrange
-            var input = RichNotFoundCollection.Create(new[] { new RichNotFound("http://example.com") { Id = 1000 } }, 3);
+            var input = ClientErrorCollection.Create(new[] { new ClientError("http://example.com") { Id = 1000 } }, 3);
 
             // act
             var result = Mapper!.Map<GetNotFoundsResponse>(input)!;

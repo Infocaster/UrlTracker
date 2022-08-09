@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UrlTracker.Core.Database;
-using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Models.Entities;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
 using ILogger = UrlTracker.Core.Logging.ILogger<UrlTracker.Core.Intercepting.RegexRedirectInterceptor>;
@@ -23,7 +23,7 @@ namespace UrlTracker.Core.Intercepting
 
         public async ValueTask<ICachableIntercept?> InterceptAsync(Url url, IReadOnlyInterceptContext context)
         {
-            var regexRedirects = await _redirectRepository.GetShallowWithRegexAsync();
+            var regexRedirects = await _redirectRepository.GetWithRegexAsync();
 
             // There may be multiple regexes for which the given url has an intercept. There is no way to tell which intercept is the best,
             //    so we just take the first intercept that we can find.
@@ -41,7 +41,7 @@ namespace UrlTracker.Core.Intercepting
                    && Regex.IsMatch(interceptString, redirect.SourceRegex!, RegexOptions.IgnoreCase))
                 {
                     _logger.LogResults<RegexRedirectInterceptor>(1);
-                    return new CachableInterceptBase<UrlTrackerShallowRedirect>(redirect);
+                    return new CachableInterceptBase<IRedirect>(redirect);
                 }
             }
 

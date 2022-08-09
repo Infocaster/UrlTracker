@@ -78,7 +78,19 @@ stages:
           test/UrlTracker.Core.Tests/UrlTracker.Core.Tests.csproj
           test/UrlTracker.Web.Tests/UrlTracker.Web.Tests.csproj
           test/UrlTracker.IntegrationTests/UrlTracker.IntegrationTests.csproj
-        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion)'
+        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion) --collect "XPlat Code Coverage"'
+
+    - script: |
+        dotnet tool install -g dotnet-reportgenerator-globaltool
+        reportgenerator -reports:$(Agent.WorkFolder)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines;Cobertura -assemblyfilters:+UrlTracker.*;-UrlTracker.Resources.*;-UrlTracker.*.Tests
+      displayName: Create code coverage report
+
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish code coverage report'
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '$(Build.SourcesDirectory)/CodeCoverage/Cobertura.xml'
+        reportDirectory: '$(Build.SourcesDirectory)/CodeCoverage'
 
     - task: DotNetCoreCLI@2
       displayName: 'dotnet pack'
@@ -101,7 +113,7 @@ stages:
   dependsOn: build
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   variables:
-    packageGlob: '$(Pipeline.Workspace)/**/UrlTracker*.nupkg'
+    packageGlob: '$(Pipeline.Workspace)/**/UrlTracker*.?snupkg'
   jobs:
   - job: releaseArtifact
     displayName: Push to artifacts
@@ -111,7 +123,7 @@ stages:
     - checkout: none
     
     - download: current
-      patterns: '**/*.nupkg'
+      patterns: '**/*.?snupkg'
       displayName: Download build artifact
     
     - task: DotNetCoreCLI@2
@@ -130,7 +142,7 @@ stages:
     - checkout: none
     
     - download: current
-      patterns: '**/*.nupkg'
+      patterns: '**/*.?snupkg'
       displayName: Download build artifact
     
     - task: DotNetCoreCLI@2
