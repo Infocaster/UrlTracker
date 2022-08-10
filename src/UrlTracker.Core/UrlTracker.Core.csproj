@@ -20,16 +20,19 @@
     <PackageIcon>infocaster_nuget_yellow.png</PackageIcon>
     <PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/infocaster/urltracker</RepositoryUrl>
-    <PackageReleaseNotes>1 new feature, 2 other changes
+    <PackageReleaseNotes>
+      1 new feature, 2 other changes
 
-- Include symbol package for improved debugging
-- Improved database schema
-- Improved performance</PackageReleaseNotes>
+      - Include symbol package for improved debugging
+      - Improved database schema
+      - Improved performance
+    </PackageReleaseNotes>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\infocaster_nuget_yellow.png">
