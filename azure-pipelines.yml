@@ -124,7 +124,9 @@ stages:
     - checkout: none
     
     - download: current
-      patterns: '**/*.?snupkg'
+      patterns: |
+        '**/*.nupkg'
+        '**/*.snupkg'
       displayName: Download build artifact
     
     - task: DotNetCoreCLI@2
@@ -151,7 +153,9 @@ stages:
     - checkout: none
     
     - download: current
-      patterns: '**/*.?snupkg'
+      patterns: |
+        '**/*.nupkg'
+        '**/*.snupkg'
       displayName: Download build artifact
     
     - task: DotNetCoreCLI@2
