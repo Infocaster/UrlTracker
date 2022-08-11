@@ -3,11 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <ContentTargetFolders>.</ContentTargetFolders>
     <PackageId>UrlTracker</PackageId>
     <Title>URL Tracker</Title>
     <Description>
@@ -16,39 +11,12 @@
 
       Use v10 for umbraco 10, Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </Description>
-    <Authors>Infocaster B.V.</Authors>
-    <Product>URL Tracker</Product>
-    <PackageTags>umbraco plugin package urltracker notfound redirect</PackageTags>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Copyright>Copyright © Infocaster 2022</Copyright>
-    <PackageProjectUrl>https://github.com/infocaster/urltracker</PackageProjectUrl>
-    <PackageIcon>infocaster_nuget_yellow.png</PackageIcon>
-    <PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/infocaster/urltracker</RepositoryUrl>
     <PackageReleaseNotes>1 bugfix
 
 - Fix source link</PackageReleaseNotes>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="..\..\infocaster_nuget_yellow.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\..\README-NUGET.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\..\readme.txt">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
     <None Include="build\**\*.*">
       <Pack>True</Pack>
       <PackagePath>buildTransitive</PackagePath>

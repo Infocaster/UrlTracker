@@ -10,6 +10,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UrlTracker.Resources.Website", "test\UrlTracker.Resources.Website\UrlTracker.Resources.Website.csproj", "{AA1972CB-5B7B-4CE1-B995-AAAB457D670F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C4986CC0-AF43-4F60-96FC-EE6C8F864348}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UrlTracker.Core", "src\UrlTracker.Core\UrlTracker.Core.csproj", "{9C136798-C236-4A04-BBC9-36249BFD9DA6}"
 EndProject

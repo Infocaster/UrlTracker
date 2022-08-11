@@ -2,48 +2,14 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <IncludeSymbols>true</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <ContentTargetFolders>.</ContentTargetFolders>
     <PackageId>UrlTracker.Core</PackageId>
     <Title>URL Tracker Core</Title>
     <Description>This package contains the core services for the URL Tracker. Useful for package development.</Description>
-    <Authors>Infocaster B.V.</Authors>
-    <Product>URL Tracker</Product>
-    <PackageTags>umbraco plugin package urltracker notfound redirect</PackageTags>
     <RootNamespace>UrlTracker.Core</RootNamespace>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Copyright>Copyright © Infocaster 2022</Copyright>
-    <PackageProjectUrl>https://github.com/infocaster/urltracker</PackageProjectUrl>
-    <PackageIcon>infocaster_nuget_yellow.png</PackageIcon>
-    <PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/infocaster/urltracker</RepositoryUrl>
     <PackageReleaseNotes>1 bugfix
 
 - Fix source link</PackageReleaseNotes>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Include="..\..\infocaster_nuget_yellow.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\..\README-NUGET.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\..\readme.txt">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
