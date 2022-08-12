@@ -108,6 +108,23 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
 
+- stage: dryrun
+  displayName: Dry run
+  dependsOn: build
+  condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/tags/')))
+  jobs:
+  - job: download
+    displayName: Test download
+    workspace:
+      clean: all
+    steps:
+    - checkout: none
+    - download: current
+      patterns: |
+        **/*.nupkg
+        **/*.snupkg
+      displayName: Download packages and symbols
+
 - stage: release
   displayName: Release
   dependsOn: build
