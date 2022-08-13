@@ -17,6 +17,9 @@ variables:
   BuildPlatform: 'any cpu'
   Solution: '**\*.sln'
   NpmWorkingDirectory: 'src\UrlTracker.Web'
+  PackageDownloadPatterns: |
+    **/*.nupkg
+    **/*.snupkg
 
 stages:
 - stage: build
@@ -120,9 +123,7 @@ stages:
     steps:
     - checkout: none
     - download: current
-      patterns: |
-        **/*.nupkg
-        **/*.snupkg
+      patterns: $(PackageDownloadPatterns)
       displayName: Download packages and symbols
 
 - stage: release
@@ -141,9 +142,7 @@ stages:
     - checkout: none
     
     - download: current
-      patterns: |
-        **/*.nupkg
-        **/*.snupkg
+      patterns: $(PackageDownloadPatterns)
       displayName: Download build artifact
     
     - task: DotNetCoreCLI@2
@@ -170,9 +169,7 @@ stages:
     - checkout: none
     
     - download: current
-      patterns: |
-        **/*.nupkg
-        **/*.snupkg
+      patterns: $(PackageDownloadPatterns)
       displayName: Download build artifact
     
     - task: DotNetCoreCLI@2
