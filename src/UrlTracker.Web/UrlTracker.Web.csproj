@@ -14,10 +14,10 @@
     <RootNamespace>UrlTracker.Web</RootNamespace>
     <PackageReleaseNotes>1 new feature, 3 other changes
 
-- Added Source link
-- Redesigned database tables
-- Improved performance
-- Improved memory footprint in database</PackageReleaseNotes>
+- Added source link
+- Redesigned database schema
+- Improved database memory footprint
+- Improved performance</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">
