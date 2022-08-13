@@ -43,7 +43,7 @@ namespace UrlTracker.Core.Database
             return _decoratee.Exists(id);
         }
 
-        public IRedirect? Get(int id)
+        public IRedirect Get(int id)
         {
             return _decoratee.Get(id);
         }

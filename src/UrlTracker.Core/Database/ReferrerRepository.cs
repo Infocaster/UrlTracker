@@ -49,13 +49,13 @@ namespace UrlTracker.Core.Database
             };
         }
 
-        protected override IReferrer? PerformGet(int id)
+        protected override IReferrer PerformGet(int id)
         {
             var sql = GetBaseQuery(false);
             sql.Where<ReferrerDto>(e => e.Id == id);
 
             var dto = Database.Fetch<ReferrerDto>(sql).FirstOrDefault();
-            if (dto is null) return null;
+            if (dto is null) return null!;
 
             return ClientErrorFactory.BuildEntity(dto);
         }

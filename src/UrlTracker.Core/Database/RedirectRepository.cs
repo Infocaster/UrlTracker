@@ -121,14 +121,14 @@ namespace UrlTracker.Core.Database
         }
         #endregion
 
-        protected override IRedirect? PerformGet(int id)
+        protected override IRedirect PerformGet(int id)
         {
             var sql = GetBaseQuery(false);
             sql.Where(GetBaseWhereClause(), new { id });
 
             var dto = Database.Fetch<RedirectDto>(sql.SelectTop(1)).FirstOrDefault();
             if (dto is null)
-                return null;
+                return null!;
 
             return RedirectFactory.BuildEntity(dto);
         }
