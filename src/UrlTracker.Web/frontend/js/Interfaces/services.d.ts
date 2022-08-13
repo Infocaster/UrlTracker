@@ -13,6 +13,7 @@
         getNotFounds(skip: number, amount: number, query: string, sortType?: string): angular.IPromise<any>;
         updateRedirect(entry: any): angular.IPromise<any>;
         deleteEntry(entryId: number, is404?: boolean): angular.IPromise<any>;
+        deleteRedirect(entryId: number): angular.IPromise<any>;
         getLanguagesOutNodeDomains(nodeId: number): angular.IPromise<any>;
         getNodesWithDomains(): angular.IPromise<any>;
         countNotFoundsThisWeek(): angular.IPromise<any>;

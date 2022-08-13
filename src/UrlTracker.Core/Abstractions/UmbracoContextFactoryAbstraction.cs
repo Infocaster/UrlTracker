@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Routing;
@@ -58,6 +60,11 @@ namespace UrlTracker.Core.Abstractions
         public int? GetResponseCode()
         {
             return _cref.UmbracoContext.PublishedRequest?.ResponseStatusCode;
+        }
+
+        public IEnumerable<IPublishedContent> GetContentAtRoot()
+        {
+            return _cref.UmbracoContext.Content?.GetAtRoot() ?? Enumerable.Empty<IPublishedContent>();
         }
     }
 

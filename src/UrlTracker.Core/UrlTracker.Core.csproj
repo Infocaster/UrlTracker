@@ -1,46 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <ContentTargetFolders>.</ContentTargetFolders>
     <PackageId>UrlTracker.Core</PackageId>
     <Title>URL Tracker Core</Title>
     <Description>This package contains the core services for the URL Tracker. Useful for package development.</Description>
-    <Authors>Infocaster B.V.</Authors>
-    <Product>URL Tracker</Product>
-    <PackageTags>umbraco plugin package urltracker notfound redirect</PackageTags>
     <RootNamespace>UrlTracker.Core</RootNamespace>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Copyright>Copyright © Infocaster 2022</Copyright>
-    <PackageProjectUrl>https://github.com/infocaster/urltracker</PackageProjectUrl>
-    <PackageIcon>infocaster_nuget_yellow.png</PackageIcon>
-    <PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/infocaster/urltracker</RepositoryUrl>
-    <PackageReleaseNotes>First release for Umbraco 9</PackageReleaseNotes>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>1 new feature, 3 other changes
+
+- Added Source link
+- Redesigned database tables
+- Improved performance
+- Improved memory footprint in database</PackageReleaseNotes>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="..\..\infocaster_nuget_yellow.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\..\README-NUGET.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\..\readme.txt">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Scrutor" Version="3.3.0" />
     <PackageReference Include="Umbraco.Cms.Infrastructure" Version="9.2.0" />
   </ItemGroup>
-
 </Project>

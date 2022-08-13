@@ -34,6 +34,9 @@
       },
       "ModelsBuilder": {
         "ModelsMode": "Nothing"
+      },
+      "Examine": {
+        "LuceneDirectoryFactory": "TempFileSystemDirectoryFactory"
       }
     }
   },

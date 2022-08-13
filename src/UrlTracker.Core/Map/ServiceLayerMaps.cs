@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Abstractions;
-using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Entities;
+using UrlTracker.Core.Database.Models.Entities;
 using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Map
@@ -19,96 +21,66 @@ namespace UrlTracker.Core.Map
         [ExcludeFromCodeCoverage]
         public void DefineMaps(IUmbracoMapper mapper)
         {
-            mapper.Define<UrlTrackerShallowRedirect, ShallowRedirect>(
-                (source, context) => new ShallowRedirect(),
+            mapper.Define<IRedirect, Redirect>(
+                (source, context) => new Redirect(),
                 Map);
 
-            mapper.Define<UrlTrackerRedirect, Redirect>(
-                (source, context) => (Redirect)context.Map<UrlTrackerShallowRedirect, ShallowRedirect>(source, new Redirect()),
+            mapper.Define<Database.Entities.RedirectEntityCollection, Models.RedirectCollection>(
+                (source, context) => Models.RedirectCollection.Create(context.MapEnumerable<IRedirect, Redirect>(source), source.Total));
+
+            mapper.Define<Redirect, IRedirect>(
+                (source, context) => new RedirectEntity(source.Culture, source.TargetRootNode?.Id, source.TargetNode?.Id, source.TargetUrl, source.SourceUrl, source.SourceRegex, source.RetainQuery, (int)source.TargetStatusCode == (int)HttpStatusCode.Moved, source.Force, source.Notes),
                 Map);
 
-            mapper.Define<UrlTrackerRedirectCollection, RedirectCollection>(
-                (source, context) => RedirectCollection.Create(context.MapEnumerable<UrlTrackerRedirect, Redirect>(source), source.Total));
-
-            mapper.Define<Redirect, UrlTrackerRedirect>(
-                (source, context) => new UrlTrackerRedirect(),
+            mapper.Define<ClientError, IClientError>(
+                (source, context) => new ClientErrorEntity(source.Url, source.Ignored, source.Strategy),
                 Map);
 
-            mapper.Define<NotFound, UrlTrackerNotFound>(
-                (source, context) => new UrlTrackerNotFound(source.Url),
+            mapper.Define<IClientError, ClientError>(
+                (source, context) => new ClientError(source.Url),
                 Map);
 
-            mapper.Define<UrlTrackerNotFound, NotFound>(
-                (source, context) => new NotFound(source.Url),
-                Map);
-
-            mapper.Define<UrlTrackerRichNotFoundCollection, RichNotFoundCollection>(
-                (source, context) => RichNotFoundCollection.Create(context.MapEnumerable<UrlTrackerRichNotFound, RichNotFound>(source), source.Total));
-
-            mapper.Define<UrlTrackerRichNotFound, RichNotFound>(
-                (source, context) => new RichNotFound(source.Url),
-                Map);
+            mapper.Define<Database.Entities.ClientErrorEntityCollection, Models.ClientErrorCollection>(
+                (source, context) => Models.ClientErrorCollection.Create(context.MapEnumerable<IClientError, ClientError>(source), source.Total));
         }
 
-        private static void Map(UrlTrackerRichNotFound source, RichNotFound target, MapperContext context)
+        private static void Map(IClientError source, ClientError target, MapperContext context)
         {
-            target.Id = source.Id ?? 0;
-            target.LatestOccurrence = source.LatestOccurrence;
+            target.Id = source.Id;
+            target.LatestOccurrence = source.MostRecentOccurrence;
             target.MostCommonReferrer = source.MostCommonReferrer;
-            target.Occurrences = source.Occurrences;
-        }
-
-        private static void Map(UrlTrackerNotFound source, NotFound target, MapperContext context)
-        {
-            target.Id = source.Id;
-            target.Inserted = source.Inserted;
-            target.Referrer = source.Referrer;
+            target.Occurrences = source.TotalOccurrences;
             target.Ignored = source.Ignored;
+            target.Inserted = source.CreateDate;
         }
 
-        private static void Map(NotFound source, UrlTrackerNotFound target, MapperContext context)
+        private static void Map(ClientError source, IClientError target, MapperContext context)
         {
             target.Id = source.Id;
-            target.Inserted = source.Inserted;
-            target.Referrer = source.Referrer;
-            target.Ignored = source.Ignored;
+            target.CreateDate = source.Inserted;
         }
 
-        private static void Map(Redirect source, UrlTrackerRedirect target, MapperContext context)
+        private static void Map(Redirect source, IRedirect target, MapperContext context)
         {
-            target.Culture = source.Culture;
-            target.Force = source.Force;
-            target.Id = source.Id;
-            target.Inserted = source.Inserted;
-            target.Notes = source.Notes;
-            target.PassThroughQueryString = source.PassThroughQueryString;
-            target.SourceRegex = source.SourceRegex;
-            target.SourceUrl = source.SourceUrl;
-            target.TargetNodeId = source.TargetNode?.Id;
-            target.TargetRootNodeId = source.TargetRootNode?.Id;
-            target.TargetStatusCode = source.TargetStatusCode;
-            target.TargetUrl = source.TargetUrl;
+            target.CreateDate = source.Inserted;
+            target.Id = source.Id ?? 0;
         }
 
-        private static void Map(UrlTrackerRedirect source, Redirect target, MapperContext context)
-        {
-            target.Inserted = source.Inserted;
-            target.Notes = source.Notes;
-        }
-
-        private void Map(UrlTrackerShallowRedirect source, ShallowRedirect target, MapperContext context)
+        private void Map(IRedirect source, Redirect target, MapperContext context)
         {
             using var cref = _umbracoContextFactory.EnsureUmbracoContext();
 
+            target.Inserted = source.CreateDate;
+            target.Notes = source.Notes;
             target.Culture = source.Culture;
             target.Force = source.Force;
-            target.Id = source.Id;
-            target.PassThroughQueryString = source.PassThroughQueryString;
+            target.Id = source.Id == 0 ? null : source.Id;
+            target.RetainQuery = source.RetainQuery;
             target.SourceRegex = source.SourceRegex;
             target.SourceUrl = source.SourceUrl;
             target.TargetNode = source.TargetNodeId.HasValue ? cref.GetContentById(source.TargetNodeId.Value) : null;
             target.TargetRootNode = source.TargetRootNodeId.HasValue ? cref.GetContentById(source.TargetRootNodeId.Value) : null;
-            target.TargetStatusCode = source.TargetStatusCode;
+            target.TargetStatusCode = source.Permanent ? HttpStatusCode.MovedPermanently : HttpStatusCode.Redirect;
             target.TargetUrl = source.TargetUrl;
         }
     }

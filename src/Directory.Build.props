@@ -1,0 +1,39 @@
+﻿<Project>
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <ContentTargetFolders>.</ContentTargetFolders>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <Authors>Infocaster B.V.</Authors>
+    <Product>URL Tracker</Product>
+    <PackageTags>umbraco plugin package urltracker notfound redirect</PackageTags>
+    <Copyright>Copyright © Infocaster 2022</Copyright>
+    <RepositoryUrl>https://github.com/Infocaster/UrlTracker</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Infocaster/UrlTracker</PackageProjectUrl>
+    <PackageIcon>infocaster_nuget_yellow.png</PackageIcon>
+    <PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\infocaster_nuget_yellow.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\README-NUGET.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="$(MSBuildThisFileDirectory)..\readme.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+</Project>

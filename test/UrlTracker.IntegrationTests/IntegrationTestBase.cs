@@ -22,10 +22,15 @@ namespace UrlTracker.IntegrationTests
             Database = ThrowawayDatabase.FromLocalInstance(@"(LocalDb)\MSSQLLocalDB");
 
             // Install Umbraco on the temporary database
-            using var factory = new UrlTrackerWebApplicationFactory(Database);
+            using var factory = CreateApplicationFactory(Database);
             var client = factory.CreateClient();
             var policy = HttpPolicyExtensions.HandleTransientHttpError().RetryAsync(3);
             policy.ExecuteAsync(() => client.GetAsync("/")).Wait();
+        }
+
+        protected virtual UrlTrackerWebApplicationFactory CreateApplicationFactory(ThrowawayDatabase database)
+        {
+            return new UrlTrackerWebApplicationFactory(database);
         }
 
         [SetUp]
@@ -35,7 +40,7 @@ namespace UrlTracker.IntegrationTests
             // Disabled, because it is bugged on the build server: https://github.com/Zaid-Ajaj/ThrowawayDb/issues/18
             //SnapshotScope = Database.CreateSnapshotScope();
             OneTimeSetup();
-            WebsiteFactory = new UrlTrackerWebApplicationFactory(Database);
+            WebsiteFactory = CreateApplicationFactory(Database);
             Scope = WebsiteFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
         }
 

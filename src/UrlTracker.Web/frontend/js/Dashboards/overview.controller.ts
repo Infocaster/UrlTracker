@@ -168,7 +168,7 @@
         this.redirects.deleteItem = function (item) {
             event?.stopPropagation();
 
-            urlTrackerEntryService.deleteEntry(item.Id).then(function () {
+            urlTrackerEntryService.deleteRedirect(item.Id).then(function () {
                 $this.GetRedirects($this.redirects);
 
                 notificationsService.success("Deleted", "Redirect succesfully deleted");
@@ -209,7 +209,7 @@
             var promises: any[] = [];
 
             $this.redirects.selectedItems.forEach(item => {
-                promises.push(urlTrackerEntryService.deleteEntry(item.Id));
+                promises.push(urlTrackerEntryService.deleteRedirect(item.Id));
             });
 
             Promise.all(promises).then(() => {

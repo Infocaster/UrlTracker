@@ -47,6 +47,8 @@ namespace UrlTracker.Resources.Testing
         protected IInterceptor Interceptor => InterceptorMock.Object;
         protected Mock<IClientErrorRepository> ClientErrorRepositoryMock { get; set; } = null!;
         protected IClientErrorRepository ClientErrorRepository => ClientErrorRepositoryMock.Object;
+        protected Mock<IReferrerRepository> ReferrerRepositoryMock { get; set; } = null!;
+        protected IReferrerRepository ReferrerRepository => ReferrerRepositoryMock.Object;
         protected Mock<IRedirectRepository> RedirectRepositoryMock { get; set; } = null!;
         protected IRedirectRepository RedirectRepository => RedirectRepositoryMock.Object;
         protected Mock<IValidationHelper> ValidationHelperMock { get; set; } = null!;
@@ -59,8 +61,6 @@ namespace UrlTracker.Resources.Testing
         protected IRedirectService RedirectService => RedirectServiceMock.Object;
         protected Mock<IClientErrorService> ClientErrorServiceMock { get; set; } = null!;
         protected IClientErrorService ClientErrorService => ClientErrorServiceMock.Object;
-        protected Mock<ILegacyService> LegacyServiceMock { get; set; } = null!;
-        protected ILegacyService LegacyService => LegacyServiceMock.Object;
         protected Mock<IRequestModelPatcher> RequestModelPatcherMock { get; set; } = null!;
         protected IRequestModelPatcher RequestModelPatcher => RequestModelPatcherMock.Object;
         protected Mock<IInterceptService> InterceptServiceMock { get; set; } = null!;
@@ -128,13 +128,13 @@ namespace UrlTracker.Resources.Testing
             DefaultInterceptContextFactoryMock = new Mock<IDefaultInterceptContextFactory>();
             InterceptorMock = new Mock<IInterceptor>();
             ClientErrorRepositoryMock = new Mock<IClientErrorRepository>();
+            ReferrerRepositoryMock = new Mock<IReferrerRepository>();
             RedirectRepositoryMock = new Mock<IRedirectRepository>();
             ValidationHelperMock = new Mock<IValidationHelper>();
             IntermediateInterceptServiceMock = new Mock<IIntermediateInterceptService>();
             InterceptConverterCollectionMock = new Mock<IInterceptConverterCollection>();
             RedirectServiceMock = new Mock<IRedirectService>();
             ClientErrorServiceMock = new Mock<IClientErrorService>();
-            LegacyServiceMock = new Mock<ILegacyService>();
             ScopeProviderMock = new ScopeProviderMock();
             RequestModelPatcherMock = new Mock<IRequestModelPatcher>();
             InterceptServiceMock = new Mock<IInterceptService>();

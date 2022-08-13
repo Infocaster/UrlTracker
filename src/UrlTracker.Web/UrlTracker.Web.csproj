@@ -1,10 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  
   <!-- Package properties -->
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <ContentTargetFolders>.</ContentTargetFolders>
     <PackageId>UrlTracker</PackageId>
     <Title>URL Tracker</Title>
     <Description>
@@ -13,34 +11,15 @@
 
       Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </Description>
-    <Authors>Infocaster B.V.</Authors>
-    <Product>URL Tracker</Product>
-    <PackageTags>umbraco plugin package urltracker notfound redirect</PackageTags>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Copyright>Copyright © Infocaster 2022</Copyright>
-    <PackageProjectUrl>https://github.com/infocaster/urltracker</PackageProjectUrl>
-    <PackageIcon>infocaster_nuget_yellow.png</PackageIcon>
-    <PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/infocaster/urltracker</RepositoryUrl>
-    <PackageReleaseNotes>First release for Umbraco 9</PackageReleaseNotes>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-  </PropertyGroup>
+    <PackageReleaseNotes>1 new feature, 3 other changes
 
+- Added Source link
+- Redesigned database tables
+- Improved performance
+- Improved memory footprint in database</PackageReleaseNotes>
+  </PropertyGroup>
   <ItemGroup>
-    <None Include="..\..\infocaster_nuget_yellow.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\..\README-NUGET.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="..\..\readme.txt">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
     <None Include="build\**\*.*">
       <Pack>True</Pack>
       <PackagePath>buildTransitive</PackagePath>
@@ -52,23 +31,20 @@
     </Content>
   </ItemGroup>
   <!-- END Package properties -->
-
-  
-  
   <!-- External references -->
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="27.2.1" />
+    <PackageReference Include="CsvHelper" Version="28.0.1" />
     <PackageReference Include="Umbraco.Cms.Web.Website" Version="9.2.0" />
     <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="9.2.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
   </ItemGroup>
   <!-- END External references -->
-
-  
-  
   <!-- Build instructions -->
   <ItemGroup>
     <FrontendFiles Include="frontend\**\*.*" />
@@ -86,21 +62,15 @@
     <Delete Files="frontend/.build-stamp" />
   </Target>
   <!-- END Build instructions -->
-
-  
-  
   <!-- Exclusions -->
-
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
     <Compile Remove="node_modules\**" />
     <EmbeddedResource Remove="node_modules\**" />
     <None Remove="node_modules\**" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="content\" />
   </ItemGroup>
   <!-- END Exclusions -->
-
 </Project>

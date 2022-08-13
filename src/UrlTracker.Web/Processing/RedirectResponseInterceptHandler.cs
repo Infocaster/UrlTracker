@@ -14,7 +14,7 @@ using UrlTracker.Web.Abstraction;
 namespace UrlTracker.Web.Processing
 {
     public class RedirectResponseInterceptHandler
-        : ResponseInterceptHandlerBase<ShallowRedirect>
+        : ResponseInterceptHandlerBase<Redirect>
     {
         private readonly ILogger<RedirectResponseInterceptHandler> _logger;
         private readonly IUmbracoMapper _mapper;
@@ -35,7 +35,7 @@ namespace UrlTracker.Web.Processing
             _requestHandlerOptions = requestHandlerOptions;
         }
 
-        protected override async ValueTask HandleAsync(RequestDelegate next, HttpContext context, ShallowRedirect intercept)
+        protected override async ValueTask HandleAsync(RequestDelegate next, HttpContext context, Redirect intercept)
         {
             bool shouldForceIntercept = ShouldForceIntercept(intercept);
             bool shouldIntercept = ShouldIntercept();
@@ -74,12 +74,12 @@ namespace UrlTracker.Web.Processing
             }
         }
 
-        private static bool ShouldForceIntercept(ShallowRedirect intercept)
+        private static bool ShouldForceIntercept(Redirect intercept)
         {
             return intercept.Force;
         }
 
-        private string? GetUrl(HttpContext context, ShallowRedirect intercept)
+        private string? GetUrl(HttpContext context, Redirect intercept)
         {
             var requestHandlerOptionsValue = _requestHandlerOptions.CurrentValue;
 

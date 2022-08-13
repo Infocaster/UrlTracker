@@ -17,6 +17,9 @@ variables:
   BuildPlatform: 'any cpu'
   Solution: '**\*.sln'
   NpmWorkingDirectory: 'src\UrlTracker.Web'
+  PackageDownloadPatterns: |
+    **/*.nupkg
+    **/*.snupkg
 
 stages:
 - stage: build
@@ -78,7 +81,19 @@ stages:
           test/UrlTracker.Core.Tests/UrlTracker.Core.Tests.csproj
           test/UrlTracker.Web.Tests/UrlTracker.Web.Tests.csproj
           test/UrlTracker.IntegrationTests/UrlTracker.IntegrationTests.csproj
-        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion)'
+        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion) --collect "XPlat Code Coverage"'
+
+    - script: |
+        dotnet tool install -g dotnet-reportgenerator-globaltool
+        reportgenerator -reports:$(Agent.WorkFolder)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines;Cobertura -assemblyfilters:+UrlTracker.*;-UrlTracker.Resources.*;-UrlTracker.*.Tests
+      displayName: Create code coverage report
+
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish code coverage report'
+      inputs:
+        codeCoverageTool: 'Cobertura'
+        summaryFileLocation: '$(Build.SourcesDirectory)/CodeCoverage/Cobertura.xml'
+        reportDirectory: '$(Build.SourcesDirectory)/CodeCoverage'
 
     - task: DotNetCoreCLI@2
       displayName: 'dotnet pack'
@@ -96,12 +111,28 @@ stages:
         ArtifactName: 'drop'
         publishLocation: 'Container'
 
+- stage: dryrun
+  displayName: Dry run
+  dependsOn: build
+  condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/tags/')))
+  jobs:
+  - job: download
+    displayName: Test download
+    workspace:
+      clean: all
+    steps:
+    - checkout: none
+    - download: current
+      patterns: $(PackageDownloadPatterns)
+      displayName: Download packages and symbols
+
 - stage: release
   displayName: Release
   dependsOn: build
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
   variables:
     packageGlob: '$(Pipeline.Workspace)/**/UrlTracker*.nupkg'
+    symbolsGlob: '$(Pipeline.Workspace)/**/UrlTracker*.snupkg'
   jobs:
   - job: releaseArtifact
     displayName: Push to artifacts
@@ -111,16 +142,24 @@ stages:
     - checkout: none
     
     - download: current
-      patterns: '**/*.nupkg'
+      patterns: $(PackageDownloadPatterns)
       displayName: Download build artifact
     
     - task: DotNetCoreCLI@2
-      displayName: 'dotnet push'
+      displayName: 'Push package to artifacts'
       inputs:
         command: push
         publishVstsFeed: '3356baca-d7d8-497c-a5fa-ebd93f79f7c7'
         versioningScheme: byBuildNumber
         packagesToPush: $(packageGlob)
+    
+    - task: DotNetCoreCLI@2
+      displayName: 'Push symbols to artifacts'
+      inputs:
+        command: push
+        publishVstsFeed: '3356baca-d7d8-497c-a5fa-ebd93f79f7c7'
+        versioningScheme: byBuildNumber
+        packagesToPush: $(symbolsGlob)
 
   - job: releaseNuget
     displayName: Push to nuget
@@ -130,11 +169,11 @@ stages:
     - checkout: none
     
     - download: current
-      patterns: '**/*.nupkg'
+      patterns: $(PackageDownloadPatterns)
       displayName: Download build artifact
     
     - task: DotNetCoreCLI@2
-      displayName: 'push to nuget.org'
+      displayName: 'push package to nuget.org'
       inputs:
         command: custom
         custom: nuget

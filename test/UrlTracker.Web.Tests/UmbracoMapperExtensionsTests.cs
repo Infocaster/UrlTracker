@@ -11,13 +11,13 @@ namespace UrlTracker.Web.Tests
     public class UmbracoMapperExtensionsTests : TestBase
     {
         private MapperContext? _mapperContext;
-        private TestMapDefinition<ShallowRedirect, Url>? _testMap;
+        private TestMapDefinition<Redirect, Url>? _testMap;
 
         protected override ICollection<IMapDefinition> CreateMappers()
         {
             return new IMapDefinition[]
             {
-                _testMap = CreateTestMap<ShallowRedirect, Url>()
+                _testMap = CreateTestMap<Redirect, Url>()
             };
         }
 
@@ -32,7 +32,7 @@ namespace UrlTracker.Web.Tests
             // arrange
 
             // act
-            Url result() => Mapper!.MapToUrl(new ShallowRedirect(), null!);
+            Url result() => Mapper!.MapToUrl(new Redirect(), null!);
 
             // assert
             Assert.That(result, Throws.ArgumentNullException);
@@ -45,7 +45,7 @@ namespace UrlTracker.Web.Tests
             _testMap!.To = Url.Parse("http://example.com");
 
             // act
-            var result = Mapper!.MapToUrl(new ShallowRedirect(), HttpContextMock!.Context);
+            var result = Mapper!.MapToUrl(new Redirect(), HttpContextMock!.Context);
 
             // assert
             Assert.That(result, Is.EqualTo(_testMap.To));
@@ -57,7 +57,7 @@ namespace UrlTracker.Web.Tests
             // arrange
 
             // act
-            Url result() => _mapperContext!.MapToUrl(new ShallowRedirect(), null!);
+            Url result() => _mapperContext!.MapToUrl(new Redirect(), null!);
 
             // assert
             Assert.That(result, Throws.ArgumentNullException);
@@ -70,7 +70,7 @@ namespace UrlTracker.Web.Tests
             _testMap!.To = Url.Parse("http://example.com");
 
             // act
-            var result = _mapperContext!.MapToUrl(new ShallowRedirect(), HttpContextMock!.Context);
+            var result = _mapperContext!.MapToUrl(new Redirect(), HttpContextMock!.Context);
 
             // assert
             Assert.That(result, Is.EqualTo(_testMap.To));

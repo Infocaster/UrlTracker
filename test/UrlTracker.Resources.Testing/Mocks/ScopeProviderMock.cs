@@ -10,6 +10,7 @@ namespace UrlTracker.Resources.Testing.Mocks
         public ScopeProviderMock()
         {
             ProviderMock = new Mock<IScopeProvider>();
+            AccessorMock = new Mock<IScopeAccessor>();
             ScopeMock = new Mock<IScope>();
 
             ProviderMock.Setup(obj => obj.CreateScope(It.IsAny<IsolationLevel>(),
@@ -20,12 +21,15 @@ namespace UrlTracker.Resources.Testing.Mocks
                                                       It.IsAny<bool>(),
                                                       It.IsAny<bool>()))
                         .Returns(ScopeMock.Object);
+
+            AccessorMock.SetupGet(obj => obj.AmbientScope)
+                        .Returns(ScopeMock.Object);
         }
 
         public Mock<IScopeProvider> ProviderMock { get; }
+        public Mock<IScopeAccessor> AccessorMock { get; }
         public Mock<IScope> ScopeMock { get; }
 
         public IScopeProvider Provider => ProviderMock.Object;
-        public IScope Scope => ScopeMock.Object;
     }
 }

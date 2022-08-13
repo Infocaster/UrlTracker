@@ -74,6 +74,13 @@
         }), "Failed to delete entry");
     }
 
+    public deleteRedirect(id) {
+        return this.urlResource.verify(this.$http({
+            url: this.urlResource.getUrl("deleteRedirect") + `/${id}`,
+            method: "DELETE"
+        }), "Failed to delete redirect");
+    }
+
     public getLanguagesOutNodeDomains(nodeId) {
         return this.urlResource.verify(this.$http({
             url: this.urlResource.getUrl("getLanguagesOutNodeDomains"),

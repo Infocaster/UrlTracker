@@ -62,7 +62,7 @@ namespace UrlTracker.Web.Tests.Map
                 Assert.That(result.Id, Is.EqualTo(input.Id));
                 Assert.That(result.Inserted, Is.EqualTo(input.Inserted));
                 Assert.That(result.Notes, Is.EqualTo(input.Notes));
-                Assert.That(result.PassThroughQueryString, Is.EqualTo(input.RedirectPassThroughQueryString));
+                Assert.That(result.RetainQuery, Is.EqualTo(input.RedirectPassThroughQueryString));
                 Assert.That(result.SourceRegex, Is.EqualTo(input.OldRegex));
                 Assert.That(result.SourceUrl, Is.EqualTo("http://example.com"));
                 Assert.That(result.TargetNode, Is.Not.Null);

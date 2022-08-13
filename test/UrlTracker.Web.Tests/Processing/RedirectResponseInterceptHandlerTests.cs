@@ -11,7 +11,6 @@ using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Logging;
-using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Resources.Testing.Objects;
 using UrlTracker.Web.Processing;
 
@@ -19,21 +18,21 @@ namespace UrlTracker.Web.Tests.Processing
 {
     public class RedirectResponseInterceptHandlerTests : TestBase
     {
-        private TestMapDefinition<ShallowRedirect, Url>? _testMap;
+        private TestMapDefinition<Redirect, Url>? _testMap;
         private RedirectResponseInterceptHandler? _testSubject;
 
         protected override ICollection<IMapDefinition> CreateMappers()
         {
             return new IMapDefinition[]
             {
-                _testMap = CreateTestMap<ShallowRedirect, Url>()
+                _testMap = CreateTestMap<Redirect, Url>()
             };
         }
 
         public override void SetUp()
         {
             RequestHandlerSettingsMock.Setup(obj => obj.CurrentValue).Returns(new RequestHandlerSettings { AddTrailingSlash = false });
-            _testSubject = new RedirectResponseInterceptHandler(new ConsoleLogger<RedirectResponseInterceptHandler>(), Mapper!, ResponseAbstraction, UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory, RequestHandlerSettings);
+            _testSubject = new RedirectResponseInterceptHandler(new VoidLogger<RedirectResponseInterceptHandler>(), Mapper!, ResponseAbstraction, UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory, RequestHandlerSettings);
             _testMap!.To = null; // <- always reset the url on the test map to prevent urls from leaking between tests
         }
 
@@ -45,7 +44,7 @@ namespace UrlTracker.Web.Tests.Processing
                 ExpectedUrl = "http://example.com/lorem",
                 InitialStatusCode = 404,
                 InitialUrl = "http://example.com",
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     Force = false,
                     TargetStatusCode = HttpStatusCode.MovedPermanently
@@ -58,7 +57,7 @@ namespace UrlTracker.Web.Tests.Processing
                 ExpectedUrl = null,
                 InitialStatusCode = 200,
                 InitialUrl = "http://example.com",
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     Force = false,
                     TargetStatusCode = HttpStatusCode.MovedPermanently
@@ -71,7 +70,7 @@ namespace UrlTracker.Web.Tests.Processing
                 ExpectedUrl = "http://example.com/lorem",
                 InitialStatusCode = 200,
                 InitialUrl = "http://example.com",
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     Force = true,
                     TargetStatusCode = HttpStatusCode.MovedPermanently
@@ -84,11 +83,11 @@ namespace UrlTracker.Web.Tests.Processing
                 ExpectedUrl = "http://example.com/lorem",
                 InitialStatusCode = 404,
                 InitialUrl = "http://example.com?ipsum=dolor",
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     Force = false,
                     TargetStatusCode = HttpStatusCode.MovedPermanently,
-                    PassThroughQueryString = false
+                    RetainQuery = false
                 }
             }.ToTestCase("HandleAsync does not pass through query string if this is disabled in the redirect");
 
@@ -98,11 +97,11 @@ namespace UrlTracker.Web.Tests.Processing
                 ExpectedUrl = "http://example.com/lorem?ipsum=dolor",
                 InitialStatusCode = 404,
                 InitialUrl = "http://example.com?ipsum=dolor",
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     Force = false,
                     TargetStatusCode = HttpStatusCode.MovedPermanently,
-                    PassThroughQueryString = true
+                    RetainQuery = true
                 }
             }.ToTestCase("HandleAsync passes through query string if this is enabled in the redirect");
 
@@ -112,7 +111,7 @@ namespace UrlTracker.Web.Tests.Processing
                 ExpectedUrl = null,
                 InitialStatusCode = 404,
                 InitialUrl = "http://example.com/lorem",
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     TargetStatusCode = HttpStatusCode.Redirect
                 }
@@ -124,7 +123,7 @@ namespace UrlTracker.Web.Tests.Processing
                 ExpectedUrl = "http://example.com/lorem",
                 InitialStatusCode = 404,
                 InitialUrl = "http://example.com/123456/lorem",
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     TargetStatusCode = HttpStatusCode.Redirect,
                     SourceRegex = @"^\d{6}/(\w+)",
@@ -138,7 +137,7 @@ namespace UrlTracker.Web.Tests.Processing
                 ExpectedUrl = "http://example.com/$1",
                 InitialStatusCode = 404,
                 InitialUrl = "http://example.com/123456/lorem",
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     TargetStatusCode = HttpStatusCode.Redirect,
                     SourceRegex = @"^\d{6}/(\w+)",
@@ -149,7 +148,7 @@ namespace UrlTracker.Web.Tests.Processing
         }
 
         [TestCaseSource(nameof(TestCases))]
-        public async Task HandleAsync_NormalFlow_ProcessesIntercept(ShallowRedirect redirect, int initialStatusCode, int expectedStatusCode, string initialUrl, string expectedUrl)
+        public async Task HandleAsync_NormalFlow_ProcessesIntercept(Redirect redirect, int initialStatusCode, int expectedStatusCode, string initialUrl, string expectedUrl)
         {
             // arrange
             HttpContextMock!.ResponseMock.SetupProperty(obj => obj.StatusCode, initialStatusCode);
@@ -162,7 +161,7 @@ namespace UrlTracker.Web.Tests.Processing
                 _testMap!.To = Url.Parse(expectedUrl);
                 ResponseAbstractionMock!.Setup(obj => obj.SetRedirectLocation(HttpContextMock.Response, expectedUrl)).Verifiable();
             }
-            var input = new InterceptBase<ShallowRedirect>(redirect);
+            var input = new InterceptBase<Redirect>(redirect);
 
             // act
             await _testSubject!.HandleAsync(next, HttpContextMock.Context, input);

@@ -15,7 +15,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
             var redirect = CreateRedirectBase();
             redirect.SourceUrl = _defaultSource;
             redirect.TargetUrl = _defaultTargetUrl;
-            redirect.PassThroughQueryString = retainQuery;
+            redirect.RetainQuery = retainQuery;
 
             return GetRedirectService().AddAsync(redirect);
         }

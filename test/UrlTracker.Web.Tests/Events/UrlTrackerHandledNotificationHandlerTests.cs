@@ -3,8 +3,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using Umbraco.Cms.Core.Configuration.Models;
 using UrlTracker.Core.Domain.Models;
-using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Resources.Testing.Mocks;
@@ -15,11 +15,12 @@ namespace UrlTracker.Web.Tests.Events
 {
     public class UrlTrackerHandledNotificationHandlerTests : TestBase
     {
-        private UrlTrackerHandledNotificationHandler? _testSubject;
+        private UrlTrackerHandledNotificationHandler _testSubject = null!;
 
         public override void SetUp()
         {
-            _testSubject = new UrlTrackerHandledNotificationHandler(ClientErrorService, ClientErrorFilterCollection, new ConsoleLogger<UrlTrackerHandledNotificationHandler>(), RequestAbstraction);
+            RequestHandlerSettingsMock.Setup(obj => obj.CurrentValue).Returns(new RequestHandlerSettings { AddTrailingSlash = false });
+            _testSubject = new UrlTrackerHandledNotificationHandler(ClientErrorService, ClientErrorFilterCollection, new VoidLogger<UrlTrackerHandledNotificationHandler>(), RequestHandlerSettings, RequestAbstraction);
         }
 
         [TestCase(TestName = "HandleAsync aborts processing if response is not 404")]
@@ -57,7 +58,7 @@ namespace UrlTracker.Web.Tests.Events
             HttpContextMock.ResponseMock.Setup(obj => obj.StatusCode).Returns(404);
             RequestAbstractionMock!.Setup(obj => obj.GetReferrer(HttpContextMock.Request)).Returns(new Uri("http://example.com/lorem"));
             ClientErrorFilterCollectionMock!.Setup(obj => obj.EvaluateCandidacyAsync(It.Is<UrlTrackerHandled>(h => h.HttpContext == HttpContextMock.Context))).ReturnsAsync(true);
-            ClientErrorServiceMock!.Setup(obj => obj.AddAsync(It.IsAny<NotFound>())).ReturnsAsync((NotFound notFound) => notFound).Verifiable();
+            ClientErrorServiceMock!.Setup(obj => obj.ReportAsync("http://example.com", It.IsAny<DateTime>(), "http://example.com/lorem")).Verifiable();
 
             // act
             await _testSubject!.HandleAsync(new UrlTrackerHandled(HttpContextMock.Context, Url.Parse("http://example.com/")), CancellationToken.None);

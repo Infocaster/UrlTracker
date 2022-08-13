@@ -37,7 +37,7 @@ namespace UrlTracker.Web.Map
             target.Culture = source.Culture;
             target.Force = source.ForceRedirect;
             target.Notes = source.Notes;
-            target.PassThroughQueryString = source.RedirectPassThroughQueryString;
+            target.RetainQuery = source.RedirectPassThroughQueryString;
             target.SourceRegex = source.OldRegex;
             target.SourceUrl = source.OldUrl;
             target.TargetStatusCode = (HttpStatusCode)source.RedirectHttpCode;

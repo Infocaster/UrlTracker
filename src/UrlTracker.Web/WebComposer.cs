@@ -69,6 +69,7 @@ namespace UrlTracker.Web
         public static IUmbracoBuilder ComposeDefaultRequestInterceptFilters(this IUmbracoBuilder builder)
         {
             builder.RequestInterceptFilters()!
+                .Append<ConfigurationInterceptFilter>()
                 .Append<UrlReservedPathFilter>();
             return builder;
         }
@@ -77,8 +78,7 @@ namespace UrlTracker.Web
         {
             builder.ClientErrorFilters()!
                 .Append<BlacklistedUrlsClientErrorFilter>()
-                .Append<ConfigurationClientErrorFilter>()
-                .Append<IgnoredClientErrorFilter>();
+                .Append<ConfigurationClientErrorFilter>();
             return builder;
         }
 
@@ -95,6 +95,8 @@ namespace UrlTracker.Web
         public static IUmbracoBuilder ComposeUrlTrackerPackage(this IUmbracoBuilder builder)
         {
             builder.AddDashboard<UrlTrackerDashboard>();
+            builder.ManifestFilters()
+                .Append<UrlTrackerManifestFilter>();
             builder.BackOfficeAssets()
                 .Append<UrlTrackerScript>()
                 .Append<UrlTrackerStyle>();

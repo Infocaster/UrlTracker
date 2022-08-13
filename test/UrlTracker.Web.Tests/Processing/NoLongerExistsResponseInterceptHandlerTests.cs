@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Mocks;
@@ -21,13 +20,13 @@ namespace UrlTracker.Web.Tests.Processing
 
         public static IEnumerable<TestCaseData> TestCases()
         {
-            var notFound = new UrlTrackerShallowClientError(HttpStatusCode.Gone);
-            yield return new TestCaseData(notFound, 404, 410).SetName("HandleAsync rewrites response to 410 if status code is 404");
-            yield return new TestCaseData(notFound, 200, 200).SetName("HandleAsync does nothing if status code is 200");
+            var clientError = new ClientErrorEntity("https://example.com", false, Core.Defaults.DatabaseSchema.ClientErrorStrategies.NoLongerExists, default, default, default);
+            yield return new TestCaseData(clientError, 404, 410).SetName("HandleAsync rewrites response to 410 if status code is 404");
+            yield return new TestCaseData(clientError, 200, 200).SetName("HandleAsync does nothing if status code is 200");
         }
 
         [TestCaseSource(nameof(TestCases))]
-        public async Task HandleAsync_NormalFlow_PerformsAction(UrlTrackerShallowClientError notFound, int initialStatusCode, int expectedStatusCode)
+        public async Task HandleAsync_NormalFlow_PerformsAction(IClientError clientError, int initialStatusCode, int expectedStatusCode)
         {
             // arrange
             HttpContextMock!.ResponseMock.SetupProperty(obj => obj.StatusCode, initialStatusCode);
@@ -36,7 +35,7 @@ namespace UrlTracker.Web.Tests.Processing
             {
                 ResponseAbstractionMock!.Setup(obj => obj.Clear(HttpContextMock.Response)).Verifiable();
             }
-            var input = new InterceptBase<UrlTrackerShallowClientError>(notFound);
+            var input = new InterceptBase<IClientError>(clientError);
 
             // act
             await _testSubject!.HandleAsync(context => Task.CompletedTask, HttpContextMock.Context, input);

@@ -23,7 +23,7 @@ namespace UrlTracker.Web
             return context.Items.TryGetValue(_httpContextKey, out var httpContext) ? httpContext as HttpContext : null;
         }
 
-        public static Url MapToUrl(this IUmbracoMapper mapper, ShallowRedirect redirect, HttpContext httpContext)
+        public static Url MapToUrl(this IUmbracoMapper mapper, Redirect redirect, HttpContext httpContext)
         {
             if (httpContext is null)
             {
@@ -37,7 +37,7 @@ namespace UrlTracker.Web
         }
 
 
-        public static Url MapToUrl(this MapperContext context, ShallowRedirect redirect, HttpContext httpContext)
+        public static Url MapToUrl(this MapperContext context, Redirect redirect, HttpContext httpContext)
         {
             if (httpContext is null)
             {

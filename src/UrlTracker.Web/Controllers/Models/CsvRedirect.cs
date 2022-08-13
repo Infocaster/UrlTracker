@@ -1,7 +1,9 @@
-﻿using CsvHelper.Configuration.Attributes;
+﻿using System.Diagnostics.CodeAnalysis;
+using CsvHelper.Configuration.Attributes;
 
 namespace UrlTracker.Web.Controllers.Models
 {
+    [ExcludeFromCodeCoverage]
     public class CsvRedirect
     {
         [Name("RootNodeId"), Index(0)]

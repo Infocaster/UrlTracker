@@ -24,6 +24,7 @@ namespace UrlTracker.Web.Events
             {
                 { "base", _linkGenerator.GetUmbracoApiServiceBaseUrl<UrlTrackerManagerController>(controller => controller.GetSettings()) },
                 { "deleteEntry", nameof(UrlTrackerManagerController.DeleteEntry) },
+                { "deleteRedirect", nameof(UrlTrackerManagerController.DeleteRedirect) },
                 { "getLanguagesOutNodeDomains", nameof(UrlTrackerManagerController.GetLanguagesOutNodeDomains) },
                 { "getNodesWithDomains", nameof(UrlTrackerManagerController.GetNodesWithDomains) },
                 { "getSettings", nameof(UrlTrackerManagerController.GetSettings) },

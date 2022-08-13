@@ -8,6 +8,7 @@ namespace UrlTracker.Web.Controllers.Models
         [Required]
         public int? Id { get; set; }
 
+        [Range(typeof(bool), "true", "true", ErrorMessage = "Redirects are now deleted through a separate endpoint")]
         public bool Is404 { get; set; } = false;
     }
 }

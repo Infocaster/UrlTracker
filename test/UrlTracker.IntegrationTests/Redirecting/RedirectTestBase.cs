@@ -22,7 +22,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
             {
                 Culture = "en-US",
                 Force = false,
-                PassThroughQueryString = false,
+                RetainQuery = false,
                 TargetStatusCode = _defaultRedirectCode,
                 TargetRootNode = GetDefaultRootNode()
             };

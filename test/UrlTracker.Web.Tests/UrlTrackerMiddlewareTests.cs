@@ -22,7 +22,7 @@ namespace UrlTracker.Web.Tests.Events
 
         public override void SetUp()
         {
-            _testSubject = new UrlTrackerMiddleware(context => Task.CompletedTask, new ConsoleLogger<UrlTrackerMiddleware>(), InterceptService, ResponseInterceptHandlerCollection, RequestInterceptFilterCollection, Mock.Of<IEventAggregator>(), RuntimeState);
+            _testSubject = new UrlTrackerMiddleware(context => Task.CompletedTask, new VoidLogger<UrlTrackerMiddleware>(), InterceptService, ResponseInterceptHandlerCollection, RequestInterceptFilterCollection, Mock.Of<IEventAggregator>(), RuntimeState);
         }
 
         [TestCase(TestName = "HandleAsync processes request")]

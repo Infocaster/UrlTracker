@@ -33,7 +33,7 @@ namespace UrlTracker.Web.Map
             target.Culture = source.Culture;
             target.Force = source.Force;
             target.Notes = source.Notes;
-            target.PassThroughQueryString = source.PassThroughQueryString;
+            target.RetainQuery = source.PassThroughQueryString;
             target.SourceRegex = source.SourceRegex;
             target.SourceUrl = source.SourceUrl;
             target.TargetNode = source.TargetNodeId.HasValue ? cref.GetContentById(source.TargetNodeId.Value) : null;
@@ -48,7 +48,7 @@ namespace UrlTracker.Web.Map
             target.Force = source.Force;
             target.TargetNodeId = source.TargetNode?.Id;
             target.Notes = source.Notes;
-            target.PassThroughQueryString = source.PassThroughQueryString;
+            target.PassThroughQueryString = source.RetainQuery;
             target.SourceRegex = source.SourceRegex;
             target.TargetRootNodeId = source.TargetRootNode?.Id;
             target.SourceUrl = source.SourceUrl;

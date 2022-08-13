@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Umbraco.Cms" Version="9.5.2" />
     <PackageReference Include="uSync" Version="9.4.0" />
   </ItemGroup>
@@ -22,7 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\UrlTracker.Web\UrlTracker.Web.csproj" />
-    <ProjectReference Include="..\UrlTracker.Resources.Testing\UrlTracker.Resources.Testing.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

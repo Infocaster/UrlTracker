@@ -6,15 +6,16 @@ using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
+using Umbraco.Extensions;
 using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Caching;
-using UrlTracker.Core.Components;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Database;
-using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Mappers;
+using UrlTracker.Core.Database.Migrations;
+using UrlTracker.Core.Database.Models.Entities;
 using UrlTracker.Core.Domain;
 using UrlTracker.Core.Events;
-using UrlTracker.Core.Exceptions;
 using UrlTracker.Core.Intercepting;
 using UrlTracker.Core.Intercepting.Conversion;
 using UrlTracker.Core.Intercepting.Preprocessing;
@@ -52,20 +53,17 @@ namespace UrlTracker.Core
             }
             builder.Services.AddSingleton<IInterceptService, InterceptService>();
             builder.Services.AddSingleton<IRedirectService, RedirectService>();
-            builder.Services.Decorate<IRedirectService>((decoratee, factory) => new DecoratorRedirectServiceCaching(decoratee, factory.GetRequiredService<IInterceptCache>()));
             builder.Services.AddSingleton<IClientErrorService, ClientErrorService>();
-            builder.Services.AddSingleton<ILegacyService, LegacyService>();
             builder.Services.AddSingleton<IRedirectRepository, RedirectRepository>();
+            builder.Services.AddSingleton<IReferrerRepository, ReferrerRepository>();
             if (settings.CacheRegexRedirects)
             {
-                builder.Services.Decorate<IRedirectRepository>((decoratee, factory) => new DecoratorRedirectRepositoryCaching(decoratee, factory.GetRequiredService<IMemoryCache>()));
+                builder.Services.Decorate<IRedirectRepository>((decoratee, factory) => new DecoratorRedirectRepositoryCaching(decoratee, factory.GetRequiredService<IMemoryCache>(), factory.GetRequiredService<IInterceptCache>()));
             }
             builder.Services.AddSingleton<IClientErrorRepository, ClientErrorRepository>();
-            builder.Services.AddSingleton<ILegacyRepository, LegacyRepository>();
-            builder.Services.Decorate<ILegacyRepository>((decoratee, factory) => new DecoratorLegacyRepositoryCaching(decoratee, factory.GetRequiredService<IMemoryCache>(), factory.GetRequiredService<IInterceptCache>()));
             builder.Services.AddSingleton<IValidationHelper, ValidationHelper>();
-            builder.Services.AddSingleton<IExceptionHelper, ExceptionHelper>();
             builder.Services.AddSingleton<IInterceptCache, InterceptCache>();
+            builder.Services.AddSingleton<IMigrationPlanFactory, MigrationPlanFactory>();
 
             builder.Services.AddTransient(typeof(ILogger<>), typeof(Logger<>));
 
@@ -115,7 +113,7 @@ namespace UrlTracker.Core
         public static IUmbracoBuilder ComposeDefaultInterceptConverters(this IUmbracoBuilder builder)
         {
             builder.InterceptConverters()!
-                .Append<MapperInterceptConverter<UrlTrackerShallowRedirect, ShallowRedirect>>();
+                .Append<MapperInterceptConverter<IRedirect, Redirect>>();
             return builder;
         }
 
@@ -142,9 +140,16 @@ namespace UrlTracker.Core
 
         public static IUmbracoBuilder ComposeUrlTrackerCoreMaps(this IUmbracoBuilder builder)
         {
+            // business logic mappers
             builder.MapDefinitions()!
-                .Add<LegacyDatabaseMap>()
                 .Add<ServiceLayerMaps>();
+
+            // sql entity mappers
+            builder.Mappers()!
+                .Add<RedirectMapper>()
+                .Add<ClientErrorMapper>()
+                .Add<ReferrerMapper>();
+
             return builder;
         }
 

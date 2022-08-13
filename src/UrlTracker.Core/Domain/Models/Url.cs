@@ -189,6 +189,20 @@ namespace UrlTracker.Core.Domain.Models
                 && other.Query == Query;
         }
 
+        public bool ExtrapolatesTo(Url? other)
+        {
+            // The protocol only matters if the domain has a protocol specified
+            // The host only matters if the domain has a host specified
+            // The port only matters if the domain has either a host or a port specified
+            // The path of the domain must be contained in the incoming url path
+            if (other is null) return false;
+            var iHaveNoHost = string.IsNullOrWhiteSpace(Host);
+            return (!Protocol.HasValue || Protocol == other.Protocol) &&
+                   (iHaveNoHost || Host!.Equals(other.Host)) &&
+                   (iHaveNoHost || Port == other.Port) &&
+                   other.Path!.StartsWith(Path!);
+        }
+
         [ExcludeFromCodeCoverage]
         public override bool Equals(object? obj)
         {
