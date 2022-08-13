@@ -178,10 +178,3 @@ stages:
         command: custom
         custom: nuget
         arguments: 'push $(packageGlob) -s https://api.nuget.org/v3/index.json --api-key $(NuGetApiKey)'
-    
-    - task: DotNetCoreCLI@2
-      displayName: 'push symbols to nuget.org'
-      inputs:
-        command: custom
-        custom: nuget
-        arguments: 'push $(symbolsGlob) -s https://api.nuget.org/v3/index.json --api-key $(NuGetApiKey)'
