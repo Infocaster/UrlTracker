@@ -5,27 +5,24 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Umbraco.Core.Models.PublishedContent;
-using UrlTracker.Core.Domain.Models;
 
 namespace UrlTracker.Core.Models
 {
-    /* Why the difference?
-     * 
-     * Shallow redirects are explicitly for intercepting and are supposed to be cached.
-     * The cache should be as small as possible, therefore the shallow object contains
-     *    only those elements that are required for caching and redirecting
-     */
-
-    public class ShallowRedirect
+    [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
+    [ExcludeFromCodeCoverage]
+    public class Redirect
         : IValidatableObject
     {
+        public string Notes { get; set; }
+        public DateTime Inserted { get; set; }
         // id cannot be validated, because in some cases it's mandatory, but in others it's not
         public int? Id { get; set; }
 
+        [RegularExpression(@"^[a-z]{2}(?:-[A-Z]{2})?$")]
         public string Culture { get; set; }
 
         [Required]
-        public IPublishedContent TargetRootNode { get; set; }
+        public IPublishedContent TargetRootNode { get; set; } // Might be null if content is taken from an old database or the import function is used.
 
         public IPublishedContent TargetNode { get; set; }
 
@@ -35,7 +32,7 @@ namespace UrlTracker.Core.Models
 
         public string SourceRegex { get; set; }
 
-        public bool PassThroughQueryString { get; set; }
+        public bool RetainQuery { get; set; }
 
         [Range(300, 399)]
         public HttpStatusCode TargetStatusCode { get; set; }
@@ -53,15 +50,6 @@ namespace UrlTracker.Core.Models
                 yield return new ValidationResult(Defaults.Validation.TargetConditionNotDefined, new[] { nameof(TargetNode), nameof(TargetUrl) });
             }
         }
-    }
-
-    [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
-    [ExcludeFromCodeCoverage]
-    public class Redirect
-        : ShallowRedirect
-    {
-        public string Notes { get; set; }
-        public DateTime Inserted { get; set; }
 
         private string GetDebuggerDisplay()
         {

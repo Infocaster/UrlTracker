@@ -4,8 +4,7 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Core.Mapping;
-using UrlTracker.Core.Database.Models;
-using UrlTracker.Core.Exceptions;
+using UrlTracker.Core.Database.Models.Entities;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing;
 
@@ -20,16 +19,16 @@ namespace UrlTracker.Core.Tests
             _testSubject = new RedirectService(RedirectRepository,
                                                Mapper,
                                                ValidationHelper,
-                                               new ExceptionHelper());
+                                               ScopeProviderMock.Provider);
         }
 
         protected override ICollection<IMapDefinition> CreateMappers()
         {
             return new IMapDefinition[]
             {
-                CreateTestMap<UrlTrackerRedirectCollection, RedirectCollection>(RedirectCollection.Create(Enumerable.Empty<Redirect>())),
-                CreateTestMap<Redirect, UrlTrackerRedirect>(new UrlTrackerRedirect()),
-                CreateTestMap<UrlTrackerRedirect, Redirect>(new Redirect())
+                CreateTestMap<Core.Database.Entities.RedirectEntityCollection, RedirectCollection>(RedirectCollection.Create(Enumerable.Empty<Redirect>())),
+                CreateTestMap<Redirect, IRedirect>(new RedirectEntity(default, default, default, default, default, default, default, default, default, default)),
+                CreateTestMap<IRedirect, Redirect>(new Redirect())
             };
         }
 

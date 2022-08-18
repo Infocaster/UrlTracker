@@ -55,7 +55,7 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_BlacklistedCandidate_ReturnsFalse()
         {
             // arrange
-            UrlTrackerSettings.Value = new UrlTrackerSettings(true, false, true, false, false, false, 5000, true, 60 * 48, true, new List<string>() { "item1", "item2", "blablabla"});
+            UrlTrackerSettings.Value = new UrlTrackerSettings(true, false, true, false, false, false, 5000, true, 60 * 48, true, new List<string>() { "item1", "item2", "blablabla" });
 
             const string url = "http://example.com/blablabla";
             HttpContextMock = new HttpContextMock(new Uri(url));

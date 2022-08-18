@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Umbraco.Core.Mapping;
-using UrlTracker.Core.Database.Models;
-using UrlTracker.Core.Exceptions;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing;
 
@@ -13,15 +12,15 @@ namespace UrlTracker.Core.Tests
 
         public override void SetUp()
         {
-            _testSubject = new ClientErrorService(ClientErrorRepository, ValidationHelper, new ExceptionHelper(), Mapper);
+            _testSubject = new ClientErrorService(ClientErrorRepository, ReferrerRepository, ValidationHelper, Mapper, ScopeProviderMock.Provider);
         }
 
         protected override ICollection<IMapDefinition> CreateMappers()
         {
             return new IMapDefinition[]
             {
-                CreateTestMap<NotFound, UrlTrackerNotFound>(new UrlTrackerNotFound()),
-                CreateTestMap<UrlTrackerNotFound, NotFound>(new NotFound())
+                CreateTestMap<ClientError, IClientError>(new ClientErrorEntity("http://example.com", false, Defaults.DatabaseSchema.ClientErrorStrategies.NotFound)),
+                CreateTestMap<IClientError, ClientError>(new ClientError("http://example.com"))
             };
         }
     }

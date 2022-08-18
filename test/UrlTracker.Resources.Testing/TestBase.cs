@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
+using Umbraco.Core;
 using Umbraco.Core.Configuration;
+using Umbraco.Core.Configuration.UmbracoSettings;
 using Umbraco.Core.Mapping;
 using Umbraco.Core.Services;
 using UrlTracker.Core;
 using UrlTracker.Core.Abstractions;
+using UrlTracker.Core.Caching;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Domain;
@@ -24,13 +27,17 @@ using UrlTracker.Web.Processing;
 
 namespace UrlTracker.Resources.Testing
 {
-    public class TestBase
+    public abstract class TestBase
     {
         protected RegisterMock RegisterMock { get; set; }
         protected UmbracoContextFactoryAbstractionMock UmbracoContextFactoryAbstractionMock { get; set; }
-        protected ScopeProviderMock ScopeProviderMock { get; private set; }
+        protected ScopeProviderMock ScopeProviderMock { get; set; }
         protected HttpContextMock HttpContextMock { get; set; }
 
+        protected Mock<IUmbracoSettingsSection> UmbracoSettingsSectionMock { get; set; }
+        protected IUmbracoSettingsSection UmbracoSettingsSection => UmbracoSettingsSectionMock.Object;
+        protected Mock<IRequestHandlerSection> RequestHandlerSectionMock { get; set; }
+        protected IRequestHandlerSection RequestHandlerSection => RequestHandlerSectionMock.Object;
         protected Mock<IAppSettingsAbstraction> AppSettingsAbstractionMock { get; set; }
         protected IAppSettingsAbstraction AppSettingsAbstraction => AppSettingsAbstractionMock.Object;
         protected Mock<IDomainProvider> DomainProviderMock { get; set; }
@@ -45,6 +52,8 @@ namespace UrlTracker.Resources.Testing
         protected IInterceptor Interceptor => InterceptorMock.Object;
         protected Mock<IClientErrorRepository> ClientErrorRepositoryMock { get; set; }
         protected IClientErrorRepository ClientErrorRepository => ClientErrorRepositoryMock.Object;
+        protected Mock<IReferrerRepository> ReferrerRepositoryMock { get; set; }
+        protected IReferrerRepository ReferrerRepository => ReferrerRepositoryMock.Object;
         protected Mock<IRedirectRepository> RedirectRepositoryMock { get; set; }
         protected IRedirectRepository RedirectRepository => RedirectRepositoryMock.Object;
         protected Mock<IValidationHelper> ValidationHelperMock { get; set; }
@@ -59,8 +68,6 @@ namespace UrlTracker.Resources.Testing
         protected IRedirectService RedirectService => RedirectServiceMock.Object;
         protected Mock<IClientErrorService> ClientErrorServiceMock { get; set; }
         protected IClientErrorService ClientErrorService => ClientErrorServiceMock.Object;
-        protected Mock<ILegacyService> LegacyServiceMock { get; set; }
-        protected ILegacyService LegacyService => LegacyServiceMock.Object;
         protected Mock<IRequestModelPatcher> RequestModelPatcherMock { get; set; }
         protected IRequestModelPatcher RequestModelPatcher => RequestModelPatcherMock.Object;
         protected Mock<IInterceptService> InterceptServiceMock { get; set; }
@@ -81,6 +88,10 @@ namespace UrlTracker.Resources.Testing
         protected ICompleteRequestAbstraction CompleteRequestAbstraction => CompleteRequestAbstractionMock.Object;
         protected Mock<IRequestInterceptFilter> RequestInterceptFilterMock { get; set; }
         protected IRequestInterceptFilter RequestInterceptFilter => RequestInterceptFilterMock.Object;
+        protected Mock<IInterceptCache> InterceptCacheMock { get; set; }
+        protected IInterceptCache InterceptCache => InterceptCacheMock.Object;
+        protected Mock<IRuntimeState> RuntimeStateMock { get; set; }
+        protected IRuntimeState RuntimeState => RuntimeStateMock.Object;
 
 
 
@@ -116,6 +127,10 @@ namespace UrlTracker.Resources.Testing
             UrlTrackerSettings.Value = null;
             ReservedPathSettings.Value = null;
 
+            RequestHandlerSectionMock = new Mock<IRequestHandlerSection>();
+            UmbracoSettingsSectionMock = new Mock<IUmbracoSettingsSection>();
+            UmbracoSettingsSectionMock.Setup(obj => obj.RequestHandler).Returns(RequestHandlerSection);
+
             RegisterMock = new RegisterMock();
             UmbracoContextFactoryAbstractionMock = new UmbracoContextFactoryAbstractionMock();
             AppSettingsAbstractionMock = new Mock<IAppSettingsAbstraction>();
@@ -126,6 +141,7 @@ namespace UrlTracker.Resources.Testing
             DefaultInterceptContextFactoryMock = new Mock<IDefaultInterceptContextFactory>();
             InterceptorMock = new Mock<IInterceptor>();
             ClientErrorRepositoryMock = new Mock<IClientErrorRepository>();
+            ReferrerRepositoryMock = new Mock<IReferrerRepository>();
             RedirectRepositoryMock = new Mock<IRedirectRepository>();
             ValidationHelperMock = new Mock<IValidationHelper>();
             IntermediateInterceptServiceMock = new Mock<IIntermediateInterceptService>();
@@ -133,7 +149,6 @@ namespace UrlTracker.Resources.Testing
             GlobalSettingsMock = new Mock<IGlobalSettings>();
             RedirectServiceMock = new Mock<IRedirectService>();
             ClientErrorServiceMock = new Mock<IClientErrorService>();
-            LegacyServiceMock = new Mock<ILegacyService>();
             ScopeProviderMock = new ScopeProviderMock();
             RequestModelPatcherMock = new Mock<IRequestModelPatcher>();
             InterceptServiceMock = new Mock<IInterceptService>();
@@ -145,6 +160,8 @@ namespace UrlTracker.Resources.Testing
             LocalizationServiceMock = new Mock<ILocalizationService>();
             CompleteRequestAbstractionMock = new Mock<ICompleteRequestAbstraction>();
             RequestInterceptFilterMock = new Mock<IRequestInterceptFilter>();
+            InterceptCacheMock = new Mock<IInterceptCache>();
+            RuntimeStateMock = new Mock<IRuntimeState>();
 
             HttpContextMock = CreateHttpContextMock();
 
@@ -170,7 +187,7 @@ namespace UrlTracker.Resources.Testing
             return Array.Empty<IMapDefinition>();
         }
 
-        protected TestMapDefinition<TIn, TOut> CreateTestMap<TIn, TOut>(TOut value = default)
+        protected static TestMapDefinition<TIn, TOut> CreateTestMap<TIn, TOut>(TOut value = default)
             => new TestMapDefinition<TIn, TOut>() { To = value };
 
         protected virtual HttpContextMock CreateHttpContextMock()

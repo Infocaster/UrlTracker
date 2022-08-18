@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Umbraco.Core.Models.PublishedContent;
 
 namespace UrlTracker.Core.Abstractions
@@ -9,5 +10,6 @@ namespace UrlTracker.Core.Abstractions
         IPublishedContent GetContentById(int id);
         string GetMediaUrl(IPublishedContent content, UrlMode mode, string culture);
         string GetUrl(IPublishedContent content, UrlMode mode, string culture);
+        IEnumerable<IPublishedContent> GetContentAtRoot();
     }
 }

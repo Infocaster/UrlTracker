@@ -9,7 +9,7 @@ namespace UrlTracker.Web
 {
     public static class UmbracoMapperExtensions
     {
-        const string _httpContextKey = "ic:urltracker:httpcontext";
+        private const string _httpContextKey = "ic:urltracker:httpcontext";
 
         [ExcludeFromCodeCoverage]
         public static void SetHttpContext(this MapperContext context, HttpContextBase httpContext)
@@ -23,7 +23,7 @@ namespace UrlTracker.Web
             return context.Items.TryGetValue(_httpContextKey, out var httpContext) ? httpContext as HttpContextBase : null;
         }
 
-        public static Url MapToUrl(this UmbracoMapper mapper, ShallowRedirect redirect, HttpContextBase httpContext)
+        public static Url MapToUrl(this UmbracoMapper mapper, Redirect redirect, HttpContextBase httpContext)
         {
             if (httpContext is null)
             {
@@ -37,7 +37,7 @@ namespace UrlTracker.Web
         }
 
 
-        public static Url MapToUrl(this MapperContext context, ShallowRedirect redirect, HttpContextBase httpContext)
+        public static Url MapToUrl(this MapperContext context, Redirect redirect, HttpContextBase httpContext)
         {
             if (httpContext is null)
             {

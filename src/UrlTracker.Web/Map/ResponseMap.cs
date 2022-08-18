@@ -39,22 +39,22 @@ namespace UrlTracker.Web.Map
                 (source, context) => new GetRedirectsResponse(),
                 Map);
 
-            mapper.Define<RichNotFound, RedirectViewModel>(
+            mapper.Define<ClientError, RedirectViewModel>(
                 (source, context) => new RedirectViewModel(),
                 Map);
 
-            mapper.Define<RichNotFoundCollection, GetNotFoundsResponse>(
+            mapper.Define<ClientErrorCollection, GetNotFoundsResponse>(
                 (source, context) => new GetNotFoundsResponse(),
                 Map);
         }
 
-        private static void Map(RichNotFoundCollection source, GetNotFoundsResponse target, MapperContext context)
+        private static void Map(ClientErrorCollection source, GetNotFoundsResponse target, MapperContext context)
         {
-            target.Entries = context.MapEnumerable<RichNotFound, RedirectViewModel>(source);
+            target.Entries = context.MapEnumerable<ClientError, RedirectViewModel>(source);
             target.NumberOfEntries = source.Total;
         }
 
-        private static void Map(RichNotFound source, RedirectViewModel target, MapperContext context)
+        private static void Map(ClientError source, RedirectViewModel target, MapperContext context)
         {
             target.CalculatedRedirectUrl = null;
             target.Culture = null;
@@ -102,7 +102,7 @@ namespace UrlTracker.Web.Map
             target.OldUrlWithoutQuery = queryIndex >= 0 ? target.OldUrl.Substring(0, queryIndex) : target.OldUrl;
             target.RedirectHttpCode = ((int)source.TargetStatusCode);
             target.RedirectNodeId = source.TargetNode?.Id;
-            target.RedirectPassThroughQueryString = source.PassThroughQueryString;
+            target.RedirectPassThroughQueryString = source.RetainQuery;
             target.RedirectRootNodeId = source.TargetRootNode?.Id ?? -1;
             target.RedirectUrl = source.TargetUrl;
             target.Referrer = null;

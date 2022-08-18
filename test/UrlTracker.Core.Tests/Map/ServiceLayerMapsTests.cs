@@ -5,11 +5,11 @@ using System.Net;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Core.Mapping;
-using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Entities;
+using UrlTracker.Core.Database.Models.Entities;
 using UrlTracker.Core.Map;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing;
-using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Resources.Testing.Objects;
 
 namespace UrlTracker.Core.Tests.Map
@@ -29,51 +29,24 @@ namespace UrlTracker.Core.Tests.Map
             UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => TestPublishedContent.Create(id));
         }
 
-        [TestCase(TestName = "Map UrlTrackerShallowRedirect to ShallowRedirect")]
-        public void Map_UrlTrackerShallowRedirect_ShallowRedirect()
+        [TestCase(TestName = "Map IRedirect to Redirect")]
+        public void Map_UrlTrackerRedirect_Redirect()
         {
             // arrange
-            var input = new UrlTrackerShallowRedirect
+            IRedirect input = new RedirectEntity(default, default, default, default, default, default, default, default, default, default)
             {
+                CreateDate = new DateTime(2022, 1, 23),
+                Notes = "lorem ipsum",
                 Culture = "nl-nl",
                 Force = true,
                 Id = 1000,
-                PassThroughQueryString = true,
+                RetainQuery = true,
                 SourceRegex = "lorem ipsum",
                 SourceUrl = "http://example.com",
                 TargetNodeId = 1001,
                 TargetRootNodeId = 1002,
-                TargetStatusCode = HttpStatusCode.Redirect,
+                Permanent = false,
                 TargetUrl = "http://example.com/lorem"
-            };
-
-            // act
-            var result = Mapper.Map<ShallowRedirect>(input);
-
-            // assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result.Culture, Is.EqualTo(input.Culture));
-                Assert.That(result.Force, Is.EqualTo(input.Force));
-                Assert.That(result.Id, Is.EqualTo(input.Id));
-                Assert.That(result.PassThroughQueryString, Is.EqualTo(input.PassThroughQueryString));
-                Assert.That(result.SourceRegex, Is.EqualTo(input.SourceRegex));
-                Assert.That(result.SourceUrl, Is.EqualTo("http://example.com"));
-                Assert.That(result.TargetNode, Is.Not.Null);
-                Assert.That(result.TargetRootNode, Is.Not.Null);
-                Assert.That(result.TargetStatusCode, Is.EqualTo(input.TargetStatusCode));
-                Assert.That(result.TargetUrl, Is.EqualTo(input.TargetUrl));
-            });
-        }
-
-        [TestCase(TestName = "Map UrlTrackerRedirect to Redirect")]
-        public void Map_UrlTrackerRedirect_Redirect()
-        {
-            // arrange
-            var input = new UrlTrackerRedirect
-            {
-                Inserted = new DateTime(2022, 1, 23),
-                Notes = "lorem ipsum"
             };
 
             // act
@@ -82,7 +55,17 @@ namespace UrlTracker.Core.Tests.Map
             // assert
             Assert.Multiple(() =>
             {
-                Assert.That(result.Inserted, Is.EqualTo(input.Inserted));
+                Assert.That(result.Culture, Is.EqualTo(input.Culture));
+                Assert.That(result.Force, Is.EqualTo(input.Force));
+                Assert.That(result.Id, Is.EqualTo(input.Id));
+                Assert.That(result.RetainQuery, Is.EqualTo(input.RetainQuery));
+                Assert.That(result.SourceRegex, Is.EqualTo(input.SourceRegex));
+                Assert.That(result.SourceUrl, Is.EqualTo("http://example.com"));
+                Assert.That(result.TargetNode, Is.Not.Null);
+                Assert.That(result.TargetRootNode, Is.Not.Null);
+                Assert.That(result.TargetStatusCode, Is.EqualTo(HttpStatusCode.Redirect));
+                Assert.That(result.TargetUrl, Is.EqualTo(input.TargetUrl));
+                Assert.That(result.Inserted, Is.EqualTo(input.CreateDate));
                 Assert.That(result.Notes, Is.EqualTo(input.Notes));
             });
         }
@@ -91,10 +74,10 @@ namespace UrlTracker.Core.Tests.Map
         public void Map_UrlTrackerRedirectCollection_RedirectCollection()
         {
             // arrange
-            var input = UrlTrackerRedirectCollection.Create(new[] { new UrlTrackerRedirect() }, 3);
+            var input = Database.Entities.RedirectEntityCollection.Create(new[] { new RedirectEntity(default, default, default, default, default, default, default, default, default, default) }, 3);
 
             // act
-            var result = Mapper.Map<RedirectCollection>(input);
+            var result = Mapper.Map<Core.Models.RedirectCollection>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -105,7 +88,7 @@ namespace UrlTracker.Core.Tests.Map
             });
         }
 
-        [TestCase(TestName = "Map Redirect to UrlTrackerRedirect with content")]
+        [TestCase(TestName = "Map Redirect to IRedirect with content")]
         public void Map_Redirect_UrlTrackerRedirect_Content()
         {
             // arrange
@@ -116,7 +99,7 @@ namespace UrlTracker.Core.Tests.Map
                 Id = 1000,
                 Inserted = new DateTime(2022, 1, 23),
                 Notes = "lorem ipsum",
-                PassThroughQueryString = true,
+                RetainQuery = true,
                 SourceRegex = "dolor sit",
                 SourceUrl = "http://example.com",
                 TargetNode = TestPublishedContent.Create(1001),
@@ -126,7 +109,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper.Map<UrlTrackerRedirect>(input);
+            var result = Mapper.Map<IRedirect>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -134,26 +117,26 @@ namespace UrlTracker.Core.Tests.Map
                 Assert.That(result.Culture, Is.EqualTo(input.Culture));
                 Assert.That(result.Force, Is.EqualTo(input.Force));
                 Assert.That(result.Id, Is.EqualTo(input.Id));
-                Assert.That(result.Inserted, Is.EqualTo(input.Inserted));
+                Assert.That(result.CreateDate, Is.EqualTo(input.Inserted));
                 Assert.That(result.Notes, Is.EqualTo(input.Notes));
-                Assert.That(result.PassThroughQueryString, Is.EqualTo(input.PassThroughQueryString));
+                Assert.That(result.RetainQuery, Is.EqualTo(input.RetainQuery));
                 Assert.That(result.SourceRegex, Is.EqualTo(input.SourceRegex));
                 Assert.That(result.SourceUrl, Is.EqualTo(input.SourceUrl));
                 Assert.That(result.TargetNodeId, Is.EqualTo(input.TargetNode.Id));
                 Assert.That(result.TargetRootNodeId, Is.EqualTo(input.TargetRootNode.Id));
-                Assert.That(result.TargetStatusCode, Is.EqualTo(input.TargetStatusCode));
+                Assert.That(result.Permanent, Is.False);
                 Assert.That(result.TargetUrl, Is.EqualTo(input.TargetUrl));
             });
         }
 
-        [TestCase(TestName = "Map Redirect to UrlTrackerRedirect without content")]
+        [TestCase(TestName = "Map Redirect to IRedirect without content")]
         public void Map_Redirect_UrlTrackerRedirect_NoContent()
         {
             // arrange
             var input = new Redirect();
 
             // act
-            var result = Mapper.Map<UrlTrackerRedirect>(input);
+            var result = Mapper.Map<IRedirect>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -164,68 +147,63 @@ namespace UrlTracker.Core.Tests.Map
             });
         }
 
-        [TestCase(TestName = "Map NotFound to UrlTrackerNotFound")]
-        public void Map_NotFound_UrlTrackerNotFound()
+        [TestCase(TestName = "Map ClientError to UrlTrackerClientError")]
+        public void Map_ClientError_UrlTrackerClientError()
         {
             // arrange
-            var input = new NotFound
+            var input = new ClientError("http://example.com/lorem")
             {
                 Id = 1000,
                 Ignored = false,
-                Inserted = new DateTime(2022, 1, 23),
-                Referrer = "http://example.com",
-                Url = "http://example.com/lorem"
+                Inserted = new DateTime(2022, 1, 23)
             };
 
             // act
-            var result = Mapper.Map<UrlTrackerNotFound>(input);
+            var result = Mapper.Map<IClientError>(input);
 
             // assert
             Assert.Multiple(() =>
             {
                 Assert.That(result.Id, Is.EqualTo(input.Id));
                 Assert.That(result.Ignored, Is.EqualTo(input.Ignored));
-                Assert.That(result.Inserted, Is.EqualTo(input.Inserted));
-                Assert.That(result.Referrer, Is.EqualTo(input.Referrer));
+                Assert.That(result.CreateDate, Is.EqualTo(input.Inserted));
                 Assert.That(result.Url, Is.EqualTo(input.Url));
             });
         }
 
-        [TestCase(TestName = "Map UrlTrackerNotFound to NotFound")]
-        public void Map_UrlTrackerNotFound_NotFound()
+        [TestCase(TestName = "Map UrlTrackerClientError to ClientError")]
+        public void Map_UrlTrackerClientError_ClientError()
         {
             // arrange
-            var input = new UrlTrackerNotFound
+            var input = new ClientErrorEntity("http://example.com/lorem", false, Defaults.DatabaseSchema.ClientErrorStrategies.NotFound, default, "http://example.com", default)
             {
                 Id = 1000,
                 Ignored = false,
-                Inserted = new DateTime(2022, 1, 23),
-                Referrer = "http://example.com",
-                Url = "http://example.com/lorem"
+                CreateDate = new DateTime(2022, 1, 23)
             };
 
             // act
-            var result = Mapper.Map<NotFound>(input);
+            var result = Mapper.Map<ClientError>(input);
 
             // assert
             Assert.Multiple(() =>
             {
                 Assert.That(result.Id, Is.EqualTo(input.Id));
                 Assert.That(result.Ignored, Is.EqualTo(input.Ignored));
-                Assert.That(result.Inserted, Is.EqualTo(input.Inserted));
-                Assert.That(result.Referrer, Is.EqualTo(input.Referrer));
+                Assert.That(result.Inserted, Is.EqualTo(input.CreateDate));
+                Assert.That(result.MostCommonReferrer, Is.EqualTo(input.MostCommonReferrer));
                 Assert.That(result.Url, Is.EqualTo(input.Url));
             });
         }
 
-        [TestCase(TestName = "Map UrlTrackerRichNotFoundCollection to RichNotFoundCollection")]
-        public void Map_UrlTrackerRichNotFoundCollection_RichNotFoundCollection()
+        [TestCase(TestName = "Map UrlTrackerClientErrorCollection to ClientErrorCollection")]
+        public void Map_UrlTrackerClientErrorCollection_ClientErrorCollection()
         {
             // arrange
-            var input = UrlTrackerRichNotFoundCollection.Create(new[] { new UrlTrackerRichNotFound() }, 3);
+            var input = Core.Database.Entities.ClientErrorEntityCollection.Create(new[] { new ClientErrorEntity("http://example.com", false, Defaults.DatabaseSchema.ClientErrorStrategies.NotFound, default, default, default) }, 3);
 
             // act
-            var result = Mapper.Map<RichNotFoundCollection>(input);
+            var result = Mapper.Map<Core.Models.ClientErrorCollection>(input);
 
             // assert
             Assert.Multiple(() =>
@@ -233,33 +211,6 @@ namespace UrlTracker.Core.Tests.Map
                 Assert.That(result.Total, Is.EqualTo(input.Total));
                 Assert.That(result.Count(), Is.EqualTo(input.Count()));
                 Assert.That(result, Has.No.Null);
-            });
-        }
-
-        [TestCase(TestName = "Map UrlTrackerRichNotFound to RichNotFound")]
-        public void Map_UrlTrackerRichNotFound_RichNotFound()
-        {
-            // arrange
-            var input = new UrlTrackerRichNotFound
-            {
-                Id = 1000,
-                LatestOccurrence = new DateTime(2022, 1, 23),
-                MostCommonReferrer = "http://example.com",
-                Occurrences = 3,
-                Url = "http://example.com/lorem"
-            };
-
-            // act
-            var result = Mapper.Map<RichNotFound>(input);
-
-            // assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result.Id, Is.EqualTo(input.Id));
-                Assert.That(result.LatestOccurrence, Is.EqualTo(input.LatestOccurrence));
-                Assert.That(result.MostCommonReferrer, Is.EqualTo(input.MostCommonReferrer));
-                Assert.That(result.Occurrences, Is.EqualTo(input.Occurrences));
-                Assert.That(result.Url, Is.EqualTo(input.Url));
             });
         }
     }

@@ -167,7 +167,7 @@ namespace UrlTracker.Web.Components
                 Culture = culture,
                 Force = false,
                 Notes = notes,
-                PassThroughQueryString = true,
+                RetainQuery = true,
                 SourceRegex = null,
                 SourceUrl = item.Url(culture, UrlMode.Absolute),
                 TargetNode = item,

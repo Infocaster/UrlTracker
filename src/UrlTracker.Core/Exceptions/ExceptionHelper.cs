@@ -3,11 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace UrlTracker.Core.Exceptions
 {
-    public class ExceptionHelper
-        : IExceptionHelper
+    public static class ExceptionHelper
     {
         [ExcludeFromCodeCoverage]
-        public void WrapAsArgumentException(string parameter, Action action)
+        internal static void WrapAsArgumentException(string parameter, Action action)
         {
             try
             {

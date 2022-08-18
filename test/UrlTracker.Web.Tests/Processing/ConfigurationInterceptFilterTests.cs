@@ -15,7 +15,7 @@ namespace UrlTracker.Web.Tests.Processing
 
         public override void SetUp()
         {
-            _testSubject = new ConfigurationInterceptFilter(UrlTrackerSettings, new ConsoleLogger());
+            _testSubject = new ConfigurationInterceptFilter(UrlTrackerSettings, new VoidLogger());
         }
 
         public static IEnumerable<TestCaseData> TestCases()

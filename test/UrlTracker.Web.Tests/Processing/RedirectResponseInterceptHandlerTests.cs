@@ -19,20 +19,21 @@ namespace UrlTracker.Web.Tests.Processing
 {
     public class RedirectResponseInterceptHandlerTests : TestBase
     {
-        private TestMapDefinition<ShallowRedirect, Url> _testMap;
+        private TestMapDefinition<Redirect, Url> _testMap;
         private RedirectResponseInterceptHandler _testSubject;
 
         protected override ICollection<IMapDefinition> CreateMappers()
         {
             return new IMapDefinition[]
             {
-                _testMap = CreateTestMap<ShallowRedirect, Url>()
+                _testMap = CreateTestMap<Redirect, Url>()
             };
         }
 
         public override void SetUp()
         {
-            _testSubject = new RedirectResponseInterceptHandler(new ConsoleLogger(), Mapper, CompleteRequestAbstraction);
+            RequestHandlerSectionMock.Setup(obj => obj.AddTrailingSlash).Returns(false);
+            _testSubject = new RedirectResponseInterceptHandler(new VoidLogger(), Mapper, CompleteRequestAbstraction, UmbracoSettingsSection);
             _testMap.To = null; // <- always reset the url on the test map to prevent urls from leaking between tests
         }
 
@@ -44,7 +45,7 @@ namespace UrlTracker.Web.Tests.Processing
                 ExpectedUrl = "http://example.com/lorem",
                 InitialStatusCode = 404,
                 InitialUrl = "http://example.com",
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     Force = false,
                     TargetStatusCode = HttpStatusCode.MovedPermanently
@@ -57,7 +58,7 @@ namespace UrlTracker.Web.Tests.Processing
                 ExpectedUrl = null,
                 InitialStatusCode = 200,
                 InitialUrl = "http://example.com",
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     Force = false,
                     TargetStatusCode = HttpStatusCode.MovedPermanently
@@ -70,7 +71,7 @@ namespace UrlTracker.Web.Tests.Processing
                 ExpectedUrl = "http://example.com/lorem",
                 InitialStatusCode = 200,
                 InitialUrl = "http://example.com",
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     Force = true,
                     TargetStatusCode = HttpStatusCode.MovedPermanently
@@ -83,11 +84,11 @@ namespace UrlTracker.Web.Tests.Processing
                 ExpectedUrl = "http://example.com/lorem",
                 InitialStatusCode = 404,
                 InitialUrl = "http://example.com?ipsum=dolor",
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     Force = false,
                     TargetStatusCode = HttpStatusCode.MovedPermanently,
-                    PassThroughQueryString = false
+                    RetainQuery = false
                 }
             }.ToTestCase("HandleAsync query string not passed through");
 
@@ -97,11 +98,11 @@ namespace UrlTracker.Web.Tests.Processing
                 ExpectedUrl = "http://example.com/lorem?ipsum=dolor",
                 InitialStatusCode = 404,
                 InitialUrl = "http://example.com?ipsum=dolor",
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     Force = false,
                     TargetStatusCode = HttpStatusCode.MovedPermanently,
-                    PassThroughQueryString = true
+                    RetainQuery = true
                 }
             }.ToTestCase("HandleAsync query string passed through");
 
@@ -111,7 +112,7 @@ namespace UrlTracker.Web.Tests.Processing
                 ExpectedUrl = null,
                 InitialStatusCode = 404,
                 InitialUrl = "http://example.com/lorem",
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     TargetStatusCode = HttpStatusCode.Redirect
                 }
@@ -119,7 +120,7 @@ namespace UrlTracker.Web.Tests.Processing
         }
 
         [TestCaseSource(nameof(TestCases))]
-        public async Task HandleAsync_NormalFlow_ProcessesIntercept(ShallowRedirect redirect, int initialStatusCode, int expectedStatusCode, string initialUrl, string expectedUrl)
+        public async Task HandleAsync_NormalFlow_ProcessesIntercept(Redirect redirect, int initialStatusCode, int expectedStatusCode, string initialUrl, string expectedUrl)
         {
             // arrange
             HttpContextMock.ResponseMock.SetupProperty(obj => obj.StatusCode, initialStatusCode);
@@ -135,7 +136,7 @@ namespace UrlTracker.Web.Tests.Processing
                 _testMap.To = Url.Parse(expectedUrl);
                 HttpContextMock.ResponseMock.SetupProperty(obj => obj.RedirectLocation);
             }
-            var input = new InterceptBase<ShallowRedirect>(redirect);
+            var input = new InterceptBase<Redirect>(redirect);
 
             // act
             await _testSubject.HandleAsync(HttpContextMock.Context, input);

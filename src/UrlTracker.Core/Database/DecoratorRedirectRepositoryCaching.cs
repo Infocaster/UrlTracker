@@ -1,48 +1,90 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Umbraco.Core.Persistence.Querying;
 using UrlTracker.Core.Caching;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Models.Entities;
 
 namespace UrlTracker.Core.Database
 {
+    [ExcludeFromCodeCoverage]
     public class DecoratorRedirectRepositoryCaching
         : IRedirectRepository
     {
         private readonly IRedirectRepository _decoratee;
-        private readonly IRegexRedirectCache _memoryCache;
+        private readonly IRegexRedirectCache _regexRedirectCache;
+        private readonly IInterceptCache _interceptCache;
+
         public DecoratorRedirectRepositoryCaching(IRedirectRepository decoratee,
-                                                  IRegexRedirectCache memoryCache)
+                                                  IRegexRedirectCache regexRedirectCache,
+                                                  IInterceptCache interceptCache)
         {
             _decoratee = decoratee;
-            _memoryCache = memoryCache;
+            _regexRedirectCache = regexRedirectCache;
+            _interceptCache = interceptCache;
         }
-        public async Task<UrlTrackerRedirect> AddAsync(UrlTrackerRedirect redirect)
+
+        public int Count(IQuery<IRedirect> query)
         {
-            var result = await _decoratee.AddAsync(redirect);
-            _memoryCache.Clear();
-            return result;
+            return _decoratee.Count(query);
         }
-        public Task<UrlTrackerRedirectCollection> GetAsync(uint skip, uint take, string query, OrderBy order, bool descending)
+
+        public void Delete(IRedirect entity)
+        {
+            _decoratee.Delete(entity);
+            ClearCaches();
+        }
+
+        public bool Exists(int id)
+        {
+            return _decoratee.Exists(id);
+        }
+
+        public IRedirect Get(int id)
+        {
+            return _decoratee.Get(id);
+        }
+
+        public IEnumerable<IRedirect> Get(IQuery<IRedirect> query)
+        {
+            return _decoratee.Get(query);
+        }
+
+        public Task<IReadOnlyCollection<IRedirect>> GetAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string culture = null)
+        {
+            return _decoratee.GetAsync(urlsAndPaths, rootNodeId, culture);
+        }
+
+        public Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string query, OrderBy order, bool descending)
         {
             return _decoratee.GetAsync(skip, take, query, order, descending);
         }
-        public Task<UrlTrackerRedirectCollection> GetAsync()
+
+        public IEnumerable<IRedirect> GetMany(params int[] ids)
         {
-            return _decoratee.GetAsync();
+            return _decoratee.GetMany(ids);
         }
-        public Task<IReadOnlyCollection<UrlTrackerShallowRedirect>> GetShallowAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string culture = null)
+
+        public Task<IReadOnlyCollection<IRedirect>> GetWithRegexAsync()
         {
-            return _decoratee.GetShallowAsync(urlsAndPaths, rootNodeId, culture);
+            return _regexRedirectCache.GetOrCreateAsync(Defaults.Cache.RegexRedirectKey, () =>
+            {
+                return _decoratee.GetWithRegexAsync();
+            });
         }
-        public Task<IReadOnlyCollection<UrlTrackerShallowRedirect>> GetShallowWithRegexAsync()
+
+        public void Save(IRedirect entity)
         {
-            return _memoryCache.GetOrCreateAsync(Defaults.Cache.RegexRedirectKey, _decoratee.GetShallowWithRegexAsync);
+            _decoratee.Save(entity);
+            ClearCaches();
         }
-        public async Task<UrlTrackerRedirect> UpdateAsync(UrlTrackerRedirect redirect)
+
+        private void ClearCaches()
         {
-            var result = await _decoratee.UpdateAsync(redirect);
-            _memoryCache.Clear();
-            return result;
+            _regexRedirectCache.Clear();
+            _interceptCache.Clear();
         }
     }
 }

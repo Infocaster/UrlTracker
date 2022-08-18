@@ -82,6 +82,7 @@ namespace UrlTracker.Web
         public static Composition ComposeDefaultRequestInterceptFilters(this Composition composition)
         {
             composition.RequestInterceptFilters()
+                .Append<ConfigurationInterceptFilter>()
                 .Append<UrlReservedPathFilter>();
             return composition;
         }
@@ -90,8 +91,7 @@ namespace UrlTracker.Web
         {
             composition.ClientErrorFilters()
                 .Append<BlacklistedUrlsClientErrorFilter>()
-                .Append<ConfigurationClientErrorFilter>()
-                .Append<IgnoredClientErrorFilter>();
+                .Append<ConfigurationClientErrorFilter>();
             return composition;
         }
 

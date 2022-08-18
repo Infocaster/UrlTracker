@@ -50,6 +50,12 @@ namespace UrlTracker.Core
             return sql.AndSelect(text);
         }
 
+        public static Sql<ISqlContext> AndSelectMin<TDto>(this Sql<ISqlContext> sql, string alias, string tableAlias, Expression<Func<TDto, object>> field)
+        {
+            string text = CreateAggregateField(sql, alias, tableAlias, "MIN", field);
+            return sql.AndSelect(text);
+        }
+
         private static string CreateAggregateField<TDto>(Sql<ISqlContext> sql, string alias, string tableAlias, string aggregator, Expression<Func<TDto, object>> field)
         {
             if (sql is null)
@@ -78,6 +84,17 @@ namespace UrlTracker.Core
             string[] array = (fields.Length == 0) ? sql.GetColumns<TDto>(tableAlias, null, null, withAlias: false) : fields.Select((Expression<Func<TDto, object>> x) => sqlSyntax.GetFieldName(x, tableAlias)).ToArray();
             object[] columns = array;
             return sql.GroupBy(columns);
+        }
+
+        public static Sql<ISqlContext>.SqlJoinClause<ISqlContext> LeftJoin(this Sql<ISqlContext> sql, Sql<ISqlContext> nestedSelect, string alias = null)
+        {
+            var join = $"({nestedSelect.SQL})";
+            if (alias != null)
+            {
+                join += " " + sql.SqlContext.SqlSyntax.GetQuotedTableName(alias);
+            }
+
+            return sql.LeftJoin(join);
         }
     }
 }

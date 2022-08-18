@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Web.Http.Results;
 using Moq;
 using NUnit.Framework;
@@ -27,7 +26,6 @@ namespace UrlTracker.Web.Tests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.TypeOf<StatusCodeResult>());
-                Assert.That((result as StatusCodeResult).StatusCode, Is.EqualTo(HttpStatusCode.Created));
             });
         }
 
@@ -37,12 +35,14 @@ namespace UrlTracker.Web.Tests.Controllers
             // arrange
             var input = new AddRedirectRequest
             {
-                Remove404 = true
+                Remove404 = true,
+                OldUrl = "http://example.com/lorem"
             };
             RedirectServiceMock.Setup(obj => obj.AddAsync(It.IsAny<Redirect>()))
                                .ReturnsAsync((Redirect redirect) => redirect)
                                .Verifiable();
-            ClientErrorServiceMock.Setup(obj => obj.DeleteAsync(It.IsAny<string>(), It.IsAny<string>()))
+            ClientErrorServiceMock.Setup(obj => obj.GetAsync(It.IsAny<string>())).ReturnsAsync((string s) => new ClientError(s));
+            ClientErrorServiceMock.Setup(obj => obj.DeleteAsync(It.IsAny<ClientError>()))
                                   .Verifiable();
             RequestModelPatcherMock.Setup(obj => obj.Patch(It.IsAny<AddRedirectRequest>()))
                                    .Returns((AddRedirectRequest request) => request);
@@ -56,8 +56,27 @@ namespace UrlTracker.Web.Tests.Controllers
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.TypeOf<StatusCodeResult>());
-                Assert.That((result as StatusCodeResult).StatusCode, Is.EqualTo(HttpStatusCode.Created));
             });
+        }
+
+        [TestCase(TestName = "AddRedirect returns BadRequest if flag is set but no client error could be found")]
+        public async Task AddRedirect_ClientErrorNotFound_ReturnBadRequest()
+        {
+            // arrange
+            var input = new AddRedirectRequest
+            {
+                Remove404 = true,
+                OldUrl = "http://example.com/lorem"
+            };
+            RequestModelPatcherMock.Setup(obj => obj.Patch(It.IsAny<AddRedirectRequest>()))
+                                   .Returns((AddRedirectRequest request) => request);
+            ClientErrorServiceMock.Setup(obj => obj.GetAsync(It.IsAny<string>())).ReturnsAsync((string s) => null);
+
+            // act
+            var result = await _testSubject.AddRedirect(input);
+
+            // assert
+            Assert.That(result, Is.TypeOf<InvalidModelStateResult>());
         }
     }
 }

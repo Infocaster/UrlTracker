@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using Umbraco.Core.Configuration.UmbracoSettings;
 using Umbraco.Core.Mapping;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
@@ -11,22 +12,25 @@ using ILogger = UrlTracker.Core.Logging.ILogger;
 namespace UrlTracker.Web.Processing
 {
     public class RedirectResponseInterceptHandler
-        : ResponseInterceptHandlerBase<ShallowRedirect>
+        : ResponseInterceptHandlerBase<Redirect>
     {
         private readonly ILogger _logger;
         private readonly UmbracoMapper _mapper;
         private readonly ICompleteRequestAbstraction _completeRequestAbstraction;
+        private readonly IUmbracoSettingsSection _umbracoSettingsSection;
 
         public RedirectResponseInterceptHandler(ILogger logger,
                                                 UmbracoMapper mapper,
-                                                ICompleteRequestAbstraction completeRequestAbstraction)
+                                                ICompleteRequestAbstraction completeRequestAbstraction,
+                                                IUmbracoSettingsSection umbracoSettingsSection)
         {
             _logger = logger;
             _mapper = mapper;
             _completeRequestAbstraction = completeRequestAbstraction;
+            _umbracoSettingsSection = umbracoSettingsSection;
         }
 
-        protected override ValueTask HandleAsync(HttpContextBase context, ShallowRedirect intercept)
+        protected override ValueTask HandleAsync(HttpContextBase context, Redirect intercept)
         {
             if (!ShouldIntercept(context, intercept))
             {
@@ -58,14 +62,14 @@ namespace UrlTracker.Web.Processing
             return new ValueTask();
         }
 
-        private string GetUrl(HttpContextBase context, ShallowRedirect intercept)
+        private string GetUrl(HttpContextBase context, Redirect intercept)
         {
             Url url = _mapper.MapToUrl(intercept, context);
             var result = url?.ToString(UrlType.Absolute);
             return result;
         }
 
-        public bool ShouldIntercept(HttpContextBase context, ShallowRedirect intercept)
+        public bool ShouldIntercept(HttpContextBase context, Redirect intercept)
         {
             return intercept.Force
                 || context.Response.StatusCode == (int)HttpStatusCode.NotFound;

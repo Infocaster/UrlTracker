@@ -299,7 +299,7 @@
     <Compile Include="Objects\TestPublishedContent.cs" />
     <Compile Include="Objects\TestResponseInterceptHandler.cs" />
     <Compile Include="Mocks\HttpContextMock.cs" />
-    <Compile Include="Logging\ConsoleLogger.cs" />
+    <Compile Include="Logging\VoidLogger.cs" />
     <Compile Include="Objects\TestMapDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Mocks\ScopeProviderMock.cs" />

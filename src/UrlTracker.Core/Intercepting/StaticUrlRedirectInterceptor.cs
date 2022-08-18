@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using UrlTracker.Core.Database;
-using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Models.Entities;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
 using ILogger = UrlTracker.Core.Logging.ILogger;
@@ -32,17 +32,17 @@ namespace UrlTracker.Core.Intercepting
             var culture = context.GetCulture();
             var rootNode = context.GetRootNode();
 
-            var results = await _redirectRepository.GetShallowAsync(interceptStrings, rootNode, culture);
+            var results = await _redirectRepository.GetAsync(interceptStrings, rootNode, culture);
             _logger.LogResults<StaticUrlRedirectInterceptor>(results.Count);
 
             return GetBestIntercept(results, url, context);
         }
 
-        protected virtual CachableInterceptBase<UrlTrackerShallowRedirect> GetBestIntercept(IReadOnlyCollection<UrlTrackerShallowRedirect> intercepts, Url url, IReadOnlyInterceptContext context)
+        protected virtual CachableInterceptBase<IRedirect> GetBestIntercept(IReadOnlyCollection<IRedirect> intercepts, Url url, IReadOnlyInterceptContext context)
         {
             // return first intercept by default
-            UrlTrackerShallowRedirect bestIntercept = intercepts.FirstOrDefault();
-            return !(bestIntercept is null) ? new CachableInterceptBase<UrlTrackerShallowRedirect>(bestIntercept) : null;
+            IRedirect bestIntercept = intercepts.FirstOrDefault();
+            return !(bestIntercept is null) ? new CachableInterceptBase<IRedirect>(bestIntercept) : null;
         }
     }
 }

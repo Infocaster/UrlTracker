@@ -21,6 +21,7 @@ using Umbraco.Web;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.WebApi;
 using UrlTracker.Core;
+using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Configuration;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Domain;
@@ -43,9 +44,9 @@ namespace UrlTracker.Web.Controllers
         private readonly IDomainProvider _domainProvider;
         private readonly IRedirectService _redirectService;
         private readonly IClientErrorService _clientErrorService;
-        private readonly ILegacyService _legacyService;
         private readonly IScopeProvider _scopeProvider;
         private readonly IRequestModelPatcher _requestModelPatcher;
+        private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactoryAbstraction;
 
         public UrlTrackerManagerController(IGlobalSettings globalSettings,
                                            IUmbracoContextAccessor umbracoContextAccessor,
@@ -58,29 +59,38 @@ namespace UrlTracker.Web.Controllers
                                            IConfiguration<UrlTrackerSettings> configuration,
                                            IDomainProvider domainProvider,
                                            IRedirectService redirectService,
-                                           IClientErrorService notFoundService,
-                                           ILegacyService legacyService,
+                                           IClientErrorService clientErrorService,
                                            IScopeProvider scopeProvider,
-                                           IRequestModelPatcher requestModelPatcher)
+                                           IRequestModelPatcher requestModelPatcher,
+                                           IUmbracoContextFactoryAbstraction umbracoContextFactoryAbstraction)
             : base(globalSettings, umbracoContextAccessor, sqlContext, services, appCaches, logger, runtimeState, umbracoHelper)
         {
             _configuration = configuration;
             _domainProvider = domainProvider;
             _redirectService = redirectService;
-            _clientErrorService = notFoundService;
-            _legacyService = legacyService;
+            _clientErrorService = clientErrorService;
             _scopeProvider = scopeProvider;
             _requestModelPatcher = requestModelPatcher;
+            _umbracoContextFactoryAbstraction = umbracoContextFactoryAbstraction;
         }
 
         [HttpPost]
         [ExcludeFromCodeCoverage]
         public async Task<IHttpActionResult> DeleteEntry([FromUri] DeleteEntryRequest request)
         {
-            var entry = await _legacyService.GetAsync(request.Id.Value);
+            var entry = await _clientErrorService.GetAsync(request.Id.Value);
             if (entry is null) return NotFound();
+            await _clientErrorService.DeleteAsync(entry);
+            return StatusCode(HttpStatusCode.NoContent);
+        }
 
-            await _legacyService.DeleteAsync(entry);
+        [HttpDelete]
+        [ExcludeFromCodeCoverage]
+        public async Task<IHttpActionResult> DeleteRedirect([FromUri] int id)
+        {
+            var redirect = await _redirectService.GetAsync(id);
+            if (redirect is null) return NotFound();
+            await _redirectService.DeleteAsync(redirect);
             return StatusCode(HttpStatusCode.NoContent);
         }
 
@@ -109,8 +119,9 @@ namespace UrlTracker.Web.Controllers
                               group domain by domain.NodeId into g
                               where g.Key.HasValue
                               select g.Key.Value;
-            uniqueNodes = uniqueNodes.Union(Umbraco.ContentAtRoot().Select(c => c.Id));
-            return Ok(uniqueNodes.ToList());
+            using (var cref = _umbracoContextFactoryAbstraction.EnsureUmbracoContext())
+                uniqueNodes = uniqueNodes.Union(cref.GetContentAtRoot().Select(c => c.Id)).ToList();
+            return Ok(uniqueNodes);
         }
 
         [HttpGet]
@@ -132,7 +143,13 @@ namespace UrlTracker.Web.Controllers
                 if (request.Remove404)
                 {
                     request = _requestModelPatcher.Patch(request);
-                    deleteTask = _clientErrorService.DeleteAsync(request.OldUrl, request.Culture);
+                    var clientError = await _clientErrorService.GetAsync(request.OldUrl);
+                    if (clientError is null)
+                    {
+                        ModelState.AddModelError(nameof(AddRedirectRequest.OldUrl), "No client error exists for the given url");
+                        return BadRequest(ModelState);
+                    }
+                    deleteTask = _clientErrorService.DeleteAsync(clientError);
                 }
 
                 var redirect = Mapper.Map<Redirect>(request);
@@ -197,18 +214,12 @@ namespace UrlTracker.Web.Controllers
 
         [HttpPost]
         [ExcludeFromCodeCoverage]
-        public async Task<IHttpActionResult> AddIgnore404([FromBody] int id)
+        public async Task<IHttpActionResult> AddIgnore404([FromBody] AddIgnore404Request request)
         {
-            var request = new AddIgnore404Request
-            {
-                Id = id
-            };
-
-            var notFound = await _clientErrorService.GetAsync(request.Id.Value);
-            if (notFound is null) return NotFound();
-
-            notFound.Ignored = true;
-            await _clientErrorService.UpdateAsync(notFound);
+            var clientError = await _clientErrorService.GetAsync(request.Id.Value);
+            if (clientError is null) return NotFound();
+            clientError.Ignored = true;
+            await _clientErrorService.UpdateAsync(clientError);
             return StatusCode(HttpStatusCode.NoContent);
         }
 

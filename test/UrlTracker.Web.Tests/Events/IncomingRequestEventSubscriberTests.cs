@@ -21,7 +21,7 @@ namespace UrlTracker.Web.Tests.Events
 
         public override void SetUp()
         {
-            _testSubject = new IncomingRequestEventSubscriber(new ConsoleLogger(), InterceptService, ResponseInterceptHandlerCollection, RequestInterceptFilterCollection, Mock.Of<IEventPublisher<ProcessedEventArgs>>());
+            _testSubject = new IncomingRequestEventSubscriber(new VoidLogger(), InterceptService, ResponseInterceptHandlerCollection, RequestInterceptFilterCollection, Mock.Of<IEventPublisher<ProcessedEventArgs>>());
         }
 
         [TestCase(TestName = "HandleAsync processes request")]

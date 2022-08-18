@@ -48,7 +48,7 @@ namespace UrlTracker.Web
             logger.Verbose<T>("Client error handling aborted: {reason}", reason);
         }
 
-        public static void LogInterceptCancelled<T>(this ILogger logger, string reason, ShallowRedirect redirect)
+        public static void LogInterceptCancelled<T>(this ILogger logger, string reason, Redirect redirect)
         {
             logger.Debug<T>("Intercept cancelled: {reason}", reason, redirect);
         }

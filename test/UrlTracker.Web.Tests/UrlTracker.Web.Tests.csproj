@@ -296,6 +296,7 @@
     <Compile Include="Controllers\ActionFilters\PatchModelAttributeTests.cs" />
     <Compile Include="Controllers\ActionFilters\ValidateModelAttributeTests.cs" />
     <Compile Include="Controllers\ControllerTestsBase.cs" />
+    <Compile Include="Controllers\Models\AddRedirectRequestTests.cs" />
     <Compile Include="Controllers\Models\AssemblyScanTestBase.cs" />
     <Compile Include="Controllers\Models\IdRequestTests.cs" />
     <Compile Include="Controllers\Models\GetLanguagesFromNodeRequestTests.cs" />
@@ -303,6 +304,7 @@
     <Compile Include="Controllers\Models\PaginationRequestTests.cs" />
     <Compile Include="Controllers\Models\RedirectRequestBaseTests.cs" />
     <Compile Include="Controllers\UrlTrackerManagerControllerTests.cs" />
+    <Compile Include="Controllers\UrlTrackerManagerControllerTests_GetNodesWithDomains.cs" />
     <Compile Include="Controllers\UrlTrackerManagerControllerTests_GetRedirects.cs" />
     <Compile Include="Controllers\UrlTrackerManagerControllerTests_AddRedirect.cs" />
     <Compile Include="Controllers\UrlTrackerManagerControllerTests_GetLanguagesFromNode.cs" />

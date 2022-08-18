@@ -39,7 +39,7 @@ namespace UrlTracker.Web.Tests.Map
                 Id = 1000,
                 Inserted = new DateTime(2022, 1, 24),
                 Notes = "lorem ipsum",
-                PassThroughQueryString = true,
+                RetainQuery = true,
                 SourceRegex = "dolor sit",
                 SourceUrl = "http://example.com",
                 TargetNode = TestPublishedContent.Create(1001),
@@ -57,7 +57,7 @@ namespace UrlTracker.Web.Tests.Map
                 Assert.That(result.Culture, Is.EqualTo(input.Culture));
                 Assert.That(result.Force, Is.EqualTo(input.Force));
                 Assert.That(result.Notes, Is.EqualTo(input.Notes));
-                Assert.That(result.PassThroughQueryString, Is.EqualTo(input.PassThroughQueryString));
+                Assert.That(result.PassThroughQueryString, Is.EqualTo(input.RetainQuery));
                 Assert.That(result.SourceRegex, Is.EqualTo(input.SourceRegex));
                 Assert.That(result.SourceUrl, Is.EqualTo(input.SourceUrl));
                 Assert.That(result.TargetNodeId, Is.EqualTo(input.TargetNode.Id));
@@ -114,7 +114,7 @@ namespace UrlTracker.Web.Tests.Map
                 Assert.That(result.Id, Is.Null);
                 Assert.That(result.Inserted, Is.EqualTo(default(DateTime)));
                 Assert.That(result.Notes, Is.EqualTo(input.Notes));
-                Assert.That(result.PassThroughQueryString, Is.EqualTo(input.PassThroughQueryString));
+                Assert.That(result.RetainQuery, Is.EqualTo(input.PassThroughQueryString));
                 Assert.That(result.SourceRegex, Is.EqualTo(input.SourceRegex));
                 Assert.That(result.SourceUrl, Is.EqualTo("http://example.com"));
                 Assert.That(result.TargetNode, Is.Not.Null);

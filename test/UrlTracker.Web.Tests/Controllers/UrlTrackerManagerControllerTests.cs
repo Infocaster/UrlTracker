@@ -53,9 +53,9 @@ namespace UrlTracker.Web.Tests.Controllers
                                                            DomainProvider,
                                                            RedirectService,
                                                            ClientErrorService,
-                                                           LegacyService,
                                                            ScopeProviderMock.Provider,
-                                                           RequestModelPatcher);
+                                                           RequestModelPatcher,
+                                                           UmbracoContextFactoryAbstractionMock.UmbracoContextFactory);
         }
     }
 }

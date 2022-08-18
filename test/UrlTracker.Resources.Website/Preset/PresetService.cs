@@ -6,14 +6,14 @@ using Umbraco.Core.Scoping;
 using Umbraco.Core.Services;
 using UrlTracker.Core.Caching;
 using UrlTracker.Core.Configuration.Models;
-using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Dtos;
 
 namespace UrlTracker.Resources.Website.Preset
 {
     public interface IPresetService
     {
         void EnsureContent();
-        void Insert(IEnumerable<UrlTrackerEntry> entries);
+        void Insert(IEnumerable<RedirectDto> entries);
         void ResetCache();
         void SetConfiguration(UrlTrackerSettings settings);
         Task WipeUrlTrackerTablesAsync();
@@ -50,7 +50,7 @@ namespace UrlTracker.Resources.Website.Preset
         {
             using (var scope = _scopeProvider.CreateScope())
             {
-                await scope.Database.DeleteMany<UrlTrackerEntry>().ExecuteAsync().ConfigureAwait(false);
+                await scope.Database.DeleteMany<RedirectDto>().ExecuteAsync().ConfigureAwait(false);
                 scope.Complete();
             }
         }
@@ -83,7 +83,7 @@ namespace UrlTracker.Resources.Website.Preset
             }
         }
 
-        public void Insert(IEnumerable<UrlTrackerEntry> entries)
+        public void Insert(IEnumerable<RedirectDto> entries)
         {
             using (var scope = _scopeProvider.CreateScope())
             {

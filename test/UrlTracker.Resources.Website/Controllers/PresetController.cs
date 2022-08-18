@@ -4,7 +4,7 @@ using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Web.WebApi;
 using UrlTracker.Core.Configuration;
 using UrlTracker.Core.Configuration.Models;
-using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Dtos;
 using UrlTracker.Resources.Testing.Clients.Models;
 using UrlTracker.Resources.Website.Preset;
 
@@ -38,7 +38,7 @@ namespace UrlTracker.Resources.Website.Controllers
             if (request is null) return BadRequest();
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var entries = Mapper.MapEnumerable<SeedRedirectRequestRedirect, UrlTrackerEntry>(request.Redirects);
+            var entries = Mapper.MapEnumerable<SeedRedirectRequestRedirect, RedirectDto>(request.Redirects);
             _presetService.Insert(entries);
             _presetService.ResetCache();
             return Ok();

@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using UrlTracker.Core.Database;
-using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
 using ILogger = UrlTracker.Core.Logging.ILogger;
@@ -17,11 +16,11 @@ namespace UrlTracker.Core.Intercepting
         private readonly IStaticUrlProviderCollection _staticUrlProviders;
         private readonly ILogger _logger;
 
-        public NoLongerExistsInterceptor(IClientErrorRepository notFoundRepository,
+        public NoLongerExistsInterceptor(IClientErrorRepository clientErrorRepository,
                                          IStaticUrlProviderCollection staticUrlProviders,
                                          ILogger logger)
         {
-            _clientErrorRepository = notFoundRepository;
+            _clientErrorRepository = clientErrorRepository;
             _staticUrlProviders = staticUrlProviders;
             _logger = logger;
         }
@@ -35,16 +34,16 @@ namespace UrlTracker.Core.Intercepting
 
             _logger.LogParameters<NoLongerExistsInterceptor>(culture, rootNodeId, urls.ToList());
 
-            var results = await _clientErrorRepository.GetShallowAsync(urls, rootNodeId, culture);
+            var results = await _clientErrorRepository.GetAsync(urls, rootNodeId, culture);
             _logger.LogResults<NoLongerExistsInterceptor>(results.Count);
 
             return GetBestResult(results);
         }
 
-        private ICachableIntercept GetBestResult(IReadOnlyCollection<UrlTrackerShallowClientError> results)
+        private ICachableIntercept GetBestResult(IReadOnlyCollection<IClientError> results)
         {
-            var bestResult = results.FirstOrDefault(r => r.TargetStatusCode == HttpStatusCode.Gone);
-            return !(bestResult is null) ? new CachableInterceptBase<UrlTrackerShallowClientError>(bestResult) : null;
+            var bestResult = results.FirstOrDefault(r => r.Strategy == Defaults.DatabaseSchema.ClientErrorStrategies.NoLongerExists);
+            return !(bestResult is null) ? new CachableInterceptBase<IClientError>(bestResult) : null;
         }
     }
 }

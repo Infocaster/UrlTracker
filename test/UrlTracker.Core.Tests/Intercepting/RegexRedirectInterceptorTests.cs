@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Models.Entities;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting;
 using UrlTracker.Core.Intercepting.Models;
@@ -17,16 +17,13 @@ namespace UrlTracker.Core.Tests.Intercepting
 
         public override void SetUp()
         {
-            _testSubject = new RegexRedirectInterceptor(RedirectRepository, new ConsoleLogger());
+            _testSubject = new RegexRedirectInterceptor(RedirectRepository, new VoidLogger());
             DefaultInterceptContext.SetRootNode(9999);
         }
 
         public static IEnumerable<TestCaseData> NormalFlowTestCases()
         {
-            var entry1 = new UrlTrackerShallowRedirect
-            {
-                SourceRegex = @"\/ipsum"
-            };
+            var entry1 = new RedirectEntity(default, default, default, default, default, @"\/ipsum", default, default, default, default);
 
             yield return new TestCaseData(
                 entry1,
@@ -46,21 +43,14 @@ namespace UrlTracker.Core.Tests.Intercepting
                 null
                 ).SetName("InterceptAsync returns null if path does not match regex");
 
-            var entry2 = new UrlTrackerShallowRedirect
-            {
-                SourceRegex = @"^lorem\?ipsum=[0-9]{3}$"
-            };
+            var entry2 = new RedirectEntity(default, default, default, default, default, @"^lorem\?ipsum=[0-9]{3}$", default, default, default, default);
 
             yield return new TestCaseData(
                 entry2,
                 Url.Parse("http://example.com/lorem?ipsum=123"),
                 entry2).SetName("InterceptAsync matches on query string");
 
-            var entry3 = new UrlTrackerShallowRedirect
-            {
-                SourceRegex = "lorem",
-                TargetRootNodeId = 9998
-            };
+            var entry3 = new RedirectEntity(default, 9998, default, default, default, "lorem", default, default, default, default);
             yield return new TestCaseData(
                 entry3,
                 Url.Parse("http://example.com/lorem"),
@@ -68,11 +58,11 @@ namespace UrlTracker.Core.Tests.Intercepting
         }
 
         [TestCaseSource(nameof(NormalFlowTestCases))]
-        public async Task InterceptAsync_NormalFlow_ReturnsMatch(UrlTrackerShallowRedirect redirect, Url input, UrlTrackerShallowRedirect expected)
+        public async Task InterceptAsync_NormalFlow_ReturnsMatch(IRedirect redirect, Url input, IRedirect expected)
         {
             // arrange
-            RedirectRepositoryMock.Setup(obj => obj.GetShallowWithRegexAsync())
-                                  .ReturnsAsync(new List<UrlTrackerShallowRedirect> { redirect });
+            RedirectRepositoryMock.Setup(obj => obj.GetWithRegexAsync())
+                                  .ReturnsAsync(new List<IRedirect> { redirect });
 
             // act
             var result = await _testSubject.InterceptAsync(input, DefaultInterceptContext);

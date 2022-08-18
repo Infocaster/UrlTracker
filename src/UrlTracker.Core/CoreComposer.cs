@@ -5,15 +5,18 @@ using Umbraco.Core;
 using Umbraco.Core.Cache;
 using Umbraco.Core.Composing;
 using Umbraco.Core.Mapping;
+using Umbraco.Core.Persistence.Mappers;
 using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Caching;
+using UrlTracker.Core.Compatibility;
 using UrlTracker.Core.Components;
 using UrlTracker.Core.Configuration;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Database;
-using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Mappers;
+using UrlTracker.Core.Database.Migrations;
+using UrlTracker.Core.Database.Models.Entities;
 using UrlTracker.Core.Domain;
-using UrlTracker.Core.Exceptions;
 using UrlTracker.Core.Intercepting;
 using UrlTracker.Core.Intercepting.Conversion;
 using UrlTracker.Core.Intercepting.Preprocessing;
@@ -53,21 +56,18 @@ namespace UrlTracker.Core
             }
             composition.RegisterUnique<IInterceptService, InterceptService>();
             composition.RegisterUnique<IRedirectService, RedirectService>();
-            container.Decorate<IRedirectService, DecoratorRedirectServiceCaching>();
             composition.RegisterUnique<IClientErrorService, ClientErrorService>();
-            composition.RegisterUnique<ILegacyService, LegacyService>();
             composition.RegisterUnique<IRedirectRepository, RedirectRepository>();
+            composition.RegisterUnique<IReferrerRepository, ReferrerRepository>();
             if (cacheRegexRedirects)
             {
                 container.Decorate<IRedirectRepository, DecoratorRedirectRepositoryCaching>();
             }
             composition.RegisterUnique<IClientErrorRepository, ClientErrorRepository>();
-            composition.RegisterUnique<ILegacyRepository, LegacyRepository>();
-            container.Decorate<ILegacyRepository, DecoratorLegacyRepositoryCaching>();
             composition.RegisterUnique<IValidationHelper, ValidationHelper>();
-            composition.RegisterUnique<IExceptionHelper, ExceptionHelper>();
             composition.RegisterUnique<IInterceptCache, InterceptCache>();
             composition.RegisterUnique<IRegexRedirectCache, RegexRedirectCache>();
+            composition.RegisterUnique<IMigrationPlanFactory, MigrationPlanFactory>();
 
             composition.Register<ILogger, Logger>(Lifetime.Transient);
 
@@ -75,6 +75,8 @@ namespace UrlTracker.Core
             composition.RegisterUnique<IInterceptPreprocessorCollection>(factory => factory.GetInstance<InterceptPreprocessorCollection>());
             composition.RegisterUnique<IInterceptorCollection>(factory => factory.GetInstance<InterceptorCollection>());
             composition.RegisterUnique<IInterceptConverterCollection>(factory => factory.GetInstance<InterceptConverterCollection>());
+
+            container.Decorate<IMapperCollection, CompatibilitySqlMapperDecorator>();
         }
     }
 
@@ -124,7 +126,7 @@ namespace UrlTracker.Core
         public static Composition ComposeDefaultInterceptConverters(this Composition composition)
         {
             composition.InterceptConverters()
-                .Append<MapperInterceptConverter<UrlTrackerShallowRedirect, ShallowRedirect>>();
+                .Append<MapperInterceptConverter<IRedirect, Redirect>>();
             return composition;
         }
 
@@ -147,8 +149,12 @@ namespace UrlTracker.Core
         public static Composition ComposeUrlTrackerCoreMaps(this Composition composition)
         {
             composition.WithCollectionBuilder<MapDefinitionCollectionBuilder>()
-                .Add<LegacyDatabaseMap>()
                 .Add<ServiceLayerMaps>();
+
+            composition.Mappers()
+                .Add<RedirectMapper>()
+                .Add<ClientErrorMapper>()
+                .Add<ReferrerMapper>();
             return composition;
         }
 

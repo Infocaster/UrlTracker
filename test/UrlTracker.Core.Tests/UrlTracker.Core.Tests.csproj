@@ -291,9 +291,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientErrorServiceTests_DeleteAsync.cs" />
     <Compile Include="ClientErrorServiceTests_AddAsync.cs" />
     <Compile Include="ClientErrorServiceTests.cs" />
+    <Compile Include="ClientErrorServiceTests_ReportAsync.cs" />
     <Compile Include="Configuration\ConfigurationCompositionTests.cs" />
     <Compile Include="Configuration\LazyConfigurationProviderTests.cs" />
     <Compile Include="Configuration\UrlTrackerConfigurationProviderTests.cs" />
@@ -304,9 +304,8 @@
     <Compile Include="Intercepting\InterceptorCollectionTests.cs" />
     <Compile Include="Intercepting\NoLongerExistsInterceptorTests.cs" />
     <Compile Include="Intercepting\Preprocessing\InterceptPreprocessorCollectionTests.cs" />
-    <Compile Include="Map\LegacyDatabaseMapTests.cs" />
     <Compile Include="Map\ServiceLayerMapsTests.cs" />
-    <Compile Include="Models\ShallowRedirectTests.cs" />
+    <Compile Include="Models\RedirectTests.cs" />
     <Compile Include="Models\UrlTrackerCollectionBaseTests.cs" />
     <Compile Include="ObjectExtensionsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

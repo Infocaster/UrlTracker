@@ -5,113 +5,68 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using NPoco;
-using Umbraco.Core.Mapping;
+using Umbraco.Core.Cache;
 using Umbraco.Core.Persistence;
+using Umbraco.Core.Persistence.Querying;
 using Umbraco.Core.Scoping;
+using UrlTracker.Core.Compatibility;
+using UrlTracker.Core.Database.Dtos;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Models.Entities;
+using UrlTracker.Core.Database.Models.Factories;
+using ILogger = UrlTracker.Core.Logging.ILogger;
 
 namespace UrlTracker.Core.Database
 {
     [ExcludeFromCodeCoverage]
     public class RedirectRepository
-        : IRedirectRepository
+        : CompatibilityNPocoRepositoryBase<int, IRedirect>, IRedirectRepository
     {
-        private readonly IScopeProvider _scopeProvider;
-        private readonly UmbracoMapper _mapper;
+        // throws NotImplementedException on purpose, because we don't need to implement it.
+        //    (Some repositories in the Umbraco source do this as well)
+        protected override Guid NodeObjectTypeId => throw new NotImplementedException();
 
-        public RedirectRepository(IScopeProvider scopeProvider, UmbracoMapper mapper)
-        {
-            _scopeProvider = scopeProvider;
-            _mapper = mapper;
-        }
+        public RedirectRepository(IScopeAccessor scopeAccessor, AppCaches appCaches, ILogger logger)
+            : base(scopeAccessor, appCaches, logger)
+        { }
 
-        public async Task<UrlTrackerRedirect> AddAsync(UrlTrackerRedirect redirect)
+        #region Old Implementation
+
+        public async Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string query, OrderBy order, bool descending)
         {
-            var entry = _mapper.Map<UrlTrackerEntry>(redirect);
-            using (var scope = _scopeProvider.CreateScope())
+            var countQuery = Sql().SelectCount();
+            countQuery = PopulateRedirectQuery(countQuery);
+
+            Task<int> totalRecordsTask = Database.ExecuteScalarAsync<int>(countQuery);
+
+            var selectQuery = Sql().SelectAll();
+            selectQuery = PopulateRedirectQuery(selectQuery);
+            Expression<Func<RedirectDto, object>> orderParameter;
+            switch (order)
             {
-                await scope.Database.InsertAsync(entry);
+                case OrderBy.Created: orderParameter = e => e.CreateDate; break;
+                case OrderBy.Culture: orderParameter = e => e.Culture; break;
+                default: throw new ArgumentOutOfRangeException(nameof(order));
+            };
+            selectQuery = selectQuery.OrderBy<RedirectDto>(descending, orderParameter);
 
-                var result = _mapper.Map<UrlTrackerRedirect>(entry);
+            List<RedirectDto> records = await Database.SkipTakeAsync<RedirectDto>(skip, take, selectQuery);
+            var redirects = records.Select(RedirectFactory.BuildEntity);
 
-                scope.Complete();
-                return result;
-            }
-        }
-
-        public async Task<UrlTrackerRedirect> UpdateAsync(UrlTrackerRedirect redirect)
-        {
-            var entry = _mapper.Map<UrlTrackerEntry>(redirect);
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                await scope.Database.UpdateAsync(entry);
-
-                var result = _mapper.Map<UrlTrackerRedirect>(entry);
-
-                scope.Complete();
-                return result;
-            }
-        }
-
-        public async Task<UrlTrackerRedirectCollection> GetAsync()
-        {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var query = scope.SqlContext.Sql()
-                                            .SelectAll()
-                                            .From<UrlTrackerEntry>()
-                                            .Where<UrlTrackerEntry>(e => !e.Is404)
-                                            .Where<UrlTrackerEntry>(e => e.RedirectHttpCode >= 300 && e.RedirectHttpCode < 400)
-                                            .OrderBy<UrlTrackerEntry>(false, e => e.Id);
-                var records = await scope.Database.FetchAsync<UrlTrackerEntry>(query);
-                var redirects = _mapper.MapEnumerable<UrlTrackerEntry, UrlTrackerRedirect>(records);
-
-                return UrlTrackerRedirectCollection.Create(redirects);
-            }
-        }
-
-        public async Task<UrlTrackerRedirectCollection> GetAsync(uint skip, uint take, string query, OrderBy order, bool descending)
-        {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var countQuery = scope.SqlContext.Sql().SelectCount();
-                countQuery = PopulateRedirectQuery(countQuery);
-
-                Task<int> totalRecordsTask = scope.Database.ExecuteScalarAsync<int>(countQuery);
-
-                var selectQuery = scope.SqlContext.Sql().SelectAll();
-                selectQuery = PopulateRedirectQuery(selectQuery);
-                Expression<Func<UrlTrackerEntry, object>> orderParameter;
-                switch (order)
-                {
-                    case OrderBy.Created: orderParameter = e => e.Inserted; break;
-                    case OrderBy.Culture: orderParameter = e => e.Culture; break;
-                    case OrderBy.Occurrences:
-                    case OrderBy.LastOccurrence:
-                    default: throw new ArgumentOutOfRangeException(nameof(order));
-                }
-
-                selectQuery = selectQuery.OrderBy<UrlTrackerEntry>(descending, orderParameter);
-
-                List<UrlTrackerEntry> records = await scope.Database.SkipTakeAsync<UrlTrackerEntry>(skip, take, selectQuery);
-                var redirects = _mapper.MapEnumerable<UrlTrackerEntry, UrlTrackerRedirect>(records);
-
-                return UrlTrackerRedirectCollection.Create(redirects, await totalRecordsTask);
-            }
+            return RedirectEntityCollection.Create(redirects, await totalRecordsTask);
 
             Sql<ISqlContext> PopulateRedirectQuery(Sql<ISqlContext> q)
             {
-                q = q.From<UrlTrackerEntry>()
-                     .Where<UrlTrackerEntry>(e => !e.Is404)
-                     .Where<UrlTrackerEntry>(e => e.RedirectHttpCode >= 300 && e.RedirectHttpCode < 400);
-                if (!(query is null))
+                q = q.From<RedirectDto>();
+                if (query != null)
                 {
                     bool queryIsInt = int.TryParse(query, out var queryInt);
-                    q = q.Where<UrlTrackerEntry>(e => e.OldUrl.Contains(query)
-                                                      || e.OldRegex.Contains(query)
-                                                      || e.RedirectUrl.Contains(query)
+                    q = q.Where<RedirectDto>(e => e.SourceUrl.Contains(query)
+                                                      || e.SourceRegex.Contains(query)
+                                                      || e.TargetUrl.Contains(query)
                                                       || e.Notes.Contains(query)
-                                                      || (queryIsInt && (e.RedirectNodeId == queryInt)));
+                                                      || (queryIsInt && (e.TargetNodeId == queryInt)));
                 }
 
                 return q;
@@ -134,49 +89,120 @@ namespace UrlTracker.Core.Database
          * Bonus: It would be awesome if somebody changes an existing domain, that we insert all required redirects to redirect
          *      the old domain to the new one
          */
-        public async Task<IReadOnlyCollection<UrlTrackerShallowRedirect>> GetShallowAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string culture = null)
+        public async Task<IReadOnlyCollection<IRedirect>> GetAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string culture = null)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+            // get base query
+            var query = Sql()
+                .SelectAll()
+                .From<RedirectDto>()
+                .Where<RedirectDto>(entry => urlsAndPaths.Contains(entry.SourceUrl));
+
+            if (rootNodeId.HasValue)
             {
-                // get base query
-                var query = scope.SqlContext.Sql()
-                    .SelectAll()
-                    .From<UrlTrackerEntry>()
-                    .Where<UrlTrackerEntry>(entry => urlsAndPaths.Contains(entry.OldUrl))
-                    .Where<UrlTrackerEntry>(entry => entry.RedirectHttpCode >= 300 && entry.RedirectHttpCode < 400);
-
-                if (rootNodeId.HasValue)
-                {
-                    // intercept on root node id if it has been given. Rows without root node id should also be returned
-                    query = query.Where<UrlTrackerEntry>(entry => entry.RedirectRootNodeId == rootNodeId || entry.RedirectRootNodeId == null);
-                }
-                if (!string.IsNullOrWhiteSpace(culture))
-                {
-                    // intercept on culture if it has been given. Rows without culture should also be returned
-                    query = query.Where<UrlTrackerEntry>(entry => entry.Culture == culture || entry.Culture == null);
-                }
-
-                query = query.OrderBy<UrlTrackerEntry>(true, e => e.ForceRedirect, e => e.Inserted);
-
-                // return entries as redirects
-                var entries = await scope.Database.FetchAsync<UrlTrackerEntry>(query).ConfigureAwait(false);
-                return _mapper.MapEnumerable<UrlTrackerEntry, UrlTrackerShallowRedirect>(entries);
+                // intercept on root node id if it has been given. Rows without root node id should also be returned
+                query = query.Where<RedirectDto>(entry => entry.TargetRootNodeId == rootNodeId || entry.TargetRootNodeId == null);
             }
+            if (!string.IsNullOrWhiteSpace(culture))
+            {
+                // intercept on culture if it has been given. Rows without culture should also be returned
+                query = query.Where<RedirectDto>(entry => entry.Culture == culture || entry.Culture == null);
+            }
+
+            query = query.OrderBy<RedirectDto>(true, e => e.Force, e => e.CreateDate);
+
+            // return entries as redirects
+            var entries = await Database.FetchAsync<RedirectDto>(query).ConfigureAwait(false);
+            return entries.Select(RedirectFactory.BuildEntity).ToList();
         }
 
-        public async Task<IReadOnlyCollection<UrlTrackerShallowRedirect>> GetShallowWithRegexAsync()
+        public Task<IReadOnlyCollection<IRedirect>> GetWithRegexAsync()
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
+            var query = AmbientScope.SqlContext.Query<IRedirect>().Where(e => e.SourceRegex != null);
+            var entities = Get(query);
+
+            return Task.FromResult<IReadOnlyCollection<IRedirect>>(entities.ToList());
+        }
+        #endregion
+
+        protected override IRedirect PerformGet(int id)
+        {
+            var sql = GetBaseQuery(false);
+            sql.Where(GetBaseWhereClause(), new { id });
+
+            var dto = Database.Fetch<RedirectDto>(sql.SelectTop(1)).FirstOrDefault();
+            if (dto is null) return null;
+
+            return RedirectFactory.BuildEntity(dto);
+        }
+
+        protected override IEnumerable<IRedirect> PerformGetAll(params int[] ids)
+        {
+            var sql = GetBaseQuery(false);
+
+            if (ids?.Any() is true) sql.WhereIn<RedirectDto>(e => e.Id, ids);
+
+            var dtos = Database.Fetch<RedirectDto>(sql);
+            return dtos.Select(RedirectFactory.BuildEntity);
+        }
+
+        protected override IEnumerable<IRedirect> PerformGetByQuery(IQuery<IRedirect> query)
+        {
+            var sql = GetBaseQuery(false);
+
+            var translator = new CompatibilitySqlTranslator<IRedirect>(sql, query);
+            sql = translator.Translate();
+
+            var dtos = Database.Fetch<RedirectDto>(sql);
+
+            return dtos.Select(RedirectFactory.BuildEntity);
+        }
+
+        protected override void PersistNewItem(IRedirect entity)
+        {
+            entity.AddingEntity();
+            if (entity.Key == Guid.Empty) entity.Key = Guid.NewGuid();
+
+            var dto = RedirectFactory.BuildDto(entity);
+            var id = Convert.ToInt32(Database.Insert(dto));
+
+            entity.Id = id;
+            entity.ResetDirtyProperties();
+        }
+
+        protected override void PersistUpdatedItem(IRedirect entity)
+        {
+            entity.UpdatingEntity();
+
+            var dto = RedirectFactory.BuildDto(entity);
+            Database.Update(dto);
+
+            entity.ResetDirtyProperties();
+        }
+
+        protected override Sql<ISqlContext> GetBaseQuery(bool isCount)
+        {
+            var sql = Sql();
+
+            sql = isCount
+                ? sql.SelectCount()
+                : sql.Select<RedirectDto>();
+
+            sql.From<RedirectDto>();
+            return sql;
+        }
+
+        protected override string GetBaseWhereClause()
+        {
+            return "id = @id";
+        }
+
+        protected override IEnumerable<string> GetDeleteClauses()
+        {
+            var list = new List<string>
             {
-                Sql<ISqlContext> sql =
-                    scope.SqlContext.Sql()
-                                    .SelectAll()
-                                    .From<UrlTrackerEntry>()
-                                    .Where<UrlTrackerEntry>(e => e.OldRegex != null && e.OldRegex != "")
-                                    .OrderBy<UrlTrackerEntry>(true, e => e.ForceRedirect, e => e.Inserted);
-                var entries = await scope.Database.FetchAsync<UrlTrackerEntry>(sql).ConfigureAwait(false);
-                return _mapper.MapEnumerable<UrlTrackerEntry, UrlTrackerShallowRedirect>(entries);
-            }
+                $"DELETE FROM {Defaults.DatabaseSchema.Tables.Redirect} WHERE id = @id"
+            };
+            return list;
         }
     }
 }

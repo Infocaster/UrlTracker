@@ -3,189 +3,223 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
-using Umbraco.Core.Mapping;
+using NPoco;
+using Umbraco.Core.Cache;
 using Umbraco.Core.Persistence;
+using Umbraco.Core.Persistence.Querying;
+using Umbraco.Core.Persistence.SqlSyntax;
 using Umbraco.Core.Scoping;
+using UrlTracker.Core.Compatibility;
+using UrlTracker.Core.Database.Dtos;
+using UrlTracker.Core.Database.Entities;
+using UrlTracker.Core.Database.Factories;
 using UrlTracker.Core.Database.Models;
+using ILogger = UrlTracker.Core.Logging.ILogger;
 
 namespace UrlTracker.Core.Database
 {
     [ExcludeFromCodeCoverage]
     public class ClientErrorRepository
-        : IClientErrorRepository
+        : CompatibilityNPocoRepositoryBase<int, IClientError>, IClientErrorRepository
     {
-        private readonly IScopeProvider _scopeProvider;
-        private readonly UmbracoMapper _mapper;
+        private const string _referrerTableAlias = "r";
+        private const string _mostCommonReferrerTableAlias = "mcr";
+        private const string _occurrancesTableAlias = "ref";
 
-        public ClientErrorRepository(IScopeProvider scopeProvider,
-                                     UmbracoMapper mapper)
+        // throws NotImplementedException on purpose, because we don't need to implement it.
+        //    (Some repositories in the Umbraco source do this as well)
+        protected override Guid NodeObjectTypeId => throw new NotImplementedException();
+
+        public ClientErrorRepository(IScopeAccessor scopeAccessor,
+                                     AppCaches appCaches,
+                                     ILogger logger)
+            : base(scopeAccessor, appCaches, logger)
+        { }
+
+        #region Old implementation
+        public Task<IReadOnlyCollection<IClientError>> GetAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string culture = null)
         {
-            _scopeProvider = scopeProvider;
-            _mapper = mapper;
-        }
-
-        public async Task<IReadOnlyCollection<UrlTrackerShallowClientError>> GetShallowAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string culture = null)
-        {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var query = scope.SqlContext.Sql().SelectAll()
-                    .From<UrlTrackerEntry>()
-                    .Where<UrlTrackerEntry>(e => urlsAndPaths.Contains(e.OldUrl))
-                    .Where<UrlTrackerEntry>(e => e.Is404 || (e.RedirectHttpCode >= 400 && e.RedirectHttpCode < 500));
-
-                if (rootNodeId.HasValue)
-                {
-                    query = query.Where<UrlTrackerEntry>(e => e.RedirectRootNodeId == rootNodeId || e.RedirectRootNodeId == null);
-                }
-
-                if (!string.IsNullOrWhiteSpace(culture))
-                {
-                    query = query.Where<UrlTrackerEntry>(e => e.Culture == culture || e.Culture == null);
-                }
-
-                var entries = await scope.Database.FetchAsync<UrlTrackerEntry>(query).ConfigureAwait(false);
-                return _mapper.MapEnumerable<UrlTrackerEntry, UrlTrackerShallowClientError>(entries);
-            }
+            IQuery<IClientError> query = SqlContext.Query<IClientError>().Where(e => urlsAndPaths.Contains(e.Url));
+            var results = Get(query);
+            return Task.FromResult<IReadOnlyCollection<IClientError>>(results.ToList());
         }
 
         public async Task<int> CountAsync(DateTime start, DateTime end)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var query = scope.SqlContext.Sql().SelectCount()
-                    .From<UrlTrackerEntry>()
-                    .Where<UrlTrackerEntry>(e => e.Is404)
-                    .Where<UrlTrackerEntry>(e => e.Inserted >= start && e.Inserted <= end);
+            var query = Sql().SelectCount()
+                             .From<ClientError2ReferrerDto>()
+                             .Where<ClientError2ReferrerDto>(e => e.CreateDate >= start && e.CreateDate <= end);
 
-                return await scope.Database.ExecuteScalarAsync<int>(query);
-            }
+            return await Database.ExecuteScalarAsync<int>(query).ConfigureAwait(false);
         }
 
-        public async Task<UrlTrackerNotFound> AddAsync(UrlTrackerNotFound notFound)
+        public async Task<ClientErrorEntityCollection> GetAsync(uint skip, uint take, string query, OrderBy order, bool descending)
         {
-            var entry = _mapper.Map<UrlTrackerEntry>(notFound);
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                await scope.Database.InsertAsync(entry);
-                var result = _mapper.Map<UrlTrackerNotFound>(entry);
+            var countQuery = Sql()
+                .SelectCount()
+                .From<ClientErrorDto>()
+                .Where<ClientErrorDto>(e => e.Ignored == false);
 
-                scope.Complete();
-                return result;
+            if (query != null)
+            {
+                countQuery.Where<ClientErrorDto>(e => e.Url.Contains(query));
             }
+
+            Task<int> totalRecordsTask = Database.ExecuteScalarAsync<int>(countQuery);
+
+            var selectQuery = GetBaseQuery(isCount: false)
+                .Where<ClientErrorDto>(e => e.Ignored == false);
+            if (query != null)
+            {
+                selectQuery.Where<ClientErrorDto>(e => e.Url.Contains(query));
+            }
+
+            string orderParameter;
+            switch (order)
+            {
+                case OrderBy.LastOccurrence:
+                case OrderBy.Created: orderParameter = SqlSyntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.MostRecentOccurrence); break;
+                case OrderBy.Occurrences: orderParameter = SqlSyntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences); break;
+                default: throw new ArgumentOutOfRangeException(nameof(order));
+            }
+
+            selectQuery = selectQuery.GenericOrderBy(descending, orderParameter);
+            var dtos = await Database.SkipTakeAsync<ExtendedClientErrorDto>(skip, take, selectQuery).ConfigureAwait(false);
+
+            return ClientErrorEntityCollection.Create(dtos.Select(ClientErrorFactory.BuildEntity), await totalRecordsTask);
+        }
+        #endregion
+
+        public override void Delete(IClientError entity)
+        {
+            base.Delete(entity);
+
+            var deleteReferrersQuery = Sql().Delete()
+                                            .From<ReferrerDto>()
+                                            .WhereNotIn<ReferrerDto>(e => e.Id, Sql().Select<ClientError2ReferrerDto>(e => e.Referrer)
+                                                                                     .From<ClientError2ReferrerDto>());
+
+            Database.Execute(deleteReferrersQuery);
         }
 
-        // ToDo: long and complicated method, can we do this more efficient?
-        public async Task<UrlTrackerRichNotFoundCollection> GetAsync(uint skip, uint take, string query, OrderBy order, bool descending)
+        protected override IClientError PerformGet(int id)
         {
-            const string tableAlias = "e";
-            const string subQueryAlias = "re";
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var countQuery = scope.SqlContext.Sql()
-                                                 .SelectCount().From("e", sql =>
-                                                 {
-                                                     sql.SelectMax<UrlTrackerEntry>("Id", tableAlias, e => e.Id)
-                                                        .From<UrlTrackerEntry>(tableAlias)
-                                                        .Where<UrlTrackerEntry>(e => e.Is404, tableAlias);
+            var sql = GetBaseQuery(false);
+            sql.Where<ClientErrorDto>(e => e.Id == id);
+            var dto = Database.Fetch<ExtendedClientErrorDto>(sql).FirstOrDefault();
 
-                                                     if (!(query is null))
-                                                     {
-                                                         sql = sql.Where<UrlTrackerEntry>(e => e.OldUrl.Contains(query), tableAlias);
-                                                     }
+            if (dto is null) return null;
 
-                                                     sql = sql.GroupBy<UrlTrackerEntry>(tableAlias, e => e.OldUrl, e => e.Culture, e => e.RedirectRootNodeId, e => e.Is404);
-                                                 });
-
-                Task<int> totalRecordsTask = scope.Database.ExecuteScalarAsync<int>(countQuery);
-                var selectQuery = scope.SqlContext.Sql()
-                                                  .SelectMax<UrlTrackerEntry>("Id", tableAlias, e => e.Id)
-                                                  .AndSelectMax<UrlTrackerEntry>("Inserted", tableAlias, e => e.Inserted)
-                                                  .AndSelect<UrlTrackerEntry>(tableAlias,
-                                                                              e => e.Is404,
-                                                                              e => e.OldUrl,
-                                                                              e => e.RedirectRootNodeId,
-                                                                              e => e.Culture)
-                                                  .AndSelectCount("Occurrences")
-                                                  .AndSelect<UrlTrackerEntry>(subQueryAlias, e => e.Referrer)
-                                                  .From<UrlTrackerEntry>(tableAlias)
-                                                  // ToDo: Can this be done strongly typed? I don't know.
-                                                  .LeftJoin("(SELECT r.[OldUrl], r.[Referrer] FROM (SELECT [OldUrl], [Referrer], ROW_NUMBER() OVER (PARTITION BY [OldUrl] ORDER BY COUNT([Referrer]) DESC) rn FROM [dbo].[icUrlTracker] WHERE [Referrer] IS NOT NULL GROUP BY [OldUrl], [Referrer]) as r WHERE r.rn = 1) re")
-                                                  .On("[e].[OldUrl] = [re].[OldUrl]")
-                                                  .Where<UrlTrackerEntry>(e => e.Is404, tableAlias);
-                if (!(query is null))
-                {
-                    selectQuery = selectQuery.Where<UrlTrackerEntry>(e => e.OldUrl.Contains(query), tableAlias);
-                }
-                selectQuery = selectQuery.GroupBy("[e].[OldUrl]", "[e].[Culture]", "[e].[RedirectRootNodeId]", "[e].[Is404]", "[re].[Referrer]");
-                string orderParameter;
-                switch (order)
-                {
-                    case OrderBy.LastOccurrence:
-                    case OrderBy.Created: orderParameter = $"MAX({scope.SqlContext.SqlSyntax.GetFieldName<UrlTrackerEntry>(e => e.Inserted, tableAlias)})"; break;
-                    case OrderBy.Culture: orderParameter = scope.SqlContext.SqlSyntax.GetFieldName<UrlTrackerEntry>(e => e.Culture, tableAlias); break;
-                    case OrderBy.Occurrences: orderParameter = "COUNT(*)"; break;
-                    default: throw new ArgumentOutOfRangeException(nameof(order));
-                }
-                selectQuery = selectQuery.GenericOrderBy(descending, orderParameter);
-                var records = await scope.Database.SkipTakeAsync<UrlTrackerEntryNotFoundAggregate>(skip, take, selectQuery);
-                var notFounds = _mapper.MapEnumerable<UrlTrackerEntryNotFoundAggregate, UrlTrackerRichNotFound>(records);
-
-                return UrlTrackerRichNotFoundCollection.Create(notFounds, await totalRecordsTask);
-            }
+            return ClientErrorFactory.BuildEntity(dto);
         }
 
-        public async Task DeleteAsync(string url, string culture)
+        protected override IEnumerable<IClientError> PerformGetAll(params int[] ids)
         {
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                var query = scope.SqlContext.Sql()
-                                            .Delete()
-                                            .From<UrlTrackerEntry>()
-                                            .Where<UrlTrackerEntry>(e => e.OldUrl == url)
-                                            .Where<UrlTrackerEntry>(e => e.Is404);
+            var sql = GetBaseQuery(false);
 
-                if (culture is null) query = query.WhereNull<UrlTrackerEntry>(e => e.Culture);
-                else query = query.Where<UrlTrackerEntry>(e => e.Culture == culture);
+            if (ids?.Any() is true) sql.WhereIn<ClientErrorDto>(e => e.Id, ids);
 
-                await scope.Database.ExecuteAsync(query);
-
-                scope.Complete();
-            }
+            var dtos = Database.Fetch<ExtendedClientErrorDto>(sql);
+            return dtos.Select(ClientErrorFactory.BuildEntity);
         }
 
-        public async Task<UrlTrackerNotFound> GetAsync(int id)
+        protected override IEnumerable<IClientError> PerformGetByQuery(IQuery<IClientError> query)
         {
-            using (var scope = _scopeProvider.CreateScope(autoComplete: true))
-            {
-                var query = scope.SqlContext.Sql()
-                                            .SelectAll()
-                                            .From<UrlTrackerEntry>()
-                                            .Where<UrlTrackerEntry>(e => e.Id == id);
-                var entries = await scope.Database.FetchAsync<UrlTrackerEntry>(query);
+            var sql = GetBaseQuery(false);
 
-                return _mapper.Map<UrlTrackerNotFound>(entries.FirstOrDefault());
-            }
+            var translator = new CompatibilitySqlTranslator<IClientError>(sql, query);
+            sql = translator.Translate();
+
+            var dtos = Database.Fetch<ExtendedClientErrorDto>(sql);
+            return dtos.Select(ClientErrorFactory.BuildEntity);
         }
 
-        public async Task UpdateAsync(UrlTrackerNotFound entry)
+        protected override void PersistNewItem(IClientError entity)
         {
-            using (var scope = _scopeProvider.CreateScope())
-            {
-                // This method is only used to ignore 404 entries, so it can pretty much be assumed that ignored is true.
-                //    I chose this setup to better accommodate a future rework of the database tables.
-                //    It's impossible to set ignore to false, because the not found entries will have been deleted.
-                if (entry.Ignored)
-                {
-                    await Task.WhenAll(scope.Database.InsertAsync<UrlTrackerIgnoreEntry>(new UrlTrackerIgnoreEntry
-                    {
-                        Culture = null,
-                        RootNodeId = null,
-                        Url = entry.Url
-                    }), DeleteAsync(entry.Url, null));
-                }
+            entity.AddingEntity();
+            if (entity.Key == Guid.Empty) entity.Key = Guid.NewGuid();
 
-                scope.Complete();
-            }
+            var dto = ClientErrorFactory.BuildDto(entity);
+            var id = Convert.ToInt32(Database.Insert(dto));
+
+            entity.Id = id;
+            entity.ResetDirtyProperties();
+        }
+
+        protected override void PersistUpdatedItem(IClientError entity)
+        {
+            entity.UpdatingEntity();
+
+            var dto = ClientErrorFactory.BuildDto(entity);
+            Database.Update(dto);
+
+            entity.ResetDirtyProperties();
+        }
+
+        protected override Sql<ISqlContext> GetBaseQuery(bool isCount)
+        {
+            var sql = Sql();
+
+            ISqlSyntaxProvider syntax = sql.SqlContext.SqlSyntax;
+            sql = isCount
+                ? sql.SelectCount()
+                : sql.Select<ClientErrorDto>(e => e.Id, e => e.Key, e => e.Url, e => e.CreateDate, e => e.Ignored, e => e.Strategy)
+                     .AndSelect($"{syntax.GetQuotedColumnName(_occurrancesTableAlias)}.{syntax.GetQuotedColumnName("count")} as {syntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences)}")
+                     .AndSelect($"{syntax.GetQuotedColumnName(_occurrancesTableAlias)}.{syntax.GetQuotedColumnName("mostRecentOccurrence")} as {syntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.MostRecentOccurrence)}")
+                     .AndSelect($"{syntax.GetQuotedColumnName(_referrerTableAlias)}.{syntax.GetQuotedColumnName("url")} as {syntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.MostCommonReferrer)}");
+
+            sql.From<ClientErrorDto>();
+            var clientErrorGroups = SqlContext.Templates.Get("clientErrorGroups", q
+                => q.SelectCount("count")
+                      .AndSelect<ClientError2ReferrerDto>(e => e.ClientError)
+                      .AndSelectMax<ClientError2ReferrerDto>("mostRecentOccurrence", null, e => e.CreateDate)
+                      .From<ClientError2ReferrerDto>()
+                      .GroupBy<ClientError2ReferrerDto>(e => e.ClientError));
+
+            var mostCommonReferrers = SqlContext.Templates.Get("mostCommonReferrers", q
+                => q.Select<ClientError2ReferrerDto>(_referrerTableAlias, e => e.ClientError, e => e.Referrer)
+                      .From(_referrerTableAlias, s => s.Select<ClientError2ReferrerDto>(e => e.ClientError, e => e.Referrer)
+                                    .Append(", ROW_NUMBER() over (PARTITION BY [clientError] ORDER BY COUNT([Referrer]) DESC) as rn")
+                                    .From<ClientError2ReferrerDto>()
+                                    .WhereNotNull<ClientError2ReferrerDto>(e => e.Referrer)
+                                    .GroupBy<ClientError2ReferrerDto>(e => e.ClientError, e => e.Referrer))
+                      .Where("rn = 1")
+                      );
+
+            sql.LeftJoin(clientErrorGroups.Sql(), _occurrancesTableAlias)
+               .On<ClientErrorDto, ClientError2ReferrerDto>((l, r) => l.Id == r.ClientError, null, _occurrancesTableAlias)
+               .LeftJoin(mostCommonReferrers.Sql(), _mostCommonReferrerTableAlias)
+               .On<ClientErrorDto, ClientError2ReferrerDto>((l, r) => l.Id == r.ClientError, null, _mostCommonReferrerTableAlias)
+               .LeftJoin<ReferrerDto>(_referrerTableAlias)
+               .On<ClientError2ReferrerDto, ReferrerDto>((l, r) => l.Referrer == r.Id, _mostCommonReferrerTableAlias, _referrerTableAlias);
+            return sql;
+        }
+
+        protected override string GetBaseWhereClause()
+        {
+            return $"{SqlSyntax.GetFieldName<ClientErrorDto>(e => e.Id)} = @id";
+        }
+
+        protected override IEnumerable<string> GetDeleteClauses()
+        {
+            var list = new List<string>
+            {
+                $"DELETE FROM {Defaults.DatabaseSchema.Tables.ClientError2Referrer} WHERE clientError = @id",
+                $"DELETE FROM {Defaults.DatabaseSchema.Tables.ClientError} WHERE id = @id"
+            };
+            return list;
+        }
+
+        public void Report(IClientError clientError, DateTime moment, IReferrer referrer)
+        {
+            var dto = new ClientError2ReferrerDto
+            {
+                ClientError = clientError.Id,
+                CreateDate = moment,
+                Referrer = referrer?.Id
+            };
+
+            Database.Insert(dto);
         }
     }
 }

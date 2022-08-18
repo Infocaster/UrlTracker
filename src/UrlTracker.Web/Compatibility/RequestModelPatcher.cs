@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Web;
 using UrlTracker.Core.Domain;
 using UrlTracker.Core.Domain.Models;
@@ -29,7 +30,7 @@ namespace UrlTracker.Web.Compatibility
                 if (request.RedirectNodeId.HasValue)
                 {
                     var content = cref.UmbracoContext.Content?.GetById(request.RedirectNodeId.Value);
-                    if (!(content is null))
+                    if (content != null)
                     {
                         request.RedirectRootNodeId = content.Root().Id;
                         return request;
@@ -39,13 +40,32 @@ namespace UrlTracker.Web.Compatibility
                 if (!string.IsNullOrWhiteSpace(request.OldUrl))
                 {
                     var url = Url.Parse(request.OldUrl);
-                    if (url.AvailableUrlTypes.Contains(UrlType.Absolute))
+
+                    var domains = _domainProvider.GetDomains();
+                    var domain = domains.FirstOrDefault(d => d.Url.ExtrapolatesTo(url));
+                    if (domain?.NodeId != null)
                     {
-                        var domains = _domainProvider.GetDomains();
-                        var domain = domains.FirstOrDefault(d => d.Url.Host.Equals(url.Host) && url.Path.StartsWith(d.Url.Path));
-                        if (!(domain?.NodeId is null))
+                        request.RedirectRootNodeId = domain.NodeId.Value;
+                        return request;
+                    }
+
+                    var rootContent = cref.UmbracoContext.Content.GetAtRoot(request.Culture);
+                    foreach (var content in rootContent)
+                    {
+                        var contentUrl = Url.Parse(content.Url(request.Culture, UrlMode.Absolute));
+                        if (contentUrl.ExtrapolatesTo(url))
                         {
-                            request.RedirectRootNodeId = domain.NodeId.Value;
+                            request.RedirectRootNodeId = content.Id;
+                            return request;
+                        }
+                    }
+
+                    foreach (var content in rootContent)
+                    {
+                        var contentUrl = Url.Parse(content.Url(request.Culture, UrlMode.Relative));
+                        if (contentUrl.ExtrapolatesTo(url))
+                        {
+                            request.RedirectRootNodeId = content.Id;
                             return request;
                         }
                     }

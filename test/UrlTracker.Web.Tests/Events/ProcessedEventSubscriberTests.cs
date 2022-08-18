@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using UrlTracker.Core.Domain.Models;
-using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Resources.Testing.Mocks;
@@ -18,7 +17,8 @@ namespace UrlTracker.Web.Tests.Events
 
         public override void SetUp()
         {
-            _testSubject = new ProcessedEventSubscriber(ClientErrorService, ClientErrorFilterCollection, new ConsoleLogger());
+            RequestHandlerSectionMock.Setup(obj => obj.AddTrailingSlash).Returns(false);
+            _testSubject = new ProcessedEventSubscriber(ClientErrorService, ClientErrorFilterCollection, new VoidLogger(), UmbracoSettingsSection);
         }
 
         [TestCase(TestName = "HandleAsync aborts processing if response is not 404")]
@@ -56,7 +56,7 @@ namespace UrlTracker.Web.Tests.Events
             HttpContextMock.ResponseMock.Setup(obj => obj.StatusCode).Returns(404);
             HttpContextMock.RequestMock.Setup(obj => obj.UrlReferrer).Returns(new Uri("http://example.com/lorem"));
             ClientErrorFilterCollectionMock.Setup(obj => obj.EvaluateCandidacyAsync(It.Is<ProcessedEventArgs>(e => e.HttpContext == HttpContextMock.Context))).ReturnsAsync(true);
-            ClientErrorServiceMock.Setup(obj => obj.AddAsync(It.IsAny<NotFound>())).ReturnsAsync((NotFound notFound) => notFound).Verifiable();
+            ClientErrorServiceMock.Setup(obj => obj.ReportAsync("http://example.com", It.IsAny<DateTime>(), "http://example.com/lorem")).Verifiable();
 
             // act
             await _testSubject.HandleAsync(this, new ProcessedEventArgs(HttpContextMock.Context, Url.Parse("http://example.com")));

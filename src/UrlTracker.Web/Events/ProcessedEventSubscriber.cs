@@ -1,7 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
 using System.Threading.Tasks;
+using Umbraco.Core.Configuration.UmbracoSettings;
 using UrlTracker.Core;
-using UrlTracker.Core.Models;
+using UrlTracker.Core.Domain.Models;
 using UrlTracker.Web.Events.Models;
 using UrlTracker.Web.Processing;
 using ILogger = UrlTracker.Core.Logging.ILogger;
@@ -15,14 +16,17 @@ namespace UrlTracker.Web.Events
         private readonly IClientErrorService _clientErrorService;
         private readonly IClientErrorFilterCollection _clientErrorFilterCollection;
         private readonly ILogger _logger;
+        private readonly IUmbracoSettingsSection _umbracoSettings;
 
         public ProcessedEventSubscriber(IClientErrorService clientErrorService,
                                         IClientErrorFilterCollection clientErrorFilterCollection,
-                                        ILogger logger)
+                                        ILogger logger,
+                                        IUmbracoSettingsSection umbracoSettings)
         {
             _clientErrorService = clientErrorService;
             _clientErrorFilterCollection = clientErrorFilterCollection;
             _logger = logger;
+            _umbracoSettings = umbracoSettings;
         }
 
         public async Task HandleAsync(object source, ProcessedEventArgs args)
@@ -45,20 +49,11 @@ namespace UrlTracker.Web.Events
                 return;
             }
 
-            NotFound notFound = CreateNotFound(args);
-            args.HttpContext.Items.Add(_cacheKey, notFound);
+            args.HttpContext.Items.Add(_cacheKey, new object());
 
-            await _clientErrorService.AddAsync(notFound);
-        }
-
-        [ExcludeFromCodeCoverage]
-        private static NotFound CreateNotFound(ProcessedEventArgs args)
-        {
-            return new NotFound
-            {
-                Url = args.Url.ToString(),
-                Referrer = args.HttpContext.Request.UrlReferrer?.AbsoluteUri
-            };
+            var url = args.Url.ToString(UrlType.Absolute, _umbracoSettings.RequestHandler.AddTrailingSlash);
+            var referrer = args.HttpContext.Request.UrlReferrer;
+            await _clientErrorService.ReportAsync(url, DateTime.Now, referrer?.ToString());
         }
     }
 }

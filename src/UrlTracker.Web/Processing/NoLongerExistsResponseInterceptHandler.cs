@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using System.Web;
-using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Web.Abstractions;
 
 namespace UrlTracker.Web.Processing
 {
     public class NoLongerExistsResponseInterceptHandler
-        : ResponseInterceptHandlerBase<UrlTrackerShallowClientError>
+        : ResponseInterceptHandlerBase<IClientError>
     {
         private readonly ICompleteRequestAbstraction _completeRequestAbstraction;
 
@@ -15,7 +15,7 @@ namespace UrlTracker.Web.Processing
             _completeRequestAbstraction = completeRequestAbstraction;
         }
 
-        protected override ValueTask HandleAsync(HttpContextBase context, UrlTrackerShallowClientError intercept)
+        protected override ValueTask HandleAsync(HttpContextBase context, IClientError intercept)
         {
             if (!ShouldRedirect(context))
             {

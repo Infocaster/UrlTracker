@@ -59,7 +59,7 @@ namespace UrlTracker.Web.Tests.Controllers
             var membershipProvider = new MembersMembershipProvider(MemberServiceMock.Object, memberTypeService);
 
             MemberCacheMock = new Mock<IPublishedMemberCache>();
-            MembershipHelper = new MembershipHelper(HttpContextMock.Context, MemberCacheMock.Object, membershipProvider, Mock.Of<RoleProvider>(), MemberServiceMock.Object, memberTypeService, Mock.Of<IUserService>(), Mock.Of<IPublicAccessService>(), AppCaches.NoCache, new ConsoleLogger());
+            MembershipHelper = new MembershipHelper(HttpContextMock.Context, MemberCacheMock.Object, membershipProvider, Mock.Of<RoleProvider>(), MemberServiceMock.Object, memberTypeService, Mock.Of<IUserService>(), Mock.Of<IPublicAccessService>(), AppCaches.NoCache, new VoidLogger());
         }
 
         protected virtual void SetupMapper()

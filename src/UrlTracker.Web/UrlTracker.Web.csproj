@@ -339,7 +339,6 @@
     <Compile Include="Processing\ConfigurationInterceptFilter.cs" />
     <Compile Include="Processing\IClientErrorFilter.cs" />
     <Compile Include="Processing\IClientErrorFilterCollection.cs" />
-    <Compile Include="Processing\IgnoredClientErrorFilter.cs" />
     <Compile Include="Processing\IRequestInterceptFilterCollection.cs" />
     <Compile Include="Processing\IResponseInterceptHandler.cs" />
     <Compile Include="Processing\IResponseInterceptHandlerCollection.cs" />

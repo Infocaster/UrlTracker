@@ -19,18 +19,7 @@ namespace UrlTracker.Core.Intercepting.Preprocessing
         public ValueTask<IInterceptContext> PreprocessUrlAsync(Url url, IInterceptContext context)
         {
             var domains = _domainProvider.GetDomains();
-            var interceptingDomain = domains.FirstOrDefault(d =>
-            {
-                // The protocol only matters if the domain has a protocol specified
-                // The host only matters if the domain has a host specified
-                // The port only matters if the domain has either a host or a port specified
-                // The path of the domain must be contained in the incoming url path
-                bool hasNoHost = string.IsNullOrWhiteSpace(d.Url.Host);
-                return (!d.Url.Protocol.HasValue || d.Url.Protocol == url.Protocol) &&
-                       (hasNoHost || d.Url.Host.Equals(url.Host)) &&
-                       (hasNoHost || d.Url.Port == url.Port) &&
-                       url.Path.StartsWith(d.Url.Path);
-            });
+            var interceptingDomain = domains.FirstOrDefault(d => d.Url.ExtrapolatesTo(url));
 
             context.SetCulture(interceptingDomain?.LanguageIsoCode);
             context.SetRootNode(interceptingDomain?.NodeId);

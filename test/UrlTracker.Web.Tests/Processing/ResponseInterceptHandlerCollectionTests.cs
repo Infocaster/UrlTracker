@@ -14,7 +14,7 @@ namespace UrlTracker.Web.Tests.Processing
 
         public override void SetUp()
         {
-            _testSubject = new ResponseInterceptHandlerCollection(new List<ISpecificResponseInterceptHandler> { ResponseInterceptHandler }, new LastChanceResponseInterceptHandler(new ConsoleLogger()));
+            _testSubject = new ResponseInterceptHandlerCollection(new List<ISpecificResponseInterceptHandler> { ResponseInterceptHandler }, new LastChanceResponseInterceptHandler(new VoidLogger()));
         }
 
         [TestCase(true, TestName = "Get returns handler if it can handle the intercept")]

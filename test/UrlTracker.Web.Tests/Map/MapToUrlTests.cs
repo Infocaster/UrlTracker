@@ -32,7 +32,7 @@ namespace UrlTracker.Web.Tests.Map
                 AppendPortNumber = false,
                 IncomingUrl = "https://example.com",
                 ExpectedUrl = Url.Parse("http://example.com/lorem"),
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     TargetUrl = "http://example.com/lorem"
                 }
@@ -43,7 +43,7 @@ namespace UrlTracker.Web.Tests.Map
                 AppendPortNumber = false,
                 IncomingUrl = "https://example.com",
                 ExpectedUrl = Url.Parse("https://example.com/lorem"),
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     TargetUrl = "/lorem"
                 }
@@ -58,7 +58,7 @@ namespace UrlTracker.Web.Tests.Map
                 {
                     new KeyValuePair<int, string>(2, "https://example.com/lorem")
                 },
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     TargetRootNode = TestPublishedContent.Create(1, PublishedItemType.Content),
                     TargetNode = TestPublishedContent.Create(2, PublishedItemType.Content)
@@ -78,7 +78,7 @@ namespace UrlTracker.Web.Tests.Map
                 {
                     new Domain(0, 1, "example com", "nl", Url.Parse("https://urltracker.ic/"))
                 }),
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     TargetRootNode = TestPublishedContent.Create(1, PublishedItemType.Content),
                     TargetNode = TestPublishedContent.Create(2, PublishedItemType.Content),
@@ -91,10 +91,10 @@ namespace UrlTracker.Web.Tests.Map
                 AppendPortNumber = false,
                 IncomingUrl = "https://example.com?dolor=sit",
                 ExpectedUrl = Url.Parse("https://example.com/lorem?dolor=sit"),
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     TargetUrl = "/lorem",
-                    PassThroughQueryString = true,
+                    RetainQuery = true,
                 }
             }.ToTestCase("MapToUrl keep query string enabled keeps the query string");
 
@@ -103,7 +103,7 @@ namespace UrlTracker.Web.Tests.Map
                 AppendPortNumber = false,
                 IncomingUrl = "https://example.com",
                 ExpectedUrl = null,
-                Redirect = new ShallowRedirect()
+                Redirect = new Redirect()
             }.ToTestCase("MapToUrl returns null when target is empty");
 
             yield return new MapTestCase
@@ -111,7 +111,7 @@ namespace UrlTracker.Web.Tests.Map
                 AppendPortNumber = true,
                 IncomingUrl = "http://example.com:81",
                 ExpectedUrl = Url.Parse("http://example.com:81/lorem"),
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     TargetNode = TestPublishedContent.Create(1, PublishedItemType.Content),
                     TargetRootNode = TestPublishedContent.Create(2, PublishedItemType.Content)
@@ -127,7 +127,7 @@ namespace UrlTracker.Web.Tests.Map
                 AppendPortNumber = true,
                 IncomingUrl = "http://example.com:80",
                 ExpectedUrl = Url.Parse("http://example.com/lorem"),
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     TargetNode = TestPublishedContent.Create(1, PublishedItemType.Content),
                     TargetRootNode = TestPublishedContent.Create(2, PublishedItemType.Content)
@@ -143,7 +143,7 @@ namespace UrlTracker.Web.Tests.Map
                 AppendPortNumber = false,
                 IncomingUrl = "http://example.com/lorem",
                 ExpectedUrl = Url.Parse("http://urltracker.ic/ipsum"),
-                Redirect = new ShallowRedirect
+                Redirect = new Redirect
                 {
                     TargetNode = TestPublishedContent.Create(1, PublishedItemType.Content)
                 },
@@ -159,7 +159,7 @@ namespace UrlTracker.Web.Tests.Map
         }
 
         [TestCaseSource(nameof(TestCases))]
-        public void MapToUrl_NormalFlow_MapsRedirectToUrl(string incomingUrl, IEnumerable<KeyValuePair<int, string>> contentUrls, ShallowRedirect redirect, DomainCollection domains, bool appendPortNumber, Url expectedUrl)
+        public void MapToUrl_NormalFlow_MapsRedirectToUrl(string incomingUrl, IEnumerable<KeyValuePair<int, string>> contentUrls, Redirect redirect, DomainCollection domains, bool appendPortNumber, Url expectedUrl)
         {
             // arrange
             HttpContextMock.RequestMock.SetupGet(obj => obj.Url).Returns(new Uri(incomingUrl));
