@@ -12,12 +12,15 @@
       Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>1 new feature, 3 other changes
+    <PackageReleaseNotes>2 new features, 5 other changes
 
-- Added source link
-- Redesigned database schema
-- Improved database memory footprint
-- Improved performance</PackageReleaseNotes>
+- Add setting to block urls from appearing in the client error overview
+- Add source link
+- Introduce frontend framework
+- Move info tab to settings section
+- Improve database schema
+- Improve database memory footprint
+- Improve performance</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">
