@@ -6,4 +6,7 @@
 	<area alias="treeTabs">
 		<key alias="urlTrackerTreeGroup">URL Tracker</key>
 	</area>
+  <area alias="treeHeaders">
+    <key alias="urlTrackerSettingsTree">URL Tracker settings</key>
+  </area>
 </language>
