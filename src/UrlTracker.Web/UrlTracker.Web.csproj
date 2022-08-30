@@ -12,12 +12,10 @@
       Use v10 for umbraco 10, Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>1 new feature, 3 other changes
+    <PackageReleaseNotes>1 bugfix, 1 other change
 
-- Added Source link
-- Redesigned database tables
-- Improved performance
-- Improved memory footprint in database</PackageReleaseNotes>
+- Fix #69
+- Include static code analyzers for future improvements</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">
