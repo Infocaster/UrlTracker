@@ -33,7 +33,15 @@
   <!-- END Package properties -->
   <!-- External references -->
   <ItemGroup>
+    <PackageReference Include="AsyncFixer" Version="1.6.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="CsvHelper" Version="28.0.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.3.44">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Umbraco.Cms.Web.Website" Version="10.0.0" />
     <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.0.0" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
@@ -64,7 +72,6 @@
   <!-- END Build instructions -->
   <!-- Exclusions -->
   <ItemGroup>
-    <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
     <Compile Remove="node_modules\**" />
     <EmbeddedResource Remove="node_modules\**" />
     <None Remove="node_modules\**" />
