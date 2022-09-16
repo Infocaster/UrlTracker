@@ -16,6 +16,7 @@ namespace UrlTracker.Web.Controllers.ActionFilters
         {
             foreach (var key in actionContext.ActionArguments.Keys.ToList())
             {
+                // TODO: extract into strategy pattern because the amount of rules is growing
                 if (actionContext.ActionArguments[key] is RedirectRequestBase redirectRequestModel)
                 {
                     if (!string.IsNullOrWhiteSpace(redirectRequestModel.OldUrl) &&
@@ -30,6 +31,13 @@ namespace UrlTracker.Web.Controllers.ActionFilters
                         char.IsLetterOrDigit(redirectRequestModel.RedirectUrl.First()))
                     {
                         redirectRequestModel.RedirectUrl = "/" + redirectRequestModel.RedirectUrl;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(redirectRequestModel.Culture) &&
+                        redirectRequestModel.Culture.Contains('-'))
+                    {
+                        var splitIndex = redirectRequestModel.Culture.IndexOf('-') + 1;
+                        redirectRequestModel.Culture = redirectRequestModel.Culture.Substring(0, splitIndex) + redirectRequestModel.Culture.Substring(splitIndex).ToUpper();
                     }
 
                     actionContext.ActionArguments[key] = redirectRequestModel;
