@@ -11,13 +11,13 @@ using UrlTracker.Core;
 
 namespace UrlTracker.Web.Controllers
 {
-    [Tree(Constants.Applications.Settings, Defaults.SettingsTree.UrlTrackerSettingsTreeName, TreeTitle = "UrlTracker settings", TreeGroup = "urlTrackerTreeGroup", SortOrder = 5)]
+    [Tree(Constants.Applications.Settings, Defaults.SettingsTree.UrlTrackerSettingsTreeName, TreeTitle = "UrlTracker settings", TreeGroup = "urlTrackerTreeGroup", SortOrder = 1)]
     [PluginController(Defaults.SettingsTree.UrlTrackerArea)]
     [ExcludeFromCodeCoverage]
-    public class SettingsTreeController : TreeController
+    public class UrlTrackerSettingsTreeController : TreeController
     {
         private readonly IMenuItemCollectionFactory _menuItemCollectionFactory;
-        public SettingsTreeController(ILocalizedTextService localizedTextService,
+        public UrlTrackerSettingsTreeController(ILocalizedTextService localizedTextService,
             UmbracoApiControllerTypeCollection umbracoApiControllerTypeCollection,
             IMenuItemCollectionFactory menuItemCollectionFactory,
             IEventAggregator eventAggregator)
@@ -46,7 +46,7 @@ namespace UrlTracker.Web.Controllers
             }
 
             var root = rootResult.Value!;
-            root.RoutePath = string.Format("{0}/{1}/{2}", Constants.Applications.Settings, Defaults.SettingsTree.UrlTrackerSettingsTreeName, "overview"); ;
+            root.RoutePath = string.Format("{0}/{1}/{2}", Constants.Applications.Settings, Defaults.SettingsTree.UrlTrackerSettingsTreeName, "overview");
             root.Icon = "icon-umb-developer";
             root.HasChildren = false;
             root.MenuUrl = null;

@@ -11,7 +11,7 @@ using Umbraco.Extensions;
 namespace UrlTracker.Core.Abstractions
 {
     [ExcludeFromCodeCoverage]
-    public class UmbracoContextFactoryAbstraction
+    internal class UmbracoContextFactoryAbstraction
         : IUmbracoContextFactoryAbstraction
     {
         private readonly IUmbracoContextFactory _umbracoContextFactory;
@@ -30,7 +30,7 @@ namespace UrlTracker.Core.Abstractions
     }
 
     [ExcludeFromCodeCoverage]
-    public class UmbracoContextReferenceAbstraction
+    internal class UmbracoContextReferenceAbstraction
         : IUmbracoContextReferenceAbstraction
     {
         private readonly UmbracoContextReference _cref;
@@ -68,9 +68,14 @@ namespace UrlTracker.Core.Abstractions
         }
     }
 
+    /// <summary>
+    /// Extensions for <see cref="IUmbracoContextFactoryAbstraction"/>
+    /// </summary>
     [ExcludeFromCodeCoverage]
     public static class UmbracoContextFactoryAbstractionExtensions
     {
+        /// <inheritdoc cref="IUmbracoContextReferenceAbstraction.GetUrl(IPublishedContent, UrlMode, string?)"/>
+        /// <exception cref="NotSupportedException"></exception>
         public static string Url(this IPublishedContent content, IUmbracoContextFactoryAbstraction abstraction, string? culture = null, UrlMode mode = UrlMode.Default)
         {
             using var cref = abstraction.EnsureUmbracoContext();

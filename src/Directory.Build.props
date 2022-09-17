@@ -16,6 +16,7 @@
     <PackageProjectUrl>https://github.com/Infocaster/UrlTracker</PackageProjectUrl>
     <PackageIcon>infocaster_nuget_yellow.png</PackageIcon>
     <PackageReadmeFile>README-NUGET.md</PackageReadmeFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>

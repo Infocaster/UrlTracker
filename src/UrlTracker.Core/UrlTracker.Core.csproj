@@ -6,19 +6,21 @@
     <Title>URL Tracker Core</Title>
     <Description>This package contains the core services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Core</RootNamespace>
-    <PackageReleaseNotes>2 new features, 5 other changes
+    <PackageReleaseNotes>1 bugfix
 
-- Add setting to block urls from appearing in the client error overview
-- Add source link
-- Introduce frontend framework
-- Move info tab to settings section
-- Improve database schema
-- Improve database memory footprint
-- Improve performance</PackageReleaseNotes>
+- Fix #69</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="AsyncFixer" Version="1.6.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="5.0.0" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.3.44">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
