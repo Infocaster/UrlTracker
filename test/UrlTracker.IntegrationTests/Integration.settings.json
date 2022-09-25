@@ -47,6 +47,20 @@
   },
   "UrlTracker": {
     "HasDomainOnChildNode": false,
-    "AppendPortNumber":  false
+    "AppendPortNumber": false,
+    "Enable": true,
+    "Backoffice": {
+      "Notifications": {
+        "Enable": false
+      }
+    },
+    "Pipeline": {
+      "Enable": true,
+      "EnableClientErrorTracking": true
+    },
+    "BlockedUrlsList": [
+      "example.com",
+      "example.nl"
+    ]
   }
 }

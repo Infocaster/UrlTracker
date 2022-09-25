@@ -9,13 +9,20 @@ namespace UrlTracker.Web
         [ExcludeFromCodeCoverage]
         public static Url GetUrl(this HttpRequest request)
         {
-            return Url.Create(
-                request.IsHttps ? Protocol.Https : Protocol.Http,
-                request.Host.Host,
-                request.Host.Port,
-                request.Path,
-                request.QueryString.Value
-            );
+            var result = request.HttpContext.Features.Get<Url>();
+            if (result is null)
+            {
+                result = Url.Create(
+                    request.IsHttps ? Protocol.Https : Protocol.Http,
+                    request.Host.Host,
+                    request.Host.Port,
+                    request.Path,
+                    request.QueryString.Value
+                );
+                request.HttpContext.Features.Set(result);
+            }
+
+            return result;
         }
     }
 }

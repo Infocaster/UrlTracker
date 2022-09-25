@@ -1,8 +1,10 @@
-﻿using UrlTracker.Core.Database.Dtos;
+﻿using System.Diagnostics.CodeAnalysis;
+using UrlTracker.Core.Database.Dtos;
 using UrlTracker.Core.Database.Models.Entities;
 
-namespace UrlTracker.Core.Database.Models.Factories
+namespace UrlTracker.Core.Database.Factories
 {
+    [ExcludeFromCodeCoverage]
     internal static class RedirectFactory
     {
         internal static IRedirect BuildEntity(RedirectDto dto)

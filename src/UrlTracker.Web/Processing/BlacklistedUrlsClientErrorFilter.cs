@@ -1,32 +1,33 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using UrlTracker.Core.Configuration.Models;
-using UrlTracker.Web.Events.Models;
 
 namespace UrlTracker.Web.Processing
 {
     public class BlacklistedUrlsClientErrorFilter : IClientErrorFilter
     {
-        private readonly UrlTrackerSettings _options;
+        private readonly IOptionsMonitor<UrlTrackerSettings> _options;
 
-        public BlacklistedUrlsClientErrorFilter(IOptions<UrlTrackerSettings> options)
+        public BlacklistedUrlsClientErrorFilter(IOptionsMonitor<UrlTrackerSettings> options)
         {
-            _options = options.Value;
+            _options = options;
         }
 
-        public ValueTask<bool> EvaluateCandidateAsync(UrlTrackerHandled notification)
-            => new ValueTask<bool>(EvaluateCandidate(notification));
+        public ValueTask<bool> EvaluateCandidateAsync(HttpContext context)
+            => new(EvaluateCandidate(context));
 
-        public bool EvaluateCandidate(UrlTrackerHandled notification)
+        private bool EvaluateCandidate(HttpContext context)
         {
-            if (!_options.BlockedUrlsList.Any()) return true;
+            var optionsValue = _options.CurrentValue;
+            if (!optionsValue.BlockedUrlsList.Any()) return true;
             //get the host + path from the url
-            var url = notification.Url.ToString();
+            var url = context.Request.GetUrl().ToString();
 
             //check if any item in blockedUrl contains the url. The foreach is used instead of a .Contains on the list to make sure that items in the list containing https / querystrings etc also get caught
-            foreach (var blockedUrl in _options.BlockedUrlsList)
+            foreach (var blockedUrl in optionsValue.BlockedUrlsList)
             {
                 if (url.Contains(blockedUrl, StringComparison.InvariantCultureIgnoreCase)) return false;
             }

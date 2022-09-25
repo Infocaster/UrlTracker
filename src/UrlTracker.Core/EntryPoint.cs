@@ -1,0 +1,145 @@
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
+using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Extensions;
+using UrlTracker.Core.Abstractions;
+using UrlTracker.Core.Configuration;
+using UrlTracker.Core.Configuration.Models;
+using UrlTracker.Core.Database;
+using UrlTracker.Core.Database.Mappers;
+using UrlTracker.Core.Database.Migrations;
+using UrlTracker.Core.Database.Models.Entities;
+using UrlTracker.Core.Domain;
+using UrlTracker.Core.Intercepting;
+using UrlTracker.Core.Intercepting.Conversion;
+using UrlTracker.Core.Intercepting.Preprocessing;
+using UrlTracker.Core.Logging;
+using UrlTracker.Core.Map;
+using UrlTracker.Core.Models;
+using UrlTracker.Core.Validation;
+
+namespace UrlTracker.Core
+{
+    /// <summary>
+    /// The entry point for the URL Tracker core services
+    /// </summary>
+    [ExcludeFromCodeCoverage]
+    public static class EntryPoint
+    {
+        /// <summary>
+        /// Add all core services of the URL Tracker to the dependency injection container
+        /// </summary>
+        /// <param name="builder">The umbraco dependency collection builder</param>
+        /// <returns>The umbraco dependency collection builder after all URL Tracker core services are added</returns>
+        public static IUmbracoBuilder ComposeUrlTrackerCore(this IUmbracoBuilder builder)
+        {
+            builder.ComposeUrlTrackerCoreComponents()
+                   .ComposeUrlTrackerCoreConfigurations()
+                   .ComposeUrlTrackerCoreMaps()
+                   .ComposeUrlTrackerCoreAbstractions()
+                   .ComposeDefaultInterceptors()
+                   .ComposeDefaultInterceptPreprocessors()
+                   .ComposeDefaultInterceptConverters();
+
+            builder.Services.AddSingleton<IDomainProvider, DomainProvider>();
+
+            builder.Services.AddSingleton<IDefaultInterceptContextFactory, DefaultInterceptContextFactory>();
+            builder.Services.AddSingleton<IIntermediateInterceptService, IntermediateInterceptService>();
+            builder.Services.AddSingleton<IInterceptService, InterceptService>();
+            builder.Services.AddSingleton<IRedirectService, RedirectService>();
+            builder.Services.AddSingleton<IClientErrorService, ClientErrorService>();
+            builder.Services.AddSingleton<IRedirectRepository, RedirectRepository>();
+            builder.Services.AddSingleton<IReferrerRepository, ReferrerRepository>();
+
+            builder.Services.AddSingleton<IClientErrorRepository, ClientErrorRepository>();
+            builder.Services.AddSingleton<IValidationHelper, ValidationHelper>();
+            builder.Services.AddSingleton<IMigrationPlanFactory, MigrationPlanFactory>();
+
+            builder.Services.AddTransient(typeof(ILogger<>), typeof(Logger<>));
+
+            builder.Services.AddSingleton<IStaticUrlProviderCollection>(factory => factory.GetRequiredService<StaticUrlProviderCollection>());
+            builder.Services.AddSingleton<IInterceptPreprocessorCollection>(factory => factory.GetRequiredService<InterceptPreprocessorCollection>());
+            builder.Services.AddSingleton<IInterceptorCollection>(factory => factory.GetRequiredService<InterceptorCollection>());
+            builder.Services.AddSingleton<IInterceptConverterCollection>(factory => factory.GetRequiredService<InterceptConverterCollection>());
+
+            return builder;
+        }
+
+        public static InterceptorCollectionBuilder? Interceptors(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<InterceptorCollectionBuilder>();
+
+        public static InterceptPreprocessorCollectionBuilder? InterceptPreprocessors(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<InterceptPreprocessorCollectionBuilder>();
+
+        public static StaticUrlProviderCollectionBuilder? StaticUrlProviders(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<StaticUrlProviderCollectionBuilder>();
+
+        public static InterceptConverterCollectionBuilder? InterceptConverters(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<InterceptConverterCollectionBuilder>();
+
+        public static IUmbracoBuilder ComposeDefaultInterceptors(this IUmbracoBuilder builder)
+        {
+            builder.Interceptors()!
+                .Append<StaticUrlRedirectInterceptor>()
+                .Append<RegexRedirectInterceptor>()
+                .Append<NoLongerExistsInterceptor>();
+
+            builder.Services.AddSingleton<ILastChanceInterceptor, NullInterceptor>();
+
+            builder.StaticUrlProviders()!
+                .Append<StaticUrlProvider>();
+            return builder;
+        }
+
+        public static IUmbracoBuilder ComposeDefaultInterceptPreprocessors(this IUmbracoBuilder builder)
+        {
+            builder.InterceptPreprocessors()!
+                .Append<DomainUrlPreprocessor>();
+            return builder;
+        }
+
+        public static IUmbracoBuilder ComposeDefaultInterceptConverters(this IUmbracoBuilder builder)
+        {
+            builder.InterceptConverters()!
+                .Append<MapperInterceptConverter<IRedirect, Redirect>>();
+            return builder;
+        }
+
+        public static IUmbracoBuilder ComposeUrlTrackerCoreComponents(this IUmbracoBuilder builder)
+        {
+            builder.AddComponent<MigrationComponent>();
+            return builder;
+        }
+
+        public static IUmbracoBuilder ComposeUrlTrackerCoreConfigurations(this IUmbracoBuilder builder)
+        {
+            builder.Services.AddOptions<UrlTrackerSettings>()
+                            .Bind(builder.Config.GetSection(Defaults.Options.UrlTrackerSection))
+                            .ValidateDataAnnotations();
+
+            builder.Services.ConfigureOptions<LegacyOptionsConfiguration>();
+            return builder;
+        }
+
+        public static IUmbracoBuilder ComposeUrlTrackerCoreMaps(this IUmbracoBuilder builder)
+        {
+            // business logic mappers
+            builder.MapDefinitions()!
+                .Add<ServiceLayerMaps>();
+
+            // sql entity mappers
+            builder.Mappers()!
+                .Add<RedirectMapper>()
+                .Add<ClientErrorMapper>()
+                .Add<ReferrerMapper>();
+
+            return builder;
+        }
+
+        public static IUmbracoBuilder ComposeUrlTrackerCoreAbstractions(this IUmbracoBuilder builder)
+        {
+            builder.Services.AddSingleton<IUmbracoContextFactoryAbstraction, UmbracoContextFactoryAbstraction>();
+            return builder;
+        }
+    }
+}

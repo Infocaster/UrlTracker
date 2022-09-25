@@ -1,0 +1,17 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <UrlTrackerPluginFolder>App_Plugins\UrlTracker</UrlTrackerPluginFolder>
+  </PropertyGroup>
+
+  <!-- Include a before build task to clean up all the files of the old url tracker, because they are now integrated in our razor class library -->
+  <!-- Remove this in v11 -->
+  <Target Name="ClearUrlTrackerAssets" BeforeTargets="BeforeBuild">
+    <ItemGroup>
+      <UrlTrackerDir Include="$(MSBuildProjectDirectory)\$(UrlTrackerPluginFolder)\" />
+    </ItemGroup>
+    <Message Text="Clear old UrlTracker data"  Importance="high" />
+    <RemoveDir Directories="@(UrlTrackerDir)"  />
+  </Target>
+
+</Project>

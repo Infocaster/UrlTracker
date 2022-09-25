@@ -5,7 +5,6 @@ using NUnit.Framework;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Mocks;
-using UrlTracker.Web.Events.Models;
 using UrlTracker.Web.Processing;
 
 namespace UrlTracker.Web.Tests.Processing
@@ -23,7 +22,7 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_ValidCandidate_ReturnsTrue()
         {
             // arrange
-            UrlTrackerSettings.Value.BlockedUrlsList = new List<string>()
+            UrlTrackerSettings.CurrentValue.BlockedUrlsList = new List<string>()
             {
                 "item1",
                 "item2",
@@ -33,7 +32,8 @@ namespace UrlTracker.Web.Tests.Processing
             HttpContextMock = new HttpContextMock(new Uri(url));
 
             // act
-            bool result = await _testSubject!.EvaluateCandidateAsync(new UrlTrackerHandled(HttpContextMock.Context, Url.Parse(url)));
+            HttpContextMock.SetupUrl(Url.Parse(url));
+            bool result = await _testSubject!.EvaluateCandidateAsync(HttpContextMock.Context);
 
             // assert
             Assert.That(result, Is.True);
@@ -43,12 +43,13 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_ValidCandidateEmptyBlacklist_ReturnsTrue()
         {
             // arrange
-            UrlTrackerSettings.Value.BlockedUrlsList = new List<string>();
+            UrlTrackerSettings.CurrentValue.BlockedUrlsList = new List<string>();
             const string url = "http://example.com/blablabla";
             HttpContextMock = new HttpContextMock(new Uri(url));
 
             // act
-            bool result = await _testSubject!.EvaluateCandidateAsync(new UrlTrackerHandled(HttpContextMock.Context, Url.Parse(url)));
+            HttpContextMock.SetupUrl(Url.Parse(url));
+            bool result = await _testSubject!.EvaluateCandidateAsync(HttpContextMock.Context);
 
             // assert
             Assert.That(result, Is.True);
@@ -58,7 +59,7 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_BlacklistedCandidate_ReturnsFalse()
         {
             // arrange
-            UrlTrackerSettings.Value.BlockedUrlsList = new List<string>()
+            UrlTrackerSettings.CurrentValue.BlockedUrlsList = new List<string>()
             {
                 "item1",
                 "item2",
@@ -68,7 +69,8 @@ namespace UrlTracker.Web.Tests.Processing
             HttpContextMock = new HttpContextMock(new Uri(url));
 
             // act
-            bool result = await _testSubject!.EvaluateCandidateAsync(new UrlTrackerHandled(HttpContextMock.Context, Url.Parse(url)));
+            HttpContextMock.SetupUrl(Url.Parse(url));
+            bool result = await _testSubject!.EvaluateCandidateAsync(HttpContextMock.Context);
 
             // assert
             Assert.That(result, Is.False);

@@ -15,9 +15,9 @@ using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Extensions;
 using UrlTracker.Core.Database.Dtos;
 using UrlTracker.Core.Database.Entities;
+using UrlTracker.Core.Database.Factories;
 using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Database.Models.Entities;
-using UrlTracker.Core.Database.Models.Factories;
 
 namespace UrlTracker.Core.Database
 {

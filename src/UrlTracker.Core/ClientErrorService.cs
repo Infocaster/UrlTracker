@@ -100,6 +100,7 @@ namespace UrlTracker.Core
             return Task.CompletedTask;
         }
 
+        [ExcludeFromCodeCoverage]
         public Task<ClientError?> GetAsync(string url)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);

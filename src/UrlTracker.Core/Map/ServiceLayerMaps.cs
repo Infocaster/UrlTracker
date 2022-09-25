@@ -80,7 +80,7 @@ namespace UrlTracker.Core.Map
             target.SourceUrl = source.SourceUrl;
             target.TargetNode = source.TargetNodeId.HasValue ? cref.GetContentById(source.TargetNodeId.Value) : null;
             target.TargetRootNode = source.TargetRootNodeId.HasValue ? cref.GetContentById(source.TargetRootNodeId.Value) : null;
-            target.TargetStatusCode = source.Permanent ? HttpStatusCode.MovedPermanently : HttpStatusCode.Redirect;
+            target.TargetStatusCode = source.Permanent ? HttpStatusCode.Moved : HttpStatusCode.Redirect;
             target.TargetUrl = source.TargetUrl;
         }
     }

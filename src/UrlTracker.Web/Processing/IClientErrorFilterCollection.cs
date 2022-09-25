@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using UrlTracker.Web.Events.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace UrlTracker.Web.Processing
 {
     public interface IClientErrorFilterCollection
     {
-        ValueTask<bool> EvaluateCandidacyAsync(UrlTrackerHandled notification);
+        ValueTask<bool> EvaluateCandidacyAsync(HttpContext context);
     }
 }

@@ -27,7 +27,7 @@ namespace UrlTracker.Core.Logging
             => _logger.BeginScope<TState>(state);
 
         public bool IsEnabled(LogLevel logLevel)
-            => _logger.IsEnabled(logLevel) && _options.Value.LoggingEnabled;
+            => _logger.IsEnabled(logLevel) && _options.Value.EnableLogging;
 
         public void Log<TState>(LogLevel logLevel, Microsoft.Extensions.Logging.EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {

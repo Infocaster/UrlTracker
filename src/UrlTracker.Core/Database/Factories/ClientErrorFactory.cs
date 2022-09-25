@@ -1,8 +1,10 @@
-﻿using UrlTracker.Core.Database.Dtos;
+﻿using System.Diagnostics.CodeAnalysis;
+using UrlTracker.Core.Database.Dtos;
 using UrlTracker.Core.Database.Entities;
 
 namespace UrlTracker.Core.Database.Factories
 {
+    [ExcludeFromCodeCoverage]
     internal static class ClientErrorFactory
     {
         internal static IClientError BuildEntity(ExtendedClientErrorDto dto)

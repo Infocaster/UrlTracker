@@ -8,6 +8,9 @@ using Umbraco.Cms.Infrastructure.Scoping;
 
 namespace UrlTracker.Core.Database.Migrations
 {
+    /// <summary>
+    /// A component that performs the database migration for the URL Tracker
+    /// </summary>
     [ExcludeFromCodeCoverage]
     public class MigrationComponent
         : IComponent
@@ -18,6 +21,14 @@ namespace UrlTracker.Core.Database.Migrations
         private readonly IRuntimeState _runtimeState;
         private readonly IMigrationPlanFactory _migrationPlanFactory;
 
+        /// <summary>
+        /// Create an instance of the MigrationComponent using dependency injection
+        /// </summary>
+        /// <param name="scopeProvider">The scope provider</param>
+        /// <param name="migrationPlanExecutor">The migration plan executor</param>
+        /// <param name="keyValueService">The key value service</param>
+        /// <param name="runtimeState">The runtime state</param>
+        /// <param name="migrationPlanFactory">The migration plan factory</param>
         public MigrationComponent(IScopeProvider scopeProvider,
                                   IMigrationPlanExecutor migrationPlanExecutor,
                                   IKeyValueService keyValueService,
@@ -31,6 +42,7 @@ namespace UrlTracker.Core.Database.Migrations
             _migrationPlanFactory = migrationPlanFactory;
         }
 
+        /// <inheritdoc/>
         public void Initialize()
         {
             if (_runtimeState.Level < RuntimeLevel.Run)
@@ -45,6 +57,7 @@ namespace UrlTracker.Core.Database.Migrations
             }
         }
 
+        /// <inheritdoc/>
         public void Terminate()
         { }
     }

@@ -14,11 +14,11 @@ namespace UrlTracker.Web.Map
     public class RedirectMap
         : IMapDefinition
     {
-        private readonly IOptions<UrlTrackerSettings> _configuration;
+        private readonly IOptionsMonitor<UrlTrackerSettings> _configuration;
         private readonly IDomainProvider _domainProvider;
         private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactoryAbstraction;
 
-        public RedirectMap(IOptions<UrlTrackerSettings> configuration,
+        public RedirectMap(IOptionsMonitor<UrlTrackerSettings> configuration,
                            IDomainProvider domainProvider,
                            IUmbracoContextFactoryAbstraction umbracoContextFactoryAbstraction)
         {
@@ -34,7 +34,7 @@ namespace UrlTracker.Web.Map
                 {
                     var httpContext = context.GetHttpContext();
 
-                    var configurationValue = _configuration.Value;
+                    var configurationValue = _configuration.CurrentValue;
                     Url? url = null;
                     var request = httpContext!.Request;
                     if (source.TargetNode is not null)

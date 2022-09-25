@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Umbraco.Cms.Core.Composing;
-using UrlTracker.Web.Events.Models;
 
 namespace UrlTracker.Web.Processing
 {
@@ -23,11 +23,11 @@ namespace UrlTracker.Web.Processing
         { }
 
         // asynchronously evaluates all the filters and returns false if any of them return false
-        public async ValueTask<bool> EvaluateCandidacyAsync(UrlTrackerHandled notification)
+        public async ValueTask<bool> EvaluateCandidacyAsync(HttpContext context)
         {
             foreach (var filter in this)
             {
-                if (!await filter.EvaluateCandidateAsync(notification)) return false;
+                if (!await filter.EvaluateCandidateAsync(context)) return false;
             }
 
             return true;

@@ -7,7 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\UrlTracker.Backoffice.UI\UrlTracker.Backoffice.UI.csproj" />
+    <ProjectReference Include="..\..\src\UrlTracker.Core.Caching.Memory\UrlTracker.Core.Caching.Memory.csproj" />
     <ProjectReference Include="..\..\src\UrlTracker.Core\UrlTracker.Core.csproj" />
+    <ProjectReference Include="..\..\src\UrlTracker.Middleware\UrlTracker.Middleware.csproj" />
     <ProjectReference Include="..\..\src\UrlTracker.Web\UrlTracker.Web.csproj" />
   </ItemGroup>
 

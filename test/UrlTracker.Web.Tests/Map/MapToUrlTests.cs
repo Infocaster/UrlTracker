@@ -161,8 +161,8 @@ namespace UrlTracker.Web.Tests.Map
         public void MapToUrl_NormalFlow_MapsRedirectToUrl(string incomingUrl, IEnumerable<KeyValuePair<int, string>> contentUrls, Redirect redirect, DomainCollection domains, bool appendPortNumber, Url expectedUrl)
         {
             // arrange
-            HttpContextMock!.SetupUrl(new Uri(incomingUrl));
-            UrlTrackerSettings!.Value.AppendPortNumber = appendPortNumber;
+            HttpContextMock.SetupUrl(new Uri(incomingUrl));
+            UrlTrackerSettings.CurrentValue.AppendPortNumber = appendPortNumber;
             if (contentUrls?.Any() == true)
             {
                 foreach (var pair in contentUrls) UmbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetUrl(It.Is<IPublishedContent>(o => o.Id == pair.Key), It.IsAny<UrlMode>(), It.IsAny<string>())).Returns(pair.Value);

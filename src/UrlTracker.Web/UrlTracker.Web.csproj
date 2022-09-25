@@ -1,80 +1,29 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <!-- Package properties -->
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <PackageId>UrlTracker</PackageId>
-    <Title>URL Tracker</Title>
-    <Description>
-      The URL Tracker makes url management easy. Your visitors will no longer be lost on your website as the URL Tracker watches how your website changes. Page moved or renamed? No problem! The URL Tracker knows this and directs your visitors to the right page. Not only does this provide a nice experience for your visitors, it also helps you maintain your rightful spot at the top in Google (and other search engines).
-      The URL Tracker puts you in control by giving you the means to manage your own redirects. It can be as simple as a redirect from a url to an umbraco page, but you can make it as sophisticated as you like using Regular Expressions. The URL Tracker is an essential tool for content editors who want to migrate to a new Umbraco website, so they can guide their users to the right place.
-
-      Use v10 for umbraco 10, Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.
-    </Description>
+    <PackageId>UrlTracker.Web</PackageId>
+    <Title>URL Tracker Web</Title>
+    <Description>This package contains the web services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
     <PackageReleaseNotes>1 bugfix
 
 - Fix #69</PackageReleaseNotes>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="build\**\*.*">
-      <Pack>True</Pack>
-      <PackagePath>buildTransitive</PackagePath>
-    </None>
-    <Content Include="content\**\*.*">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-      <PackagePath>content</PackagePath>
-    </Content>
-  </ItemGroup>
   <!-- END Package properties -->
   <!-- External references -->
   <ItemGroup>
-    <PackageReference Include="AsyncFixer" Version="1.6.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="CsvHelper" Version="28.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.3.44">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Umbraco.Cms.Web.Website" Version="10.0.0" />
     <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.0.0" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
   </ItemGroup>
   <!-- END External references -->
-  <!-- Build instructions -->
-  <ItemGroup>
-    <FrontendFiles Include="frontend\**\*.*" />
-    <FrontendFiles Remove="frontend\.build-stamp" />
-  </ItemGroup>
-  <Target Name="NpmInstallDebug" Inputs="package.json" Outputs="node_modules/.install-stamp" Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" BeforeTargets="BeforeBuild">
-    <Exec Command="npm ci" />
-    <Touch Files="node_modules/.install-stamp" AlwaysCreate="true" />
-  </Target>
-  <Target Name="NpmRunBuildDebug" DependsOnTargets="NpmInstallDebug" Inputs="@(FrontendFiles)" Outputs="frontend/.build-stamp" Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" BeforeTargets="BeforeBuild">
-    <Exec Command="npm run build:webpack" />
-    <Touch Files="frontend/.build-stamp" AlwaysCreate="true" />
-  </Target>
-  <Target Name="RemoveBuildStamps" BeforeTargets="Clean">
-    <Delete Files="frontend/.build-stamp" />
-  </Target>
-  <!-- END Build instructions -->
   <!-- Exclusions -->
   <ItemGroup>
     <Compile Remove="node_modules\**" />
     <EmbeddedResource Remove="node_modules\**" />
     <None Remove="node_modules\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="content\" />
   </ItemGroup>
   <!-- END Exclusions -->
 </Project>

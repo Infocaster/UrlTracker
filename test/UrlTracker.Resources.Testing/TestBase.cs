@@ -7,8 +7,10 @@ using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Scoping;
+using UrlTracker.Backoffice.UI.Compatibility;
 using UrlTracker.Core;
-using UrlTracker.Core.Caching;
+using UrlTracker.Core.Caching.Memory;
+using UrlTracker.Core.Caching.Memory.Options;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Domain;
@@ -17,10 +19,11 @@ using UrlTracker.Core.Intercepting.Conversion;
 using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Core.Intercepting.Preprocessing;
 using UrlTracker.Core.Validation;
+using UrlTracker.Middleware.Options;
+using UrlTracker.Modules.Options;
 using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Resources.Testing.Objects;
 using UrlTracker.Web.Abstraction;
-using UrlTracker.Web.Compatibility;
 using UrlTracker.Web.Configuration;
 using UrlTracker.Web.Processing;
 
@@ -35,6 +38,12 @@ namespace UrlTracker.Resources.Testing
 
         protected Mock<IOptionsMonitor<RequestHandlerSettings>> RequestHandlerSettingsMock { get; set; } = null!;
         protected IOptionsMonitor<RequestHandlerSettings> RequestHandlerSettings => RequestHandlerSettingsMock.Object;
+        protected Mock<IOptionsMonitor<UrlTrackerSettings>> UrlTrackerSettingsMock { get; set; } = null!;
+        protected IOptionsMonitor<UrlTrackerSettings> UrlTrackerSettings => UrlTrackerSettingsMock.Object;
+        protected Mock<IOptionsSnapshot<UrlTrackerLegacyOptions>> UrlTrackerLegacyOptionsMock { get; set; } = null!;
+        protected IOptionsSnapshot<UrlTrackerLegacyOptions> UrlTrackerLegacyOptions => UrlTrackerLegacyOptionsMock.Object;
+        protected Mock<IOptionsMonitor<UrlTrackerPipelineOptions>> UrlTrackerPipelineOptionsMock { get; set; } = null!;
+        protected IOptionsMonitor<UrlTrackerPipelineOptions> UrlTrackerPipelineOptions => UrlTrackerPipelineOptionsMock.Object;
         protected Mock<IDomainProvider> DomainProviderMock { get; set; } = null!;
         protected IDomainProvider DomainProvider => DomainProviderMock.Object;
         protected Mock<IInterceptConverter> InterceptConverterMock { get; set; } = null!;
@@ -87,8 +96,7 @@ namespace UrlTracker.Resources.Testing
         protected IRuntimeState RuntimeState => RuntimeStateMock.Object;
 
 
-
-        protected IOptions<UrlTrackerSettings> UrlTrackerSettings { get; set; } = null!;
+        protected IOptions<UrlTrackerMemoryCacheOptions> UrlTrackerMemoryCacheOptions { get; set; } = null!;
         protected Mock<IReservedPathSettingsProvider> ReservedPathSettingsProviderMock { get; set; } = null!;
         protected IReservedPathSettingsProvider ReservedPathSettingsProvider => ReservedPathSettingsProviderMock.Object;
         protected IUmbracoMapper Mapper { get; set; } = null!;
@@ -115,7 +123,13 @@ namespace UrlTracker.Resources.Testing
         [SetUp]
         public void SetUpBase()
         {
-            UrlTrackerSettings = Options.Create<UrlTrackerSettings>(new UrlTrackerSettings());
+            UrlTrackerSettingsMock = new Mock<IOptionsMonitor<UrlTrackerSettings>>();
+            UrlTrackerSettingsMock.SetupGet(obj => obj.CurrentValue).Returns(new UrlTrackerSettings());
+            UrlTrackerPipelineOptionsMock = new Mock<IOptionsMonitor<UrlTrackerPipelineOptions>>();
+            UrlTrackerPipelineOptionsMock.SetupGet(obj => obj.CurrentValue).Returns(new UrlTrackerPipelineOptions());
+            UrlTrackerLegacyOptionsMock = new Mock<IOptionsSnapshot<UrlTrackerLegacyOptions>>();
+            UrlTrackerLegacyOptionsMock.SetupGet(obj => obj.Value).Returns(new UrlTrackerLegacyOptions());
+            UrlTrackerMemoryCacheOptions = Options.Create<UrlTrackerMemoryCacheOptions>(new UrlTrackerMemoryCacheOptions());
             GlobalSettings = Options.Create<GlobalSettings>(new GlobalSettings());
 
             RequestHandlerSettingsMock = new Mock<IOptionsMonitor<RequestHandlerSettings>>();

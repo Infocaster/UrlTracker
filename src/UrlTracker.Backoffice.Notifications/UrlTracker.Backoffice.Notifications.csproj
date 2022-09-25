@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <PackageId>UrlTracker.Backoffice.Notifications</PackageId>
+    <Title>URL Tracker Backoffice Notifications</Title>
+    <Description>This package contains notification handlers for the URL Tracker to handle Umbraco content notifications</Description>
+    <RootNamespace>UrlTracker.Backoffice.Notifications</RootNamespace>
+    <PackageReleaseNotes>
+      1 bugfix, 1 other change
+
+      - Fix #69
+      - Include static code analyzers for future improvements
+    </PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms.Infrastructure" Version="10.0.0" />
+  </ItemGroup>
+
+</Project>

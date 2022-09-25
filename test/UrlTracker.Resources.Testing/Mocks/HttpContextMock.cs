@@ -1,6 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Moq;
+using UrlTracker.Core.Domain.Models;
 
 namespace UrlTracker.Resources.Testing.Mocks
 {
@@ -16,6 +18,7 @@ namespace UrlTracker.Resources.Testing.Mocks
 
             ContextMock.Setup(obj => obj.Request).Returns(RequestMock.Object);
             ContextMock.Setup(obj => obj.Response).Returns(ResponseMock.Object);
+            RequestMock.Setup(obj => obj.HttpContext).Returns(ContextMock.Object);
             _urlConfigured = false;
             if (incomingUrl is not null)
             {
@@ -31,7 +34,17 @@ namespace UrlTracker.Resources.Testing.Mocks
             RequestMock.Setup(obj => obj.Scheme).Returns(incomingUrl.Scheme);
             RequestMock.Setup(obj => obj.Path).Returns(new PathString(incomingUrl.AbsolutePath));
             RequestMock.Setup(obj => obj.QueryString).Returns(new QueryString(incomingUrl.Query));
+
+            SetupUrl(Url.FromAbsoluteUri(incomingUrl));
+
             _urlConfigured = true;
+        }
+
+        public void SetupUrl(Url incomingUrl)
+        {
+            var featureCollection = new FeatureCollection();
+            featureCollection.Set<Url>(incomingUrl);
+            ContextMock.SetupGet(obj => obj.Features).Returns(featureCollection);
         }
 
         public HttpContext Context => ContextMock.Object;

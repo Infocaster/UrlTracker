@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>UrlTracker.Core.Caching.Memory</PackageId>
+    <Title>URL Tracker Core Memory Cache</Title>
+    <Description>This package contains an in-memory cache layer for the core services of the URL Tracker</Description>
+    <RootNamespace>UrlTracker.Core.Caching.Memory</RootNamespace>
+    <PackageReleaseNotes>
+      1 bugfix, 1 other change
+
+      - Fix #69
+      - Include static code analyzers for future improvements
+    </PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Umbraco.Cms.Core" Version="10.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
+    <PackageReference Include="Scrutor" Version="4.2.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
+  </ItemGroup>
+
+</Project>

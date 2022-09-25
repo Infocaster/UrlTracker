@@ -1,0 +1,76 @@
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Umbraco.Cms.Core.Cache;
+using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Cms.Core.Notifications;
+using UrlTracker.Core.Caching.Memory.Database;
+using UrlTracker.Core.Caching.Memory.Domain;
+using UrlTracker.Core.Caching.Memory.Intercepting;
+using UrlTracker.Core.Caching.Memory.Notifications;
+using UrlTracker.Core.Caching.Memory.Options;
+using UrlTracker.Core.Database;
+using UrlTracker.Core.Domain;
+using UrlTracker.Core.Intercepting;
+
+namespace UrlTracker.Core.Caching.Memory
+{
+    /// <summary>
+    /// The entry point for the URL Tracker in-memory cache services
+    /// </summary>
+    [ExcludeFromCodeCoverage]
+    public static class EntryPoint
+    {
+        /// <summary>
+        /// Add all in-memory cache services of the URL Tracker to the dependency injection container
+        /// </summary>
+        /// <remarks>
+        /// <para><see cref="Core.EntryPoint.ComposeUrlTrackerCore(IUmbracoBuilder)"/> must be used before invoking this method</para>
+        /// </remarks>
+        /// <param name="builder">The umbraco dependency collection builder</param>
+        /// <returns>The umbraco dependency collection builder after all URL Tracker in-memory cache services are added</returns>
+        public static IUmbracoBuilder ComposeUrlTrackerMemoryCache(this IUmbracoBuilder builder)
+        {
+            var settings = builder.Config.GetOptions();
+            builder.Services.Decorate<IDomainProvider>((decoratee, factory) => new DecoratorDomainProviderCaching(decoratee, factory.GetRequiredService<AppCaches>().RuntimeCache));
+            if (settings.EnableInterceptCaching)
+            {
+                builder.Services.Decorate<IIntermediateInterceptService>((decoratee, factory) => new DecoratorIntermediateInterceptServiceCaching(decoratee, factory.GetRequiredService<IInterceptCache>(), factory.GetRequiredService<IOptions<UrlTrackerMemoryCacheOptions>>()));
+            }
+            if (settings.EnableRegexRedirectCaching)
+            {
+                builder.Services.Decorate<IRedirectRepository>((decoratee, factory) => new DecoratorRedirectRepositoryCaching(decoratee, factory.GetRequiredService<IMemoryCache>(), factory.GetRequiredService<IInterceptCache>()));
+            }
+            builder.Services.AddSingleton<IInterceptCache, InterceptCache>();
+
+            builder.ComposeNotificationHandlers()
+                .ComposeConfigurations();
+
+            return builder;
+        }
+
+        private static UrlTrackerMemoryCacheOptions GetOptions(this IConfiguration configuration)
+        {
+            var settings = new UrlTrackerMemoryCacheOptions();
+            configuration.GetSection(Defaults.Options.Section).Bind(settings);
+            return settings;
+        }
+
+        private static IUmbracoBuilder ComposeNotificationHandlers(this IUmbracoBuilder builder)
+        {
+            builder.AddNotificationHandler<DomainDeletedNotification, ContentChangeNotificationHandler>();
+            builder.AddNotificationHandler<DomainSavedNotification, ContentChangeNotificationHandler>();
+            return builder;
+        }
+
+        private static IUmbracoBuilder ComposeConfigurations(this IUmbracoBuilder builder)
+        {
+            builder.Services.AddOptions<UrlTrackerMemoryCacheOptions>()
+                            .Bind(builder.Config.GetSection(Defaults.Options.Section))
+                            .ValidateDataAnnotations();
+            return builder;
+        }
+    }
+}
