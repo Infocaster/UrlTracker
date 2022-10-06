@@ -28,6 +28,11 @@ stages:
   - job: build
     displayName: Build
     steps:
+    - checkout: self
+      displayName: Clone repository
+      fetchDepth: 0
+      clean: true
+
     - task: GitVersion@5
       displayName: GitVersion
       inputs:
