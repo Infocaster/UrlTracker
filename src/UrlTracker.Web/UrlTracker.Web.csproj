@@ -1,13 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <!-- Package properties -->
   <PropertyGroup>
     <PackageId>UrlTracker.Web</PackageId>
     <Title>URL Tracker Web</Title>
     <Description>This package contains the web services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>1 bugfix
+    <PackageReleaseNotes>2 changes
 
-- Fix #69</PackageReleaseNotes>
+- Separate different features into different projects
+- Convert UI to razor class library, so no more static assets</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->

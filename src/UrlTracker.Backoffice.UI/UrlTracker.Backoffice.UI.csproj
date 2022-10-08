@@ -1,64 +1,49 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
-
+<Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
     <PackageId>UrlTracker.Backoffice.UI</PackageId>
     <Title>URL Tracker Backoffice interface</Title>
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>
-      1 bugfix, 1 other change
+    <PackageReleaseNotes>2 changes
 
-      - Fix #69
-      - Include static code analyzers for future improvements
-    </PackageReleaseNotes>
+- Separate different features into different projects
+- Convert UI to razor class library, so no more static assets</PackageReleaseNotes>
   </PropertyGroup>
-
   <ItemGroup>
     <None Include="build\**\*.*">
       <Pack>True</Pack>
       <PackagePath>buildTransitive</PackagePath>
     </None>
   </ItemGroup>
-
-    <ItemGroup>
+  <ItemGroup>
     <Content Remove="package-lock.json" />
     <Content Remove="package.json" />
     <Content Remove="tsconfig.json" />
   </ItemGroup>
-
-
   <ItemGroup>
     <SupportedPlatform Include="browser" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="28.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.8" />
     <PackageReference Include="Umbraco.Cms.Core" Version="10.0.0" />
     <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.0.0" />
   </ItemGroup>
-
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
-
   <ItemGroup>
     <None Include="package-lock.json" />
     <None Include="package.json" />
     <None Include="tsconfig.json" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
     <ProjectReference Include="..\UrlTracker.Modules\UrlTracker.Modules.csproj" />
   </ItemGroup>
-
   <ItemGroup>
-    
   </ItemGroup>
-
-
   <!-- Build instructions -->
   <Target Name="NpmInstallDebug" Inputs="package.json" Outputs="node_modules/.install-stamp" Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" BeforeTargets="BeforeBuild">
     <Exec Command="npm ci" />
@@ -72,5 +57,4 @@
     <Delete Files="frontend/.build-stamp" />
   </Target>
   <!-- END Build instructions -->
-  
 </Project>

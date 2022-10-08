@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -12,18 +11,14 @@
       Use v10 for umbraco 10, Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </Description>
     <RootNamespace>UrlTracker</RootNamespace>
-    <PackageReleaseNotes>
-      1 bugfix, 1 other change
+    <PackageReleaseNotes>2 changes
 
-      - Fix #69
-      - Include static code analyzers for future improvements
-    </PackageReleaseNotes>
+- Separate different features into different projects
+- Convert UI to razor class library, so no more static assets</PackageReleaseNotes>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="10.0.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Backoffice.Notifications\UrlTracker.Backoffice.Notifications.csproj" />
     <ProjectReference Include="..\UrlTracker.Backoffice.UI\UrlTracker.Backoffice.UI.csproj" />
@@ -32,5 +27,4 @@
     <ProjectReference Include="..\UrlTracker.Middleware\UrlTracker.Middleware.csproj" />
     <ProjectReference Include="..\UrlTracker.Web\UrlTracker.Web.csproj" />
   </ItemGroup>
-
 </Project>

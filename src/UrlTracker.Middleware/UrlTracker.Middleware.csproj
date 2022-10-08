@@ -1,24 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <PackageId>UrlTracker.Middleware</PackageId>
     <Title>URL Tracker Middleware</Title>
     <Description>This package contains middleware to perform redirects and to register client errors with the URL Tracker</Description>
     <RootNamespace>UrlTracker.Middleware</RootNamespace>
-    <PackageReleaseNotes>
-      1 bugfix, 1 other change
+    <PackageReleaseNotes>2 changes
 
-      - Fix #69
-      - Include static code analyzers for future improvements
-    </PackageReleaseNotes>
+- Separate different features into different projects
+- Convert UI to razor class library, so no more static assets</PackageReleaseNotes>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Umbraco.Cms.Core" Version="10.0.0" />
     <PackageReference Include="Umbraco.Cms.Web.Common" Version="10.0.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
     <ProjectReference Include="..\UrlTracker.Modules\UrlTracker.Modules.csproj" />

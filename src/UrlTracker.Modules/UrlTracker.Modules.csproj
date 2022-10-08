@@ -1,16 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <PackageId>UrlTracker.Modules</PackageId>
     <Title>URL Tracker Module registration</Title>
     <Description>This package contains objects for module registration. It keeps helps keeping track of installed modules for the URL Tracker</Description>
     <RootNamespace>UrlTracker.Modules</RootNamespace>
-    <PackageReleaseNotes>
-      1 bugfix, 1 other change
+    <PackageReleaseNotes>2 changes
 
-      - Fix #69
-      - Include static code analyzers for future improvements
-    </PackageReleaseNotes>
+- Separate different features into different projects
+- Convert UI to razor class library, so no more static assets</PackageReleaseNotes>
   </PropertyGroup>
-  
 </Project>
