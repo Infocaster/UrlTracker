@@ -5,10 +5,11 @@
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>2 changes
+    <PackageReleaseNotes>2 bugfixes, 1 other change
 
-- Separate different features into different projects
-- Convert UI to razor class library, so no more static assets</PackageReleaseNotes>
+- Fix non-404 responses being registered instead of 404
+- Fix any url redirects on static url entry
+- Update all dependencies</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">

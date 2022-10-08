@@ -4,10 +4,11 @@
     <Title>URL Tracker Core Memory Cache</Title>
     <Description>This package contains an in-memory cache layer for the core services of the URL Tracker</Description>
     <RootNamespace>UrlTracker.Core.Caching.Memory</RootNamespace>
-    <PackageReleaseNotes>2 changes
+    <PackageReleaseNotes>2 bugfixes, 1 other change
 
-- Separate different features into different projects
-- Convert UI to razor class library, so no more static assets</PackageReleaseNotes>
+- Fix non-404 responses being registered instead of 404
+- Fix any url redirects on static url entry
+- Update all dependencies</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="10.0.0" />

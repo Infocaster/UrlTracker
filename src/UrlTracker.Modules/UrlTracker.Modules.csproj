@@ -4,9 +4,10 @@
     <Title>URL Tracker Module registration</Title>
     <Description>This package contains objects for module registration. It keeps helps keeping track of installed modules for the URL Tracker</Description>
     <RootNamespace>UrlTracker.Modules</RootNamespace>
-    <PackageReleaseNotes>2 changes
+    <PackageReleaseNotes>2 bugfixes, 1 other change
 
-- Separate different features into different projects
-- Convert UI to razor class library, so no more static assets</PackageReleaseNotes>
+- Fix non-404 responses being registered instead of 404
+- Fix any url redirects on static url entry
+- Update all dependencies</PackageReleaseNotes>
   </PropertyGroup>
 </Project>

@@ -11,10 +11,11 @@
       Use v10 for umbraco 10, Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </Description>
     <RootNamespace>UrlTracker</RootNamespace>
-    <PackageReleaseNotes>2 changes
+    <PackageReleaseNotes>2 bugfixes, 1 other change
 
-- Separate different features into different projects
-- Convert UI to razor class library, so no more static assets</PackageReleaseNotes>
+- Fix non-404 responses being registered instead of 404
+- Fix any url redirects on static url entry
+- Update all dependencies</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="10.0.0" />

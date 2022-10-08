@@ -4,10 +4,11 @@
     <Title>URL Tracker Core</Title>
     <Description>This package contains the core services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Core</RootNamespace>
-    <PackageReleaseNotes>2 changes
+    <PackageReleaseNotes>2 bugfixes, 1 other change
 
-- Separate different features into different projects
-- Convert UI to razor class library, so no more static assets</PackageReleaseNotes>
+- Fix non-404 responses being registered instead of 404
+- Fix any url redirects on static url entry
+- Update all dependencies</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Infrastructure" Version="10.0.0" />
