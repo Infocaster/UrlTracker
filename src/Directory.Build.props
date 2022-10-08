@@ -12,7 +12,7 @@
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Authors>Infocaster B.V.</Authors>
     <Product>URL Tracker</Product>
-    <PackageTags>umbraco plugin package urltracker notfound redirect</PackageTags>
+    <PackageTags>umbraco plugin package urltracker notfound redirect umbraco-marketplace</PackageTags>
     <Copyright>Copyright © Infocaster 2022</Copyright>
     <RepositoryUrl>https://github.com/Infocaster/UrlTracker</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Infocaster/UrlTracker</PackageProjectUrl>
