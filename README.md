@@ -21,18 +21,6 @@ The URL Tracker is guaranteed to work with SQL Server databases. The URL Tracker
 
 ## Getting Started
 The URL Tracker is available via NuGet. Visit [the URL Tracker on NuGet](https://www.nuget.org/packages/UrlTracker/) for instructions on how to install the URL Tracker package in your website.
-Once installed, you'll have to actually use it in your request pipeline (Often found in the file `Startup.cs`). For the best performance, you should insert the URL Tracker as high in the pipeline as possible. The URL Tracker requires an instantiated umbraco context, so make sure it is inserted after the umbraco context is initialized. We recommend that you insert the URL Tracker like this:
-```csharp
-app.UseUmbraco()
-    .WithMiddleware(u =>
-    {
-        u.UseBackOffice();
-        u.UseWebsite();
-
-        // Insert behind 'UseWebsite' to ensure the existance of an UmbracoContext
-        u.UseUrlTracker();
-    })
-```
 Now build your project and you should be ready to make your visitors happy!
 
 ## Configuration
@@ -50,7 +38,7 @@ The URL Tracker has several configurable properties that can be changed in appse
             "Notifications":{
                 "Enable": true
             }
-        }
+        },
         "Caching": {
             "Memory": {
                 "CacheRegexRedirects": true,
