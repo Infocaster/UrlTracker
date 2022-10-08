@@ -31,16 +31,16 @@ namespace UrlTracker.Core.Database.Factories
         {
             var dto = new RedirectDto
             {
-                Culture = entity.Culture,
+                Culture = entity.Culture.DefaultIfNullOrWhiteSpace(null),
                 TargetRootNodeId = entity.TargetRootNodeId,
                 TargetNodeId = entity.TargetNodeId,
-                TargetUrl = entity.TargetUrl,
-                SourceUrl = entity.SourceUrl,
-                SourceRegex = entity.SourceRegex,
+                TargetUrl = entity.TargetUrl.DefaultIfNullOrWhiteSpace(null),
+                SourceUrl = entity.SourceUrl.DefaultIfNullOrWhiteSpace(null),
+                SourceRegex = entity.SourceRegex.DefaultIfNullOrWhiteSpace(null),
                 RetainQuery = entity.RetainQuery,
                 Permanent = entity.Permanent,
                 Force = entity.Force,
-                Notes = entity.Notes,
+                Notes = entity.Notes.DefaultIfNullOrWhiteSpace(null),
                 CreateDate = entity.CreateDate,
                 Key = entity.Key,
             };

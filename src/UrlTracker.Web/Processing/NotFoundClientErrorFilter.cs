@@ -14,7 +14,7 @@ namespace UrlTracker.Web.Processing
 
         private static bool EvaluateCandidate(HttpContext context)
         {
-            return context.Response.StatusCode != 404;
+            return context.Response.StatusCode == 404;
         }
     }
 }

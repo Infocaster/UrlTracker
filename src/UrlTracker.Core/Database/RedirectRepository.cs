@@ -114,7 +114,7 @@ namespace UrlTracker.Core.Database
 
         public Task<IReadOnlyCollection<IRedirect>> GetWithRegexAsync()
         {
-            var query = AmbientScope.SqlContext.Query<IRedirect>().Where(e => e.SourceRegex != null);
+            var query = AmbientScope.SqlContext.Query<IRedirect>().Where(e => e.SourceRegex != null && e.SourceRegex != "");
             var entities = Get(query);
 
             return Task.FromResult<IReadOnlyCollection<IRedirect>>(entities.ToList());

@@ -11,8 +11,6 @@ URL Tracker
 
 </h1>
 
-*This project is a continuation of [the original URL Tracker, created by Kipusoep](https://github.com/kipusoep/UrlTracker).*
-
 The URL Tracker makes url management easy. Your visitors will no longer be lost on your website as the URL Tracker watches how your website changes. Page moved or renamed? No problem! The URL Tracker knows this and directs your visitors to the right page. Not only does this provide a nice experience for your visitors, it also helps you maintain your rightful spot at the top in Google (and other search engines).
 The URL Tracker puts you in control by giving you the means to manage your own redirects. It can be as simple as a redirect from a url to an umbraco page, but you can make it as sophisticated as you like using Regular Expressions. The URL Tracker is an essential tool for content editors who want to migrate to a new Umbraco website, so they can guide their users to the right place.
 
@@ -82,13 +80,6 @@ Many people have already contributed to this awesome project:
 
 *Made with [contributors-img](https://contrib.rocks).*
 
------
-
-## Credits ##
-Credits from the original developer:
-*   **InfoCaster** | Being able to combine 'work' with package development and thanks to colleagues for inspiration.
-*   **Richard Soeteman** | Richard came up with the idea for a package which keeps track of URLs of umbraco nodes.
-*   **The uComponents project** | For inspiring me to create a single-assembly package solution.
 <a href="https://infocaster.net">
 <img align="right" height="200" src="https://raw.githubusercontent.com/Infocaster/.github/main/assets/Infocaster_Corner.png?raw=true">
 </a>
