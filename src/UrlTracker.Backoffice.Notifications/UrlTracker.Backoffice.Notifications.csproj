@@ -6,11 +6,11 @@
     <Title>URL Tracker Backoffice Notifications</Title>
     <Description>This package contains notification handlers for the URL Tracker to handle Umbraco content notifications</Description>
     <RootNamespace>UrlTracker.Backoffice.Notifications</RootNamespace>
-    <PackageReleaseNotes>2 bugfixes, 1 other change
+    <PackageReleaseNotes>3 changes
 
-- Fix non-404 responses being registered instead of 404
-- Fix any url redirects on static url entry
-- Update all dependencies</PackageReleaseNotes>
+- Convert to modular plugin structure
+- Update dependencies
+- Prepare for new Umbraco marketplace</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />

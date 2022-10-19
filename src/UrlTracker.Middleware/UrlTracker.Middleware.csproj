@@ -4,11 +4,11 @@
     <Title>URL Tracker Middleware</Title>
     <Description>This package contains middleware to perform redirects and to register client errors with the URL Tracker</Description>
     <RootNamespace>UrlTracker.Middleware</RootNamespace>
-    <PackageReleaseNotes>2 bugfixes, 1 other change
+    <PackageReleaseNotes>3 changes
 
-- Fix non-404 responses being registered instead of 404
-- Fix any url redirects on static url entry
-- Update all dependencies</PackageReleaseNotes>
+- Convert to modular plugin structure
+- Update dependencies
+- Prepare for new Umbraco marketplace</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
