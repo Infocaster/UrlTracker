@@ -11,7 +11,7 @@
 - Prepare for new Umbraco marketplace</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Infrastructure" Version="10.0.0" />
+    <PackageReference Include="Umbraco.Cms.Infrastructure" Version="11.0.0-rc1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Modules\UrlTracker.Modules.csproj" />

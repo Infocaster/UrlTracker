@@ -11,8 +11,8 @@
 - Prepare for new Umbraco marketplace</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Core" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="11.0.0-rc1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0-rc.2.22472.3" />
     <PackageReference Include="Scrutor" Version="4.2.0" />
   </ItemGroup>
   <ItemGroup>

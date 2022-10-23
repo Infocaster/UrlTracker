@@ -1,13 +1,13 @@
 trigger:
   branches:
     include:
-    - v10/main
-    - v10/develop
-    - v10/release/*
-    - v10/hotfix
+    - v11/main
+    - v11/develop
+    - v11/release/*
+    - v11/hotfix
   tags:
     include:
-    - 10.*
+    - 11.*
 
 pool:
   name: Default
