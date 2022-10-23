@@ -3,7 +3,7 @@ using NUnit.Framework;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Resources.Testing.Objects;
 
-namespace UrlTracker.Web.Tests.Controllers
+namespace UrlTracker.Backoffice.UI.Tests.Controllers
 {
     public partial class UrlTrackerManagerControllerTests
     {

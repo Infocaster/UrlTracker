@@ -23,6 +23,6 @@ namespace UrlTracker.Backoffice.UI
         public virtual string Alias => "UrlTracker";
 
         /// <inheritdoc/>
-        public virtual string View => "/App_Plugins/UrlTracker/Dashboards/overview.html";
+        public virtual string View => "/App_Plugins/UrlTracker/dashboard/dashboard.html";
     }
 }

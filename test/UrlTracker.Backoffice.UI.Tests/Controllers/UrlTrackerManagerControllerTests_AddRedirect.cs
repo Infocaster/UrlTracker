@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UrlTracker.Backoffice.UI.Controllers.Models;
 using UrlTracker.Core.Models;
 
-namespace UrlTracker.Web.Tests.Controllers
+namespace UrlTracker.Backoffice.UI.Tests.Controllers
 {
     public partial class UrlTrackerManagerControllerTests
     {

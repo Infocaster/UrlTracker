@@ -1,6 +1,8 @@
 ﻿using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Core.Services;
 using UrlTracker.Backoffice.UI.Controllers.Models;
+using UrlTracker.Backoffice.UI.Controllers.Models.Extensions;
+using UrlTracker.Backoffice.UI.Extensions;
 using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
@@ -47,6 +49,9 @@ namespace UrlTracker.Backoffice.UI.Map
 
             mapper.Define<ClientErrorCollection, GetNotFoundsResponse>(
                 (source, context) => new GetNotFoundsResponse(context.MapEnumerable<ClientError, RedirectViewModel>(source), source.Total));
+
+            mapper.Define<IUrlTrackerDashboardPage, DashboardPagesResponsePage>(
+                (source, context) => new DashboardPagesResponsePage(source.Alias, source.View));
         }
 
         private static void Map(ClientError source, RedirectViewModel target, MapperContext context)

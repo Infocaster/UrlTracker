@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using UrlTracker.Backoffice.UI.Controllers.Models;
+using UrlTracker.Backoffice.UI.Controllers.Models.Extensions;
 using UrlTracker.Backoffice.UI.Map;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
@@ -231,6 +232,23 @@ namespace UrlTracker.Backoffice.UI.Tests.Map
             {
                 Assert.That(result.Entries.Count, Is.EqualTo(input.Count()));
                 Assert.That(result.NumberOfEntries, Is.EqualTo(input.Total));
+            });
+        }
+
+        [TestCase(TestName = "Map IUrlTrackerDashboardPage to DashboardPagesResponsePage")]
+        public void Map_IUrlTrackerDashboardPage_DashboardPagesResponsePage()
+        {
+            // arrange
+            var input = TestDashboardPage.Create("test", UrlTracker.Backoffice.UI.Defaults.Routing.DashboardPageFolder + "test.html");
+
+            // act
+            var result = Mapper.Map<DashboardPagesResponsePage>(input)!;
+
+            // assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Alias, Is.EqualTo(input.Alias));
+                Assert.That(result.View, Is.EqualTo(input.View));
             });
         }
     }
