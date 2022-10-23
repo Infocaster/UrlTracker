@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>UrlTracker</PackageId>
     <Title>URL Tracker</Title>
@@ -9,11 +9,9 @@
       Use v11 for umbraco 11, Use v10 for umbraco 10, Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </Description>
     <RootNamespace>UrlTracker</RootNamespace>
-    <PackageReleaseNotes>3 changes
+    <PackageReleaseNotes>1 change
 
-- Convert to modular plugin structure
-- Update dependencies
-- Prepare for new Umbraco marketplace</PackageReleaseNotes>
+- port to Umbraco 11</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="11.0.0-rc1" />

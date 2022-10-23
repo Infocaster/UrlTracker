@@ -4,11 +4,9 @@
     <Title>URL Tracker Backoffice Notifications</Title>
     <Description>This package contains notification handlers for the URL Tracker to handle Umbraco content notifications</Description>
     <RootNamespace>UrlTracker.Backoffice.Notifications</RootNamespace>
-    <PackageReleaseNotes>3 changes
+    <PackageReleaseNotes>1 change
 
-- Convert to modular plugin structure
-- Update dependencies
-- Prepare for new Umbraco marketplace</PackageReleaseNotes>
+- port to Umbraco 11</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />

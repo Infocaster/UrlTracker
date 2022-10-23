@@ -5,11 +5,9 @@
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>3 changes
+    <PackageReleaseNotes>1 change
 
-- Convert to modular plugin structure
-- Update dependencies
-- Prepare for new Umbraco marketplace</PackageReleaseNotes>
+- port to Umbraco 11</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">
