@@ -4,7 +4,7 @@ using Umbraco.Cms.Infrastructure.Migrations;
 namespace UrlTracker.Core.Database.Migrations
 {
     [ExcludeFromCodeCoverage]
-    public class M202206251507_Rework
+    internal class M202206251507_Rework
         : MigrationBase
     {
         public M202206251507_Rework(IMigrationContext context) : base(context)

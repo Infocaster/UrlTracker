@@ -1,7 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UrlTracker.Core.Database;
-using UrlTracker.Core.Database.Models.Entities;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
 using ILogger = UrlTracker.Core.Logging.ILogger<UrlTracker.Core.Intercepting.RegexRedirectInterceptor>;
@@ -34,11 +34,7 @@ namespace UrlTracker.Core.Intercepting
 
             foreach (var redirect in regexRedirects)
             {
-                if ((rootNodeId == null
-                    || redirect.TargetRootNodeId == null
-                    || redirect.TargetRootNodeId == -1
-                    || redirect.TargetRootNodeId == rootNodeId)
-                   && Regex.IsMatch(interceptString, redirect.SourceRegex!, RegexOptions.IgnoreCase))
+                if (Regex.IsMatch(interceptString, redirect.Source.Value, RegexOptions.IgnoreCase))
                 {
                     _logger.LogResults<RegexRedirectInterceptor>(1);
                     return new CachableInterceptBase<IRedirect>(redirect);

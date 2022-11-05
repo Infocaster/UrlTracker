@@ -36,8 +36,6 @@ namespace UrlTracker.Backoffice.UI
                 .Append<UrlTrackerStyle>();
 
             builder.MapDefinitions()
-                .Add<ResponseMap>()
-                .Add<RequestMap>()
                 .Add<CsvMap>();
 
             builder.AddNotificationHandler<ServerVariablesParsingNotification, ServerVariablesNotificationHandler>();

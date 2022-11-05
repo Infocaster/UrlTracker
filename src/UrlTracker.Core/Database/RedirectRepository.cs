@@ -17,7 +17,6 @@ using UrlTracker.Core.Database.Dtos;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Factories;
 using UrlTracker.Core.Database.Models;
-using UrlTracker.Core.Database.Models.Entities;
 
 namespace UrlTracker.Core.Database
 {
@@ -43,7 +42,6 @@ namespace UrlTracker.Core.Database
             Expression<Func<RedirectDto, object?>> orderParameter = order switch
             {
                 OrderBy.Created => e => e.CreateDate,
-                OrderBy.Culture => e => e.Culture!,
                 _ => throw new ArgumentOutOfRangeException(nameof(order)),
             };
             selectQuery = selectQuery.OrderBy<RedirectDto>(descending, orderParameter);
@@ -59,11 +57,8 @@ namespace UrlTracker.Core.Database
                 if (query is not null)
                 {
                     bool queryIsInt = int.TryParse(query, out var queryInt);
-                    q = q.Where<RedirectDto>(e => e.SourceUrl!.Contains(query)
-                                                      || e.SourceRegex!.Contains(query)
-                                                      || e.TargetUrl!.Contains(query)
-                                                      || e.Notes!.Contains(query)
-                                                      || (queryIsInt && (e.TargetNodeId == queryInt)));
+                    q = q.Where<RedirectDto>(e => e.SourceValue!.Contains(query)
+                                               || e.TargetValue!.Contains(query));
                 }
 
                 return q;
@@ -86,24 +81,14 @@ namespace UrlTracker.Core.Database
          * Bonus: It would be awesome if somebody changes an existing domain, that we insert all required redirects to redirect
          *      the old domain to the new one
          */
-        public async Task<IReadOnlyCollection<IRedirect>> GetAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
+        public async Task<IReadOnlyCollection<IRedirect>> GetAsync(IEnumerable<string> urlsAndPaths)
         {
             // get base query
             var query = Sql()
                 .SelectAll()
                 .From<RedirectDto>()
-                .Where<RedirectDto>(entry => urlsAndPaths.Contains(entry.SourceUrl));
-
-            if (rootNodeId.HasValue)
-            {
-                // intercept on root node id if it has been given. Rows without root node id should also be returned
-                query = query.Where<RedirectDto>(entry => entry.TargetRootNodeId == rootNodeId || entry.TargetRootNodeId == null);
-            }
-            if (!string.IsNullOrWhiteSpace(culture))
-            {
-                // intercept on culture if it has been given. Rows without culture should also be returned
-                query = query.Where<RedirectDto>(entry => entry.Culture == culture || entry.Culture == null);
-            }
+                .Where<RedirectDto>(entry => entry.SourceStrategy == Defaults.DatabaseSchema.RedirectSourceStrategies.Url)
+                .Where<RedirectDto>(entry => urlsAndPaths.Contains(entry.SourceValue));
 
             query = query.OrderBy<RedirectDto>(true, e => e.Force, e => e.CreateDate);
 
@@ -114,7 +99,7 @@ namespace UrlTracker.Core.Database
 
         public Task<IReadOnlyCollection<IRedirect>> GetWithRegexAsync()
         {
-            var query = AmbientScope.SqlContext.Query<IRedirect>().Where(e => e.SourceRegex != null && e.SourceRegex != "");
+            var query = AmbientScope.SqlContext.Query<IRedirect>().Where(e => e.SourceStrategy == Defaults.DatabaseSchema.RedirectSourceStrategies.RegularExpression);
             var entities = Get(query);
 
             return Task.FromResult<IReadOnlyCollection<IRedirect>>(entities.ToList());

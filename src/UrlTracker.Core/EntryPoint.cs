@@ -6,9 +6,9 @@ using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Configuration;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Database;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Mappers;
 using UrlTracker.Core.Database.Migrations;
-using UrlTracker.Core.Database.Models.Entities;
 using UrlTracker.Core.Domain;
 using UrlTracker.Core.Intercepting;
 using UrlTracker.Core.Intercepting.Conversion;
@@ -39,7 +39,8 @@ namespace UrlTracker.Core
                    .ComposeUrlTrackerCoreAbstractions()
                    .ComposeDefaultInterceptors()
                    .ComposeDefaultInterceptPreprocessors()
-                   .ComposeDefaultInterceptConverters();
+                   .ComposeDefaultInterceptConverters()
+                   .ComposeDefaultStrategyMaps();
 
             builder.Services.AddSingleton<IDomainProvider, DomainProvider>();
 
@@ -57,6 +58,7 @@ namespace UrlTracker.Core
 
             builder.Services.AddTransient(typeof(ILogger<>), typeof(Logger<>));
 
+            builder.Services.AddSingleton<IStrategyMapCollection>(factory => factory.GetRequiredService<StrategyMapCollection>());
             builder.Services.AddSingleton<IStaticUrlProviderCollection>(factory => factory.GetRequiredService<StaticUrlProviderCollection>());
             builder.Services.AddSingleton<IInterceptPreprocessorCollection>(factory => factory.GetRequiredService<InterceptPreprocessorCollection>());
             builder.Services.AddSingleton<IInterceptorCollection>(factory => factory.GetRequiredService<InterceptorCollection>());
@@ -76,6 +78,19 @@ namespace UrlTracker.Core
 
         public static InterceptConverterCollectionBuilder? InterceptConverters(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<InterceptConverterCollectionBuilder>();
+
+        public static StrategyMapCollectionBuilder? StrategyMaps(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<StrategyMapCollectionBuilder>();
+
+        public static IUmbracoBuilder ComposeDefaultStrategyMaps(this IUmbracoBuilder builder)
+        {
+            builder.StrategyMaps()!
+                .Append<UrlSourceStrategyMap>()
+                .Append<RegexSourceStrategyMap>()
+                .Append<UrlTargetStrategyMap>()
+                .Append<ContentPageTargetStrategyMap>();
+            return builder;
+        }
 
         public static IUmbracoBuilder ComposeDefaultInterceptors(this IUmbracoBuilder builder)
         {

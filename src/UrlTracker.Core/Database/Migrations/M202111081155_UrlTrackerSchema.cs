@@ -11,7 +11,7 @@ namespace UrlTracker.Core.Database.Migrations
     [TableName("icUrlTracker")]
     [PrimaryKey("Id", AutoIncrement = true)]
     [ExcludeFromCodeCoverage]
-    public class M202111081155_UrlTrackerSchema_IcUrlTracker
+    internal class M202111081155_UrlTrackerSchema_IcUrlTracker
     {
         [Column("Id")]
         [PrimaryKeyColumn(AutoIncrement = true, IdentitySeed = 1)]
@@ -61,7 +61,7 @@ namespace UrlTracker.Core.Database.Migrations
     [TableName("icUrlTrackerIgnore404")]
     [PrimaryKey("Id", AutoIncrement = true)]
     [ExcludeFromCodeCoverage]
-    public class M202111081155_UrlTrackerSchema_IcUrlTrackerIgnore404
+    internal class M202111081155_UrlTrackerSchema_IcUrlTrackerIgnore404
     {
         [Column("Id")]
         [PrimaryKeyColumn(AutoIncrement = true, IdentitySeed = 1)]

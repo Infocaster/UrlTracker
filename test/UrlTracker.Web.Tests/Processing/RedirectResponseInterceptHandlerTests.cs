@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using NUnit.Framework;
@@ -32,8 +31,7 @@ namespace UrlTracker.Web.Tests.Processing
         public override void SetUp()
         {
             RequestHandlerSettingsMock.Setup(obj => obj.CurrentValue).Returns(new RequestHandlerSettings { AddTrailingSlash = false });
-            _testSubject = new RedirectResponseInterceptHandler(new VoidLogger<RedirectResponseInterceptHandler>(), Mapper!, ResponseAbstraction, UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory, RequestHandlerSettings);
-            _testMap!.To = null; // <- always reset the url on the test map to prevent urls from leaking between tests
+            _testSubject = new RedirectResponseInterceptHandler(new VoidLogger<RedirectResponseInterceptHandler>(), ResponseAbstraction, UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory, RedirectToUrlConverterCollection);
         }
 
         public static IEnumerable<TestCaseData> TestCases()
@@ -47,7 +45,7 @@ namespace UrlTracker.Web.Tests.Processing
                 Redirect = new Redirect
                 {
                     Force = false,
-                    TargetStatusCode = HttpStatusCode.MovedPermanently
+                    Permanent = true
                 }
             }.ToTestCase("HandleAsync redirects if status code is 404");
 
@@ -60,7 +58,7 @@ namespace UrlTracker.Web.Tests.Processing
                 Redirect = new Redirect
                 {
                     Force = false,
-                    TargetStatusCode = HttpStatusCode.MovedPermanently
+                    Permanent = true
                 }
             }.ToTestCase("HandleAsync does not redirect if status code is 200 and redirect is not forced");
 
@@ -73,7 +71,7 @@ namespace UrlTracker.Web.Tests.Processing
                 Redirect = new Redirect
                 {
                     Force = true,
-                    TargetStatusCode = HttpStatusCode.MovedPermanently
+                    Permanent = true
                 }
             }.ToTestCase("HandleAsync redirects if status code is 200 and redirect is forced");
 
@@ -86,7 +84,7 @@ namespace UrlTracker.Web.Tests.Processing
                 Redirect = new Redirect
                 {
                     Force = false,
-                    TargetStatusCode = HttpStatusCode.MovedPermanently,
+                    Permanent = true,
                     RetainQuery = false
                 }
             }.ToTestCase("HandleAsync does not pass through query string if this is disabled in the redirect");
@@ -100,7 +98,7 @@ namespace UrlTracker.Web.Tests.Processing
                 Redirect = new Redirect
                 {
                     Force = false,
-                    TargetStatusCode = HttpStatusCode.MovedPermanently,
+                    Permanent = true,
                     RetainQuery = true
                 }
             }.ToTestCase("HandleAsync passes through query string if this is enabled in the redirect");
@@ -113,7 +111,7 @@ namespace UrlTracker.Web.Tests.Processing
                 InitialUrl = "http://example.com/lorem",
                 Redirect = new Redirect
                 {
-                    TargetStatusCode = HttpStatusCode.Redirect
+                    Permanent = false
                 }
             }.ToTestCase("HandleAsync rewrites response to 410 if the published content target no longer exists");
 
@@ -125,26 +123,11 @@ namespace UrlTracker.Web.Tests.Processing
                 InitialUrl = "http://example.com/123456/lorem",
                 Redirect = new Redirect
                 {
-                    TargetStatusCode = HttpStatusCode.Redirect,
-                    SourceRegex = @"^\d{6}/(\w+)",
-                    TargetUrl = "http://example.com/$1"
+                    Permanent = false,
+                    Source = new RegexSourceStrategy(@"^\d{6}/(\w+)"),
+                    Target = new UrlTargetStrategy("http://example.com/$1")
                 }
             }.ToTestCase("HandleAsync replaces regex capture groups if the source is a regex");
-
-            yield return new RedirectResponseHandlerTestCase
-            {
-                ExpectedStatusCode = 302,
-                ExpectedUrl = "http://example.com/$1",
-                InitialStatusCode = 404,
-                InitialUrl = "http://example.com/123456/lorem",
-                Redirect = new Redirect
-                {
-                    TargetStatusCode = HttpStatusCode.Redirect,
-                    SourceRegex = @"^\d{6}/(\w+)",
-                    SourceUrl = "http://example.com/123456/lorem",
-                    TargetUrl = "http://example.com/$1"
-                }
-            }.ToTestCase("HandleAsync does not replace regex capture groups if the source is not a regex");
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -158,7 +141,7 @@ namespace UrlTracker.Web.Tests.Processing
             Task next(HttpContext context) => Task.FromResult(nextInvoked = true);
             if (expectedUrl is not null)
             {
-                _testMap!.To = Url.Parse(expectedUrl);
+                RedirectToUrlConverterCollectionMock.Setup(obj => obj.Convert(redirect, HttpContextMock.Context)).Returns(expectedUrl);
                 ResponseAbstractionMock!.Setup(obj => obj.SetRedirectLocation(HttpContextMock.Response, expectedUrl)).Verifiable();
             }
             var input = new InterceptBase<Redirect>(redirect);

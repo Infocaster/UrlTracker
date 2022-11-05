@@ -9,7 +9,7 @@ namespace UrlTracker.Core.Database.Dtos
     [PrimaryKey("id")]
     [ExplicitColumns]
     [ExcludeFromCodeCoverage]
-    public class RedirectDto
+    internal class RedirectDto
     {
         [Column("id")]
         [PrimaryKeyColumn]
@@ -22,31 +22,6 @@ namespace UrlTracker.Core.Database.Dtos
         [Column("createDate")]
         public DateTime CreateDate { get; set; }
 
-        [Column("culture")]
-        [Length(10)]
-        [NullSetting(NullSetting = NullSettings.Null)]
-        public string? Culture { get; set; }
-
-        [Column("targetRootNodeId")]
-        [NullSetting(NullSetting = NullSettings.Null)]
-        public int? TargetRootNodeId { get; set; }
-
-        [Column("targetNodeId")]
-        [NullSetting(NullSetting = NullSettings.Null)]
-        public int? TargetNodeId { get; set; }
-
-        [Column("targetUrl")]
-        [NullSetting(NullSetting = NullSettings.Null)]
-        public string? TargetUrl { get; set; }
-
-        [Column("sourceUrl")]
-        [NullSetting(NullSetting = NullSettings.Null)]
-        public string? SourceUrl { get; set; }
-
-        [Column("sourceRegex")]
-        [NullSetting(NullSetting = NullSettings.Null)]
-        public string? SourceRegex { get; set; }
-
         [Column("retainQuery")]
         public bool RetainQuery { get; set; }
 
@@ -56,8 +31,16 @@ namespace UrlTracker.Core.Database.Dtos
         [Column("force")]
         public bool Force { get; set; }
 
-        [Column("notes")]
-        [NullSetting(NullSetting = NullSettings.Null)]
-        public string? Notes { get; set; }
+        [Column("sourceStrategy")]
+        public Guid SourceStrategy { get; set; }
+
+        [Column("sourceValue")]
+        public string SourceValue { get; set; } = null!;
+
+        [Column("targetStrategy")]
+        public Guid TargetStrategy { get; set; }
+
+        [Column("targetValue")]
+        public string TargetValue { get; set; } = null!;
     }
 }

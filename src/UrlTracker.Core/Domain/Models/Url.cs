@@ -112,6 +112,7 @@ namespace UrlTracker.Core.Domain.Models
             };
         }
 
+        [ExcludeFromCodeCoverage]
         public static Url Create(Protocol? protocol, string? host, int? port, string? path, string? query)
         {
             return new Url

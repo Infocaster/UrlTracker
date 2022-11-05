@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -171,16 +170,11 @@ namespace UrlTracker.Backoffice.Notifications
         {
             return new Redirect
             {
-                Culture = culture,
                 Force = false,
-                Notes = notes,
                 RetainQuery = true,
-                SourceRegex = null,
-                SourceUrl = item.Url(_publishedUrlProvider, culture, UrlMode.Absolute),
-                TargetNode = item,
-                TargetRootNode = root,
-                TargetStatusCode = HttpStatusCode.MovedPermanently,
-                TargetUrl = null
+                Source = new UrlSourceStrategy(item.Url(_publishedUrlProvider, culture, UrlMode.Absolute)),
+                Target = new ContentPageTargetStrategy(item, culture),
+                Permanent = true
             };
         }
 

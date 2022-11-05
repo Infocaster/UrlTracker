@@ -4,7 +4,7 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Mapping;
-using UrlTracker.Core.Database.Models.Entities;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing;
 
@@ -27,7 +27,7 @@ namespace UrlTracker.Core.Tests
             return new IMapDefinition[]
             {
                 CreateTestMap<Core.Database.Entities.RedirectEntityCollection, RedirectCollection>(RedirectCollection.Create(Enumerable.Empty<Redirect>())),
-                CreateTestMap<Redirect, IRedirect>(new RedirectEntity(default, default, default, default, default, default, default, default, default, default)),
+                CreateTestMap<Redirect, IRedirect>(new RedirectEntity(default, default, default, default, default)),
                 CreateTestMap<IRedirect, Redirect>(new Redirect())
             };
         }

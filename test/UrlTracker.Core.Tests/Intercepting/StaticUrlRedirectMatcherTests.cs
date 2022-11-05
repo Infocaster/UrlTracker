@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using UrlTracker.Core.Database.Models.Entities;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting;
 using UrlTracker.Resources.Testing;
@@ -22,8 +22,8 @@ namespace UrlTracker.Core.Tests.Intercepting
 
         public static IEnumerable<TestCaseData> TestCases()
         {
-            var result1 = new RedirectEntity(default, default, default, default, "http://example.com/", default, default, default, default, default);
-            var result2 = new RedirectEntity(default, default, default, default, "http://example.com/lorem", default, default, default, default, default);
+            var result1 = new RedirectEntity(default, default, default, EntityStrategy.UrlSourceStrategy("http://example.com/"), default);
+            var result2 = new RedirectEntity(default, default, default, EntityStrategy.UrlSourceStrategy("http://example.com/lorem"), default);
 
             yield return new TestCaseData(
                 Array.Empty<IRedirect>(),
@@ -38,7 +38,7 @@ namespace UrlTracker.Core.Tests.Intercepting
         public async Task GetMatchAsync_NormalFlow_ReturnsMatch(IRedirect[] output, IRedirect expected)
         {
             // arrange
-            RedirectRepositoryMock!.Setup(obj => obj.GetAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<string>())).ReturnsAsync(output);
+            RedirectRepositoryMock!.Setup(obj => obj.GetAsync(It.IsAny<IEnumerable<string>>())).ReturnsAsync(output);
 
             // act
             var result = await _testSubject!.InterceptAsync(Url.Parse("http://example.com"), DefaultInterceptContext!);

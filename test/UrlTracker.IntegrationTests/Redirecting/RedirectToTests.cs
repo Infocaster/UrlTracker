@@ -13,7 +13,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
         protected Redirect CreateRedirectToBase()
         {
             var result = CreateRedirectBase();
-            result.SourceUrl = "/dolor/sit";
+            result.Source = new UrlSourceStrategy("/dolor/sit");
 
             return result;
         }
@@ -21,7 +21,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
         protected Redirect CreateRedirectToUrl(string url)
         {
             var result = CreateRedirectToBase();
-            result.TargetUrl = url;
+            result.Target = new UrlTargetStrategy(url);
 
             return result;
         }
@@ -29,7 +29,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
         protected Redirect CreateRedirectToContent(IPublishedContent content)
         {
             var result = CreateRedirectToBase();
-            result.TargetNode = content;
+            result.Target = new ContentPageTargetStrategy(content, null);
 
             return result;
         }
@@ -101,8 +101,8 @@ namespace UrlTracker.IntegrationTests.Redirecting
         {
             // arrange
             var redirect = CreateRedirectBase();
-            redirect.SourceRegex = @"^[0-9]{6}\?lorem=(\w+)";
-            redirect.TargetUrl = "/$1";
+            redirect.Source = new RegexSourceStrategy(@"^[0-9]{6}\?lorem=(\w+)");
+            redirect.Target = new UrlTargetStrategy("/$1");
             await GetRedirectService().AddAsync(redirect);
             var client = WebsiteFactory.CreateStandardClient();
             const string targetPath = "ipsum";

@@ -4,107 +4,85 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using Umbraco.Cms.Core.Models.Entities;
 
-namespace UrlTracker.Core.Database.Models.Entities
+namespace UrlTracker.Core.Database.Entities
 {
+    /// <summary>
+    /// When implemented, this type provides model values for a redirect
+    /// </summary>
     public interface IRedirect
         : IEntity, IRememberBeingDirty
     {
-        [DataMember]
-        string? Culture { get; set; }
-
-        [DataMember]
-        int? TargetRootNodeId { get; set; }
-
-        [DataMember]
-        int? TargetNodeId { get; set; }
-
-        [DataMember]
-        string? TargetUrl { get; set; }
-
-        [DataMember]
-        string? SourceUrl { get; set; }
-
-        [DataMember]
-        string? SourceRegex { get; set; }
-
+        /// <summary>
+        /// If true, query string parameters on the incoming URL should transfer to the outgoing URL
+        /// </summary>
         [DataMember]
         bool RetainQuery { get; set; }
 
+        /// <summary>
+        /// If true, the redirect should use the permanent redirect HTTP Status code
+        /// </summary>
         [DataMember]
         bool Permanent { get; set; }
 
+        /// <summary>
+        /// If true, the redirect should apply, regardless of the original response
+        /// </summary>
         [DataMember]
         bool Force { get; set; }
 
+        /// <summary>
+        /// The strategy by which to match incoming URLs
+        /// </summary>
         [DataMember]
-        public string? Notes { get; set; }
+        EntityStrategy Source { get; set; }
+
+        /// <summary>
+        /// The strategy by which to construct outgoing URLs
+        /// </summary>
+        [DataMember]
+        EntityStrategy Target { get; set; }
+
+        /// <summary>
+        /// Flattened strategy identifier for database query builder
+        /// </summary>
+        Guid SourceStrategy { get; }
+
+        /// <summary>
+        /// Flattened strategy value for database query builder
+        /// </summary>
+        string SourceValue { get; }
+
+        /// <summary>
+        /// Flattened strategy identifier for database query builder
+        /// </summary>
+        Guid TargetStrategy { get; }
+
+        /// <summary>
+        /// Flattened strategy value for database query builder
+        /// </summary>
+        string TargetValue { get; }
     }
 
     [Serializable]
     [DataContract(IsReference = true)]
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     [ExcludeFromCodeCoverage]
-    public class RedirectEntity : EntityBase, IRedirect
+    internal class RedirectEntity : EntityBase, IRedirect
     {
-        private string? _culture;
-        private int? _targetRootNodeId;
-        private int? _targetNodeId;
-        private string? _targetUrl;
-        private string? _sourceUrl;
-        private string? _sourceRegex;
         private bool _retainQuery;
         private bool _permanent;
         private bool _force;
-        private string? _notes;
+        private EntityStrategy _source;
+        private EntityStrategy _target;
 
-        public RedirectEntity(string? culture, int? targetRootNodeId, int? targetNodeId, string? targetUrl, string? sourceUrl, string? sourceRegex, bool retainQuery, bool permanent, bool force, string? notes)
+        /// <inheritdoc />
+        public RedirectEntity(bool retainQuery, bool permanent, bool force, EntityStrategy source, EntityStrategy target)
         {
-            _culture = culture;
-            _targetRootNodeId = targetRootNodeId;
-            _targetNodeId = targetNodeId;
-            _targetUrl = targetUrl;
-            _sourceUrl = sourceUrl;
-            _sourceRegex = sourceRegex;
             _retainQuery = retainQuery;
             _permanent = permanent;
             _force = force;
-            _notes = notes;
-        }
-
-        public string? Culture
-        {
-            get => _culture;
-            set => SetPropertyValueAndDetectChanges(value, ref _culture, nameof(Culture));
-        }
-
-        public int? TargetRootNodeId
-        {
-            get => _targetRootNodeId;
-            set => SetPropertyValueAndDetectChanges(value, ref _targetRootNodeId, nameof(TargetRootNodeId));
-        }
-
-        public int? TargetNodeId
-        {
-            get => _targetNodeId;
-            set => SetPropertyValueAndDetectChanges(value, ref _targetNodeId, nameof(TargetNodeId));
-        }
-
-        public string? TargetUrl
-        {
-            get => _targetUrl;
-            set => SetPropertyValueAndDetectChanges(value, ref _targetUrl, nameof(TargetUrl));
-        }
-
-        public string? SourceUrl
-        {
-            get => _sourceUrl;
-            set => SetPropertyValueAndDetectChanges(value, ref _sourceUrl, nameof(SourceUrl));
-        }
-
-        public string? SourceRegex
-        {
-            get => _sourceRegex;
-            set => SetPropertyValueAndDetectChanges(value, ref _sourceRegex, nameof(SourceRegex));
+            _source = source;
+            _target = target;
         }
 
         public bool RetainQuery
@@ -125,15 +103,29 @@ namespace UrlTracker.Core.Database.Models.Entities
             set => SetPropertyValueAndDetectChanges(value, ref _force, nameof(Force));
         }
 
-        public string? Notes
+        public EntityStrategy Target
         {
-            get => _notes;
-            set => SetPropertyValueAndDetectChanges(value, ref _notes, nameof(Notes));
+            get => _target;
+            set => SetPropertyValueAndDetectChanges(value, ref _target, nameof(Target));
         }
+
+        public EntityStrategy Source
+        {
+            get => _source;
+            set => SetPropertyValueAndDetectChanges(value, ref _source, nameof(Source));
+        }
+
+        public Guid SourceStrategy => Source.Strategy;
+
+        public string SourceValue => Source.Value;
+
+        public Guid TargetStrategy => Target.Strategy;
+
+        public string TargetValue => Target.Value;
 
         private string GetDebuggerDisplay()
         {
-            return $"From {SourceUrl ?? SourceRegex} to {TargetNodeId?.ToString() ?? TargetUrl}";
+            return $"From {Source.Value} to {Target.Value}";
         }
     }
 }

@@ -4,7 +4,7 @@ using Umbraco.Cms.Infrastructure.Migrations;
 namespace UrlTracker.Core.Database.Migrations
 {
     [ExcludeFromCodeCoverage]
-    public class M202204091707_AddIndexes
+    internal class M202204091707_AddIndexes
         : MigrationBase
     {
         private const string _indexName = "IX_" + _tableName + "_" + _cultureColumn + "_" + _oldUrlColumn + "_" + _redirectNodeIdColumn;

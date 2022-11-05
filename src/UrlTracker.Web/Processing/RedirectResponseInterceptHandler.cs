@@ -1,12 +1,7 @@
 ﻿using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
-using Umbraco.Cms.Core.Configuration.Models;
-using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Abstractions;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Logging;
 using UrlTracker.Core.Models;
 using UrlTracker.Web.Abstraction;
@@ -17,22 +12,19 @@ namespace UrlTracker.Web.Processing
         : ResponseInterceptHandlerBase<Redirect>
     {
         private readonly ILogger<RedirectResponseInterceptHandler> _logger;
-        private readonly IUmbracoMapper _mapper;
         private readonly IResponseAbstraction _responseAbstraction;
         private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactory;
-        private readonly IOptionsMonitor<RequestHandlerSettings> _requestHandlerOptions;
+        private readonly IRedirectToUrlConverterCollection _urlConverterCollection;
 
         public RedirectResponseInterceptHandler(ILogger<RedirectResponseInterceptHandler> logger,
-                                                IUmbracoMapper mapper,
                                                 IResponseAbstraction responseAbstraction,
                                                 IUmbracoContextFactoryAbstraction umbracoContextFactory,
-                                                IOptionsMonitor<RequestHandlerSettings> requestHandlerOptions)
+                                                IRedirectToUrlConverterCollection urlConverterCollection)
         {
             _logger = logger;
-            _mapper = mapper;
             _responseAbstraction = responseAbstraction;
             _umbracoContextFactory = umbracoContextFactory;
-            _requestHandlerOptions = requestHandlerOptions;
+            _urlConverterCollection = urlConverterCollection;
         }
 
         protected override async ValueTask HandleAsync(RequestDelegate next, HttpContext context, Redirect intercept)
@@ -53,18 +45,8 @@ namespace UrlTracker.Web.Processing
             response.Clear(_responseAbstraction);
             if (url is not null)
             {
-                // If redirect is a regex match, ensure that potential capture tokens are replaced in the target url
-                // TODO: Evaluate side effects!
-                //    This logic has been taken from the old code base. It has a potential side effect.
-                //    If a pattern matches on a partial string, the non-matched part will stay in the url
-                //    example: regex:"(ipsum)" targeturl: "http://example.com/$1" input: "lorem/ipsum/dolor" result: "lorem/http://example.com/ipsum/dolor"
-                if (string.IsNullOrWhiteSpace(intercept.SourceUrl) && !string.IsNullOrWhiteSpace(intercept.SourceRegex))
-                {
-                    url = Regex.Replace((context.Request.Path + context.Request.QueryString.Value).TrimStart('/'), intercept.SourceRegex, url);
-                }
-
                 response.SetRedirectLocation(_responseAbstraction, url);
-                response.StatusCode = ((int)intercept.TargetStatusCode);
+                response.StatusCode = (int)(intercept.Permanent ? HttpStatusCode.MovedPermanently : HttpStatusCode.Redirect);
                 _logger.LogRequestRedirected(url);
             }
             else
@@ -81,11 +63,7 @@ namespace UrlTracker.Web.Processing
 
         private string? GetUrl(HttpContext context, Redirect intercept)
         {
-            var requestHandlerOptionsValue = _requestHandlerOptions.CurrentValue;
-
-            var url = _mapper.MapToUrl(intercept, context);
-            var result = url?.ToString(UrlType.Absolute, requestHandlerOptionsValue.AddTrailingSlash);
-            return result;
+            return _urlConverterCollection.Convert(intercept, context);
         }
 
         private bool ShouldIntercept()

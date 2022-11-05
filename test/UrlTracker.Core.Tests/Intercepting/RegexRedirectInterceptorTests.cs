@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using UrlTracker.Core.Database.Models.Entities;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting;
 using UrlTracker.Resources.Testing;
@@ -22,7 +22,7 @@ namespace UrlTracker.Core.Tests.Intercepting
 
         public static IEnumerable<TestCaseData> NormalFlowTestCases()
         {
-            var entry1 = new RedirectEntity(default, default, default, default, default, @"\/ipsum", default, default, default, default);
+            var entry1 = new RedirectEntity(default, default, default, EntityStrategy.RegexSourceStrategy(@"\/ipsum"), default);
 
             yield return new TestCaseData(
                 entry1,
@@ -42,18 +42,12 @@ namespace UrlTracker.Core.Tests.Intercepting
                 null
                 ).SetName("InterceptAsync returns null if path does not match regex");
 
-            var entry2 = new RedirectEntity(default, default, default, default, default, @"^lorem\?ipsum=[0-9]{3}$", default, default, default, default);
+            var entry2 = new RedirectEntity(default, default, default, EntityStrategy.RegexSourceStrategy(@"^lorem\?ipsum=[0-9]{3}$"), default);
 
             yield return new TestCaseData(
                 entry2,
                 Url.Parse("http://example.com/lorem?ipsum=123"),
                 entry2).SetName("InterceptAsync matches on query string");
-
-            var entry3 = new RedirectEntity(default, 9998, default, default, default, "lorem", default, default, default, default);
-            yield return new TestCaseData(
-                entry3,
-                Url.Parse("http://example.com/lorem"),
-                null).SetName("InterceptAsync does not match if target root node is unequal to request root node");
         }
 
         [TestCaseSource(nameof(NormalFlowTestCases))]

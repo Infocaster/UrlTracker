@@ -16,6 +16,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         private readonly IUmbracoMapper _mapper;
         private readonly IUrlTrackerDashboardPageCollection _dashboardPageCollection;
 
+        /// <inheritdoc />
         public ExtensionsController(IUmbracoMapper mapper, IUrlTrackerDashboardPageCollection dashboardPageCollection)
         {
             _mapper = mapper;
@@ -26,6 +27,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         /// Get all URL Tracker dashboard tabs
         /// </summary>
         /// <returns>All URL Tracker dashboard tabs</returns>
+        [HttpGet]
         public IActionResult DashboardPages()
         {
             var pages = _dashboardPageCollection.Get();

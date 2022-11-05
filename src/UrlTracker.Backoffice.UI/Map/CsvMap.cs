@@ -1,4 +1,4 @@
-﻿using System.Net;
+﻿using System;
 using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Backoffice.UI.Controllers.Models;
 using UrlTracker.Core.Abstractions;
@@ -29,31 +29,33 @@ namespace UrlTracker.Backoffice.UI.Map
 
         private void Map(CsvRedirect source, Redirect target, MapperContext context)
         {
-            using var cref = _umbracoContextFactory.EnsureUmbracoContext();
-            target.Culture = source.Culture;
-            target.Force = source.Force;
-            target.Notes = source.Notes;
-            target.RetainQuery = source.PassThroughQueryString;
-            target.SourceRegex = source.SourceRegex;
-            target.SourceUrl = source.SourceUrl;
-            target.TargetNode = source.TargetNodeId.HasValue ? cref.GetContentById(source.TargetNodeId.Value) : null;
-            target.TargetRootNode = source.TargetRootNodeId.HasValue ? cref.GetContentById(source.TargetRootNodeId.Value) : null;
-            target.TargetStatusCode = (HttpStatusCode)source.TargetStatusCode;
-            target.TargetUrl = source.TargetUrl;
+            throw new NotImplementedException();
+            //using var cref = _umbracoContextFactory.EnsureUmbracoContext();
+            //target.Culture = source.Culture;
+            //target.Force = source.Force;
+            //target.Notes = source.Notes;
+            //target.RetainQuery = source.PassThroughQueryString;
+            //target.SourceRegex = source.SourceRegex;
+            //target.SourceUrl = source.SourceUrl;
+            //target.TargetNode = source.TargetNodeId.HasValue ? cref.GetContentById(source.TargetNodeId.Value) : null;
+            //target.TargetRootNode = source.TargetRootNodeId.HasValue ? cref.GetContentById(source.TargetRootNodeId.Value) : null;
+            //target.TargetStatusCode = (HttpStatusCode)source.TargetStatusCode;
+            //target.TargetUrl = source.TargetUrl;
         }
 
         private static void Map(Redirect source, CsvRedirect target, MapperContext context)
         {
-            target.Culture = source.Culture;
-            target.Force = source.Force;
-            target.TargetNodeId = source.TargetNode?.Id;
-            target.Notes = source.Notes;
-            target.PassThroughQueryString = source.RetainQuery;
-            target.SourceRegex = source.SourceRegex;
-            target.TargetRootNodeId = source.TargetRootNode?.Id;
-            target.SourceUrl = source.SourceUrl;
-            target.TargetStatusCode = (int)source.TargetStatusCode;
-            target.TargetUrl = source.TargetUrl;
+            throw new NotImplementedException();
+            //target.Culture = source.Culture;
+            //target.Force = source.Force;
+            //target.TargetNodeId = source.TargetNode?.Id;
+            //target.Notes = source.Notes;
+            //target.PassThroughQueryString = source.RetainQuery;
+            //target.SourceRegex = source.SourceRegex;
+            //target.TargetRootNodeId = source.TargetRootNode?.Id;
+            //target.SourceUrl = source.SourceUrl;
+            //target.TargetStatusCode = (int)source.TargetStatusCode;
+            //target.TargetUrl = source.TargetUrl;
         }
     }
 }

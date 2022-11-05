@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Core.Database.Entities;
-using UrlTracker.Core.Database.Models.Entities;
 using UrlTracker.Core.Map;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing;
@@ -20,12 +18,14 @@ namespace UrlTracker.Core.Tests.Map
         {
             return new[]
             {
-                new ServiceLayerMaps(UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory)
+                new ServiceLayerMaps(StrategyMapCollection)
             };
         }
 
         public override void SetUp()
         {
+            StrategyMapCollectionMock.Setup(obj => obj.Map<ISourceStrategy>(It.IsAny<EntityStrategy>())).Returns((EntityStrategy es) => new UrlSourceStrategy(es.Value));
+            StrategyMapCollectionMock.Setup(obj => obj.Map<ITargetStrategy>(It.IsAny<EntityStrategy>())).Returns(new ContentPageTargetStrategy(TestPublishedContent.Create(1234), "en-US"));
             UmbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => TestPublishedContent.Create(id));
         }
 
@@ -33,20 +33,13 @@ namespace UrlTracker.Core.Tests.Map
         public void Map_UrlTrackerRedirect_Redirect()
         {
             // arrange
-            IRedirect input = new RedirectEntity(default, default, default, default, default, default, default, default, default, default)
+            IRedirect input = new RedirectEntity(default, default, default, default, default)
             {
                 CreateDate = new DateTime(2022, 1, 23),
-                Notes = "lorem ipsum",
-                Culture = "nl-nl",
                 Force = true,
                 Id = 1000,
                 RetainQuery = true,
-                SourceRegex = "lorem ipsum",
-                SourceUrl = "http://example.com",
-                TargetNodeId = 1001,
-                TargetRootNodeId = 1002,
                 Permanent = false,
-                TargetUrl = "http://example.com/lorem"
             };
 
             // act
@@ -55,18 +48,11 @@ namespace UrlTracker.Core.Tests.Map
             // assert
             Assert.Multiple(() =>
             {
-                Assert.That(result.Culture, Is.EqualTo(input.Culture));
                 Assert.That(result.Force, Is.EqualTo(input.Force));
                 Assert.That(result.Id, Is.EqualTo(input.Id));
                 Assert.That(result.RetainQuery, Is.EqualTo(input.RetainQuery));
-                Assert.That(result.SourceRegex, Is.EqualTo(input.SourceRegex));
-                Assert.That(result.SourceUrl, Is.EqualTo("http://example.com"));
-                Assert.That(result.TargetNode, Is.Not.Null);
-                Assert.That(result.TargetRootNode, Is.Not.Null);
-                Assert.That(result.TargetStatusCode, Is.EqualTo(HttpStatusCode.Redirect));
-                Assert.That(result.TargetUrl, Is.EqualTo(input.TargetUrl));
                 Assert.That(result.Inserted, Is.EqualTo(input.CreateDate));
-                Assert.That(result.Notes, Is.EqualTo(input.Notes));
+                Assert.That(result.Permanent, Is.EqualTo(input.Permanent));
             });
         }
 
@@ -74,7 +60,7 @@ namespace UrlTracker.Core.Tests.Map
         public void Map_UrlTrackerRedirectCollection_RedirectCollection()
         {
             // arrange
-            var input = Database.Entities.RedirectEntityCollection.Create(new[] { new RedirectEntity(default, default, default, default, default, default, default, default, default, default) }, 3);
+            var input = Database.Entities.RedirectEntityCollection.Create(new[] { new RedirectEntity(default, default, default, default, default) }, 3);
 
             // act
             var result = Mapper!.Map<Core.Models.RedirectCollection>(input)!;
@@ -94,18 +80,11 @@ namespace UrlTracker.Core.Tests.Map
             // arrange
             var input = new Redirect
             {
-                Culture = "nl-nl",
                 Force = true,
                 Id = 1000,
                 Inserted = new DateTime(2022, 1, 23),
-                Notes = "lorem ipsum",
                 RetainQuery = true,
-                SourceRegex = "dolor sit",
-                SourceUrl = "http://example.com",
-                TargetNode = TestPublishedContent.Create(1001),
-                TargetRootNode = TestPublishedContent.Create(1002),
-                TargetStatusCode = HttpStatusCode.Redirect,
-                TargetUrl = "http://example.com/lorem"
+                Permanent = true
             };
 
             // act
@@ -114,36 +93,11 @@ namespace UrlTracker.Core.Tests.Map
             // assert
             Assert.Multiple(() =>
             {
-                Assert.That(result.Culture, Is.EqualTo(input.Culture));
                 Assert.That(result.Force, Is.EqualTo(input.Force));
                 Assert.That(result.Id, Is.EqualTo(input.Id));
                 Assert.That(result.CreateDate, Is.EqualTo(input.Inserted));
-                Assert.That(result.Notes, Is.EqualTo(input.Notes));
                 Assert.That(result.RetainQuery, Is.EqualTo(input.RetainQuery));
-                Assert.That(result.SourceRegex, Is.EqualTo(input.SourceRegex));
-                Assert.That(result.SourceUrl, Is.EqualTo(input.SourceUrl));
-                Assert.That(result.TargetNodeId, Is.EqualTo(input.TargetNode.Id));
-                Assert.That(result.TargetRootNodeId, Is.EqualTo(input.TargetRootNode.Id));
-                Assert.That(result.Permanent, Is.False);
-                Assert.That(result.TargetUrl, Is.EqualTo(input.TargetUrl));
-            });
-        }
-
-        [TestCase(TestName = "Map Redirect to IRedirect without content")]
-        public void Map_Redirect_UrlTrackerRedirect_NoContent()
-        {
-            // arrange
-            var input = new Redirect();
-
-            // act
-            var result = Mapper!.Map<IRedirect>(input)!;
-
-            // assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result.SourceUrl, Is.Null);
-                Assert.That(result.TargetNodeId, Is.Null);
-                Assert.That(result.TargetRootNodeId, Is.Null);
+                Assert.That(result.Permanent, Is.EqualTo(input.Permanent));
             });
         }
 

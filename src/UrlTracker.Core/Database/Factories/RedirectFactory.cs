@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using UrlTracker.Core.Database.Dtos;
-using UrlTracker.Core.Database.Models.Entities;
+using UrlTracker.Core.Database.Entities;
 
 namespace UrlTracker.Core.Database.Factories
 {
@@ -9,7 +9,7 @@ namespace UrlTracker.Core.Database.Factories
     {
         internal static IRedirect BuildEntity(RedirectDto dto)
         {
-            var entity = new RedirectEntity(dto.Culture, dto.TargetRootNodeId, dto.TargetNodeId, dto.TargetUrl, dto.SourceUrl, dto.SourceRegex, dto.RetainQuery, dto.Permanent, dto.Force, dto.Notes);
+            var entity = new RedirectEntity(dto.RetainQuery, dto.Permanent, dto.Force, new EntityStrategy(dto.SourceStrategy, dto.SourceValue), new EntityStrategy(dto.TargetStrategy, dto.TargetValue));
             try
             {
                 entity.DisableChangeTracking();
@@ -31,16 +31,13 @@ namespace UrlTracker.Core.Database.Factories
         {
             var dto = new RedirectDto
             {
-                Culture = entity.Culture.DefaultIfNullOrWhiteSpace(null),
-                TargetRootNodeId = entity.TargetRootNodeId,
-                TargetNodeId = entity.TargetNodeId,
-                TargetUrl = entity.TargetUrl.DefaultIfNullOrWhiteSpace(null),
-                SourceUrl = entity.SourceUrl.DefaultIfNullOrWhiteSpace(null),
-                SourceRegex = entity.SourceRegex.DefaultIfNullOrWhiteSpace(null),
                 RetainQuery = entity.RetainQuery,
                 Permanent = entity.Permanent,
                 Force = entity.Force,
-                Notes = entity.Notes.DefaultIfNullOrWhiteSpace(null),
+                TargetValue = entity.Target.Value,
+                SourceValue = entity.Source.Value,
+                SourceStrategy = entity.Source.Strategy,
+                TargetStrategy = entity.Target.Strategy,
                 CreateDate = entity.CreateDate,
                 Key = entity.Key,
             };

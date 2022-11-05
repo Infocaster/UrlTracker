@@ -6,7 +6,6 @@ using Umbraco.Cms.Core.Persistence.Querying;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Models;
-using UrlTracker.Core.Database.Models.Entities;
 
 namespace UrlTracker.Core.Caching.Memory.Database
 {
@@ -63,9 +62,9 @@ namespace UrlTracker.Core.Caching.Memory.Database
         }
 
         /// <inheritdoc/>
-        public Task<IReadOnlyCollection<IRedirect>> GetAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
+        public Task<IReadOnlyCollection<IRedirect>> GetAsync(IEnumerable<string> urlsAndPaths)
         {
-            return _decoratee.GetAsync(urlsAndPaths, rootNodeId, culture);
+            return _decoratee.GetAsync(urlsAndPaths);
         }
 
         /// <inheritdoc/>

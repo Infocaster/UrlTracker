@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using UrlTracker.Core.Database;
-using UrlTracker.Core.Database.Models.Entities;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
 using ILogger = UrlTracker.Core.Logging.ILogger<UrlTracker.Core.Intercepting.StaticUrlRedirectInterceptor>;
@@ -29,10 +29,7 @@ namespace UrlTracker.Core.Intercepting
         {
             var interceptStrings = _urlProviderCollection.GetUrls(url);
 
-            var culture = context.GetCulture();
-            var rootNode = context.GetRootNode();
-
-            var results = await _redirectRepository.GetAsync(interceptStrings, rootNode, culture);
+            var results = await _redirectRepository.GetAsync(interceptStrings);
             _logger.LogResults<StaticUrlRedirectInterceptor>(results.Count);
 
             return GetBestIntercept(results, url, context);

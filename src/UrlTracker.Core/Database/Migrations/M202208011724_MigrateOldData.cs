@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.Extensions.Logging;
@@ -9,7 +8,7 @@ using Umbraco.Cms.Infrastructure.Migrations;
 namespace UrlTracker.Core.Database.Migrations
 {
     [ExcludeFromCodeCoverage]
-    public class M202208011724_MigrateOldData
+    internal class M202208011724_MigrateOldData
         : MigrationBase
     {
         public M202208011724_MigrateOldData(IMigrationContext context)
@@ -22,7 +21,7 @@ namespace UrlTracker.Core.Database.Migrations
             // Sqlite doesn't understand GUIDS,
             //    so we need to make a roundtrip to the server to actually create new guids for each record
             Logger.LogInformation("Transferring referrers from old table structure");
-            BatchFetchAndProcess<OldReferrerDto>(Sql(
+            Database.BatchFetchAndProcess<OldReferrerDto>(Sql(
             @"SELECT MIN([Inserted]) as Inserted, [Referrer]
             FROM [icUrlTracker]
             WHERE [Referrer] is not null
@@ -39,7 +38,7 @@ namespace UrlTracker.Core.Database.Migrations
 
             // transfer client errors
             Logger.LogInformation("Transferring client error urls from old table structure");
-            BatchFetchAndProcess<OldClientErrorDto>(Sql(
+            Database.BatchFetchAndProcess<OldClientErrorDto>(Sql(
             @"SELECT MIN([Inserted]) as Inserted, [OldUrl]
             FROM [icUrlTracker]
             WHERE [Is404] = 1
@@ -58,7 +57,7 @@ namespace UrlTracker.Core.Database.Migrations
 
             // transfer instances of client errors
             Logger.LogInformation("Transferring client error instances from old table structure");
-            BatchFetchAndProcess<M202206251507_Rework_ClientError2ReferrerDto>(Sql(
+            Database.BatchFetchAndProcess<M202206251507_Rework_ClientError2ReferrerDto>(Sql(
             @"SELECT [ce].[id] as clientError, [re].[id] as referrer, [icUrlTracker].[Inserted] as createDate
             FROM [icUrlTracker]
             left join [urltrackerClientError] ce
@@ -77,7 +76,7 @@ namespace UrlTracker.Core.Database.Migrations
 set [ignored] = 1
 from [icUrlTrackerIgnore404] where [urltrackerClientError].[url] = [icUrlTrackerIgnore404].[Url]");
 
-            BatchFetchAndProcess<OldIgnoreDto>(Sql(
+            Database.BatchFetchAndProcess<OldIgnoreDto>(Sql(
             @"select MIN([ig].[Inserted]) as Inserted,
 	        [ig].[Url]
             from [icUrlTrackerIgnore404] as ig
@@ -97,7 +96,7 @@ from [icUrlTrackerIgnore404] where [urltrackerClientError].[url] = [icUrlTracker
 
             // transfer redirects
             Logger.LogInformation("Transferring redirects from old table structure");
-            BatchFetchAndProcess<OldRedirectDto>(Sql(
+            Database.BatchFetchAndProcess<OldRedirectDto>(Sql(
             @"SELECT Inserted, Culture, ForceRedirect, Notes, RedirectPassThroughQueryString, OldRegex, OldUrl, RedirectNodeId, RedirectRootNodeId, RedirectUrl
             FROM [icUrlTracker]
             WHERE [icUrlTracker].[Is404] = 0
@@ -119,25 +118,6 @@ from [icUrlTrackerIgnore404] where [urltrackerClientError].[url] = [icUrlTracker
                     TargetUrl = i.RedirectUrl.DefaultIfNullOrWhiteSpace(null)
                 }));
             });
-        }
-
-        private void BatchFetchAndProcess<T>(Sql sql, Action<IEnumerable<T>> action)
-        {
-            long page = 1;
-            long totalPages;
-            do
-            {
-                /* Records are processed in batches of 500.000
-                 * Several tests concluded that at this number the speed is still acceptable (approximately 3 minutes on 2.000.000 records)
-                 * and the database doesn't time out.
-                 */
-                var results = Database.Page<T>(page, 500000, sql);
-                totalPages = results.TotalPages;
-                page++;
-
-                action(results.Items);
-            }
-            while (page <= totalPages);
         }
 
         private class OldReferrerDto
