@@ -1,29 +1,14 @@
-﻿using System;
-
-namespace UrlTracker.Core.Models
+﻿namespace UrlTracker.Core.Models
 {
     /// <summary>
-    /// This base interface provides identification for source and target strategies
-    /// </summary>
-    public interface IStrategyBase
-    {
-        /// <summary>
-        /// The unique identifier of the strategy
-        /// </summary>
-        Guid Strategy { get; }
-    }
-
-    /// <summary>
-    /// A strategy for matching incoming URLs
+    /// A marker interface for source strategies
     /// </summary>
     public interface ISourceStrategy
-        : IStrategyBase
     { }
 
     /// <summary>
-    /// A strategy for creating outgoing URLs
+    /// A marker interface for target strategies
     /// </summary>
     public interface ITargetStrategy
-        : IStrategyBase
     { }
 }

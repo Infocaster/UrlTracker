@@ -1,5 +1,4 @@
 ﻿using UrlTracker.Core.Database.Entities;
-using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Map
 {
@@ -13,9 +12,9 @@ namespace UrlTracker.Core.Map
         /// </summary>
         /// <param name="strategyBase">The strategy to check</param>
         /// <returns><see langword="true"/> if this converter can convert the given strategy, otherwise <see langword="false"/></returns>
-        bool CanHandle(IStrategyBase strategyBase);
+        bool CanHandle(object strategyBase);
 
-        /// <inheritdoc cref="CanHandle(IStrategyBase)"/>
+        /// <inheritdoc cref="CanHandle(object)"/>
         bool CanHandle(EntityStrategy strategyBase);
 
         /// <summary>
@@ -23,10 +22,10 @@ namespace UrlTracker.Core.Map
         /// </summary>
         /// <param name="strategy">The strategy to convert</param>
         /// <returns>The result of the conversion</returns>
-        IStrategyBase Convert(EntityStrategy strategy);
+        object Convert(EntityStrategy strategy);
 
         /// <inheritdoc cref="Convert(EntityStrategy)"/>
-        EntityStrategy Convert(IStrategyBase strategy);
+        EntityStrategy Convert(object strategy);
     }
 
     /// <summary>
@@ -35,7 +34,6 @@ namespace UrlTracker.Core.Map
     /// <typeparam name="T">The type of strategy to convert to and from</typeparam>
     public interface IStrategyMap<out T>
         : IStrategyMap
-        where T : IStrategyBase
     {
         /// <inheritdoc cref="IStrategyMap.Convert(EntityStrategy)"/>
         new T Convert(EntityStrategy strategy);

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Umbraco.Cms.Core.Composing;
 using UrlTracker.Core.Database.Entities;
-using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Map
 {
@@ -22,8 +21,8 @@ namespace UrlTracker.Core.Map
     /// </summary>
     public interface IStrategyMapCollection
     {
-        T Map<T>(EntityStrategy strategy) where T : IStrategyBase;
-        EntityStrategy Map(IStrategyBase strategy);
+        T Map<T>(EntityStrategy strategy);
+        EntityStrategy Map(object strategy);
     }
 
     /// <summary>
@@ -37,7 +36,6 @@ namespace UrlTracker.Core.Map
         { }
 
         public T Map<T>(EntityStrategy strategy)
-            where T : IStrategyBase
         {
             var mapper = this.OfType<IStrategyMap<T>>().FirstOrDefault(m => m.CanHandle(strategy));
             if (mapper is null) throw new ArgumentException("Don't know how to map this strategy", nameof(strategy));
@@ -45,7 +43,7 @@ namespace UrlTracker.Core.Map
             return mapper.Convert(strategy);
         }
 
-        public EntityStrategy Map(IStrategyBase strategy)
+        public EntityStrategy Map(object strategy)
         {
             var mapper = this.FirstOrDefault(m => m.CanHandle(strategy));
             if (mapper is null) throw new ArgumentException("Don't know how to map this strategy", nameof(strategy));

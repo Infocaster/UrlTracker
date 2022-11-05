@@ -22,7 +22,7 @@ namespace UrlTracker.Core.Tests.Intercepting
 
         public static IEnumerable<TestCaseData> NormalFlowTestCases()
         {
-            var entry1 = new RedirectEntity(default, default, default, EntityStrategy.RegexSourceStrategy(@"\/ipsum"), default);
+            var entry1 = new RedirectEntity(default, default, default, EntityStrategy.RegexSource(@"\/ipsum"), default);
 
             yield return new TestCaseData(
                 entry1,
@@ -42,7 +42,7 @@ namespace UrlTracker.Core.Tests.Intercepting
                 null
                 ).SetName("InterceptAsync returns null if path does not match regex");
 
-            var entry2 = new RedirectEntity(default, default, default, EntityStrategy.RegexSourceStrategy(@"^lorem\?ipsum=[0-9]{3}$"), default);
+            var entry2 = new RedirectEntity(default, default, default, EntityStrategy.RegexSource(@"^lorem\?ipsum=[0-9]{3}$"), default);
 
             yield return new TestCaseData(
                 entry2,

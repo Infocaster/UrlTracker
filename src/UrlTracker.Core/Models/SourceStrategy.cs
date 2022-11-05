@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 
 namespace UrlTracker.Core.Models
@@ -8,11 +8,10 @@ namespace UrlTracker.Core.Models
     /// </summary>
     [ExcludeFromCodeCoverage]
     public abstract class SourceStrategyBase
-        : StrategyBase, ISourceStrategy
+        : ISourceStrategy
     {
         /// <inheritdoc />
-        protected SourceStrategyBase(Guid strategy, string value)
-            : base(strategy)
+        protected SourceStrategyBase(string value)
         {
             Value = value;
         }
@@ -20,6 +19,7 @@ namespace UrlTracker.Core.Models
         /// <summary>
         /// The parameter that defines the behaviour of this strategy
         /// </summary>
+        [Required]
         public virtual string Value { get; set; }
     }
 
@@ -32,7 +32,7 @@ namespace UrlTracker.Core.Models
     {
         /// <inheritdoc />
         public UrlSourceStrategy(string value)
-            : base(Defaults.DatabaseSchema.RedirectSourceStrategies.Url, value)
+            : base(value)
         { }
     }
 
@@ -45,7 +45,7 @@ namespace UrlTracker.Core.Models
     {
         /// <inheritdoc />
         public RegexSourceStrategy(string value)
-            : base(Defaults.DatabaseSchema.RedirectSourceStrategies.RegularExpression, value)
+            : base(value)
         { }
     }
 }

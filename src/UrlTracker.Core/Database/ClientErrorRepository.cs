@@ -42,13 +42,13 @@ namespace UrlTracker.Core.Database
             return Task.FromResult<IReadOnlyCollection<IClientError>>(results.ToList());
         }
 
-        public async Task<int> CountAsync(DateTime start, DateTime end)
+        public Task<int> CountAsync(DateTime start, DateTime end)
         {
             var query = Sql().SelectCount()
                              .From<ClientError2ReferrerDto>()
                              .Where<ClientError2ReferrerDto>(e => e.CreateDate >= start && e.CreateDate <= end);
 
-            return await Database.ExecuteScalarAsync<int>(query).ConfigureAwait(false);
+            return Database.ExecuteScalarAsync<int>(query);
         }
 
         public async Task<ClientErrorEntityCollection> GetAsync(uint skip, uint take, string? query, OrderBy order, bool descending)

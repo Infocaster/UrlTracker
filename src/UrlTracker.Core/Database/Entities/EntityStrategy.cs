@@ -37,7 +37,7 @@ namespace UrlTracker.Core.Database.Entities
         /// </summary>
         /// <param name="value">The strategy value</param>
         /// <returns>A new instance of <see cref="EntityStrategy"/></returns>
-        public static EntityStrategy UrlSourceStrategy(string value)
+        public static EntityStrategy UrlSource(string value)
             => new(Defaults.DatabaseSchema.RedirectSourceStrategies.Url, value);
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace UrlTracker.Core.Database.Entities
         /// </summary>
         /// <param name="value">The strategy value</param>
         /// <returns>A new instance of <see cref="EntityStrategy"/></returns>
-        public static EntityStrategy RegexSourceStrategy(string value)
+        public static EntityStrategy RegexSource(string value)
             => new(Defaults.DatabaseSchema.RedirectSourceStrategies.RegularExpression, value);
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace UrlTracker.Core.Database.Entities
         /// </summary>
         /// <param name="value">The strategy value</param>
         /// <returns>A new instance of <see cref="EntityStrategy"/></returns>
-        public static EntityStrategy UrlTargetStrategy(string value)
+        public static EntityStrategy UrlTarget(string value)
             => new(Defaults.DatabaseSchema.RedirectTargetStrategies.Url, value);
 
 
@@ -62,7 +62,7 @@ namespace UrlTracker.Core.Database.Entities
         /// </summary>
         /// <param name="value">The strategy value</param>
         /// <returns>A new instance of <see cref="EntityStrategy"/></returns>
-        public static EntityStrategy ContentTargetStrategy(string value)
+        public static EntityStrategy ContentTarget(string value)
             => new(Defaults.DatabaseSchema.RedirectTargetStrategies.Content, value);
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace UrlTracker.Core.Database.Entities
         /// </summary>
         /// <param name="value">The strategy value</param>
         /// <returns>A new instance of <see cref="EntityStrategy"/></returns>
-        public static EntityStrategy MediaTargetStrategy(string value)
+        public static EntityStrategy MediaTarget(string value)
             => new(Defaults.DatabaseSchema.RedirectTargetStrategies.Media, value);
 
         /// <inheritdoc />
@@ -94,6 +94,18 @@ namespace UrlTracker.Core.Database.Entities
         public override int GetHashCode()
         {
             return HashCode.Combine(Strategy, Value);
+        }
+
+        /// <inheritdoc />
+        public static bool operator ==(EntityStrategy left, EntityStrategy right)
+        {
+            return left.Equals(right);
+        }
+
+        /// <inheritdoc />
+        public static bool operator !=(EntityStrategy left, EntityStrategy right)
+        {
+            return !left.Equals(right);
         }
     }
 }

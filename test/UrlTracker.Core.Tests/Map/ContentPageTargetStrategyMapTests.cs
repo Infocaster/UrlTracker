@@ -23,9 +23,9 @@ namespace UrlTracker.Core.Tests.Map
 
         public static IEnumerable<TestCaseData> ConvertToSimpleTestCaseSource()
         {
-            yield return new TestCaseData(new ContentPageTargetStrategy(TestPublishedContent.Create(1234), null), EntityStrategy.ContentTargetStrategy("1234"))
+            yield return new TestCaseData(new ContentPageTargetStrategy(TestPublishedContent.Create(1234), null), EntityStrategy.ContentTarget("1234"))
                 .SetName("Convert returns correct value with only id");
-            yield return new TestCaseData(new ContentPageTargetStrategy(TestPublishedContent.Create(1234), "en-US"), EntityStrategy.ContentTargetStrategy("1234;en-US"))
+            yield return new TestCaseData(new ContentPageTargetStrategy(TestPublishedContent.Create(1234), "en-US"), EntityStrategy.ContentTarget("1234;en-US"))
                 .SetName("Convert returns correct value with id and culture");
         }
 
@@ -56,13 +56,13 @@ namespace UrlTracker.Core.Tests.Map
 
         public static IEnumerable<TestCaseData> ConvertToComplexTestCaseSource()
         {
-            yield return new TestCaseData(EntityStrategy.ContentTargetStrategy("1234"), new ContentPageTargetStrategy(_testContent, null))
+            yield return new TestCaseData(EntityStrategy.ContentTarget("1234"), new ContentPageTargetStrategy(_testContent, null))
                 .SetName("Convert creates correct strategy with only content");
 
-            yield return new TestCaseData(EntityStrategy.ContentTargetStrategy("1234;en-US"), new ContentPageTargetStrategy(_testContent, "en-US"))
+            yield return new TestCaseData(EntityStrategy.ContentTarget("1234;en-US"), new ContentPageTargetStrategy(_testContent, "en-US"))
                 .SetName("Convert creates correct strategy with content and culture");
 
-            yield return new TestCaseData(EntityStrategy.ContentTargetStrategy("1000"), new ContentPageTargetStrategy(null, null))
+            yield return new TestCaseData(EntityStrategy.ContentTarget("1000"), new ContentPageTargetStrategy(null, null))
                 .SetName("Convert creates correct strategy if content does not exist");
         }
 

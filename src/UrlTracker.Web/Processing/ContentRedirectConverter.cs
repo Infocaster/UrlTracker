@@ -21,7 +21,7 @@ namespace UrlTracker.Web.Processing
         }
 
         public bool CanHandle(Redirect redirect)
-            => redirect.Target.Strategy == Core.Defaults.DatabaseSchema.RedirectTargetStrategies.Content && redirect.Target is ContentPageTargetStrategy;
+            => redirect.Target is ContentPageTargetStrategy;
 
         public string? Handle(Redirect redirect, HttpContext context)
         {

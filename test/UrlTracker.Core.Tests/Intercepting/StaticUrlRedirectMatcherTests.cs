@@ -22,8 +22,8 @@ namespace UrlTracker.Core.Tests.Intercepting
 
         public static IEnumerable<TestCaseData> TestCases()
         {
-            var result1 = new RedirectEntity(default, default, default, EntityStrategy.UrlSourceStrategy("http://example.com/"), default);
-            var result2 = new RedirectEntity(default, default, default, EntityStrategy.UrlSourceStrategy("http://example.com/lorem"), default);
+            var result1 = new RedirectEntity(default, default, default, EntityStrategy.UrlSource("http://example.com/"), default);
+            var result2 = new RedirectEntity(default, default, default, EntityStrategy.UrlSource("http://example.com/lorem"), default);
 
             yield return new TestCaseData(
                 Array.Empty<IRedirect>(),

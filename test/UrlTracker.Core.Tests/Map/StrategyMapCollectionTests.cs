@@ -22,11 +22,11 @@ namespace UrlTracker.Core.Tests.Map
         public void MapToSimple_MapperExists_CallsMapper()
         {
             // arrange
-            _strategyMapMock.Setup(obj => obj.CanHandle(It.IsAny<IStrategyBase>())).Returns(true);
-            _strategyMapMock.Setup(obj => obj.Convert(It.IsAny<IStrategyBase>())).Verifiable();
+            _strategyMapMock.Setup(obj => obj.CanHandle(It.IsAny<object>())).Returns(true);
+            _strategyMapMock.Setup(obj => obj.Convert(It.IsAny<object>())).Verifiable();
 
             // act
-            _testSubject.Map(Mock.Of<IStrategyBase>());
+            _testSubject.Map(Mock.Of<object>());
 
             // assert
             _strategyMapMock.Verify();
@@ -36,10 +36,10 @@ namespace UrlTracker.Core.Tests.Map
         public void MapToSimple_MapperDoesNotExist_ThrowsException()
         {
             // arrange
-            _strategyMapMock.Setup(obj => obj.CanHandle(It.IsAny<IStrategyBase>())).Returns(false);
+            _strategyMapMock.Setup(obj => obj.CanHandle(It.IsAny<object>())).Returns(false);
 
             // act
-            void result() => _testSubject.Map(Mock.Of<IStrategyBase>());
+            void result() => _testSubject.Map(Mock.Of<object>());
 
             // assert
             Assert.That(result, Throws.ArgumentException);
@@ -53,7 +53,7 @@ namespace UrlTracker.Core.Tests.Map
             _strategyMapMock.Setup(obj => obj.Convert(It.IsAny<EntityStrategy>())).Verifiable();
 
             // act
-            _testSubject.Map<ISourceStrategy>(EntityStrategy.UrlSourceStrategy("https://example.com"));
+            _testSubject.Map<ISourceStrategy>(EntityStrategy.UrlSource("https://example.com"));
 
             // assert
             _strategyMapMock.Verify();
@@ -66,7 +66,7 @@ namespace UrlTracker.Core.Tests.Map
             _strategyMapMock.Setup(obj => obj.CanHandle(It.IsAny<EntityStrategy>())).Returns(false);
 
             // act
-            void result() => _testSubject.Map<ISourceStrategy>(EntityStrategy.UrlSourceStrategy("https://example.com"));
+            void result() => _testSubject.Map<ISourceStrategy>(EntityStrategy.UrlSource("https://example.com"));
 
             // assert
             Assert.That(result, Throws.ArgumentException);

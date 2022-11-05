@@ -19,6 +19,6 @@ namespace UrlTracker.Core.Map
 
         /// <inheritdoc/>
         protected override EntityStrategy Convert(RegexSourceStrategy strategy)
-            => new(strategy.Strategy, strategy.Value);
+            => EntityStrategy.RegexSource(strategy.Value);
     }
 }

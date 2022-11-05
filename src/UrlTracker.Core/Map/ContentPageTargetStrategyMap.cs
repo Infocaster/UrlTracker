@@ -36,7 +36,7 @@ namespace UrlTracker.Core.Map
             if (strategy.Culture != null)
                 value += ";" + strategy.Culture;
 
-            return new EntityStrategy(strategy.Strategy, value);
+            return EntityStrategy.ContentTarget(value);
         }
     }
 }

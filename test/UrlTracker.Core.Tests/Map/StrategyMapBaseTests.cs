@@ -24,13 +24,10 @@ namespace UrlTracker.Core.Tests.Map
 
             yield return new TestCaseData(new ContentPageTargetStrategy(default, default), true)
                 .SetName("CanHandle returns true if target strategy is a supported strategy");
-
-            yield return new TestCaseData(new MisleadingTargetStrategy(), false)
-                .SetName("CanHandle returns false if target strategy has right key but not right type");
         }
 
         [TestCaseSource(nameof(CanHandleComplexTestCaseSource))]
-        public void CanHandleComplex_SeveralStrategies_ReturnsCorrectResult(IStrategyBase strategy, bool expected)
+        public void CanHandleComplex_SeveralStrategies_ReturnsCorrectResult(object strategy, bool expected)
         {
             // arrange
 
@@ -43,10 +40,10 @@ namespace UrlTracker.Core.Tests.Map
 
         public static IEnumerable<TestCaseData> CanHandleSimpleTestCaseSource()
         {
-            yield return new TestCaseData(EntityStrategy.ContentTargetStrategy("1234"), true)
+            yield return new TestCaseData(EntityStrategy.ContentTarget("1234"), true)
                 .SetName("CanHandle returns true if target strategy is supported");
 
-            yield return new TestCaseData(EntityStrategy.UrlTargetStrategy("http://example.com"), false)
+            yield return new TestCaseData(EntityStrategy.UrlTarget("http://example.com"), false)
                 .SetName("CanHandle returns false if target strategy is not supported");
         }
 
@@ -75,11 +72,6 @@ namespace UrlTracker.Core.Tests.Map
             {
                 throw new NotImplementedException();
             }
-        }
-
-        private class MisleadingTargetStrategy : ITargetStrategy
-        {
-            public Guid Strategy => UrlTracker.Core.Defaults.DatabaseSchema.RedirectTargetStrategies.Content;
         }
     }
 }

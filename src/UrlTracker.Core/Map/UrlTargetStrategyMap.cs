@@ -19,6 +19,6 @@ namespace UrlTracker.Core.Map
 
         /// <inheritdoc/>
         protected override EntityStrategy Convert(UrlTargetStrategy strategy)
-            => new(strategy.Strategy, strategy.Url.ToString());
+            => EntityStrategy.UrlTarget(strategy.Url.ToString());
     }
 }

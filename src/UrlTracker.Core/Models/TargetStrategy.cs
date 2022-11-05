@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using UrlTracker.Core.Domain.Models;
@@ -10,10 +11,10 @@ namespace UrlTracker.Core.Models
     /// </summary>
     [ExcludeFromCodeCoverage]
     public abstract class ContentTargetStrategyBase
-        : StrategyBase, ITargetStrategy
+        : ITargetStrategy
     {
         /// <inheritdoc />
-        protected ContentTargetStrategyBase(Guid strategy, IPublishedContent? content) : base(strategy)
+        protected ContentTargetStrategyBase(IPublishedContent? content)
         {
             Content = content;
         }
@@ -21,6 +22,7 @@ namespace UrlTracker.Core.Models
         /// <summary>
         /// The content to redirect to
         /// </summary>
+        [Required]
         public virtual IPublishedContent? Content { get; }
     }
 
@@ -33,7 +35,7 @@ namespace UrlTracker.Core.Models
     {
         /// <inheritdoc />
         public ContentPageTargetStrategy(IPublishedContent? content, string? culture)
-            : base(Defaults.DatabaseSchema.RedirectTargetStrategies.Content, content)
+            : base(content)
         {
             Culture = culture;
         }
@@ -58,7 +60,7 @@ namespace UrlTracker.Core.Models
         /// <inheritdoc />
         public override int GetHashCode()
         {
-            return HashCode.Combine(Content, Culture, Strategy);
+            return HashCode.Combine(Content, Culture);
         }
     }
 
@@ -71,7 +73,7 @@ namespace UrlTracker.Core.Models
     {
         /// <inheritdoc />
         public MediaTargetStrategy(IPublishedContent content)
-            : base(Defaults.DatabaseSchema.RedirectTargetStrategies.Media, content)
+            : base(content)
         { }
     }
 
@@ -80,11 +82,10 @@ namespace UrlTracker.Core.Models
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class UrlTargetStrategy
-        : StrategyBase, ITargetStrategy
+        : ITargetStrategy
     {
         /// <inheritdoc />
         public UrlTargetStrategy(Url url)
-            : base(Defaults.DatabaseSchema.RedirectTargetStrategies.Url)
         {
             Url = url;
         }
@@ -97,6 +98,7 @@ namespace UrlTracker.Core.Models
         /// <summary>
         /// The URL to redirect to
         /// </summary>
+        [Required]
         public Url Url { get; }
     }
 }

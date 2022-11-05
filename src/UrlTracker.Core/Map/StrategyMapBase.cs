@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using UrlTracker.Core.Database.Entities;
-using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Map
 {
@@ -11,16 +10,16 @@ namespace UrlTracker.Core.Map
     /// <typeparam name="T">The strategy type that this mapper can produce</typeparam>
     public abstract class StrategyMapBase<T>
         : IStrategyMap<T>
-        where T : IStrategyBase
+        where T : notnull
     {
         /// <summary>
-        /// The unique identifier for the specific strategy that this mapper converts
+        /// The unique identifier of the strategy that this type can convert
         /// </summary>
         protected abstract Guid StrategyKey { get; }
 
         /// <inheritdoc />
-        public bool CanHandle(IStrategyBase strategyBase)
-            => strategyBase.Strategy == StrategyKey && strategyBase is T;
+        public bool CanHandle(object strategyBase)
+            => strategyBase is T;
 
         /// <inheritdoc />
         public bool CanHandle(EntityStrategy strategyBase)
@@ -31,14 +30,14 @@ namespace UrlTracker.Core.Map
 
         /// <inheritdoc />
         [ExcludeFromCodeCoverage]
-        public EntityStrategy Convert(IStrategyBase strategy)
+        public EntityStrategy Convert(object strategy)
             => Convert((T)strategy);
 
-        /// <inheritdoc cref="Convert(IStrategyBase)"/>
+        /// <inheritdoc cref="Convert(object)"/>
         protected abstract EntityStrategy Convert(T strategy);
 
         [ExcludeFromCodeCoverage]
-        IStrategyBase IStrategyMap.Convert(EntityStrategy strategy)
+        object IStrategyMap.Convert(EntityStrategy strategy)
             => Convert(strategy);
     }
 }
