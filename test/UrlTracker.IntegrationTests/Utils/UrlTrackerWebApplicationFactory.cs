@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
@@ -32,6 +33,21 @@ namespace UrlTracker.IntegrationTests.Utils
                 {
                     new KeyValuePair<string, string>("ConnectionStrings:umbracoDbDSN", _inMemoryConnectionString),
                     new KeyValuePair<string, string>("ConnectionStrings:umbracoDbDSN_ProviderName", "Microsoft.Data.Sqlite")
+                });
+            });
+
+            builder.ConfigureServices(ConfigureServices);
+        }
+
+        private void ConfigureServices(IServiceCollection obj)
+        {
+            obj.AddSingleton<IAuthorizationHandler, TestAuthorizationHandler>();
+            obj.AddAuthorization(options =>
+            {
+                options.AddPolicy("BackOfficeAccess", policy =>
+                {
+                    policy.Requirements.Clear();
+                    policy.AddRequirements(new TestRequirement());
                 });
             });
         }

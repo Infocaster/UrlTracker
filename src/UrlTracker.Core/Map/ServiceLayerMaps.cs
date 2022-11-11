@@ -57,18 +57,21 @@ namespace UrlTracker.Core.Map
             target.CreateDate = source.Inserted;
         }
 
-        private static void Map(Redirect source, IRedirect target, MapperContext context)
+        private void Map(Redirect source, IRedirect target, MapperContext context)
         {
             target.CreateDate = source.Inserted;
             target.Id = source.Id ?? 0;
+            target.Key = source.Key ?? default;
         }
 
         private void Map(IRedirect source, Redirect target, MapperContext context)
         {
             target.Inserted = source.CreateDate;
             target.Force = source.Force;
-            target.Id = source.Id == 0 ? null : source.Id;
+            target.Id = source.Id == default ? null : source.Id;
+            target.Key = source.Key == default ? null : source.Key;
             target.RetainQuery = source.RetainQuery;
+            target.Permanent = source.Permanent;
             target.Source = _strategyMapCollection.Map<ISourceStrategy>(source.Source);
             target.Target = _strategyMapCollection.Map<ITargetStrategy>(source.Target);
         }

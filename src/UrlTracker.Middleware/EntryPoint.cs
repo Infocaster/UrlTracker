@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.DependencyInjection;
 using UrlTracker.Middleware.Options;
 using UrlTracker.Middleware.Processing;
@@ -10,6 +11,7 @@ namespace UrlTracker.Middleware
     /// <summary>
     /// The entry point for the URL Tracker middleware
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public static class EntryPoint
     {
         /// <summary>

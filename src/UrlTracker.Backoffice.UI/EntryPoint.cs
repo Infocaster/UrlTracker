@@ -4,6 +4,8 @@ using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Extensions;
 using UrlTracker.Backoffice.UI.Compatibility;
+using UrlTracker.Backoffice.UI.Controllers;
+using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
 using UrlTracker.Backoffice.UI.Extensions;
 using UrlTracker.Backoffice.UI.Map;
 using UrlTracker.Web.Events;
@@ -36,11 +38,21 @@ namespace UrlTracker.Backoffice.UI
                 .Append<UrlTrackerStyle>();
 
             builder.MapDefinitions()
-                .Add<CsvMap>();
+                .Add<CsvMap>()
+                .Add<RedirectMap>();
 
             builder.AddNotificationHandler<ServerVariablesParsingNotification, ServerVariablesNotificationHandler>();
 
             builder.Services.AddSingleton<IRequestModelPatcher, RequestModelPatcher>();
+            builder.Services.AddScoped<IRedirectRequestHandler, RedirectRequestHandler>();
+
+            builder.AddMvcAndRazor(options =>
+            {
+                options.ConfigureApplicationPartManager(manager =>
+                {
+                    manager.FeatureProviders.Add(new UrlTrackerControllerFeatureProvider());
+                });
+            });
 
             return builder;
         }

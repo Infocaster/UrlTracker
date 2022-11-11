@@ -11,7 +11,7 @@ namespace UrlTracker.Core.Database.Entities
     [DataContract]
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     [ExcludeFromCodeCoverage]
-    public struct EntityStrategy : IEquatable<EntityStrategy>
+    public class EntityStrategy : IEquatable<EntityStrategy>
     {
         /// <inheritdoc />
         public EntityStrategy(Guid strategy, string value)

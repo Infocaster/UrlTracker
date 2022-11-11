@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
     <PackageId>UrlTracker.Backoffice.UI</PackageId>
     <Title>URL Tracker Backoffice interface</Title>
@@ -15,6 +15,10 @@
       <Pack>True</Pack>
       <PackagePath>buildTransitive</PackagePath>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="UrlTracker.IntegrationTests"/>
+    <InternalsVisibleTo Include="UrlTracker.Backoffice.UI.Tests" />
   </ItemGroup>
   <ItemGroup>
     <Content Remove="package-lock.json" />

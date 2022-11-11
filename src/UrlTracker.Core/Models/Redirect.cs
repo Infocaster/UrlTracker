@@ -13,6 +13,8 @@ namespace UrlTracker.Core.Models
         // id cannot be validated, because in some cases it's mandatory, but in others it's not
         public int? Id { get; set; }
 
+        public Guid? Key { get; set; }
+
         [Required]
         public bool RetainQuery { get; set; }
 

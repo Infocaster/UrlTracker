@@ -32,10 +32,7 @@ namespace UrlTracker.Web.Processing
 
             var url = Url.Parse(target.Content.Url(_umbracoContextFactoryAbstraction, culture: target.Culture.DefaultIfNullOrWhiteSpace(null), UrlMode.Absolute));
 
-            if (url.Host != context.Request.Host.Host)
-            {
-                // convert to better url?
-            }
+            if (redirect.RetainQuery) url.Query = context.Request.QueryString.Value;
 
             var requestHandlerSettingsValue = _requestHandlerSettings.CurrentValue;
             return url.ToString(UrlType.Absolute, requestHandlerSettingsValue.AddTrailingSlash);

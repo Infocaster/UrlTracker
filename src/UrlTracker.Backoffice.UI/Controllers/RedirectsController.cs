@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
 using UrlTracker.Backoffice.UI.Controllers.Models.Redirects;
+using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
 
 namespace UrlTracker.Backoffice.UI.Controllers
 {
@@ -10,8 +11,15 @@ namespace UrlTracker.Backoffice.UI.Controllers
     /// A controller for managing redirects for the URL Tracker
     /// </summary>
     [PluginController(Defaults.Routing.Area)]
-    public class RedirectsController : UmbracoAuthorizedApiController
+    internal class RedirectsController : UmbracoAuthorizedApiController
     {
+        private readonly IRedirectRequestHandler _redirectRequestHandler;
+
+        public RedirectsController(IRedirectRequestHandler redirectRequestHandler)
+        {
+            _redirectRequestHandler = redirectRequestHandler;
+        }
+
         /// <summary>
         /// Get the redirect with this specific ID
         /// </summary>
@@ -20,7 +28,10 @@ namespace UrlTracker.Backoffice.UI.Controllers
         [HttpGet]
         public IActionResult Get([FromRoute] int id)
         {
-            throw new NotImplementedException();
+            var model = _redirectRequestHandler.Get(id);
+            if (model is null) return NotFound();
+
+            return Ok(model);
         }
 
         /// <summary>
@@ -32,7 +43,9 @@ namespace UrlTracker.Backoffice.UI.Controllers
         [HttpPost]
         public IActionResult Create([FromBody] RedirectRequest request)
         {
-            throw new NotImplementedException();
+            var model = _redirectRequestHandler.Create(request);
+
+            return Ok(model);
         }
 
         /// <summary>
@@ -44,7 +57,10 @@ namespace UrlTracker.Backoffice.UI.Controllers
         [HttpPut]
         public IActionResult Update([FromRoute] int id, [FromBody] RedirectRequest request)
         {
-            throw new NotImplementedException();
+            var model = _redirectRequestHandler.Update(id, request);
+            if (model is null) return NotFound();
+
+            return Ok(model);
         }
 
         /// <summary>
@@ -56,7 +72,10 @@ namespace UrlTracker.Backoffice.UI.Controllers
         [HttpDelete]
         public IActionResult Delete([FromRoute] int id)
         {
-            throw new NotImplementedException();
+            var model = _redirectRequestHandler.Delete(id);
+            if (model is null) return NotFound();
+
+            return Ok(model);
         }
     }
 }

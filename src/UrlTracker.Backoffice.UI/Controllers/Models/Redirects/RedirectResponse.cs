@@ -1,39 +1,51 @@
 ﻿using System;
 using System.Runtime.Serialization;
+using UrlTracker.Backoffice.UI.Controllers.Models.Base;
 
 namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
 {
     [DataContract]
     internal class RedirectResponse
+        : RedirectViewModelBase, IEquatable<RedirectResponse>
     {
         [DataMember(Name = "id")]
         public int Id { get; set; }
 
-        [DataMember(Name = "key")]
-        public Guid Key { get; set; }
-
         [DataMember(Name = "createDate")]
         public DateTime CreateDate { get; set; }
 
-        [DataMember(Name = "sourceStrategy")]
-        public Guid SourceStrategy { get; set; }
+        public bool Equals(RedirectResponse? other)
+        {
+            return other is not null &&
+                (ReferenceEquals(this, other) ||
+                  (Id == other.Id
+                && Key == other.Key
+                && CreateDate == other.CreateDate
+                && Source == other.Source
+                && Target == other.Target
+                && Permanent == other.Permanent
+                && RetainQuery == other.RetainQuery
+                && Force == other.Force));
+        }
 
-        [DataMember(Name = "sourceValue")]
-        public string SourceValue { get; set; } = null!;
+        public override bool Equals(object? obj)
+        {
+            return obj is RedirectResponse other && Equals(other);
+        }
 
-        [DataMember(Name = "targetStrategy")]
-        public Guid TargetStrategy { get; set; }
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Id, Key, CreateDate, Source, Target, Permanent, RetainQuery, Force);
+        }
 
-        [DataMember(Name = "targetValue")]
-        public string TargetValue { get; set; } = null!;
+        public static bool operator ==(RedirectResponse? left, RedirectResponse? right)
+        {
+            return left?.Equals(right) ?? right is null;
+        }
 
-        [DataMember(Name = "permanent")]
-        public bool Permanent { get; set; }
-
-        [DataMember(Name = "retainQuery")]
-        public bool RetainQuery { get; set; }
-
-        [DataMember(Name = "force")]
-        public bool Force { get; set; }
+        public static bool operator !=(RedirectResponse? left, RedirectResponse? right)
+        {
+            return !(left == right);
+        }
     }
 }

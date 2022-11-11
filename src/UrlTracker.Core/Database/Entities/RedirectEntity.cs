@@ -63,11 +63,14 @@ namespace UrlTracker.Core.Database.Entities
         string TargetValue { get; }
     }
 
+    /// <summary>
+    /// Default implementation of <see cref="IRedirect" />
+    /// </summary>
     [Serializable]
     [DataContract(IsReference = true)]
     [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
     [ExcludeFromCodeCoverage]
-    internal class RedirectEntity : EntityBase, IRedirect
+    public class RedirectEntity : EntityBase, IRedirect
     {
         private bool _retainQuery;
         private bool _permanent;
@@ -106,13 +109,13 @@ namespace UrlTracker.Core.Database.Entities
         public EntityStrategy Target
         {
             get => _target;
-            set => SetPropertyValueAndDetectChanges(value, ref _target, nameof(Target));
+            set => SetPropertyValueAndDetectChanges(value, ref _target!, nameof(Target));
         }
 
         public EntityStrategy Source
         {
             get => _source;
-            set => SetPropertyValueAndDetectChanges(value, ref _source, nameof(Source));
+            set => SetPropertyValueAndDetectChanges(value, ref _source!, nameof(Source));
         }
 
         public Guid SourceStrategy => Source.Strategy;
