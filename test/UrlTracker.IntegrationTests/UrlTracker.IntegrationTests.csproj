@@ -20,12 +20,18 @@
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="34.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.0-rc.2.22476.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0-preview-20221003-04" />
     <PackageReference Include="NUnit" Version="3.13.3" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
-    <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
-    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.3.1" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.5.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="Polly.Extensions.Http" Version="3.0.0" />
     <PackageReference Include="ThrowawayDb" Version="1.5.0" />

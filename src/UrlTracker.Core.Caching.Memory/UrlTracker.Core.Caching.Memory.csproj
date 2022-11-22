@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>UrlTracker.Core.Caching.Memory</PackageId>
     <Title>URL Tracker Core Memory Cache</Title>
@@ -9,8 +9,8 @@
 - port to Umbraco 11</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Core" Version="11.0.0-rc1" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0-rc.2.22472.3" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="11.0.0-rc4" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
     <PackageReference Include="Scrutor" Version="4.2.0" />
   </ItemGroup>
   <ItemGroup>

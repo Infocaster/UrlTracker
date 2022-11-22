@@ -24,10 +24,10 @@
     <SupportedPlatform Include="browser" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="29.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0-rc.2.22476.2" />
-    <PackageReference Include="Umbraco.Cms.Core" Version="11.0.0-rc1" />
-    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="11.0.0-rc1" />
+    <PackageReference Include="CsvHelper" Version="30.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.0" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="11.0.0-rc4" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="11.0.0-rc4" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\" />
