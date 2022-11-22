@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
@@ -18,6 +19,14 @@ namespace UrlTracker.Backoffice.UI.Controllers
         public RedirectsController(IRedirectRequestHandler redirectRequestHandler)
         {
             _redirectRequestHandler = redirectRequestHandler;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> List([FromQuery] ListRedirectRequest request)
+        {
+            var model = await _redirectRequestHandler.GetAsync(request);
+
+            return Ok(model);
         }
 
         /// <summary>

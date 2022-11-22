@@ -6,7 +6,6 @@ using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
-using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Exceptions;
 using UrlTracker.Core.Models;
 using UrlTracker.Core.Validation;
@@ -51,11 +50,11 @@ namespace UrlTracker.Core
         }
 
         [ExcludeFromCodeCoverage]
-        public async Task<RedirectCollection> GetAsync(uint skip, uint take, string? query = null, OrderBy order = OrderBy.Created, bool descending = true)
+        public async Task<RedirectCollection> GetAsync(uint skip, uint take, string? query = null, bool descending = true)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
 
-            var redirects = await _redirectRepository.GetAsync(skip, take, query, order, descending).ConfigureAwait(false);
+            var redirects = await _redirectRepository.GetAsync(skip, take, query, descending).ConfigureAwait(false);
             return _mapper.Map<RedirectCollection>(redirects)!;
         }
 

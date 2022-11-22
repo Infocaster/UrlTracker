@@ -2,25 +2,18 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
-using UrlTracker.Backoffice.UI.Compatibility;
 using UrlTracker.Backoffice.UI.Controllers.ActionFilters;
 using UrlTracker.Backoffice.UI.Controllers.Models;
 using UrlTracker.Core;
-using UrlTracker.Core.Abstractions;
-using UrlTracker.Core.Domain;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Models;
-using UrlTracker.Modules.Options;
 
 namespace UrlTracker.Backoffice.UI.Controllers
 {
@@ -32,33 +25,21 @@ namespace UrlTracker.Backoffice.UI.Controllers
     public class UrlTrackerManagerController
         : UmbracoAuthorizedApiController
     {
-        private readonly IOptionsSnapshot<UrlTrackerLegacyOptions> _configuration;
-        private readonly IDomainProvider _domainProvider;
         private readonly IRedirectService _redirectService;
         private readonly IClientErrorService _clientErrorService;
         private readonly IScopeProvider _scopeProvider;
-        private readonly IRequestModelPatcher _requestModelPatcher;
         private readonly IUmbracoMapper _mapper;
-        private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactoryAbstraction;
 
-        public UrlTrackerManagerController(IOptionsSnapshot<UrlTrackerLegacyOptions> configuration,
-                                           IDomainProvider domainProvider,
-                                           IRedirectService redirectService,
+        public UrlTrackerManagerController(IRedirectService redirectService,
                                            IClientErrorService clientErrorService,
                                            IScopeProvider scopeProvider,
-                                           IRequestModelPatcher requestModelPatcher,
-                                           IUmbracoMapper mapper,
-                                           IUmbracoContextFactoryAbstraction umbracoContextFactoryAbstraction)
+                                           IUmbracoMapper mapper)
             : base()
         {
-            _configuration = configuration;
-            _domainProvider = domainProvider;
             _redirectService = redirectService;
             _clientErrorService = clientErrorService;
             _scopeProvider = scopeProvider;
-            _requestModelPatcher = requestModelPatcher;
             _mapper = mapper;
-            _umbracoContextFactoryAbstraction = umbracoContextFactoryAbstraction;
         }
 
         [HttpPost]
@@ -72,103 +53,12 @@ namespace UrlTracker.Backoffice.UI.Controllers
             return NoContent();
         }
 
-        [HttpDelete]
-        [ExcludeFromCodeCoverage]
-        public async Task<IActionResult> DeleteRedirect([FromRoute] int id)
-        {
-            var redirect = await _redirectService.GetAsync(id);
-            if (redirect is null) return NotFound();
-
-            await _redirectService.DeleteAsync(redirect);
-            return NoContent();
-        }
-
-        [HttpGet]
-        public IActionResult GetLanguagesOutNodeDomains([FromQuery] GetLanguagesFromNodeRequest request)
-        {
-            // ToDo: Old implementation does not account for the possibility that a provided id might not map to an actual published content item
-            //    Check for content item and return 404 if no content exists for a given id
-            var domains = _domainProvider.GetDomains(request.NodeId!.Value);
-            var uniqueDomains = from domain in domains
-                                group domain by domain.LanguageIsoCode into g
-                                select g.First();
-
-            // ToDo: This model is currently simply a list. This is not nice and can become difficult to work with
-            //    Replace list with a real response model
-            var model = _mapper.MapEnumerable<Domain, GetLanguagesFromNodeResponseLanguage>(uniqueDomains);
-            return Ok(model);
-        }
-
-        [HttpGet]
-        [ExcludeFromCodeCoverage]
-        public IActionResult GetNodesWithDomains()
-        {
-            var domains = _domainProvider.GetDomains();
-            var uniqueNodes = from domain in domains
-                              group domain by domain.NodeId into g
-                              where g.Key.HasValue
-                              select g.Key!.Value;
-
-            if (uniqueNodes?.Any() is not true)
-            {
-                using (var cref = _umbracoContextFactoryAbstraction.EnsureUmbracoContext())
-                    uniqueNodes = cref.GetContentAtRoot().Select(c => c.Id);
-            }
-
-            return Ok(uniqueNodes.ToList());
-        }
-
-        [HttpGet]
-        [ExcludeFromCodeCoverage]
-        public IActionResult GetSettings()
-        {
-            var result = _configuration.Value;
-            var model = _mapper.Map<GetSettingsResponse>(result);
-            return Ok(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddRedirect([FromBody] AddRedirectRequest request)
-        {
-            // Wrap the operations inside a scope! If one of the operations fail, everything will be rolled back. This way, no data will ever get lost
-            using var scope = _scopeProvider.CreateScope();
-            Task? deleteTask = null;
-            if (request.Remove404)
-            {
-                request = _requestModelPatcher.Patch(request);
-                var clientError = await _clientErrorService.GetAsync(request.OldUrl!);
-                if (clientError is null)
-                {
-                    ModelState.AddModelError(nameof(AddRedirectRequest.OldUrl), "No client error exists for the given url");
-                    return BadRequest(ModelState);
-                }
-                deleteTask = _clientErrorService.DeleteAsync(clientError);
-            }
-
-            var redirect = _mapper.Map<Redirect>(request)!;
-            await _redirectService.AddAsync(redirect);
-            if (deleteTask is not null) await deleteTask;
-
-            scope.Complete();
-            return Ok();
-        }
-
-        [HttpPost]
-        [ExcludeFromCodeCoverage]
-        public async Task<IActionResult> UpdateRedirect([FromBody] UpdateRedirectRequest request)
-        {
-            var redirect = _mapper.Map<Redirect>(request)!;
-            await _redirectService.UpdateAsync(redirect);
-
-            return NoContent();
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetRedirects([FromQuery] GetRedirectsRequest request)
         {
             ExtractOrderParameters(request.SortType, out bool descending, out Core.Database.Models.OrderBy orderBy);
 
-            var result = await _redirectService.GetAsync((uint)request.Skip!.Value, (uint)request.Amount!.Value, request.Query, orderBy, descending);
+            var result = await _redirectService.GetAsync((uint)request.Skip!.Value, (uint)request.Amount!.Value, request.Query, descending);
             var model = _mapper.Map<GetRedirectsResponse>(result);
 
             return Ok(model);

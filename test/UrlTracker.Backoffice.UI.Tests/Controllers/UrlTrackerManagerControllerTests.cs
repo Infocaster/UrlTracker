@@ -33,14 +33,10 @@ namespace UrlTracker.Backoffice.UI.Tests.Controllers
             UrlTrackerLegacyOptions.Value.AppendPortNumber = true;
             UrlTrackerLegacyOptions.Value.IsDisabled = true;
             UrlTrackerLegacyOptions.Value.EnableLogging = true;
-            _testSubject = new UrlTrackerManagerController(UrlTrackerLegacyOptions,
-                                                           DomainProvider,
-                                                           RedirectService,
+            _testSubject = new UrlTrackerManagerController(RedirectService,
                                                            ClientErrorService,
                                                            ScopeProviderMock!.Provider,
-                                                           RequestModelPatcher,
-                                                           Mapper!,
-                                                           UmbracoContextFactoryAbstractionMock.UmbracoContextFactory);
+                                                           Mapper!);
         }
     }
 }

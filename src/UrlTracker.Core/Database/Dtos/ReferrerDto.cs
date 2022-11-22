@@ -9,7 +9,7 @@ namespace UrlTracker.Core.Database.Dtos
     [PrimaryKey("id")]
     [ExplicitColumns]
     [ExcludeFromCodeCoverage]
-    public class ReferrerDto
+    internal class ReferrerDto
     {
         [Column("id")]
         [PrimaryKeyColumn]

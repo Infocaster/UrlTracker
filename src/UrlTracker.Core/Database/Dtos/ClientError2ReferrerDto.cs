@@ -8,7 +8,7 @@ namespace UrlTracker.Core.Database.Dtos
     [TableName(Defaults.DatabaseSchema.Tables.ClientError2Referrer)]
     [PrimaryKey("id")]
     [ExplicitColumns]
-    public class ClientError2ReferrerDto
+    internal class ClientError2ReferrerDto
     {
         [Column("id")]
         [PrimaryKeyColumn]

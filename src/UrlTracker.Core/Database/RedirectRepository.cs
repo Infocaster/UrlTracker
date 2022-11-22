@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NPoco;
@@ -16,7 +15,6 @@ using Umbraco.Extensions;
 using UrlTracker.Core.Database.Dtos;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Factories;
-using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Core.Database
 {
@@ -30,7 +28,7 @@ namespace UrlTracker.Core.Database
 
         #region Old Implementation
 
-        public async Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, OrderBy order, bool descending)
+        public async Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, bool descending)
         {
             var countQuery = Sql().SelectCount();
             countQuery = PopulateRedirectQuery(countQuery);
@@ -39,12 +37,7 @@ namespace UrlTracker.Core.Database
 
             var selectQuery = Sql().SelectAll();
             selectQuery = PopulateRedirectQuery(selectQuery);
-            Expression<Func<RedirectDto, object?>> orderParameter = order switch
-            {
-                OrderBy.Created => e => e.CreateDate,
-                _ => throw new ArgumentOutOfRangeException(nameof(order)),
-            };
-            selectQuery = selectQuery.OrderBy<RedirectDto>(descending, orderParameter);
+            selectQuery = selectQuery.OrderBy<RedirectDto>(descending, e => e.CreateDate);
 
             List<RedirectDto> records = await Database.SkipTakeAsync<RedirectDto>(skip, take, selectQuery);
             var redirects = records.Select(RedirectFactory.BuildEntity);
@@ -120,7 +113,6 @@ namespace UrlTracker.Core.Database
         protected override IEnumerable<IRedirect> PerformGetAll(params int[]? ids)
         {
             var sql = GetBaseQuery(false);
-
             if (ids?.Any() is true) sql.WhereIn<RedirectDto>(e => e.Id, ids);
 
             var dtos = Database.Fetch<RedirectDto>(sql);

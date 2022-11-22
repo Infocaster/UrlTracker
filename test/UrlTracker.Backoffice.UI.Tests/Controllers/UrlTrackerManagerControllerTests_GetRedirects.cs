@@ -18,7 +18,7 @@ namespace UrlTracker.Backoffice.UI.Tests.Controllers
                 Amount = 1,
                 Skip = 0
             };
-            RedirectServiceMock!.Setup(obj => obj.GetAsync(It.IsAny<uint>(), It.IsAny<uint>(), It.IsAny<string>(), Core.Database.Models.OrderBy.Occurrences, false))
+            RedirectServiceMock!.Setup(obj => obj.GetAsync(It.IsAny<uint>(), It.IsAny<uint>(), It.IsAny<string>(), false))
                                 .ReturnsAsync(RedirectCollection.Create(Enumerable.Empty<Redirect>()))
                                 .Verifiable();
 

@@ -22,14 +22,8 @@ namespace UrlTracker.Web.Events
         {
             Dictionary<string, string?> urlTrackerVariables = new()
             {
-                { "base", _linkGenerator.GetUmbracoApiServiceBaseUrl<UrlTrackerManagerController>(controller => controller.GetSettings()) },
+                { "base", _linkGenerator.GetUmbracoApiServiceBaseUrl<UrlTrackerManagerController>(controller => controller.DeleteEntry(default!)) },
                 { "deleteEntry", nameof(UrlTrackerManagerController.DeleteEntry) },
-                { "deleteRedirect", nameof(UrlTrackerManagerController.DeleteRedirect) },
-                { "getLanguagesOutNodeDomains", nameof(UrlTrackerManagerController.GetLanguagesOutNodeDomains) },
-                { "getNodesWithDomains", nameof(UrlTrackerManagerController.GetNodesWithDomains) },
-                { "getSettings", nameof(UrlTrackerManagerController.GetSettings) },
-                { "addRedirect", nameof(UrlTrackerManagerController.AddRedirect) },
-                { "updateRedirect", nameof(UrlTrackerManagerController.UpdateRedirect) },
                 { "getRedirects", nameof(UrlTrackerManagerController.GetRedirects) },
                 { "getNotFounds", nameof(UrlTrackerManagerController.GetNotFounds) },
                 { "countNotFoundsThisWeek", nameof(UrlTrackerManagerController.CountNotFoundsThisWeek) },

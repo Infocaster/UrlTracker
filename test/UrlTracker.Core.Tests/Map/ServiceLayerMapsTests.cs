@@ -33,7 +33,7 @@ namespace UrlTracker.Core.Tests.Map
         public void Map_UrlTrackerRedirect_Redirect()
         {
             // arrange
-            IRedirect input = new RedirectEntity(default, default, default, default, default)
+            IRedirect input = new RedirectEntity(default, default, default, EntityStrategy.UrlSource("https://example.com"), EntityStrategy.UrlTarget("https://example.com"))
             {
                 CreateDate = new DateTime(2022, 1, 23),
                 Force = true,
@@ -60,7 +60,7 @@ namespace UrlTracker.Core.Tests.Map
         public void Map_UrlTrackerRedirectCollection_RedirectCollection()
         {
             // arrange
-            var input = Database.Entities.RedirectEntityCollection.Create(new[] { new RedirectEntity(default, default, default, default, default) }, 3);
+            var input = Database.Entities.RedirectEntityCollection.Create(new[] { new RedirectEntity(default, default, default, EntityStrategy.UrlSource("https://example.com"), EntityStrategy.UrlTarget("https://example.com")) }, 3);
 
             // act
             var result = Mapper!.Map<Core.Models.RedirectCollection>(input)!;

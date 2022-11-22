@@ -74,7 +74,7 @@ namespace UrlTracker.Core.Database.Migrations
         public string Url { get; set; } = null!;
 
         [Column("recommendationStrategy")]
-        public Guid RecommendationStrategy { get; set; }
+        public int RecommendationStrategy { get; set; }
 
         [Column("variableScore")]
         public int VariableScore { get; set; }
@@ -84,18 +84,22 @@ namespace UrlTracker.Core.Database.Migrations
     }
 
     [TableName(TableName)]
-    [PrimaryKey("recommendationStrategy")]
+    [PrimaryKey("id")]
     [ExplicitColumns]
     [ExcludeFromCodeCoverage]
     internal class M202210291430_RecommendationModelSchema_RedactionScoreDto
     {
         public const string TableName = "urltrackerRedactionScore";
 
+        [Column("id")]
+        [PrimaryKeyColumn(AutoIncrement = true)]
+        public int Id { get; set; }
+
         [Column("score")]
-        public int Score { get; set; }
+        public decimal Score { get; set; }
 
         [Column("recommendationStrategy")]
-        [PrimaryKeyColumn(AutoIncrement = false)]
+        [Index(IndexTypes.UniqueNonClustered, Name = "IX_recommendationStrategy_RecommendationStrategy")]
         public Guid RecommendationStrategy { get; set; }
     }
 }

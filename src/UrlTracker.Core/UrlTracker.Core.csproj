@@ -15,4 +15,9 @@
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Modules\UrlTracker.Modules.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="UrlTracker.Core.Tests"/>
+    <InternalsVisibleTo Include="UrlTracker.IntegrationTests"/>
+  </ItemGroup>
 </Project>

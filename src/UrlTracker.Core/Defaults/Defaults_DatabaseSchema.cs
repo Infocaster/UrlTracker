@@ -43,6 +43,16 @@ namespace UrlTracker.Core
                 /// The name of the client error and referrer relation table
                 /// </summary>
                 public const string ClientError2Referrer = TableNamePrefix + "ClientError2Referrer";
+
+                /// <summary>
+                /// The name of the recommendation table
+                /// </summary>
+                public const string Recommendation = TableNamePrefix + "Recommendation";
+
+                /// <summary>
+                /// The name of the redaction score table
+                /// </summary>
+                public const string RedactionScore = TableNamePrefix + "RedactionScore";
             }
 
             /// <summary>

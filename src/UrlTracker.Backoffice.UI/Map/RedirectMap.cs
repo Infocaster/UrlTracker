@@ -1,4 +1,5 @@
-﻿using Umbraco.Cms.Core.Mapping;
+﻿using System.Collections.Generic;
+using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Backoffice.UI.Controllers.Models.Base;
 using UrlTracker.Backoffice.UI.Controllers.Models.Redirects;
 using UrlTracker.Core.Database.Entities;
@@ -9,6 +10,9 @@ namespace UrlTracker.Backoffice.UI.Map
     {
         public void DefineMaps(IUmbracoMapper mapper)
         {
+            mapper.Define<RedirectEntityCollection, RedirectCollectionResponse>(
+                (source, context) => new RedirectCollectionResponse(context.Map<IEnumerable<RedirectResponse>>(source.Elements)!, source.Total));
+
             mapper.Define<IRedirect, RedirectResponse>(
                 (source, context) => new RedirectResponse(),
                 (source, target, context) =>

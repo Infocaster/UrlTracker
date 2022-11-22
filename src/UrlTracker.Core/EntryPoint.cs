@@ -51,6 +51,8 @@ namespace UrlTracker.Core
             builder.Services.AddSingleton<IClientErrorService, ClientErrorService>();
             builder.Services.AddSingleton<IRedirectRepository, RedirectRepository>();
             builder.Services.AddSingleton<IReferrerRepository, ReferrerRepository>();
+            builder.Services.AddSingleton<IRedactionScoreRepository, RedactionScoreRepository>();
+            builder.Services.AddSingleton<IRecommendationRepository, RecommendationRepository>();
 
             builder.Services.AddSingleton<IClientErrorRepository, ClientErrorRepository>();
             builder.Services.AddSingleton<IValidationHelper, ValidationHelper>();
@@ -146,7 +148,9 @@ namespace UrlTracker.Core
             builder.Mappers()!
                 .Add<RedirectMapper>()
                 .Add<ClientErrorMapper>()
-                .Add<ReferrerMapper>();
+                .Add<ReferrerMapper>()
+                .Add<RecommendationMapper>()
+                .Add<RedactionScoreMapper>();
 
             return builder;
         }

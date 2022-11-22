@@ -5,31 +5,36 @@ using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
 namespace UrlTracker.Core.Database.Dtos
 {
-    [TableName(Defaults.DatabaseSchema.Tables.ClientError)]
+    [TableName(Defaults.DatabaseSchema.Tables.Recommendation)]
     [PrimaryKey("id")]
     [ExplicitColumns]
     [ExcludeFromCodeCoverage]
-    internal class ClientErrorDto
+    internal class RecommendationDto
     {
         [Column("id")]
         [PrimaryKeyColumn]
         public int Id { get; set; }
 
         [Column("key")]
-        [Index(IndexTypes.UniqueNonClustered, Name = "IX_urlTrackerClientError_Key")]
+        [Index(IndexTypes.UniqueNonClustered, Name = "IX_urlTrackerRedirect_Key")]
         public Guid Key { get; set; }
 
         [Column("createDate")]
         public DateTime CreateDate { get; set; }
 
+        [Column("updateDate")]
+        public DateTime UpdateDate { get; set; }
+
         [Column("url")]
-        [Index(IndexTypes.UniqueNonClustered, Name = "IX_urlTrackerClientError_Url")]
         public string Url { get; set; } = null!;
 
-        [Column("ignored")]
-        public bool Ignored { get; set; }
+        [Column("recommendationStrategy")]
+        public int RecommendationStrategy { get; set; }
 
-        [Column("strategy")]
-        public Guid Strategy { get; set; }
+        [Column("variableScore")]
+        public int VariableScore { get; set; }
+
+        [Column("ignore")]
+        public bool Ignore { get; set; }
     }
 }

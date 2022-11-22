@@ -5,7 +5,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Umbraco.Cms.Core.Persistence.Querying;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
-using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Core.Caching.Memory.Database
 {
@@ -68,9 +67,9 @@ namespace UrlTracker.Core.Caching.Memory.Database
         }
 
         /// <inheritdoc/>
-        public Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, OrderBy order, bool descending)
+        public Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, bool descending)
         {
-            return _decoratee.GetAsync(skip, take, query, order, descending);
+            return _decoratee.GetAsync(skip, take, query, descending);
         }
 
         /// <inheritdoc/>

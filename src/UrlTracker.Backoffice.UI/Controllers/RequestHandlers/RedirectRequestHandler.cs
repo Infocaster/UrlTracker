@@ -1,4 +1,5 @@
-﻿using Umbraco.Cms.Core.Mapping;
+﻿using System.Threading.Tasks;
+using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Backoffice.UI.Controllers.Models.Redirects;
 using UrlTracker.Core.Database;
@@ -11,6 +12,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         RedirectResponse Create(RedirectRequest request);
         RedirectResponse? Delete(int id);
         RedirectResponse? Get(int id);
+        Task<RedirectCollectionResponse> GetAsync(ListRedirectRequest request);
         RedirectResponse? Update(int id, RedirectRequest request);
     }
 
@@ -25,6 +27,14 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             _redirectRepository = redirectRepository;
             _scopeProvider = scopeProvider;
             _mapper = mapper;
+        }
+
+        public async Task<RedirectCollectionResponse> GetAsync(ListRedirectRequest request)
+        {
+            using var scope = _scopeProvider.CreateScope();
+
+            var entities = await _redirectRepository.GetAsync(request.Page * request.PageSize, request.PageSize, request.Query, true);
+            return _mapper.Map<RedirectCollectionResponse>(entities)!;
         }
 
         public RedirectResponse? Get(int id)
