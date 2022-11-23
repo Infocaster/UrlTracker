@@ -1,0 +1,31 @@
+{
+    "$schema": "https://marketplace.umbraco.com/umbraco-marketplace-schema.json",
+    "Title": "URL Tracker",
+    "AlternatePackageNames": [
+        "301 URL Tracker"
+    ],
+    "Category": "Analytics and Insights",
+    "PackageType": "Package",
+    "Tags": [
+        "notfound",
+        "tracking",
+        "redirect",
+        "301",
+        "302",
+        "404"
+    ],
+    "LicenseTypes": ["Free"],
+    "AuthorDetails": {
+        "Url": "https://infocaster.net",
+        "ImageUrl": "https://github.com/InfocasterTechniek.png",
+        "Description": "Let's make the internet brighter",
+        "Contributors": [
+            "Dennis Heutinck",
+            "Erik Eelman",
+            "Joris Peters",
+            "Bram van den Bogaard"
+        ]
+    },
+    "IssueTrackerUrl": "https://github.com/Infocaster/UrlTracker/issues",
+    "DiscussionForumUrl": "https://github.com/Infocaster/UrlTracker/discussions"
+}

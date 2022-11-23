@@ -39,6 +39,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution 
 		README-NUGET.md = README-NUGET.md
 		README.md = README.md
 		readme.txt = readme.txt
+		umbraco-marketplace.json = umbraco-marketplace.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UrlTracker", "src\UrlTracker\UrlTracker.csproj", "{B8AD441A-A922-478F-876D-42870176F06D}"
@@ -57,7 +58,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UrlTracker.Modules", "src\U
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UrlTracker.Backoffice.UI", "src\UrlTracker.Backoffice.UI\UrlTracker.Backoffice.UI.csproj", "{DA854F49-C34A-480E-AB69-8A3277324779}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UrlTracker.Backoffice.UI.Tests", "test\UrlTracker.Backoffice.UI.Tests\UrlTracker.Backoffice.UI.Tests.csproj", "{1171E249-A1B5-4EF0-B1A2-6F84B95E4D23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UrlTracker.Backoffice.UI.Tests", "test\UrlTracker.Backoffice.UI.Tests\UrlTracker.Backoffice.UI.Tests.csproj", "{1171E249-A1B5-4EF0-B1A2-6F84B95E4D23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
