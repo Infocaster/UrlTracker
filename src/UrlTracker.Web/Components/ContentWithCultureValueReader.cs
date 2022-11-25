@@ -2,6 +2,7 @@
 using Umbraco.Core.Models;
 using Umbraco.Core.Models.PublishedContent;
 using Umbraco.Web;
+using UrlTracker.Core;
 
 namespace UrlTracker.Web.Components
 {
@@ -13,7 +14,7 @@ namespace UrlTracker.Web.Components
         public ContentWithCultureValueReader(IContent content, ContentCultureInfos culture = null)
         {
             _content = content;
-            _culture = culture?.Culture;
+            _culture = culture?.Culture.NormalizeCulture();
         }
 
         public string GetName()

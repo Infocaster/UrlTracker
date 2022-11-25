@@ -397,6 +397,7 @@
     <Compile Include="Intercepting\Preprocessing\InterceptPreprocessorCollectionBuilder.cs" />
     <Compile Include="IInterceptService.cs" />
     <Compile Include="IRedirectService.cs" />
+    <Compile Include="StringExtensions.cs" />
     <Compile Include="LoggerExtensions.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Domain\Models\Domain.cs" />
