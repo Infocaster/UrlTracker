@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
+using UrlTracker.Core;
 using UrlTracker.Web.Controllers.Models;
 
 namespace UrlTracker.Web.Controllers.ActionFilters
@@ -36,8 +37,7 @@ namespace UrlTracker.Web.Controllers.ActionFilters
                     if (!string.IsNullOrWhiteSpace(redirectRequestModel.Culture) &&
                         redirectRequestModel.Culture.Contains('-'))
                     {
-                        var splitIndex = redirectRequestModel.Culture.IndexOf('-') + 1;
-                        redirectRequestModel.Culture = redirectRequestModel.Culture.Substring(0, splitIndex) + redirectRequestModel.Culture.Substring(splitIndex).ToUpper();
+                        redirectRequestModel.Culture = redirectRequestModel.Culture.NormalizeCulture();
                     }
 
                     actionContext.ActionArguments[key] = redirectRequestModel;
