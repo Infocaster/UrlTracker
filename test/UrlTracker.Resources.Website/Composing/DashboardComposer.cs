@@ -1,5 +1,6 @@
 ﻿using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.Dashboards;
+using Umbraco.Cms.Core.DependencyInjection;
 
 namespace UrlTracker.Resources.Website.Composing
 {

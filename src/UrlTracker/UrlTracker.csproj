@@ -15,7 +15,7 @@
 - port to Umbraco 11</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Core" Version="11.0.0-rc4" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="11.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Backoffice.Notifications\UrlTracker.Backoffice.Notifications.csproj" />

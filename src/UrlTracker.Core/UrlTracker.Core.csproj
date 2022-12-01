@@ -9,7 +9,7 @@
 - port to Umbraco 11</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Infrastructure" Version="11.0.0-rc4" />
+    <PackageReference Include="Umbraco.Cms.Infrastructure" Version="11.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Modules\UrlTracker.Modules.csproj" />

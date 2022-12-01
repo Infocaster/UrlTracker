@@ -6,6 +6,7 @@ using Umbraco.Cms.Core.Security;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.BackOffice.Security;
+using Umbraco.Extensions;
 
 namespace UrlTracker.Resources.Website.Middleware
 {
