@@ -6,6 +6,6 @@
     <RootNamespace>UrlTracker.Modules</RootNamespace>
     <PackageReleaseNotes>1 change
 
-- port to Umbraco 11</PackageReleaseNotes>
+- Update to Umbraco 11</PackageReleaseNotes>
   </PropertyGroup>
 </Project>

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>UrlTracker.Core</PackageId>
     <Title>URL Tracker Core</Title>
@@ -6,7 +6,7 @@
     <RootNamespace>UrlTracker.Core</RootNamespace>
     <PackageReleaseNotes>1 change
 
-- port to Umbraco 11</PackageReleaseNotes>
+- Update to Umbraco 11</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Infrastructure" Version="11.0.0" />

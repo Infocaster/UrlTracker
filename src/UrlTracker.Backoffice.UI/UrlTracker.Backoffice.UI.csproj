@@ -7,7 +7,7 @@
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
     <PackageReleaseNotes>1 change
 
-- port to Umbraco 11</PackageReleaseNotes>
+- Update to Umbraco 11</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">

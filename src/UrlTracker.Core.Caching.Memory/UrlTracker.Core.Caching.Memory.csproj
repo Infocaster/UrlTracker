@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>UrlTracker.Core.Caching.Memory</PackageId>
     <Title>URL Tracker Core Memory Cache</Title>
@@ -6,7 +6,7 @@
     <RootNamespace>UrlTracker.Core.Caching.Memory</RootNamespace>
     <PackageReleaseNotes>1 change
 
-- port to Umbraco 11</PackageReleaseNotes>
+- Update to Umbraco 11</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="11.0.0" />
