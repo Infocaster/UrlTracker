@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using NPoco.DatabaseTypes;
 using Umbraco.Cms.Infrastructure.Migrations;
 
 namespace UrlTracker.Core.Database.Migrations
@@ -7,14 +9,14 @@ namespace UrlTracker.Core.Database.Migrations
     internal class M202210291430_RecommendationModel
         : MigrationBase
     {
-        private const string _redirectTableName = "urltrackerRedirect";
-        private const string _oldSourceName = "sourceUrl";
-        private const string _newSourceName = "sourceValue";
-        private const string _sourceStrategyColumnName = "sourceStrategy";
-        private const string _oldSourceRegexStrategy = "sourceRegex";
-        private const string _oldTargetName = "targetUrl";
-        private const string _newTargetName = "targetValue";
-        private const string _targetStrategyColumnName = "targetStrategy";
+        internal const string _redirectTableName = "urltrackerRedirect";
+        internal const string _oldSourceName = "sourceUrl";
+        internal const string _newSourceName = "sourceValue";
+        internal const string _sourceStrategyColumnName = "sourceStrategy";
+        internal const string _oldSourceRegexStrategy = "sourceRegex";
+        internal const string _oldTargetName = "targetUrl";
+        internal const string _newTargetName = "targetValue";
+        internal const string _targetStrategyColumnName = "targetStrategy";
 
         public M202210291430_RecommendationModel(IMigrationContext context)
             : base(context)
@@ -34,24 +36,10 @@ namespace UrlTracker.Core.Database.Migrations
 
         private void MigrateRedirects()
         {
-            Rename.Column(_oldSourceName).OnTable(_redirectTableName).To(_newSourceName).Do();
-            Create.Column(_sourceStrategyColumnName).OnTable(_redirectTableName).AsGuid().NotNullable().WithDefaultValue(Defaults.DatabaseSchema.RedirectSourceStrategies.Url).Do();
+            var migrationHelper = GetMigrationHelper();
 
-            // All redirects that have no source value are regular expression redirects
-            Database.Execute(@"UPDATE [urltrackerRedirect]
-                               SET [sourceStrategy] = @sourceStrategy, [sourceValue] = [sourceRegex]
-                               WHERE [sourceValue] IS NULL", new { sourceStrategy = Defaults.DatabaseSchema.RedirectSourceStrategies.RegularExpression });
-
-            Alter.Table(_redirectTableName).AlterColumn(_newSourceName).AsString(255).NotNullable().Do();
-
-            Rename.Column(_oldTargetName).OnTable(_redirectTableName).To(_newTargetName).Do();
-            Create.Column(_targetStrategyColumnName).OnTable(_redirectTableName).AsGuid().NotNullable().WithDefaultValue(Defaults.DatabaseSchema.RedirectTargetStrategies.Url).Do();
-
-            // All redirects that have a target node id are content redirects
-            Database.Execute(@"UPDATE [urltrackerRedirect]
-                               SET [targetStrategy] = @targetStrategy, [targetValue] = [targetNodeId]
-                               WHERE [targetNodeId] IS NOT NULL", new { targetStrategy = Defaults.DatabaseSchema.RedirectTargetStrategies.Content });
-            Alter.Table(_redirectTableName).AlterColumn(_newTargetName).AsString(255).NotNullable().Do();
+            migrationHelper.MigrateSource();
+            migrationHelper.MigrateTarget();
 
             // All url source strategies should be transformed in order to work with the new approach:
             //  - Urls with root nodes need to be processed individually to append the domains to the source value
@@ -70,6 +58,97 @@ namespace UrlTracker.Core.Database.Migrations
                   .Column("sourceRegex")
                   .FromTable(_redirectTableName)
                   .Do();
+        }
+
+        private IMigrationHelper GetMigrationHelper()
+        {
+            return DatabaseType switch
+            {
+                SQLiteDatabaseType => new SqliteMigrationHelper(this),
+                _ => new DefaultMigrationHelper(this)
+            };
+        }
+
+        private interface IMigrationHelper
+        {
+            void MigrateSource();
+            void MigrateTarget();
+        }
+
+        private class DefaultMigrationHelper : IMigrationHelper
+        {
+            private readonly M202210291430_RecommendationModel _migration;
+
+            public DefaultMigrationHelper(M202210291430_RecommendationModel migration)
+            {
+                _migration = migration;
+            }
+
+            public void MigrateSource()
+            {
+                _migration.Rename.Column(_oldSourceName).OnTable(_redirectTableName).To(_newSourceName).Do();
+                _migration.Create.Column(_sourceStrategyColumnName).OnTable(_redirectTableName).AsGuid().NotNullable().WithDefaultValue(Defaults.DatabaseSchema.RedirectSourceStrategies.Url).Do();
+
+                // All redirects that have no source value are regular expression redirects
+                _migration.Database.Execute(@"UPDATE [urltrackerRedirect]
+                               SET [sourceStrategy] = @sourceStrategy, [sourceValue] = [sourceRegex]
+                               WHERE [sourceValue] IS NULL", new { sourceStrategy = Defaults.DatabaseSchema.RedirectSourceStrategies.RegularExpression });
+
+                _migration.Alter.Table(_redirectTableName).AlterColumn(_newSourceName).AsString(255).NotNullable().Do();
+            }
+
+            public void MigrateTarget()
+            {
+                _migration.Rename.Column(_oldTargetName).OnTable(_redirectTableName).To(_newTargetName).Do();
+                _migration.Create.Column(_targetStrategyColumnName).OnTable(_redirectTableName).AsGuid().NotNullable().WithDefaultValue(Defaults.DatabaseSchema.RedirectTargetStrategies.Url).Do();
+
+                // All redirects that have a target node id are content redirects
+                _migration.Database.Execute(@"UPDATE [urltrackerRedirect]
+                               SET [targetStrategy] = @targetStrategy, [targetValue] = [targetNodeId]
+                               WHERE [targetNodeId] IS NOT NULL", new { targetStrategy = Defaults.DatabaseSchema.RedirectTargetStrategies.Content });
+                _migration.Alter.Table(_redirectTableName).AlterColumn(_newTargetName).AsString(255).NotNullable().Do();
+            }
+        }
+
+        private class SqliteMigrationHelper : IMigrationHelper
+        {
+            private readonly M202210291430_RecommendationModel _migration;
+
+            public SqliteMigrationHelper(M202210291430_RecommendationModel migration)
+            {
+                _migration = migration;
+            }
+
+            public void MigrateSource()
+            {
+                _migration.Create.Column(_newSourceName).OnTable(_redirectTableName).AsString(255).NotNullable().WithDefaultValue(string.Empty).Do();
+                _migration.Create.Column(_sourceStrategyColumnName).OnTable(_redirectTableName).AsGuid().NotNullable().WithDefaultValue(Defaults.DatabaseSchema.RedirectSourceStrategies.Url).Do();
+
+                // All redirects that have no source value are regular expression redirects
+                _migration.Database.Execute(@"UPDATE [urltrackerRedirect]
+                               SET [sourceStrategy] = @sourceStrategy, [sourceValue] = [sourceRegex]
+                               WHERE [sourceUrl] IS NULL", new { sourceStrategy = Defaults.DatabaseSchema.RedirectSourceStrategies.RegularExpression });
+                _migration.Database.Execute(@"UPDATE [urltrackerRedirect]
+                               SET [sourceValue] = [sourceUrl]
+                               WHERE [sourceUrl] IS NOT NULL");
+
+                _migration.Delete.Column(_oldSourceName).FromTable(_redirectTableName).Do();
+            }
+
+            public void MigrateTarget()
+            {
+                _migration.Create.Column(_newTargetName).OnTable(_redirectTableName).AsString(255).NotNullable().WithDefaultValue(string.Empty).Do();
+                _migration.Create.Column(_targetStrategyColumnName).OnTable(_redirectTableName).AsGuid().NotNullable().WithDefaultValue(Defaults.DatabaseSchema.RedirectTargetStrategies.Url).Do();
+
+                // All redirects that have a target node id are content redirects
+                _migration.Database.Execute(@"UPDATE [urltrackerRedirect]
+                               SET [targetStrategy] = @targetStrategy, [targetValue] = [targetNodeId]
+                               WHERE [targetNodeId] IS NOT NULL", new { targetStrategy = Defaults.DatabaseSchema.RedirectTargetStrategies.Content });
+                _migration.Database.Execute(@"UPDATE [urltrackerRedirect]
+                               SET [targetValue] = [targetUrl]
+                               WHERE [targetUrl] IS NOT NULL");
+                _migration.Delete.Column(_oldTargetName).FromTable(_redirectTableName).Do();
+            }
         }
     }
 }

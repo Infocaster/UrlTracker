@@ -61,7 +61,7 @@ namespace UrlTracker.Core.Database.Migrations
         public int Id { get; set; }
 
         [Column("key")]
-        [Index(IndexTypes.UniqueNonClustered, Name = "IX_urlTrackerRedirect_Key")]
+        [Index(IndexTypes.UniqueNonClustered, Name = "IX_urltrackerRecommendation_Key")]
         public Guid Key { get; set; }
 
         [Column("createDate")]
@@ -99,7 +99,7 @@ namespace UrlTracker.Core.Database.Migrations
         public decimal Score { get; set; }
 
         [Column("recommendationStrategy")]
-        [Index(IndexTypes.UniqueNonClustered, Name = "IX_recommendationStrategy_RecommendationStrategy")]
+        [Index(IndexTypes.UniqueNonClustered, Name = "IX_urltrackerRedactionScore_recommendationStrategy")]
         public Guid RecommendationStrategy { get; set; }
     }
 }
