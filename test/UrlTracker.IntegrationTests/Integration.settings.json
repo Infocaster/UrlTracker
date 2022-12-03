@@ -9,9 +9,6 @@
       }
     }
   },
-  "ConnectionStrings": {
-    "umbracoDbDSN_ProviderName": "Microsoft.Data.SqlClient"
-  },
   "Umbraco": {
     "CMS": {
       "Unattended": {
