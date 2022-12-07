@@ -13,6 +13,7 @@ using Umbraco.Extensions;
 using UrlTracker.Core.Database.Dtos;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Factories;
+using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Core.Database
 {
@@ -107,13 +108,18 @@ namespace UrlTracker.Core.Database
             entity.ResetDirtyProperties();
         }
 
-        public RecommendationEntityCollection Get(int page, int pageSize)
+        public RecommendationEntityCollection Get(int page, int pageSize, RecommendationScoreParameters parameters)
         {
             var sql = Sql()
                 .Select<RecommendationDto>("r")
-                .AndSelect($"10 * {SqlSyntax.GetFieldName<RecommendationDto>(e => e.VariableScore, "r")}" +
-                $" - (POWER(DATEDIFF(day, GETDATE(), {SqlSyntax.GetFieldName<RecommendationDto>(e => e.UpdateDate, "r")}), 0.5))" +
-                $" + 10 * {SqlSyntax.GetFieldName<RedactionScoreDto>(e => e.Score, "s")} AS score");
+                .Append($", @vf * {SqlSyntax.GetFieldName<RecommendationDto>(e => e.VariableScore, "r")}" +
+                $" - (POWER(DATEDIFF(day, GETDATE(), {SqlSyntax.GetFieldName<RecommendationDto>(e => e.UpdateDate, "r")}), @tf))" +
+                $" + @rf * {SqlSyntax.GetFieldName<RedactionScoreDto>(e => e.Score, "s")} AS score", new
+                {
+                    vf = parameters.VariableFactor,
+                    tf = parameters.TimeFactor,
+                    rf = parameters.RedactionFactor
+                });
             sql.From<RecommendationDto>("r");
             sql.LeftJoin<RedactionScoreDto>("s").On<RecommendationDto, RedactionScoreDto>((le, re) => le.RecommendationStrategy == re.Id, "r", "s");
 
