@@ -8,7 +8,7 @@
     <RootNamespace>UrlTracker.Core</RootNamespace>
     <PackageReleaseNotes>1 bugfix
 
-- Fix #69</PackageReleaseNotes>
+- Fix #102</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AsyncFixer" Version="1.6.0">

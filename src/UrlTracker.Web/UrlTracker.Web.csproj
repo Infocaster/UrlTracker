@@ -14,7 +14,7 @@
     <RootNamespace>UrlTracker.Web</RootNamespace>
     <PackageReleaseNotes>1 bugfix
 
-- Fix #69</PackageReleaseNotes>
+- Fix #102</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">
