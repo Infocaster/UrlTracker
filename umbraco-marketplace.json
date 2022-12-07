@@ -20,10 +20,18 @@
         "ImageUrl": "https://github.com/InfocasterTechniek.png",
         "Description": "Let's make the internet brighter",
         "Contributors": [
-            "Dennis Heutinck",
-            "Erik Eelman",
-            "Joris Peters",
-            "Bram van den Bogaard"
+            {
+                "Name": "Dennis Heutinck"
+            },
+            {
+                "Name": "Erik Eelman"
+            },
+            {
+                "Name": "Joris Peters"
+            },
+            {
+                "Name": "Bram van den Bogaard"
+            }
         ]
     },
     "IssueTrackerUrl": "https://github.com/Infocaster/UrlTracker/issues",
