@@ -3,10 +3,8 @@
 	<area alias="dashboardTabs">
 		<key alias="UrlTracker">UrlTracker</key>
 	</area>
-	<area alias="treeTabs">
-		<key alias="urlTrackerTreeGroup">URL Tracker</key>
-	</area>
   <area alias="treeHeaders">
-    <key alias="urlTrackerSettingsTree">URL Tracker settings</key>
+		<key alias="urlTrackerTreeGroup">URL Tracker</key>
+    <key alias="urlTrackerSettingsTree">URL Tracker instellingen</key>
   </area>
 </language>
