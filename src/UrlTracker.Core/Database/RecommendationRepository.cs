@@ -108,12 +108,12 @@ namespace UrlTracker.Core.Database
             entity.ResetDirtyProperties();
         }
 
-        public RecommendationEntityCollection Get(int page, int pageSize, RecommendationScoreParameters parameters)
+        public RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationScoreParameters parameters)
         {
             var sql = Sql()
                 .Select<RecommendationDto>("r")
                 .Append($", @vf * {SqlSyntax.GetFieldName<RecommendationDto>(e => e.VariableScore, "r")}" +
-                $" - (POWER(DATEDIFF(day, GETDATE(), {SqlSyntax.GetFieldName<RecommendationDto>(e => e.UpdateDate, "r")}), @tf))" +
+                $" - ({SqlSyntax.TimeFactorFunction(SqlSyntax.DaysDifference<RecommendationDto>(e => e.UpdateDate, "r"), "@tf")})" +
                 $" + @rf * {SqlSyntax.GetFieldName<RedactionScoreDto>(e => e.Score, "s")} AS score", new
                 {
                     vf = parameters.VariableFactor,

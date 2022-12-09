@@ -10,7 +10,8 @@ namespace UrlTracker.Backoffice.UI.Controllers
         private readonly static Type[] _controllers = new[]
         {
             typeof(RedirectsController),
-            typeof(ExtensionsController)
+            typeof(ExtensionsController),
+            typeof(RecommendationsController)
         };
 
         protected override bool IsController(TypeInfo typeInfo)

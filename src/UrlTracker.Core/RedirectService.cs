@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
@@ -12,6 +13,16 @@ using UrlTracker.Core.Validation;
 
 namespace UrlTracker.Core
 {
+    public interface IRedirectService
+    {
+        Task<Redirect> AddAsync(Redirect redirect);
+        Task DeleteAsync(Redirect redirect);
+        Task<RedirectCollection> GetAsync(uint skip, uint take, string? query = null, bool descending = true);
+        Task<RedirectCollection> GetAsync();
+        Task<Redirect?> GetAsync(int id);
+        Task<Redirect> UpdateAsync(Redirect redirect);
+    }
+
     public class RedirectService
         : IRedirectService
     {

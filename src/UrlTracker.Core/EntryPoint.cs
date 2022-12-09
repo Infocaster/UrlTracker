@@ -49,6 +49,8 @@ namespace UrlTracker.Core
             builder.Services.AddSingleton<IInterceptService, InterceptService>();
             builder.Services.AddSingleton<IRedirectService, RedirectService>();
             builder.Services.AddSingleton<IClientErrorService, ClientErrorService>();
+            builder.Services.AddSingleton<IRedactionScoreService, RedactionScoreService>();
+            builder.Services.AddSingleton<IRecommendationService, RecommendationService>();
             builder.Services.AddSingleton<IRedirectRepository, RedirectRepository>();
             builder.Services.AddSingleton<IReferrerRepository, ReferrerRepository>();
             builder.Services.AddSingleton<IRedactionScoreRepository, RedactionScoreRepository>();

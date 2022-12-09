@@ -39,12 +39,14 @@ namespace UrlTracker.Backoffice.UI
 
             builder.MapDefinitions()
                 .Add<CsvMap>()
-                .Add<RedirectMap>();
+                .Add<RedirectMap>()
+                .Add<RecommendationMap>();
 
             builder.AddNotificationHandler<ServerVariablesParsingNotification, ServerVariablesNotificationHandler>();
 
             builder.Services.AddSingleton<IRequestModelPatcher, RequestModelPatcher>();
             builder.Services.AddScoped<IRedirectRequestHandler, RedirectRequestHandler>();
+            builder.Services.AddScoped<IRecommendationRequestHandler, RecommendationRequestHandler>();
 
             builder.AddMvcAndRazor(options =>
             {

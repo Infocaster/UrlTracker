@@ -7,6 +7,6 @@ namespace UrlTracker.Core.Database
     public interface IRecommendationRepository
         : IReadWriteQueryRepository<int, IRecommendation>
     {
-        RecommendationEntityCollection Get(int page, int pageSize, RecommendationScoreParameters parameters);
+        RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationScoreParameters parameters);
     }
 }
