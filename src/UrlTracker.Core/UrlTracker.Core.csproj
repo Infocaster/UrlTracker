@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="UrlTracker.Core.Tests"/>
-    <InternalsVisibleTo Include="UrlTracker.IntegrationTests"/>
+    <InternalsVisibleTo Include="UrlTracker.Core.Tests" />
+    <InternalsVisibleTo Include="UrlTracker.IntegrationTests" />
   </ItemGroup>
 </Project>

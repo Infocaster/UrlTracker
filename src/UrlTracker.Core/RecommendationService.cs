@@ -14,6 +14,8 @@ namespace UrlTracker.Core
         IRecommendation Create(string url, IRedactionScore score);
         IRecommendation Create(string url, Guid scoreKey);
         RecommendationEntityCollection Get(uint page, uint pageSize);
+        IRecommendation? Get(string url, IRedactionScore score);
+        IRecommendation? Get(string url, Guid scoreKey);
         void Save(IRecommendation recommendation);
     }
 
@@ -59,6 +61,23 @@ namespace UrlTracker.Core
         public IRecommendation Create(string url, IRedactionScore score)
         {
             return new RecommendationEntity(url, score);
+        }
+
+        public IRecommendation? Get(string url, IRedactionScore score)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+
+            return _recommendationRepository.Get(scope.SqlContext.Query<IRecommendation>()
+                .Where(e => e.Url == url)
+                .Where(e => e.StrategyId == score.Id)).FirstOrDefault();
+        }
+
+        public IRecommendation? Get(string url, Guid scoreKey)
+        {
+            var score = _redactionScoreService.Get(scoreKey);
+            if (score is null) throw new ArgumentException("No redaction score exists for given key", nameof(scoreKey));
+
+            return Get(url, score);
         }
     }
 }

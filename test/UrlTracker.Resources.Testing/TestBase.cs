@@ -102,6 +102,8 @@ namespace UrlTracker.Resources.Testing
         protected IRedirectToUrlConverterCollection RedirectToUrlConverterCollection => RedirectToUrlConverterCollectionMock.Object;
         protected Mock<IStrategyMapCollection> StrategyMapCollectionMock { get; set; } = null!;
         protected IStrategyMapCollection StrategyMapCollection => StrategyMapCollectionMock.Object;
+        protected Mock<IRedactionScoreService> RedactionScoreServiceMock { get; set; } = null!;
+        protected IRedactionScoreService RedactionScoreService => RedactionScoreServiceMock.Object;
 
 
         protected IOptions<UrlTrackerMemoryCacheOptions> UrlTrackerMemoryCacheOptions { get; set; } = null!;
@@ -173,6 +175,7 @@ namespace UrlTracker.Resources.Testing
             UrlTrackerDashboardPageCollectionMock = new Mock<IUrlTrackerDashboardPageCollection>();
             RedirectToUrlConverterCollectionMock = new Mock<IRedirectToUrlConverterCollection>();
             StrategyMapCollectionMock = new Mock<IStrategyMapCollection>();
+            RedactionScoreServiceMock = new Mock<IRedactionScoreService>();
 
             HttpContextMock = CreateHttpContextMock();
 

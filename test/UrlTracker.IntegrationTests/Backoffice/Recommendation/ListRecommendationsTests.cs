@@ -20,7 +20,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Recommendation
             var recommendationService = GetRecommendationService();
 
             var rec1 = recommendationService.CreateAndSave("https://example.com/lorem", Defaults.DatabaseSchema.RedactionScores.Page);
-            var rec2 = recommendationService.CreateAndSave("https://urltracker.ic/ipsum", Defaults.DatabaseSchema.RedactionScores.Image);
+            var rec2 = recommendationService.CreateAndSave("https://urltracker.ic/ipsum", Defaults.DatabaseSchema.RedactionScores.Media);
 
             // act
             var result = await WebsiteFactory.CreateStandardClient().GetAsync(_endpoint + "?page=1&pageSize=10");

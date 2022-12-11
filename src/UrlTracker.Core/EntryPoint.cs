@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Extensions;
 using UrlTracker.Core.Abstractions;
+using UrlTracker.Core.Classification;
 using UrlTracker.Core.Configuration;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Database;
@@ -40,6 +41,7 @@ namespace UrlTracker.Core
                    .ComposeDefaultInterceptors()
                    .ComposeDefaultInterceptPreprocessors()
                    .ComposeDefaultInterceptConverters()
+                   .ComposeDefaultUrlClassifiers()
                    .ComposeDefaultStrategyMaps();
 
             builder.Services.AddSingleton<IDomainProvider, DomainProvider>();
@@ -67,6 +69,7 @@ namespace UrlTracker.Core
             builder.Services.AddSingleton<IInterceptPreprocessorCollection>(factory => factory.GetRequiredService<InterceptPreprocessorCollection>());
             builder.Services.AddSingleton<IInterceptorCollection>(factory => factory.GetRequiredService<InterceptorCollection>());
             builder.Services.AddSingleton<IInterceptConverterCollection>(factory => factory.GetRequiredService<InterceptConverterCollection>());
+            builder.Services.AddSingleton<IUrlClassifierStrategyCollection>(factory => factory.GetRequiredService<UrlClassifierStrategyCollection>());
 
             return builder;
         }
@@ -85,6 +88,9 @@ namespace UrlTracker.Core
 
         public static StrategyMapCollectionBuilder? StrategyMaps(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<StrategyMapCollectionBuilder>();
+
+        public static UrlClassifierStrategyCollectionBuilder? UrlClassifiers(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<UrlClassifierStrategyCollectionBuilder>();
 
         public static IUmbracoBuilder ComposeDefaultStrategyMaps(this IUmbracoBuilder builder)
         {
@@ -107,6 +113,18 @@ namespace UrlTracker.Core
 
             builder.StaticUrlProviders()!
                 .Append<StaticUrlProvider>();
+            return builder;
+        }
+
+        public static IUmbracoBuilder ComposeDefaultUrlClassifiers(this IUmbracoBuilder builder)
+        {
+            builder.UrlClassifiers()!
+                .Append<MediaUrlClassifierStrategy>()
+                .Append<TechnicalFileUrlClassifierStrategy>()
+                .Append<FileUrlClassifierStrategy>();
+
+            builder.Services.AddSingleton<IFallbackUrlClassifier, FallbackUrlClassifier>();
+
             return builder;
         }
 

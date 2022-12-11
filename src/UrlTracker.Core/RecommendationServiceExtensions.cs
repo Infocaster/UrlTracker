@@ -24,5 +24,10 @@ namespace UrlTracker.Core
 
             return entity;
         }
+
+        public static IRecommendation GetOrCreate(this IRecommendationService service, string url, IRedactionScore score)
+        {
+            return service.Get(url, score) ?? service.Create(url, score);
+        }
     }
 }

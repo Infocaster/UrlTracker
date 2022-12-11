@@ -21,5 +21,9 @@ namespace UrlTracker.Core.Database.Dtos
         [Column("recommendationStrategy")]
         [Index(IndexTypes.UniqueNonClustered, Name = "IX_recommendationStrategy_RecommendationStrategy")]
         public Guid RecommendationStrategy { get; set; }
+
+        [Column("name")]
+        [Length(200)]
+        public string? Name { get; set; }
     }
 }

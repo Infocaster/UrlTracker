@@ -9,9 +9,9 @@ namespace UrlTracker.Core
 {
     public static class RedactionScoreServiceExtensions
     {
-        public static IRedactionScore CreateAndSave(this IRedactionScoreService service, Guid key, decimal score)
+        public static IRedactionScore CreateAndSave(this IRedactionScoreService service, Guid key, decimal score, string? name = null)
         {
-            var entity = service.Create(key, score);
+            var entity = service.Create(key, score, name);
             service.Save(entity);
 
             return entity;

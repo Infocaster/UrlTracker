@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Cms.Core.Persistence;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
@@ -11,8 +12,9 @@ namespace UrlTracker.Core
 {
     public interface IRedactionScoreService
     {
-        IRedactionScore Create(Guid key, decimal score);
+        IRedactionScore Create(Guid key, decimal score, string? name = null);
         IRedactionScore? Get(Guid key);
+        IEnumerable<IRedactionScore> GetAll();
         void Save(IRedactionScore score);
     }
 
@@ -43,13 +45,21 @@ namespace UrlTracker.Core
             scope.Complete();
         }
 
-        public IRedactionScore Create(Guid key, decimal score)
+        public IRedactionScore Create(Guid key, decimal score, string? name = null)
         {
             return new RedactionScoreEntity()
             {
                 Key = key,
-                RedactionScore = score
+                RedactionScore = score,
+                Name = name
             };
+        }
+
+        public IEnumerable<IRedactionScore> GetAll()
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+
+            return (_redactionScoreRepository as IReadRepository<int, IRedactionScore>).GetMany();
         }
     }
 }

@@ -6,6 +6,7 @@ using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Services;
 using UrlTracker.Core;
+using UrlTracker.Core.Classification;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Logging;
 using UrlTracker.Web;
@@ -17,28 +18,31 @@ namespace UrlTracker.Middleware
     /// <summary>
     /// A middleware that detects client error responses and registers them in the URL Tracker service
     /// </summary>
-    public class UrlTrackerClientErrorTrackingMiddleware
+    public class UrlTrackerRecommendationTrackingMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IClientErrorService _clientErrorService;
         private readonly IClientErrorFilterCollection _clientErrorFilterCollection;
-        private readonly ILogger<UrlTrackerClientErrorTrackingMiddleware> _logger;
+        private readonly IRecommendationService _recommendationService;
+        private readonly IUrlClassifierStrategyCollection _classifierStrategyCollection;
+        private readonly ILogger<UrlTrackerRecommendationTrackingMiddleware> _logger;
         private readonly IRuntimeState _runtimeState;
         private readonly IOptionsMonitor<RequestHandlerSettings> _requestHandlerOptions;
         private readonly IRequestAbstraction _requestAbstraction;
 
         /// <inheritdoc />
-        public UrlTrackerClientErrorTrackingMiddleware(RequestDelegate next,
-                                                       IClientErrorService clientErrorService,
-                                                       IClientErrorFilterCollection clientErrorFilterCollection,
-                                                       ILogger<UrlTrackerClientErrorTrackingMiddleware> logger,
-                                                       IOptionsMonitor<RequestHandlerSettings> requestHandlerOptions,
-                                                       IRequestAbstraction requestAbstraction,
-                                                       IRuntimeState runtimeState)
+        public UrlTrackerRecommendationTrackingMiddleware(RequestDelegate next,
+                                                          IClientErrorFilterCollection clientErrorFilterCollection,
+                                                          IRecommendationService recommendationService,
+                                                          IUrlClassifierStrategyCollection classifierStrategyCollection,
+                                                          ILogger<UrlTrackerRecommendationTrackingMiddleware> logger,
+                                                          IOptionsMonitor<RequestHandlerSettings> requestHandlerOptions,
+                                                          IRequestAbstraction requestAbstraction,
+                                                          IRuntimeState runtimeState)
         {
             _next = next;
-            _clientErrorService = clientErrorService;
             _clientErrorFilterCollection = clientErrorFilterCollection;
+            _recommendationService = recommendationService;
+            _classifierStrategyCollection = classifierStrategyCollection;
             _logger = logger;
             _requestHandlerOptions = requestHandlerOptions;
             _requestAbstraction = requestAbstraction;
@@ -62,15 +66,20 @@ namespace UrlTracker.Middleware
 
             if (!await _clientErrorFilterCollection.EvaluateCandidacyAsync(context))
             {
-                _logger.LogAbortClientErrorHandling("Incoming request failed client error candidacy check");
+                _logger.LogAbortClientErrorHandling("Incoming request failed recommendation candidacy check");
                 return;
             }
 
+            var url = context.Request.GetUrl();
+            var classification = _classifierStrategyCollection.Classify(url);
+            
             var requestHandlerOptionsValue = _requestHandlerOptions.CurrentValue;
-            var url = context.Request.GetUrl().ToString(UrlType.Absolute, requestHandlerOptionsValue.AddTrailingSlash);
-            var referrer = context.Request.GetReferrer(_requestAbstraction);
+            var urlString = context.Request.GetUrl().ToString(UrlType.Absolute, requestHandlerOptionsValue.AddTrailingSlash);
 
-            await _clientErrorService.ReportAsync(url, DateTime.Now, referrer?.ToString());
+            var recommendation = _recommendationService.GetOrCreate(urlString, classification);
+            recommendation.VariableScore++;
+
+            _recommendationService.Save(recommendation);
         }
     }
 }

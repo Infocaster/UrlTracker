@@ -40,6 +40,7 @@ namespace UrlTracker.Core.Database.Factories
                 entity.Id = dto.Id;
                 entity.Key = dto.RecommendationStrategy;
                 entity.RedactionScore = dto.Score;
+                entity.Name = dto.Name;
 
                 entity.ResetDirtyProperties();
                 return entity;
@@ -76,7 +77,8 @@ namespace UrlTracker.Core.Database.Factories
             var dto = new RedactionScoreDto
             {
                 RecommendationStrategy = entity.Key,
-                Score = entity.RedactionScore
+                Score = entity.RedactionScore,
+                Name = entity.Name,
             };
 
             if (entity.HasIdentity)

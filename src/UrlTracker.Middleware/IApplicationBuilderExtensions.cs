@@ -53,5 +53,27 @@ namespace UrlTracker.Middleware
             app.UseMiddleware<UrlTrackerClientErrorTrackingMiddleware>();
             return app;
         }
+
+        /// <summary>
+        /// Track recommendation opportunities using the URL Tracker service
+        /// </summary>
+        /// <param name="app">The pipeline builder</param>
+        /// <returns>The pipeline builder after adding this middleware</returns>
+        public static IUmbracoApplicationBuilderContext UseUrlTrackerRecommendationTracking(this IUmbracoApplicationBuilderContext app)
+        {
+            app.AppBuilder.UseUrlTrackerRecommendationTracking();
+            return app;
+        }
+
+        /// <summary>
+        /// Track recommendation opportunities using the URL Tracker service
+        /// </summary>
+        /// <param name="app">The pipeline builder</param>
+        /// <returns>The pipeline builder after adding this middleware</returns>
+        public static IApplicationBuilder UseUrlTrackerRecommendationTracking(this IApplicationBuilder app)
+        {
+            app.UseMiddleware<UrlTrackerRecommendationTrackingMiddleware>();
+            return app;
+        }
     }
 }

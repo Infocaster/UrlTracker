@@ -147,7 +147,7 @@ namespace UrlTracker.Core
                 /// <summary>
                 /// Any url with an image file extension
                 /// </summary>
-                public static readonly Guid Image = new("b3454454-ee3f-4c99-889f-c570eb096544");
+                public static readonly Guid Media = new("b3454454-ee3f-4c99-889f-c570eb096544");
 
                 /// <summary>
                 /// Any url with a technical extension (style sheets, scripts, fonts, etc.)

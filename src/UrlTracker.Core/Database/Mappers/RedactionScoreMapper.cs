@@ -21,6 +21,7 @@ namespace UrlTracker.Core.Database.Mappers
             DefineMap<IRedactionScore, RedactionScoreDto>(nameof(IRedactionScore.Id), nameof(RedactionScoreDto.Id));
             DefineMap<IRedactionScore, RedactionScoreDto>(nameof(IRedactionScore.Key), nameof(RedactionScoreDto.RecommendationStrategy));
             DefineMap<IRedactionScore, RedactionScoreDto>(nameof(IRedactionScore.RedactionScore), nameof(RedactionScoreDto.Score));
+            DefineMap<IRedactionScore, RedactionScoreDto>(nameof(IRedactionScore.Name), nameof(RedactionScoreDto.Name));
         }
     }
 }

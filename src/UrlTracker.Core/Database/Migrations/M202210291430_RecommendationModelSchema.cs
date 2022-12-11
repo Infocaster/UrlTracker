@@ -101,5 +101,9 @@ namespace UrlTracker.Core.Database.Migrations
         [Column("recommendationStrategy")]
         [Index(IndexTypes.UniqueNonClustered, Name = "IX_urltrackerRedactionScore_recommendationStrategy")]
         public Guid RecommendationStrategy { get; set; }
+
+        [Column("name")]
+        [Length(200)]
+        public string? Name { get; set; }
     }
 }
