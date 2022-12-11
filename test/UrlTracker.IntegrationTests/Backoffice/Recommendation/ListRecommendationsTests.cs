@@ -17,14 +17,10 @@ namespace UrlTracker.IntegrationTests.Backoffice.Recommendation
         public async Task List_NormalFlow_ReturnsCorrectResult()
         {
             // arrange
-            var redactionScoreService = GetRedactionScoreService();
             var recommendationService = GetRecommendationService();
 
-            var redscore1 = redactionScoreService.CreateAndSave(Guid.NewGuid(), 2.5m);
-            var redscore2 = redactionScoreService.CreateAndSave(Guid.NewGuid(), 1.3m);
-
-            var rec1 = recommendationService.CreateAndSave("https://example.com/lorem", redscore1);
-            var rec2 = recommendationService.CreateAndSave("https://urltracker.ic/ipsum", redscore2);
+            var rec1 = recommendationService.CreateAndSave("https://example.com/lorem", Defaults.DatabaseSchema.RedactionScores.Page);
+            var rec2 = recommendationService.CreateAndSave("https://urltracker.ic/ipsum", Defaults.DatabaseSchema.RedactionScores.Image);
 
             // act
             var result = await WebsiteFactory.CreateStandardClient().GetAsync(_endpoint + "?page=1&pageSize=10");

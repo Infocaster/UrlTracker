@@ -128,6 +128,32 @@ namespace UrlTracker.Core
                 /// </summary>
                 public static readonly Guid Media = new("376c08bf-c93c-4298-b4b8-61a933c9f99c");
             }
+
+            /// <summary>
+            /// Unique ids for the various classifiers for recommendations
+            /// </summary>
+            public static class RedactionScores
+            {
+                /// <summary>
+                /// Any url without extension
+                /// </summary>
+                public static readonly Guid Page = new("a23ed85f-d803-4850-baf4-c02203c49b93");
+
+                /// <summary>
+                /// Any url with an unrecognised extension
+                /// </summary>
+                public static readonly Guid File = new("bf6b11a6-196b-4003-ae61-b4b5525f9110");
+
+                /// <summary>
+                /// Any url with an image file extension
+                /// </summary>
+                public static readonly Guid Image = new("b3454454-ee3f-4c99-889f-c570eb096544");
+
+                /// <summary>
+                /// Any url with a technical extension (style sheets, scripts, fonts, etc.)
+                /// </summary>
+                public static readonly Guid TechnicalFile = new("e1de5e1b-c4f4-42ae-a50e-4e0ce3348e62");
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ using Umbraco.Cms.Infrastructure.Migrations;
 namespace UrlTracker.Core.Database.Migrations
 {
     [ExcludeFromCodeCoverage]
-    public class MigrationPlanFactory : IMigrationPlanFactory
+    internal class MigrationPlanFactory : IMigrationPlanFactory
     {
         public MigrationPlan Create()
         {
@@ -13,7 +13,8 @@ namespace UrlTracker.Core.Database.Migrations
             result.From(string.Empty) // add shortcut to the plan for fresh installs. This to make the install process less convoluted
                   .To<M202206251507_Rework>("2.1") // start using new versioning system for the database
                   .To<M202210291350_DeleteOldTables>("2.2")
-                  .To<M202210291430_RecommendationModel>("3.0");
+                  .To<M202210291430_RecommendationModel>("3.0")
+                  .To<M202212111209_PopulateRedactionScores>("3.1");
             // Use ☝️ this path for new migrations
 
             result.From("urlTracker") // support for older db and long route if the url tracker had already been used before
