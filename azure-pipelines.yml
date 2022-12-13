@@ -76,7 +76,7 @@ stages:
 
     - script: |
         dotnet tool install -g dotnet-reportgenerator-globaltool
-        reportgenerator -reports:$(Agent.WorkFolder)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines;Cobertura -assemblyfilters:+UrlTracker.*;-UrlTracker.Resources.*;-UrlTracker.*.Tests
+        reportgenerator -reports:$(Agent.WorkFolder)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:Cobertura -assemblyfilters:+UrlTracker.*;-UrlTracker.Resources.*;-UrlTracker.*.Tests
       displayName: Create code coverage report
 
     - task: PublishCodeCoverageResults@1
@@ -134,6 +134,7 @@ stages:
     - checkout: none
     
     - download: current
+      artifact: 'drop'
       patterns: $(PackageDownloadPatterns)
       displayName: Download build artifact
     
