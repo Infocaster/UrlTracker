@@ -65,20 +65,6 @@ stages:
         version: '6.x'
 
     - task: DotNetCoreCLI@2
-      displayName: 'dotnet restore'
-      inputs:
-        command: restore
-        feedsToUse: config
-        nugetConfigPath: nuget.config
-
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet build'
-      inputs:
-        command: build
-        projects: UrlTracker.sln
-        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion)'
-
-    - task: DotNetCoreCLI@2
       displayName: 'Run tests'
       inputs:
         command: 'test'
@@ -128,6 +114,7 @@ stages:
     steps:
     - checkout: none
     - download: current
+      artifact: 'drop'
       patterns: $(PackageDownloadPatterns)
       displayName: Download packages and symbols
 
