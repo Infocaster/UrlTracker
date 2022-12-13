@@ -128,5 +128,10 @@ namespace UrlTracker.Core.Database
             var dtos = Database.Page<RecommendationDto>(page, pageSize, sql);
             return RecommendationEntityCollection.Create(dtos.Items.Select(dto => RecommendationFactory.BuildEntity(dto, _redactionScoreRepository.Get(dto.RecommendationStrategy)!)).ToList(), (int)dtos.TotalItems);
         }
+
+        public void Clear()
+        {
+            Database.DeleteMany<RecommendationDto>().Execute();
+        }
     }
 }

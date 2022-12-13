@@ -12,6 +12,7 @@ namespace UrlTracker.Core
 {
     public interface IRecommendationService
     {
+        void Clear();
         IRecommendation Create(string url, IRedactionScore score);
         IRecommendation Create(string url, Guid scoreKey);
         RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationScoreParameters? parameters = null);
@@ -79,6 +80,14 @@ namespace UrlTracker.Core
             if (score is null) throw new ArgumentException("No redaction score exists for given key", nameof(scoreKey));
 
             return Get(url, score);
+        }
+
+        public void Clear()
+        {
+            using var scope = _scopeProvider.CreateScope();
+            _recommendationRepository.Clear();
+
+            scope.Complete();
         }
     }
 }

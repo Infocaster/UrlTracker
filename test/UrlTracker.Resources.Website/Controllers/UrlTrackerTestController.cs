@@ -82,6 +82,14 @@ namespace UrlTracker.Resources.Website.Controllers
         }
 
         [HttpPost]
+        public IActionResult ClearRecommendations()
+        {
+            _recommendationService.Clear();
+
+            return Ok();
+        }
+
+        [HttpPost]
         public IActionResult SetRecommendation([FromBody] SetRecommendationRequest request)
         {
             var url = UrlTracker.Core.Domain.Models.Url.Parse(request.Url);

@@ -29,9 +29,17 @@
         $this.getScore = getScore;
         $this.getCurrentLocation = getCurrentLocation;
         $this.submit = submit;
+        $this.clear = clear;
         $this.dtChange = dtChange;
 
         init();
+
+        function clear() {
+            $http.post(`/umbraco/backoffice/api/urltrackertest/clearrecommendations`)
+                .then(function (result) {
+                    fetch();
+                });
+        }
 
         function update(key, score) {
             $http.post(`/umbraco/backoffice/api/urltrackertest/setredactionscore?id=${key}`, score)
