@@ -114,7 +114,7 @@ namespace UrlTracker.Core.Database
                 .Select<RecommendationDto>("r")
                 .Append($", @vf * {SqlSyntax.GetFieldName<RecommendationDto>(e => e.VariableScore, "r")}" +
                 $" - ({SqlSyntax.TimeFactorFunction(SqlSyntax.DaysDifference<RecommendationDto>(e => e.UpdateDate, "r"), "@tf")})" +
-                $" + @rf * {SqlSyntax.GetFieldName<RedactionScoreDto>(e => e.Score, "s")} AS score", new
+                $" + @rf * {SqlSyntax.GetFieldName<RedactionScoreDto>(e => e.Score, "s")} AS orderscore", new
                 {
                     vf = parameters.VariableFactor,
                     tf = parameters.TimeFactor,
@@ -123,7 +123,7 @@ namespace UrlTracker.Core.Database
             sql.From<RecommendationDto>("r");
             sql.LeftJoin<RedactionScoreDto>("s").On<RecommendationDto, RedactionScoreDto>((le, re) => le.RecommendationStrategy == re.Id, "r", "s");
 
-            sql.OrderByDescending("score");
+            sql.OrderByDescending("orderscore");
 
             var dtos = Database.Page<RecommendationDto>(page, pageSize, sql);
             return RecommendationEntityCollection.Create(dtos.Items.Select(dto => RecommendationFactory.BuildEntity(dto, _redactionScoreRepository.Get(dto.RecommendationStrategy)!)).ToList(), (int)dtos.TotalItems);

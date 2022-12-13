@@ -20,7 +20,7 @@ namespace UrlTracker.Core
             string template = syntaxProvider.ProviderName switch
             {
                 "Microsoft.Data.Sqlite" => "julianday('now') - julianday({0})",
-                _ => "DATEDIFF(day, GETDATE(), {0})",
+                _ => "DATEDIFF(day, {0}, GETDATE())",
             };
             return string.Format(template, fieldName);
         }
@@ -30,7 +30,7 @@ namespace UrlTracker.Core
             return syntaxProvider.ProviderName switch
             {
                 "Microsoft.Data.Sqlite" => string.Format("{0} * {1}", arguments.Take(2).ToArray()),
-                _ => string.Format("POWER({0}, {1})", arguments),
+                _ => string.Format("POWER(CAST({0} as float), {1})", arguments),
             };
         }
 

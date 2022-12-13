@@ -8,6 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="App_Plugins\UrlTrackerTest\dashboard\dashboard.html" />
+    <Content Include="App_Plugins\UrlTrackerTest\style.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="App_Plugins\UrlTrackerTest\dashboard\dashboard.controller.js" />
+    <None Include="App_Plugins\UrlTrackerTest\package.manifest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Umbraco.Cms" Version="10.5.1" />
     <PackageReference Include="uSync" Version="10.2.1" />

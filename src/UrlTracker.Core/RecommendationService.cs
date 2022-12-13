@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
+using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Core
 {
@@ -13,7 +14,7 @@ namespace UrlTracker.Core
     {
         IRecommendation Create(string url, IRedactionScore score);
         IRecommendation Create(string url, Guid scoreKey);
-        RecommendationEntityCollection Get(uint page, uint pageSize);
+        RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationScoreParameters? parameters = null);
         IRecommendation? Get(string url, IRedactionScore score);
         IRecommendation? Get(string url, Guid scoreKey);
         void Save(IRecommendation recommendation);
@@ -32,10 +33,10 @@ namespace UrlTracker.Core
             _redactionScoreService = redactionScoreService;
         }
 
-        public RecommendationEntityCollection Get(uint page, uint pageSize)
+        public RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationScoreParameters? parameters = null)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
-            var result = _recommendationRepository.Get(page, pageSize, Core.Defaults.Parameters.ScoreParameters);
+            var result = _recommendationRepository.Get(page, pageSize, parameters ?? Core.Defaults.Parameters.ScoreParameters);
 
             return result;
         }

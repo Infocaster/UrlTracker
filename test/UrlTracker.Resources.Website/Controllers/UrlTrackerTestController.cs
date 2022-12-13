@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Umbraco.Cms.Core.Configuration.Models;
+using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using UrlTracker.Core;
+using UrlTracker.Core.Classification;
 using UrlTracker.Core.Database.Entities;
+using UrlTracker.Core.Domain.Models;
 using UrlTracker.Resources.Website.Models;
 
 namespace UrlTracker.Resources.Website.Controllers
@@ -12,10 +17,22 @@ namespace UrlTracker.Resources.Website.Controllers
         : UmbracoAuthorizedApiController
     {
         private readonly IRedactionScoreService _redactionScoreService;
+        private readonly IRecommendationService _recommendationService;
+        private readonly IUrlClassifierStrategyCollection _urlClassifier;
+        private readonly IOptionsMonitor<RequestHandlerSettings> _requestHandlerOptions;
+        private readonly IScopeProvider _scopeProvider;
 
-        public UrlTrackerTestController(IRedactionScoreService redactionScoreService)
+        public UrlTrackerTestController(IRedactionScoreService redactionScoreService,
+                                        IRecommendationService recommendationService,
+                                        IUrlClassifierStrategyCollection urlClassifier,
+                                        IOptionsMonitor<RequestHandlerSettings> requestHandlerOptions,
+                                        IScopeProvider scopeProvider)
         {
             _redactionScoreService = redactionScoreService;
+            _recommendationService = recommendationService;
+            _urlClassifier = urlClassifier;
+            _requestHandlerOptions = requestHandlerOptions;
+            _scopeProvider = scopeProvider;
         }
 
         [HttpGet]
@@ -34,13 +51,61 @@ namespace UrlTracker.Resources.Website.Controllers
         }
 
         [HttpPost]
-        public IActionResult SetRedactionScore([FromQuery]Guid id, [FromBody]decimal value)
+        public IActionResult SetRedactionScore([FromQuery] Guid id, [FromBody] decimal value)
         {
             var score = _redactionScoreService.Get(id);
             if (score is null) return NotFound();
 
             score.RedactionScore = value;
+            _redactionScoreService.Save(score);
 
+            return Ok();
+        }
+
+        [HttpGet]
+        public IActionResult GetResults(double c1, double c2, double c3)
+        {
+            var results = _recommendationService.Get(1, 100, new Core.Database.Models.RecommendationScoreParameters
+            {
+                RedactionFactor = c1,
+                VariableFactor = c2,
+                TimeFactor = c3
+            });
+
+            return Ok(results.Select(r => new RecommendationViewModel
+            {
+                Strategy = r.Strategy.Key,
+                UpdateDate = r.UpdateDate,
+                Url = r.Url,
+                VariableScore = r.VariableScore
+            }));
+        }
+
+        [HttpPost]
+        public IActionResult SetRecommendation([FromBody] SetRecommendationRequest request)
+        {
+            var url = UrlTracker.Core.Domain.Models.Url.Parse(request.Url);
+
+            IRedactionScore strategy = _urlClassifier.Classify(url);
+
+            var optionsValue = _requestHandlerOptions.CurrentValue;
+            string urlString = url.ToString(UrlType.Absolute, optionsValue.AddTrailingSlash);
+            var recommendation = _recommendationService.GetOrCreate(urlString, strategy);
+
+            recommendation.VariableScore = request.Visits;
+
+            _recommendationService.Save(recommendation);
+
+            using var scope = _scopeProvider.CreateScope();
+
+            scope.Database.Execute($"UPDATE {Defaults.DatabaseSchema.Tables.Recommendation} SET updateDate = @date WHERE url = @url AND recommendationStrategy = @strategy", new
+            {
+                date = request.DateTime,
+                url = urlString,
+                strategy = strategy.Id
+            });
+
+            scope.Complete();
             return Ok();
         }
     }

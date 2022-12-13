@@ -1,0 +1,8 @@
+{
+  "javascript": [
+    "~/App_Plugins/UrlTrackerTest/dashboard/dashboard.controller.js"
+  ],
+  "css": [
+    "~/App_Plugins/UrlTrackerTest/style.css"
+  ]
+}
