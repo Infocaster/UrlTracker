@@ -95,12 +95,28 @@ stages:
         versioningScheme: byEnvVar
         versionEnvVar: GitVersion.NuGetVersion
         verbosityPack: Normal
+        packDirectory: '$(Build.ArtifactStagingDirectory)/packages'
+  
+    - task: DotNetCoreCLI@2
+      displayName: 'dotnet build website'
+      inputs:
+        command: publish
+        publishWebProjects: false
+        projects: test/**/UrlTracker.Resources.Website.csproj
+        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/website -p:Version=$(GitVersion.NuGetVersion)'
 
     - task: PublishBuildArtifacts@1
-      displayName: 'Publish build artifacts'
+      displayName: 'Publish package artifacts'
       inputs:
-        PathtoPublish: '$(build.artifactstagingdirectory)'
-        ArtifactName: 'drop'
+        PathtoPublish: '$(build.artifactstagingdirectory)/packages'
+        ArtifactName: 'drop-website'
+        publishLocation: 'Container'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish website artifacts'
+      inputs:
+        PathtoPublish: '$(build.artifactstagingdirectory)/website'
+        ArtifactName: 'drop-website'
         publishLocation: 'Container'
 
 - stage: dryrun
