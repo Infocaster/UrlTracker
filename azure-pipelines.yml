@@ -109,7 +109,7 @@ stages:
       displayName: 'Publish package artifacts'
       inputs:
         PathtoPublish: '$(build.artifactstagingdirectory)/packages'
-        ArtifactName: 'drop-website'
+        ArtifactName: 'drop'
         publishLocation: 'Container'
 
     - task: PublishBuildArtifacts@1
