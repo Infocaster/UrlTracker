@@ -94,6 +94,7 @@ stages:
         packagesToPack: src/**/*.csproj
         versioningScheme: byEnvVar
         versionEnvVar: GitVersion.NuGetVersion
+        verbosityPack: Normal
 
     - task: PublishBuildArtifacts@1
       displayName: 'Publish build artifacts'
