@@ -8,13 +8,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="App_Plugins\UrlTrackerTest\dashboard\dashboard.html" />
-    <Content Include="App_Plugins\UrlTrackerTest\style.css" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="App_Plugins\UrlTrackerTest\dashboard\dashboard.controller.js" />
-    <None Include="App_Plugins\UrlTrackerTest\package.manifest" />
+    <Content Include="App_Plugins\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
