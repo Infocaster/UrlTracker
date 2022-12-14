@@ -30,6 +30,7 @@ jobs:
           inputs:
             folderPath: '${{ parameters.dropName }}'
             xmlTransformationRules: '-transform **\*.${{ parameters.stageName }}.config -xml **\*.config'
+            jsonTargetFiles: '**\appsettings.json'
         - task: IISWebAppManagementOnMachineGroup@0
           displayName: 'Create or update IIS website'
           inputs:
