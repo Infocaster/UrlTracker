@@ -12,6 +12,12 @@ trigger:
 pool:
   name: Default
 
+parameters:
+- name: deployWebsite
+  displayName: Deploy website to testing environment
+  type: boolean
+  default: false
+
 variables: 
   BuildConfiguration: 'release'
   BuildPlatform: 'any cpu'
@@ -96,14 +102,6 @@ stages:
         versionEnvVar: GitVersion.NuGetVersion
         verbosityPack: Normal
         packDirectory: '$(Build.ArtifactStagingDirectory)/packages'
-  
-    - task: DotNetCoreCLI@2
-      displayName: 'dotnet build website'
-      inputs:
-        command: publish
-        publishWebProjects: false
-        projects: test/**/UrlTracker.Resources.Website.csproj
-        arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/website -p:Version=$(GitVersion.NuGetVersion)'
 
     - task: PublishBuildArtifacts@1
       displayName: 'Publish package artifacts'
@@ -111,13 +109,21 @@ stages:
         PathtoPublish: '$(build.artifactstagingdirectory)/packages'
         ArtifactName: 'drop'
         publishLocation: 'Container'
-
-    - task: PublishBuildArtifacts@1
-      displayName: 'Publish website artifacts'
-      inputs:
-        PathtoPublish: '$(build.artifactstagingdirectory)/website'
-        ArtifactName: 'drop-website'
-        publishLocation: 'Container'
+    - ${{ if eq(parameters.deployWebsite, true) }}:
+      - task: DotNetCoreCLI@2
+        displayName: 'dotnet build website'
+        inputs:
+          command: publish
+          publishWebProjects: false
+          projects: test/**/UrlTracker.Resources.Website.csproj
+          arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/website -p:Version=$(GitVersion.NuGetVersion)'
+      
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish website artifacts'
+        inputs:
+          PathtoPublish: '$(build.artifactstagingdirectory)/website'
+          ArtifactName: 'drop-website'
+          publishLocation: 'Container'
 
 - stage: dryrun
   displayName: Dry run
