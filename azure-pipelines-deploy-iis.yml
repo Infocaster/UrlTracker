@@ -1,0 +1,66 @@
+parameters:
+- name: websiteName
+  type: string
+- name: dropName
+  type: string
+- name: environment
+  type: string
+- name: hostName
+  type: string
+- name: stageName
+  type: string
+- name: deploymentPath
+  type: string
+
+jobs:
+- deployment: 'prepare${{ parameters.environment }}'
+  displayName: 'Create and deploy to machines on ${{ parameters.environment }}'
+  environment:
+    name: ${{ parameters.environment }}
+    resourceType: VirtualMachine
+  variables:
+  - name: physicalPath
+    value: '${{ parameters.deploymentPath }}\${{ parameters.websiteName }}'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - task: FileTransform@2
+          displayName: Transform web.config
+          inputs:
+            folderPath: '${{ parameters.dropName }}'
+            xmlTransformationRules: '-transform **\*.${{ parameters.stageName }}.config -xml **\*.config'
+        - task: IISWebAppManagementOnMachineGroup@0
+          displayName: 'Create or update IIS website'
+          inputs:
+            IISDeploymentType: 'IISWebsite'
+            ActionIISWebsite: 'CreateOrUpdateWebsite'
+            WebsiteName: '${{ parameters.websiteName }}'
+            WebsitePhysicalPath: '$(physicalPath)'
+            WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
+            CreateOrUpdateAppPoolForWebsite: true
+            AppPoolNameForWebsite: '${{ parameters.websiteName }}'
+            DotNetVersionForWebsite: 'No Managed Code'
+            PipeLineModeForWebsite: 'Integrated'
+            AppPoolIdentityForWebsite: 'ApplicationPoolIdentity'
+            AddBinding: true
+            Bindings: |
+                {
+                    bindings:[
+                        {
+                            "protocol":"http",
+                            "ipAddress":"",
+                            "hostname":"${{ parameters.hostName }}",
+                            "port":"80",
+                            "sslThumbprint":"",
+                            "sniFlag":false
+                        }
+                    ]
+                }
+
+        - task: IISWebAppDeploymentOnMachineGroup@0
+          displayName: 'Deploy to IIS'
+          inputs:
+            WebsiteName: '${{ parameters.websiteName }}'
+            Package: '${{ parameters.dropName }}'
+            takeAppOfflineFlag: true

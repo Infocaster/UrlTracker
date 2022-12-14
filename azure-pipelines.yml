@@ -18,12 +18,19 @@ parameters:
   type: boolean
   default: false
 
-variables: 
-  BuildConfiguration: 'release'
-  BuildPlatform: 'any cpu'
-  Solution: '**\*.sln'
-  NpmWorkingDirectory: 'src\UrlTracker.Backoffice.UI'
-  PackageDownloadPatterns: |
+variables:
+- group: nuget-package
+- group: test-server
+- name: BuildConfiguration
+  value: 'release'
+- name: BuildPlatform
+  value: 'any cpu'
+- name: Solution
+  value: '**\*.sln'
+- name: NpmWorkingDirectory
+  value: 'src\UrlTracker.Backoffice.UI'
+- name: PackageDownloadPatterns
+  value: |
     **/*.nupkg
     **/*.snupkg
 
@@ -109,6 +116,7 @@ stages:
         PathtoPublish: '$(build.artifactstagingdirectory)/packages'
         ArtifactName: 'drop'
         publishLocation: 'Container'
+    
     - ${{ if eq(parameters.deployWebsite, true) }}:
       - task: DotNetCoreCLI@2
         displayName: 'dotnet build website'
@@ -194,3 +202,18 @@ stages:
         command: custom
         custom: nuget
         arguments: 'push $(packageGlob) -s https://api.nuget.org/v3/index.json --api-key $(NuGetApiKey)'
+
+- ${{ if eq(parameters.deployWebsite, true) }}:
+  - stage: testing
+    displayName: Deploy to testing
+    dependsOn: build
+    condition: succeeded()
+    jobs:
+    - template: 'azure-pipelines-deploy-iis.yml'
+      parameters:
+        websiteName: 'urltracker'
+        dropName: '$(pipeline.workspace)/drop-website/UrlTracker.Resources.Website.zip'
+        environment: 'Testing'
+        hostName: $(HostName)
+        stageName: 'Testing'
+        deploymentPath: $(TestPhysicalPath)
