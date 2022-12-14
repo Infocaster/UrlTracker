@@ -112,9 +112,11 @@ namespace UrlTracker.Core.Database
         {
             var sql = Sql()
                 .Select<RecommendationDto>("r")
-                .Append($", @vf * {SqlSyntax.GetFieldName<RecommendationDto>(e => e.VariableScore, "r")}" +
-                $" - ({SqlSyntax.TimeFactorFunction(SqlSyntax.DaysDifference<RecommendationDto>(e => e.UpdateDate, "r"), "@tf")})" +
-                $" + @rf * {SqlSyntax.GetFieldName<RedactionScoreDto>(e => e.Score, "s")} AS orderscore", new
+                .Append($", (@vf * {SqlSyntax.GetFieldName<RecommendationDto>(e => e.VariableScore, "r")}" +
+                $" + @rf * {SqlSyntax.GetFieldName<RedactionScoreDto>(e => e.Score, "s")})" +
+                $" * ({SqlSyntax.TimeFactorFunction(SqlSyntax.DaysDifference<RecommendationDto>(e => e.UpdateDate, "r"), "@tf")})" +
+                $" AS orderscore"
+                , new
                 {
                     vf = parameters.VariableFactor,
                     tf = parameters.TimeFactor,

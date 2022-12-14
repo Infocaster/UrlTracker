@@ -29,8 +29,8 @@ namespace UrlTracker.Core
         {
             return syntaxProvider.ProviderName switch
             {
-                "Microsoft.Data.Sqlite" => string.Format("{0} * {1}", arguments.Take(2).ToArray()),
-                _ => string.Format("POWER(CAST({0} as float), {1})", arguments),
+                "Microsoft.Data.Sqlite" => string.Format("1 / (({0} * {1}) + 1)", arguments.Take(2).ToArray()),
+                _ => string.Format("POWER(0.5, CAST({0} as float) / {1})", arguments),
             };
         }
 

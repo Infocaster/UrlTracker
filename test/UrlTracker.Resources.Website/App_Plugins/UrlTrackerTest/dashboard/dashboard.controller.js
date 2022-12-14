@@ -91,9 +91,9 @@
             let strategy = getStrategy(recommendation);
             let date = Date.parse(recommendation.UpdateDate);
             let daydiff = Math.round((new Date() - date) / (1000 * 60 * 60 * 24))
-            return ($this.vsconstant * recommendation.VariableScore) +
-                ($this.rsconstant * strategy.Score) -
-                (daydiff ** $this.tsconstant);
+            return (($this.vsconstant * recommendation.VariableScore) +
+                ($this.rsconstant * strategy.Score)) *
+                (0.5 ** (daydiff / $this.tsconstant));
         }
 
         function getCurrentLocation() {
