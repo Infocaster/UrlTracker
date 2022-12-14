@@ -77,33 +77,15 @@
             </umb-box-content>
         </umb-box>
     </div>
-    <div class="urltrackertest-resultcontainer">
-        <umb-box>
-            <umb-box-header title="results">
-                <umb-button action="vm.fetch()"
-                            label="Refresh">
-                </umb-button>
-            </umb-box-header>
-            <umb-box-content ng-if="!!vm.loading">
-                <umb-load-indicator></umb-load-indicator>
-            </umb-box-content>
-            <umb-box-content ng-if="!vm.loading">
-                <ul>
-                    <li ng-repeat="rec in vm.results">
-                        <header>{{vm.getStrategy(rec).Name}}</header>
-                        <div>({{vm.getScore(rec)}}) <strong>{{rec.Url}}</strong></div>
-                        <div>Last update: {{rec.UpdateDate}}</div>
-                    </li>
-                </ul>
-            </umb-box-content>
-        </umb-box>
-    </div>
     <div class="urltrackertest-update">
         <umb-box>
             <umb-box-header title="Update recommendation"
                             description="Enter a url, a variable score and a date here to update or add an entry">
                 <umb-button action="vm.clear()"
                             label="Clear">
+                </umb-button>
+                <umb-button action="vm.seed()"
+                            label="Generate 100">
                 </umb-button>
                 <umb-button action="vm.submit()"
                             label="Submit">
@@ -121,6 +103,28 @@
                                       options="vm.dateTimeConfig"
                                       on-change="vm.dtChange(selectedDates, dateStr, instance)">
                 </umb-date-time-picker>
+            </umb-box-content>
+        </umb-box>
+    </div>
+    <div class="urltrackertest-resultcontainer">
+        <umb-box>
+            <umb-box-header title="results">
+                <umb-button action="vm.fetch()"
+                            label="Refresh">
+                </umb-button>
+            </umb-box-header>
+            <umb-box-content ng-if="!!vm.loading">
+                <umb-load-indicator></umb-load-indicator>
+            </umb-box-content>
+            <umb-box-content ng-if="!vm.loading">
+                <ul>
+                    <li ng-repeat="rec in vm.results" style="margin-top: 1rem;">
+                        <header>{{vm.getStrategy(rec).Name}}</header>
+                        <div>({{vm.getScore(rec)}}) <strong>{{rec.Url}}</strong></div>
+                        <div>Total visits: {{rec.VariableScore}}</div>
+                        <div>Last update: {{vm.getDayDiff(rec)}} days ago</div>
+                    </li>
+                </ul>
             </umb-box-content>
         </umb-box>
     </div>

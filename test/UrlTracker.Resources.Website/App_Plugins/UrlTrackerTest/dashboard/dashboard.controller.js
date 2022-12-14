@@ -31,8 +31,21 @@
         $this.submit = submit;
         $this.clear = clear;
         $this.dtChange = dtChange;
+        $this.seed = seed;
+        $this.getDayDiff = getDayDiff;
 
         init();
+
+        function seed() {
+            $this.loading++;
+            $http.post(`/umbraco/backoffice/api/urltrackertest/generaterandomrecommendations`)
+                .then(function (result) {
+                    fetch();
+                })
+                .finally(function () {
+                    $this.loading--;
+                });
+        }
 
         function clear() {
             $http.post(`/umbraco/backoffice/api/urltrackertest/clearrecommendations`)
@@ -87,13 +100,18 @@
             return $this.redactionScores.find(function (e) { return e.Id === recommendation.Strategy });
         }
 
+        function getDayDiff(recommendation) {
+
+            let date = Date.parse(recommendation.UpdateDate);
+            return Math.round((new Date() - date) / (1000 * 60 * 60 * 24));
+        }
+
         function getScore(recommendation) {
             let strategy = getStrategy(recommendation);
-            let date = Date.parse(recommendation.UpdateDate);
-            let daydiff = Math.round((new Date() - date) / (1000 * 60 * 60 * 24))
-            return (($this.vsconstant * recommendation.VariableScore) +
+            let daydiff = getDayDiff(recommendation);
+            return ((($this.vsconstant * recommendation.VariableScore) +
                 ($this.rsconstant * strategy.Score)) *
-                (0.5 ** (daydiff / $this.tsconstant));
+                (0.5 ** (daydiff / $this.tsconstant))).toFixed(4);
         }
 
         function getCurrentLocation() {

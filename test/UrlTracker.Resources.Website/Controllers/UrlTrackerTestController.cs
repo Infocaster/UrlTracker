@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Bogus;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Configuration.Models;
@@ -21,6 +22,14 @@ namespace UrlTracker.Resources.Website.Controllers
         private readonly IUrlClassifierStrategyCollection _urlClassifier;
         private readonly IOptionsMonitor<RequestHandlerSettings> _requestHandlerOptions;
         private readonly IScopeProvider _scopeProvider;
+
+        private static Faker<SetRecommendationRequest> requestGenerator = new Faker<SetRecommendationRequest>()
+            .RuleFor(e => e.DateTime, f => f.Date.Between(DateTime.Now.AddYears(-1), DateTime.Today))
+            .RuleFor(e => e.Visits, f => f.Random.Int(1, 2000))
+            .RuleSet("img", set => set.RuleFor(e => e.Url, f => "https://urltracker.ic" + f.Internet.UrlRootedPath("jpg")))
+            .RuleSet("file", set => set.RuleFor(e => e.Url, f => "https://urltracker.ic" + f.Internet.UrlRootedPath("pdf")))
+            .RuleSet("page", set => set.RuleFor(e => e.Url, f => "https://urltracker.ic" + f.Internet.UrlRootedPath()))
+            .RuleSet("technicalFile", set => set.RuleFor(e => e.Url, f => "https://urltracker.ic" + f.Internet.UrlRootedPath("js")));
 
         public UrlTrackerTestController(IRedactionScoreService redactionScoreService,
                                         IRecommendationService recommendationService,
@@ -85,6 +94,22 @@ namespace UrlTracker.Resources.Website.Controllers
         public IActionResult ClearRecommendations()
         {
             _recommendationService.Clear();
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public IActionResult GenerateRandomRecommendations()
+        {
+            var requests = requestGenerator.Generate(25, "default, img").Concat(
+                requestGenerator.Generate(25, "default, file")).Concat(
+                requestGenerator.Generate(25, "default, page")).Concat(
+                requestGenerator.Generate(25, "default, technicalFile")).ToList();
+
+            foreach(var r in requests)
+            {
+                SetRecommendation(r);
+            }
 
             return Ok();
         }
