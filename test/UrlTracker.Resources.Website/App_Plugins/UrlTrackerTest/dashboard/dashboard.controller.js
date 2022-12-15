@@ -38,7 +38,8 @@
 
         function seed() {
             $this.loading++;
-            $http.post(`/umbraco/backoffice/api/urltrackertest/generaterandomrecommendations`)
+            var baseUrl = getCurrentLocation();
+            $http.post(`/umbraco/backoffice/api/urltrackertest/generaterandomrecommendations`, { baseurl: baseUrl })
                 .then(function (result) {
                     fetch();
                 })

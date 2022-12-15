@@ -26,10 +26,10 @@ namespace UrlTracker.Resources.Website.Controllers
         private static Faker<SetRecommendationRequest> requestGenerator = new Faker<SetRecommendationRequest>()
             .RuleFor(e => e.DateTime, f => f.Date.Between(DateTime.Now.AddYears(-1), DateTime.Today))
             .RuleFor(e => e.Visits, f => f.Random.Int(1, 2000))
-            .RuleSet("img", set => set.RuleFor(e => e.Url, f => "https://urltracker.ic" + f.Internet.UrlRootedPath("jpg")))
-            .RuleSet("file", set => set.RuleFor(e => e.Url, f => "https://urltracker.ic" + f.Internet.UrlRootedPath("pdf")))
-            .RuleSet("page", set => set.RuleFor(e => e.Url, f => "https://urltracker.ic" + f.Internet.UrlRootedPath()))
-            .RuleSet("technicalFile", set => set.RuleFor(e => e.Url, f => "https://urltracker.ic" + f.Internet.UrlRootedPath("js")));
+            .RuleSet("img", set => set.RuleFor(e => e.Url, f => f.Internet.UrlRootedPath(f.PickRandom("jpg", "png", "gif", "ico", "webp", "webm", "mp3"))))
+            .RuleSet("file", set => set.RuleFor(e => e.Url, f => f.Internet.UrlRootedPath(f.PickRandom("pdf", "docx", "html"))))
+            .RuleSet("page", set => set.RuleFor(e => e.Url, f => f.Internet.UrlRootedPath()))
+            .RuleSet("technicalFile", set => set.RuleFor(e => e.Url, f => f.Internet.UrlRootedPath(f.PickRandom("js", "css", "js.map"))));
 
         public UrlTrackerTestController(IRedactionScoreService redactionScoreService,
                                         IRecommendationService recommendationService,
@@ -99,7 +99,7 @@ namespace UrlTracker.Resources.Website.Controllers
         }
 
         [HttpPost]
-        public IActionResult GenerateRandomRecommendations()
+        public IActionResult GenerateRandomRecommendations([FromBody] GenerateRandomRequest request)
         {
             var requests = requestGenerator.Generate(25, "default, img").Concat(
                 requestGenerator.Generate(25, "default, file")).Concat(
@@ -108,6 +108,7 @@ namespace UrlTracker.Resources.Website.Controllers
 
             foreach(var r in requests)
             {
+                r.Url = request.BaseUrl.TrimEnd('/') + r.Url;
                 SetRecommendation(r);
             }
 
