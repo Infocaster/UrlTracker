@@ -1,30 +1,37 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using UrlTracker.Core.Abstractions;
+using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Core.Logging;
 using UrlTracker.Core.Models;
 using UrlTracker.Web.Abstraction;
 
 namespace UrlTracker.Web.Processing
 {
-    public class RedirectResponseInterceptHandler
+    public abstract class RedirectResponseInterceptHandler<TStrategy>
         : ResponseInterceptHandlerBase<Redirect>
+        where TStrategy : ITargetStrategy
     {
-        private readonly ILogger<RedirectResponseInterceptHandler> _logger;
-        private readonly IResponseAbstraction _responseAbstraction;
-        private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactory;
-        private readonly IRedirectToUrlConverterCollection _urlConverterCollection;
+        protected ILogger Logger { get; }
 
-        public RedirectResponseInterceptHandler(ILogger<RedirectResponseInterceptHandler> logger,
+        protected IResponseAbstraction ResponseAbstraction { get; }
+
+        protected IUmbracoContextFactoryAbstraction UmbracoContextFactory { get; }
+
+        public RedirectResponseInterceptHandler(ILogger logger,
                                                 IResponseAbstraction responseAbstraction,
-                                                IUmbracoContextFactoryAbstraction umbracoContextFactory,
-                                                IRedirectToUrlConverterCollection urlConverterCollection)
+                                                IUmbracoContextFactoryAbstraction umbracoContextFactory)
         {
-            _logger = logger;
-            _responseAbstraction = responseAbstraction;
-            _umbracoContextFactory = umbracoContextFactory;
-            _urlConverterCollection = urlConverterCollection;
+            Logger = logger;
+            ResponseAbstraction = responseAbstraction;
+            UmbracoContextFactory = umbracoContextFactory;
+        }
+
+        protected override bool CanHandle(Redirect input)
+        {
+            return input.Target is TStrategy;
         }
 
         protected override async ValueTask HandleAsync(RequestDelegate next, HttpContext context, Redirect intercept)
@@ -33,26 +40,26 @@ namespace UrlTracker.Web.Processing
             bool shouldIntercept = ShouldIntercept();
             if (!shouldForceIntercept && !shouldIntercept)
             {
-                _logger.LogInterceptCancelled("requirements not met.", intercept);
+                Logger.LogInterceptCancelled("requirements not met.", intercept);
                 await next(context);
                 return;
             }
 
             // get actual redirect url and write to the response
-            string? url = GetUrl(context, intercept);
+            string? url = GetUrl(context, intercept, (TStrategy)intercept.Target);
 
             var response = context.Response;
-            response.Clear(_responseAbstraction);
+            response.Clear(ResponseAbstraction);
             if (url is not null)
             {
-                response.SetRedirectLocation(_responseAbstraction, url);
+                response.SetRedirectLocation(ResponseAbstraction, url);
                 response.StatusCode = (int)(intercept.Permanent ? HttpStatusCode.MovedPermanently : HttpStatusCode.Redirect);
-                _logger.LogRequestRedirected(url);
+                Logger.LogRequestRedirected(url);
             }
             else
             {
                 response.StatusCode = 410;
-                _logger.LogRequestConvertedToGone();
+                Logger.LogRequestConvertedToGone();
             }
         }
 
@@ -61,14 +68,14 @@ namespace UrlTracker.Web.Processing
             return intercept.Force;
         }
 
-        private string? GetUrl(HttpContext context, Redirect intercept)
-        {
-            return _urlConverterCollection.Convert(intercept, context);
-        }
+        protected abstract string? GetUrl(HttpContext context, Redirect intercept, TStrategy target);
+        //{
+        //    return _urlConverterCollection.Convert(intercept, context);
+        //}
 
         private bool ShouldIntercept()
         {
-            using var cref = _umbracoContextFactory.EnsureUmbracoContext();
+            using var cref = UmbracoContextFactory.EnsureUmbracoContext();
             return cref.GetResponseCode() == (int)HttpStatusCode.NotFound;
         }
     }

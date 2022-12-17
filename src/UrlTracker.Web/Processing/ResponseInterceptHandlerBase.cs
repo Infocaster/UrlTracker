@@ -10,7 +10,10 @@ namespace UrlTracker.Web.Processing
         : ISpecificResponseInterceptHandler
     {
         public virtual bool CanHandle(IIntercept intercept)
-            => intercept.Info is TInput;
+            => intercept.Info is TInput input && CanHandle(input);
+
+        protected virtual bool CanHandle(TInput input)
+            => true;
 
         public ValueTask HandleAsync(RequestDelegate next, HttpContext context, IIntercept intercept)
             => intercept.Info is TInput realIntercept ? HandleAsync(next, context, realIntercept) : new ValueTask();

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Mapping;
+using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Core.Models;
@@ -18,7 +20,7 @@ namespace UrlTracker.Web.Tests.Processing
     public class RedirectResponseInterceptHandlerTests : TestBase
     {
         private TestMapDefinition<Redirect, Url>? _testMap;
-        private RedirectResponseInterceptHandler? _testSubject;
+        private TestRedirectResponseInterceptHandler? _testSubject;
 
         protected override ICollection<IMapDefinition> CreateMappers()
         {
@@ -31,7 +33,7 @@ namespace UrlTracker.Web.Tests.Processing
         public override void SetUp()
         {
             RequestHandlerSettingsMock.Setup(obj => obj.CurrentValue).Returns(new RequestHandlerSettings { AddTrailingSlash = false });
-            _testSubject = new RedirectResponseInterceptHandler(new VoidLogger<RedirectResponseInterceptHandler>(), ResponseAbstraction, UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory, RedirectToUrlConverterCollection);
+            _testSubject = new TestRedirectResponseInterceptHandler(new VoidLogger<TestRedirectResponseInterceptHandler>(), ResponseAbstraction, UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory);
         }
 
         public static IEnumerable<TestCaseData> TestCases()
@@ -114,20 +116,6 @@ namespace UrlTracker.Web.Tests.Processing
                     Permanent = false
                 }
             }.ToTestCase("HandleAsync rewrites response to 410 if the published content target no longer exists");
-
-            yield return new RedirectResponseHandlerTestCase
-            {
-                ExpectedStatusCode = 302,
-                ExpectedUrl = "http://example.com/lorem",
-                InitialStatusCode = 404,
-                InitialUrl = "http://example.com/123456/lorem",
-                Redirect = new Redirect
-                {
-                    Permanent = false,
-                    Source = new RegexSourceStrategy(@"^\d{6}/(\w+)"),
-                    Target = new UrlTargetStrategy("http://example.com/$1")
-                }
-            }.ToTestCase("HandleAsync replaces regex capture groups if the source is a regex");
         }
 
         [TestCaseSource(nameof(TestCases))]
@@ -141,7 +129,7 @@ namespace UrlTracker.Web.Tests.Processing
             Task next(HttpContext context) => Task.FromResult(nextInvoked = true);
             if (expectedUrl is not null)
             {
-                RedirectToUrlConverterCollectionMock.Setup(obj => obj.Convert(redirect, HttpContextMock.Context)).Returns(expectedUrl);
+                _testSubject.returnValue = expectedUrl;
                 ResponseAbstractionMock!.Setup(obj => obj.SetRedirectLocation(HttpContextMock.Response, expectedUrl)).Verifiable();
             }
             var input = new InterceptBase<Redirect>(redirect);
@@ -161,5 +149,26 @@ namespace UrlTracker.Web.Tests.Processing
                 ResponseAbstractionMock!.Verify();
             });
         }
+
+        private class TestRedirectResponseInterceptHandler
+            : RedirectResponseInterceptHandler<TestTarget>
+        {
+            public TestRedirectResponseInterceptHandler(ILogger logger,
+                                                        Abstraction.IResponseAbstraction responseAbstraction,
+                                                        IUmbracoContextFactoryAbstraction umbracoContextFactory)
+                : base(logger, responseAbstraction, umbracoContextFactory)
+            {
+            }
+
+            protected override string? GetUrl(HttpContext context, Redirect intercept, TestTarget target)
+            {
+                return returnValue;
+            }
+
+            public string? returnValue { get; set; }
+        }
+
+        private class TestTarget : ITargetStrategy
+        { }
     }
 }

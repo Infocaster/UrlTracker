@@ -3,26 +3,29 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Configuration.Models;
+using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Logging;
 using UrlTracker.Core.Models;
+using UrlTracker.Web.Abstraction;
 
 namespace UrlTracker.Web.Processing
 {
-    public class UrlRedirectConverter : IRedirectToUrlConverter
+    public class UrlRedirectResponseInterceptHandler : RedirectResponseInterceptHandler<UrlTargetStrategy>
     {
         private readonly IOptionsMonitor<RequestHandlerSettings> _requestHandlerSettings;
 
-        public UrlRedirectConverter(IOptionsMonitor<RequestHandlerSettings> requestHandlerSettings)
+        public UrlRedirectResponseInterceptHandler(ILogger<UrlRedirectResponseInterceptHandler> logger,
+                                    IResponseAbstraction responseAbstraction,
+                                    IUmbracoContextFactoryAbstraction umbracoContextFactory,
+                                    IOptionsMonitor<RequestHandlerSettings> requestHandlerSettings)
+            : base(logger, responseAbstraction, umbracoContextFactory)
         {
             _requestHandlerSettings = requestHandlerSettings;
         }
 
-        public bool CanHandle(Redirect redirect)
-            => redirect.Target is UrlTargetStrategy;
-
-        public string? Handle(Redirect redirect, HttpContext context)
+        protected override string? GetUrl(HttpContext context, Redirect intercept, UrlTargetStrategy target)
         {
-            var target = (UrlTargetStrategy)redirect.Target;
             var url = target.Url;
             var request = context.Request;
 
@@ -30,7 +33,7 @@ namespace UrlTracker.Web.Processing
 
             if (!url.Protocol.HasValue) url.Protocol = (Protocol)Enum.Parse(typeof(Protocol), request.Scheme, true);
 
-            if (redirect.RetainQuery) url.Query = request.QueryString.Value;
+            if (intercept.RetainQuery) url.Query = request.QueryString.Value;
 
             var requestHandlerSettingsValue = _requestHandlerSettings.CurrentValue;
             var result = url.ToString(UrlType.Absolute, requestHandlerSettingsValue.AddTrailingSlash);
@@ -40,7 +43,7 @@ namespace UrlTracker.Web.Processing
             //    This logic has been taken from the old code base. It has a potential side effect.
             //    If a pattern matches on a partial string, the non-matched part will stay in the url
             //    example: regex:"(ipsum)" targeturl: "http://example.com/$1" input: "lorem/ipsum/dolor" result: "lorem/http://example.com/ipsum/dolor"
-            if (redirect.Source is RegexSourceStrategy regexsource)
+            if (intercept.Source is RegexSourceStrategy regexsource)
             {
                 result = Regex.Replace((context.Request.Path + context.Request.QueryString.Value).TrimStart('/'), regexsource.Value, result);
             }

@@ -25,13 +25,11 @@ namespace UrlTracker.Web
         {
             builder.ComposeDefaultResponseIntercepts()
                    .ComposeDefaultRequestInterceptFilters()
-                   .ComposeDefaultClientErrorFilters()
-                   .ComposeDefaultRedirectToUrlConverters();
+                   .ComposeDefaultClientErrorFilters();
 
             builder.Services.AddTransient<IRequestAbstraction, RequestAbstraction>();
             builder.Services.AddTransient<IResponseAbstraction, ResponseAbstraction>();
 
-            builder.Services.AddSingleton<IRedirectToUrlConverterCollection>(factory => factory.GetRequiredService<RedirectToUrlConverterCollection>());
             builder.Services.AddSingleton<IResponseInterceptHandlerCollection>(factory => factory.GetRequiredService<ResponseInterceptHandlerCollection>());
             builder.Services.AddSingleton<IRequestInterceptFilterCollection>(factory => factory.GetRequiredService<RequestInterceptFilterCollection>());
             builder.Services.AddSingleton<IClientErrorFilterCollection>(factory => factory.GetRequiredService<ClientErrorFilterCollection>());
@@ -43,7 +41,8 @@ namespace UrlTracker.Web
         public static IUmbracoBuilder ComposeDefaultResponseIntercepts(this IUmbracoBuilder builder)
         {
             builder.ResponseInterceptHandlers()!
-                .Append<RedirectResponseInterceptHandler>()
+                .Append<UrlRedirectResponseInterceptHandler>()
+                .Append<ContentRedirectResponseInterceptHandler>()
                 .Append<NoLongerExistsResponseInterceptHandler>()
                 .Append<NullInterceptHandler>();
 
@@ -69,14 +68,6 @@ namespace UrlTracker.Web
             return builder;
         }
 
-        public static IUmbracoBuilder ComposeDefaultRedirectToUrlConverters(this IUmbracoBuilder builder)
-        {
-            builder.RedirectToUrlConverters()!
-                .Append<UrlRedirectConverter>()
-                .Append<ContentRedirectConverter>();
-            return builder;
-        }
-
         public static ResponseInterceptHandlerCollectionBuilder? ResponseInterceptHandlers(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<ResponseInterceptHandlerCollectionBuilder>();
 
@@ -85,8 +76,5 @@ namespace UrlTracker.Web
 
         public static ClientErrorFilterCollectionBuilder? ClientErrorFilters(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<ClientErrorFilterCollectionBuilder>();
-
-        public static RedirectToUrlConverterCollectionBuilder? RedirectToUrlConverters(this IUmbracoBuilder builder)
-            => builder.WithCollectionBuilder<RedirectToUrlConverterCollectionBuilder>();
     }
 }

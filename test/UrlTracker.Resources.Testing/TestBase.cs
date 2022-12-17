@@ -98,8 +98,6 @@ namespace UrlTracker.Resources.Testing
         protected IRuntimeState RuntimeState => RuntimeStateMock.Object;
         protected Mock<IUrlTrackerDashboardPageCollection> UrlTrackerDashboardPageCollectionMock { get; set; } = null!;
         protected IUrlTrackerDashboardPageCollection UrlTrackerDashboardPageCollection => UrlTrackerDashboardPageCollectionMock.Object;
-        protected Mock<IRedirectToUrlConverterCollection> RedirectToUrlConverterCollectionMock { get; set; } = null!;
-        protected IRedirectToUrlConverterCollection RedirectToUrlConverterCollection => RedirectToUrlConverterCollectionMock.Object;
         protected Mock<IStrategyMapCollection> StrategyMapCollectionMock { get; set; } = null!;
         protected IStrategyMapCollection StrategyMapCollection => StrategyMapCollectionMock.Object;
         protected Mock<IRedactionScoreService> RedactionScoreServiceMock { get; set; } = null!;
@@ -173,7 +171,6 @@ namespace UrlTracker.Resources.Testing
             InterceptCacheMock = new Mock<IInterceptCache>();
             RuntimeStateMock = new Mock<IRuntimeState>();
             UrlTrackerDashboardPageCollectionMock = new Mock<IUrlTrackerDashboardPageCollection>();
-            RedirectToUrlConverterCollectionMock = new Mock<IRedirectToUrlConverterCollection>();
             StrategyMapCollectionMock = new Mock<IStrategyMapCollection>();
             RedactionScoreServiceMock = new Mock<IRedactionScoreService>();
 
