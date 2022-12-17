@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Umbraco.Cms.Web.Common.Authorization;
 using UrlTracker.Resources.Website;
 
 namespace UrlTracker.IntegrationTests.Utils
@@ -44,7 +45,7 @@ namespace UrlTracker.IntegrationTests.Utils
             obj.AddSingleton<IAuthorizationHandler, TestAuthorizationHandler>();
             obj.AddAuthorization(options =>
             {
-                options.AddPolicy("BackOfficeAccess", policy =>
+                options.AddPolicy(AuthorizationPolicies.BackOfficeAccess, policy =>
                 {
                     policy.Requirements.Clear();
                     policy.AddRequirements(new TestRequirement());

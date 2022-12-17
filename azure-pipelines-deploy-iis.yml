@@ -11,6 +11,8 @@ parameters:
   type: string
 - name: deploymentPath
   type: string
+- name: packageDownloadPatterns
+  type: string
 
 jobs:
 - deployment: 'prepare${{ parameters.environment }}'
@@ -25,6 +27,11 @@ jobs:
     runOnce:
       deploy:
         steps:
+        - checkout: none
+        - download: current
+          artifact: 'drop'
+          patterns: ${{ parameters.packageDownloadPatterns }}
+          displayName: Download packages and symbols
         - task: FileTransform@2
           displayName: Transform web.config
           inputs:

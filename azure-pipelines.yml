@@ -78,14 +78,23 @@ stages:
         version: '6.x'
 
     - task: DotNetCoreCLI@2
+      displayName: 'Build solution'
+      inputs:
+        command: 'build'
+        projects: 'UrlTracker.sln'
+        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion)'
+
+    - task: DotNetCoreCLI@2
       displayName: 'Run tests'
       inputs:
         command: 'test'
         projects: |
+          test/UrlTracker.Core.Caching.Memory.Tests/UrlTracker.Core.Caching.Memory.Tests.csproj
           test/UrlTracker.Core.Tests/UrlTracker.Core.Tests.csproj
-          test/UrlTracker.Web.Tests/UrlTracker.Web.Tests.csproj
           test/UrlTracker.IntegrationTests/UrlTracker.IntegrationTests.csproj
-        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion) --collect "XPlat Code Coverage"'
+          test/UrlTracker.Middleware.Tests/UrlTracker.Middleware.Tests.csproj
+          test/UrlTracker.Web.Tests/UrlTracker.Web.Tests.csproj
+        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion) --collect "XPlat Code Coverage" --no-build'
 
     - script: |
         dotnet tool install -g dotnet-reportgenerator-globaltool
@@ -103,7 +112,7 @@ stages:
       displayName: 'dotnet pack'
       inputs:
         command: pack
-        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion)'
+        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion) --no-build'
         packagesToPack: src/**/*.csproj
         versioningScheme: byEnvVar
         versionEnvVar: GitVersion.NuGetVersion
@@ -124,7 +133,7 @@ stages:
           command: publish
           publishWebProjects: false
           projects: test/**/UrlTracker.Resources.Website.csproj
-          arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/website -p:Version=$(GitVersion.NuGetVersion)'
+          arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/website -p:Version=$(GitVersion.NuGetVersion) --no-build'
       
       - task: PublishBuildArtifacts@1
         displayName: 'Publish website artifacts'
@@ -217,3 +226,4 @@ stages:
         hostName: $(HostName)
         stageName: 'Testing'
         deploymentPath: $(TestPhysicalPath)
+        packageDownloadPatterns: 'drop-website'
