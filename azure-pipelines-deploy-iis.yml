@@ -30,7 +30,7 @@ jobs:
         - checkout: none
         - download: current
           artifact: ${{ parameters.dropName }}
-          displayName: Download packages and symbols
+          displayName: Download website artifact
         - task: FileTransform@2
           displayName: Transform web.config
           inputs:
