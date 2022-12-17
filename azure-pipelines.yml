@@ -221,9 +221,9 @@ stages:
     - template: 'azure-pipelines-deploy-iis.yml'
       parameters:
         websiteName: 'urltracker'
-        dropName: '$(pipeline.workspace)/drop-website/UrlTracker.Resources.Website.zip'
+        dropFolder: '$(pipeline.workspace)/drop-website/UrlTracker.Resources.Website.zip'
         environment: 'Testing'
         hostName: $(HostName)
         stageName: 'Testing'
         deploymentPath: $(TestPhysicalPath)
-        packageDownloadPatterns: 'drop-website'
+        dropName: 'drop-website'

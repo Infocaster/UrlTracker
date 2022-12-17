@@ -3,6 +3,8 @@ parameters:
   type: string
 - name: dropName
   type: string
+- name: dropFolder
+  type: string
 - name: environment
   type: string
 - name: hostName
@@ -10,8 +12,6 @@ parameters:
 - name: stageName
   type: string
 - name: deploymentPath
-  type: string
-- name: packageDownloadPatterns
   type: string
 
 jobs:
@@ -29,13 +29,12 @@ jobs:
         steps:
         - checkout: none
         - download: current
-          artifact: 'drop'
-          patterns: ${{ parameters.packageDownloadPatterns }}
+          artifact: ${{ parameters.dropName }}
           displayName: Download packages and symbols
         - task: FileTransform@2
           displayName: Transform web.config
           inputs:
-            folderPath: '${{ parameters.dropName }}'
+            folderPath: '${{ parameters.dropFolder }}'
             xmlTransformationRules: '-transform **\*.${{ parameters.stageName }}.config -xml **\*.config'
             jsonTargetFiles: '**\appsettings.json'
         - task: IISWebAppManagementOnMachineGroup@0
@@ -70,5 +69,5 @@ jobs:
           displayName: 'Deploy to IIS'
           inputs:
             WebsiteName: '${{ parameters.websiteName }}'
-            Package: '${{ parameters.dropName }}'
+            Package: '${{ parameters.dropFolder }}'
             takeAppOfflineFlag: true
