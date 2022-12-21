@@ -1,7 +1,8 @@
-﻿<div ng-controller="UrlTracker.Dashboard.Controller as vm" class="urltracker-body">
-	<!--<umb-tabs-nav tabs="vm.tabs" on-tab-change="vm.changeTab(tab.alias)"></umb-tabs-nav>
-
-	<umb-tab-content ng-repeat="tab in vm.tabs" tab="tab" ng-show="tab.active">
-
-	</umb-tab-content>-->
-</div>
+﻿<urltracker-dashboard
+    ng-controller="UrlTracker.Dashboard.Controller as vm"
+    ng-attr-tabs="{{ vm.tabs }}"
+    ng-on-tabchange="vm.setTab($event)"
+    ng-attr-loading="{{ vm.loading ? '' : undefined }}"
+    ng-init="vm.init()">
+    <div slot="tabs" ng-if="vm.activeTab" ng-include="vm.activeTab.template"></div>
+</urltracker-dashboard>

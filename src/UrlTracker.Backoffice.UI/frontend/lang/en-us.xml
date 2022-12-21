@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <language alias="en" intName="English (US)" localName="English (US)" lcid="" culture="en-US">
-	<area alias="dashboardTabs">
-		<key alias="UrlTracker">UrlTracker</key>
-	</area>
+  <area alias="dashboardTabs">
+    <key alias="UrlTracker">URL Tracker</key>
+  </area>
   <area alias="treeHeaders">
-		<key alias="urlTrackerTreeGroup">URL Tracker</key>
+    <key alias="urlTrackerTreeGroup">URL Tracker</key>
     <key alias="urlTrackerSettingsTree">URL Tracker settings</key>
+  </area>
+  <area alias="urlTrackerDashboardTabs">
+    <key alias="overview">Overview</key>
+    <key alias="recommendations">Recommendations</key>
+    <key alias="redirects">Redirects</key>
+    <key alias="advancedRedirects">Advanced redirects</key>
+  </area>
+  <area alias="urlTrackerDashboardTabLabels">
+    <key alias="overview">Overview</key>
+    <key alias="recommendations">Recommendations</key>
+    <key alias="redirects">Redirects</key>
+    <key alias="advancedRedirects">Advanced redirects</key>
   </area>
 </language>

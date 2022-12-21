@@ -4,15 +4,16 @@
     "sourceMap": true,
     "strict": true,
     "noImplicitReturns": true,
-    "noImplicitAny": false,
+    "noImplicitAny": true,
     "module": "es6",
     "moduleResolution": "node",
-    "target": "es5",
+    "target": "ES2015",
     "allowJs": true,
     "removeComments": true,
-    "lib": ["ES2015", "DOM"]
+    "lib": [ "ES2015", "DOM" ],
+    "experimentalDecorators": true,
   },
   "include": [
     "./frontend/js/**/*"
-  ]
+]
 }

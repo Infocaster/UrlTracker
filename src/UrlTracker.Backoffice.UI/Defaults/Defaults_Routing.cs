@@ -16,9 +16,12 @@
             /// <summary>
             /// The base folder for all static resources
             /// </summary>
-            public const string AppPluginFolder = "app_plugins/urltracker/";
+            public const string AppPluginFolder = "/app_plugins/urltracker/";
 
-            public const string DashboardPageFolder = AppPluginFolder + "dashboard/pages/";
+            /// <summary>
+            /// The base folder for all dashboard pages
+            /// </summary>
+            public const string DashboardPageFolder = AppPluginFolder + "dashboard/tabs/";
         }
     }
 }

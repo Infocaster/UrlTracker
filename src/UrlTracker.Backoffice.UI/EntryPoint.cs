@@ -40,7 +40,8 @@ namespace UrlTracker.Backoffice.UI
             builder.MapDefinitions()
                 .Add<CsvMap>()
                 .Add<RedirectMap>()
-                .Add<RecommendationMap>();
+                .Add<RecommendationMap>()
+                .Add<ExtensionMap>();
 
             builder.AddNotificationHandler<ServerVariablesParsingNotification, ServerVariablesNotificationHandler>();
 

@@ -12,6 +12,6 @@ namespace UrlTracker.Backoffice.UI.Extensions
         public string Alias { get; } = "overview";
 
         /// <inheritdoc />
-        public string View { get; } = Defaults.Routing.DashboardPageFolder + "overview.html";
+        public string View { get; } = Defaults.Routing.DashboardPageFolder + "landingpage.html";
     }
 }
