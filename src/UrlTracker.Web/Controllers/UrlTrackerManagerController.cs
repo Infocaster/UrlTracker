@@ -84,7 +84,7 @@ namespace UrlTracker.Web.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        [HttpDelete]
+        [HttpPost]
         [ExcludeFromCodeCoverage]
         public async Task<IHttpActionResult> DeleteRedirect([FromUri] int id)
         {

@@ -77,7 +77,7 @@
     public deleteRedirect(id) {
         return this.urlResource.verify(this.$http({
             url: this.urlResource.getUrl("deleteRedirect") + `/${id}`,
-            method: "DELETE"
+            method: "POST"
         }), "Failed to delete redirect");
     }
 

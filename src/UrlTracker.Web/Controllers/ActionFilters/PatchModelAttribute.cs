@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 using UrlTracker.Core;
@@ -39,6 +36,9 @@ namespace UrlTracker.Web.Controllers.ActionFilters
                     {
                         redirectRequestModel.Culture = redirectRequestModel.Culture.NormalizeCulture();
                     }
+
+                    redirectRequestModel.OldUrl = redirectRequestModel.OldUrl.DefaultIfNullOrWhiteSpace(null);
+                    redirectRequestModel.OldRegex = redirectRequestModel.OldRegex.DefaultIfNullOrWhiteSpace(null);
 
                     actionContext.ActionArguments[key] = redirectRequestModel;
                 }
