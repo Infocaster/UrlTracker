@@ -9,7 +9,7 @@ namespace UrlTracker.Backoffice.UI.Extensions
     public class RecommendationsDashboardPage : IUrlTrackerDashboardPage
     {
         /// <inheritdoc />
-        public string Alias { get; } = "recommendations";
+        public string Alias { get; } = Defaults.Extensions.Recommendations;
 
         /// <inheritdoc />
         public string View { get; } = Defaults.Routing.DashboardPageFolder + "recommendations.html";

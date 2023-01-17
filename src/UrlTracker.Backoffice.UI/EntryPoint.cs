@@ -8,6 +8,7 @@ using UrlTracker.Backoffice.UI.Controllers;
 using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
 using UrlTracker.Backoffice.UI.Extensions;
 using UrlTracker.Backoffice.UI.Map;
+using UrlTracker.Backoffice.UI.UserNotifications;
 using UrlTracker.Web.Events;
 
 namespace UrlTracker.Backoffice.UI
@@ -29,7 +30,8 @@ namespace UrlTracker.Backoffice.UI
         public static IUmbracoBuilder ComposeUrlTrackerBackoffice(this IUmbracoBuilder builder)
         {
             builder.AddDashboard<UrlTrackerDashboard>();
-            builder.AddDefaultUrlTrackerDashboardPages();
+            builder.AddDefaultUrlTrackerDashboardPages()
+                   .AddDefaultUrlTrackerNotifications();
 
             builder.ManifestFilters()
                 .Append<UrlTrackerManifestFilter>();
@@ -83,6 +85,18 @@ namespace UrlTracker.Backoffice.UI
                 .Add<RecommendationsDashboardPage>()
                 .Add<RedirectsDashboardPage>()
                 .Add<AdvancedRedirectsDashboardPage>();
+
+            return builder;
+        }
+
+        /// <summary>
+        /// Composes the default URL Tracker dashboard notifications
+        /// </summary>
+        /// <param name="builder">The Umbraco service collection</param>
+        /// <returns>The Umbraco service collection after all the services are added</returns>
+        public static IUmbracoBuilder AddDefaultUrlTrackerNotifications(this IUmbracoBuilder builder)
+        {
+            builder.Services.ConfigureOptions<DashboardWelcomeUserNotificationConfiguration>();
 
             return builder;
         }
