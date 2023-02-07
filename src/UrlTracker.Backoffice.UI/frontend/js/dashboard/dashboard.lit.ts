@@ -1,6 +1,7 @@
 ﻿import { LitElement, html, css } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { IDashboardTab } from "./dashboardTab";
+import { IDashboardFooter } from "./footer/dashboardFooter";
 
 @customElement('urltracker-dashboard')
 export class UrlTrackerDashboard extends LitElement {
@@ -8,6 +9,7 @@ export class UrlTrackerDashboard extends LitElement {
     constructor() {
         super();
         this.tabs = null;
+        this.footer = null;
         this.loading = false;
     }
 
@@ -67,7 +69,7 @@ export class UrlTrackerDashboard extends LitElement {
                     <slot name="tabs"></slot>
                 </div>
             </uui-scroll-container>
-            <urltracker-dashboard-footer>
+            <urltracker-dashboard-footer .model="${this.footer}">
             </urltracker-dashboard-footer>
             `;
         }
@@ -113,6 +115,9 @@ export class UrlTrackerDashboard extends LitElement {
 
     @property({ type: Boolean, reflect: true })
     public loading: boolean;
+
+    @property({ type: Object, reflect: true })
+    public footer: IDashboardFooter | null;
 
     private onActivateTab(item: IDashboardTab): (e: Event) => void {
         return (_e: Event) => {

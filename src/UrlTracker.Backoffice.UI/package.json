@@ -6,6 +6,7 @@
   "scripts": {
     "build:webpack": "webpack --mode=development",
     "build:webpack-production": "webpack --mode=production",
+    "watch:webpack": "webpack watch --mode=development",
     "test": "wtr frontend/test/**/*.test.ts --node-resolve",
     "test:watch": "wtr frontend/test/**/*.test.ts --node-resolve --watch"
   },

@@ -1,0 +1,7 @@
+﻿<urltracker-dashboard ng-attr-tabs="{{ vm.tabs }}"
+                      ng-attr-footer="{{ vm.footer }}"
+                      ng-on-tabchange="vm.setTab($event)"
+                      ng-attr-loading="{{ vm.loading ? '' : undefined }}"
+                      ng-init="vm.init()">
+    <div slot="tabs" ng-if="vm.activeTab" ng-include="vm.activeTab.template"></div>
+</urltracker-dashboard>

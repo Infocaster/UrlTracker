@@ -1,4 +1,4 @@
-import { expect, fixture, html, nextFrame, oneEvent } from '@open-wc/testing'
+import { expect, fixture, html, oneEvent } from '@open-wc/testing'
 
 import { UrlTrackerDashboard } from "../../js/dashboard/dashboard.lit"
 import "../../js/dashboard/dashboard.lit"
