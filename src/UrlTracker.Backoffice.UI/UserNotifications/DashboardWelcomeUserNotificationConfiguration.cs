@@ -15,9 +15,9 @@ namespace UrlTracker.Backoffice.UI.UserNotifications
             options.Notifications.Add(new UrlTrackerUserNotification
             {
                 Id = "0a224b9b-" + name,
-                TranslatableTitleComponent = $"urltrackernotifications_{name}welcometitle",
+                TranslatableTitleComponent = $"urlTrackerNotifications_{name}welcometitle",
                 TitleArguments = Array.Empty<string>(),
-                TranslatableBodyComponent = $"urltrackernotifications_{name}welcomebody",
+                TranslatableBodyComponent = $"urlTrackerNotifications_{name}welcomebody",
                 BodyArguments = Array.Empty<string>(),
             });
         }

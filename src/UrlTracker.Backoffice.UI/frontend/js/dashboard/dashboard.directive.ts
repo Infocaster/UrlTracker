@@ -62,25 +62,33 @@ export class UrlTrackerDashboardController {
         }
     }
 
-    private async refreshFooter(): Promise<void> {
+    private refreshFooter(): angular.IPromise<void> {
 
-        this.footer = {
-            logo: "/App_Plugins/UrlTracker/assets/layout/footerlogo.svg",
-            logoUrl: "https://infocaster.net",
-            version: this.versionProvider.version,
-            links: [
-                {
-                    url: "https://github.com/Infocaster/UrlTracker/Discussions",
-                    title: "Suggest a feature",
-                    target: "_blank"
-                },
-                {
-                    url: "https://github.com/Infocaster/UrlTracker/Issues",
-                    title: "Report a bug",
-                    target: "_blank"
-                }
-            ]
-        };
+        return this.localizationService.localizeMany([
+            "urlTrackerDashboardFooter_logo",
+            "urlTrackerDashboardFooter_logourl",
+            "urlTrackerDashboardFooter_featurelabel",
+            "urlTrackerDashboardFooter_buglabel"
+        ]).then((result) => {
+
+            this.footer = {
+                logo: result[0],
+                logoUrl: result[1],
+                version: this.versionProvider.version,
+                links: [
+                    {
+                        url: "https://github.com/Infocaster/UrlTracker/Discussions",
+                        title: result[2],
+                        target: "_blank"
+                    },
+                    {
+                        url: "https://github.com/Infocaster/UrlTracker/Issues",
+                        title: result[3],
+                        target: "_blank"
+                    }
+                ]
+            };
+        })
     }
 }
 

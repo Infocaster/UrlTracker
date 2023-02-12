@@ -19,4 +19,18 @@
     <key alias="redirects">Redirects</key>
     <key alias="advancedRedirects">Geavanceerde redirects</key>
   </area>
+  <area alias="urlTrackerNotifications">
+    <key alias="landingpagewelcometitle">Welkom bij de URL Tracker</key>
+    <key alias="landingpagewelcomebody">In dit overzicht staat een reeks van de meest belangrijke adviezen voor uw gemak. Verbeter de ervaring van uw bezoekers door deze problemen op te lossen.</key>
+    <key alias="recommendationswelcometitle">Adviezen overzicht</key>
+    <key alias="recommendationswelcomebody">Hier kun je alle huidige adviezen terugvinden. Standaard worden de adviezen gesorteerd op urgentie. Gebruik de invulvelden om het overzicht te filteren en sorteren.</key>
+    <key alias="redirectswelcometitle">Redirects overzicht</key>
+    <key alias="redirectswelcomebody">Deze tab laat de redirects zien die op deze website zijn ingesteld. Gebruik de verschillende knoppen en velden om redirects aan te maken, te verwijderen en aan te passen. Deze pagina geeft alleen de standaard redirects weer. Bekijk het geavanceerde redirects overzicht om alle redirects te zien.</key>
+    <key alias="advancedredirectswelcometitle">Geavanceerde redirects overzicht</key>
+    <key alias="advancedredirectswelcomebody">Bovenop de standaard redirects, laat deze pagina ook de redirects zien met geavanceerde instellingen.</key>
+  </area>
+  <area alias="urlTrackerDashboardFooter">
+    <key alias="featurelabel">Doe een suggestie</key>
+    <key alias="buglabel">Meld een bug</key>
+  </area>
 </language>

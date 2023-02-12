@@ -19,4 +19,20 @@
     <key alias="redirects">Redirects</key>
     <key alias="advancedRedirects">Advanced redirects</key>
   </area>
+  <area alias="urlTrackerNotifications">
+    <key alias="landingpagewelcometitle">Welcome to the URL Tracker</key>
+    <key alias="landingpagewelcomebody">On this overview, a selection of the most important recommendations is compiled for your convenience. Improve your visitors' experience by solving these issues</key>
+    <key alias="recommendationswelcometitle">Recommendations overview</key>
+    <key alias="recommendationswelcomebody">Over here you can see all current recommendations. By default, recommendations are ordered by their importance. Use the inputs and dropdowns to filter and sort the recommendations.</key>
+    <key alias="redirectswelcometitle">Redirects overview</key>
+    <key alias="redirectswelcomebody">This tab shows the redirects that are configured for your website. The various controls on this page allow you to create, delete and edit your redirects. This page only shows standard redirects. Check out the 'advanced redirects' tab to see all the redirects.</key>
+    <key alias="advancedredirectswelcometitle">Advanced redirects overview</key>
+    <key alias="advancedredirectswelcomebody">In addition to the standard redirects, this page shows you all redirects with advanced configuration options.</key>
+  </area>
+  <area alias="urlTrackerDashboardFooter">
+    <key alias="logo">/App_Plugins/UrlTracker/assets/layout/footerlogo.svg</key>
+    <key alias="logourl">https://infocaster.net</key>
+    <key alias="featurelabel">Suggest a feature</key>
+    <key alias="buglabel">Report a bug</key>
+  </area>
 </language>
