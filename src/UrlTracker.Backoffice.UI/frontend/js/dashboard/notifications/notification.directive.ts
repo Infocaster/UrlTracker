@@ -1,4 +1,4 @@
-import { IDashboardTab } from "../dashboardTab";
+import { basePath } from "../../util/constants";
 import { ITranslatedNotificationCollection } from "./notification";
 import { INotificationResource, NotificationResource } from "./notification.service";
 
@@ -34,7 +34,7 @@ ngUrlTrackerNotification.alias = "ngUrltrackerNotification"
 export function ngUrlTrackerNotification(): angular.IDirective {
     return {
         restrict: 'E',
-        templateUrl: '/App_Plugins/UrlTracker/dashboard/notifications/notification.directive.html',
+        templateUrl: basePath + '/dashboard/notifications/notification.directive.html',
         controller: UrlTrackerNotificationController.alias,
         controllerAs: 'vm',
         scope: {

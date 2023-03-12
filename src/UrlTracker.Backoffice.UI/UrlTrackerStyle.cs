@@ -8,7 +8,7 @@ namespace UrlTracker.Backoffice.UI
         : CssFile
     {
         public UrlTrackerStyle()
-            : base("/App_Plugins/UrlTracker/style.css")
+            : base(Defaults.Routing.AppPluginFolder + "style.css")
         { }
     }
 }

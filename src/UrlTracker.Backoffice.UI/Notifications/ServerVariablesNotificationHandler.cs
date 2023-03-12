@@ -20,16 +20,15 @@ namespace UrlTracker.Web.Events
 
         public void Handle(ServerVariablesParsingNotification notification)
         {
-            Dictionary<string, string?> urlTrackerVariables = new()
+            Dictionary<string, string> recommendationVariables = new()
             {
-                { "base", _linkGenerator.GetUmbracoApiServiceBaseUrl<UrlTrackerManagerController>(controller => controller.DeleteEntry(default!)) },
-                { "deleteEntry", nameof(UrlTrackerManagerController.DeleteEntry) },
-                { "getRedirects", nameof(UrlTrackerManagerController.GetRedirects) },
-                { "getNotFounds", nameof(UrlTrackerManagerController.GetNotFounds) },
-                { "countNotFoundsThisWeek", nameof(UrlTrackerManagerController.CountNotFoundsThisWeek) },
-                { "addIgnore404", nameof(UrlTrackerManagerController.AddIgnore404) },
-                { "importRedirects", nameof(UrlTrackerManagerController.ImportRedirects) },
-                { "exportRedirects", nameof(UrlTrackerManagerController.ExportRedirects) }
+                { "base", _linkGenerator.GetUmbracoApiServiceBaseUrl<RecommendationsController>(controller => controller.List(default!))! },
+                { "list", nameof(RecommendationsController.List) }
+            };
+
+            Dictionary<string, object> urlTrackerVariables = new()
+            {
+                { "recommendations", recommendationVariables }
             };
 
             notification.ServerVariables.Add("urlTracker", urlTrackerVariables);

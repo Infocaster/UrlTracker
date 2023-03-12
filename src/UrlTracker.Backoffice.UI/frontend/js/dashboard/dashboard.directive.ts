@@ -4,6 +4,8 @@ import { ILitEvent } from "../util/litEvent";
 import { IDashboardFooter } from "./footer/dashboardFooter";
 import { IDashboardTab } from "./dashboardTab";
 import { IVersionProvider, VersionProvider } from "../util/versionProvider";
+import { basePath } from "../util/constants";
+import { IUrlResource, UrlResource } from "../util/UrlResource";
 
 export interface IUrlTrackerDashboardScope extends angular.IScope { }
 export interface ITabChangeEvent extends ILitEvent<IDashboardTab> { }
@@ -97,7 +99,7 @@ export function ngUrltrackerDashboard(): angular.IDirective {
 
     return {
         restrict: 'E',
-        templateUrl: '/App_Plugins/UrlTracker/dashboard/dashboard.directive.html',
+        templateUrl: basePath + '/dashboard/dashboard.directive.html',
         controller: UrlTrackerDashboardController.alias,
         controllerAs: 'vm'
     };
