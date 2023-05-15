@@ -30,7 +30,8 @@ The URL Tracker has several configurable properties that can be changed in appse
         "Enable": true,
         "EnableLogging": false,
         "AppendPortNumber": false,
-        "HasDomainOnChildNode": false,
+        "IncludeWildcardDomains": false,
+        "HasDomainOnChildNode": true,
         "BlockedUrlsList": [],
         "Backoffice": {
             "Notifications":{
@@ -58,7 +59,8 @@ The URL Tracker has several configurable properties that can be changed in appse
 |                                      UrlTracker:Enable | bool     | Set this value to `false` to completely disable the URL Tracker. The URL Tracker will not intercept any requests nor track any content updates
 |                               UrlTracker:EnableLogging | bool     | Set this value to `true` to allow the URL Tracker to write logs to the Umbraco native logger. Most logs from the URL Tracker are written at Debug or Verbose level.
 |                            UrlTracker:AppendPortNumber | bool     | Set this value to `true` to add a port number behind the host component of a redirect url. This setting is ignored when the application is hosted on the default port 80.
-|                        UrlTracker:HasDomainOnChildNode | bool     | Set this value to `true` if your website has domains configured on pages that are not in the root of the website.
+|                        UrlTracker:HasDomainOnChildNode | bool     | Set this value to `false` to exclude domains on nodes that are not in the root of the content tree.
+|                      UrlTracker:IncludeWildcardDomains | bool     | Set this value to `true` to include wildcard domains.
 |                             UrlTracker:BlockedUrlsList | string[] | Add strings to this array that should be blocked from the UrlTracker. The strings in this array will be filtered out and shall never appear as a 404. This is great for things that crawlers search for like wpadmin and prevents the UrlTracker from getting clogged. Keep in mind that the filter works with String.Contains so there is no need to use entire urls.
 |             UrlTracker:Backoffice:Notifications:Enable | bool     | Set this value to `true` to disable tracking of content changes. The URL Tracker will not automatically create redirects when content is updated
 |          UrlTracker:Caching:Memory:CacheRegexRedirects | bool     | Set this value to `false` to disable caching of regex redirects. By default, all regex redirects are cached in memory to improve performance.

@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Core.Web;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Domain.Models;
 
@@ -13,32 +14,44 @@ namespace UrlTracker.Core.Domain
     // The domain provider separates the domain interpretation logic from the original service,
     //    because it's not the service's job to obtain the domains and it makes the service unnecessarily complicated
     // Caching is taken out and instead implemented as a decorator (see DecoratorDomainProviderCaching.cs)
-    // Old code reference: https://dev.azure.com/infocaster/Umbraco%20Awesome/_git/UrlTracker?path=/Services/UrlTrackerService.cs&version=GBdevelop&line=322&lineEnd=347&lineStartColumn=3&lineEndColumn=4&lineStyle=plain&_a=contents
     [ExcludeFromCodeCoverage]
     internal class DomainProvider
         : IDomainProvider
     {
         private readonly IDomainService _domainService;
         private readonly IOptions<UrlTrackerSettings> _options;
+        private readonly IUmbracoContextFactory _umbracoContextFactory;
 
         public DomainProvider(IDomainService domainService,
-                              IOptions<UrlTrackerSettings> options)
+                              IOptions<UrlTrackerSettings> options,
+                              IUmbracoContextFactory umbracoContextFactory)
         {
             _domainService = domainService;
             _options = options;
+            _umbracoContextFactory = umbracoContextFactory;
         }
 
         public DomainCollection GetDomains()
         {
+
             var configurationValue = _options.Value;
-            var domains = _domainService.GetAll(configurationValue.HasDomainOnChildNode);
+            var domains = _domainService.GetAll(configurationValue.IncludeWildcardDomains);
+
+            if (!configurationValue.HasDomainOnChildNode)
+            {
+                using var cref = _umbracoContextFactory.EnsureUmbracoContext();
+
+                var contentAtRoot = new HashSet<int>(cref.UmbracoContext.Content!.GetAtRoot().Select(c => c.Id));
+                domains = domains.Where(d => d.RootContentId.HasValue && contentAtRoot.Contains(d.RootContentId.Value));
+            }
+
             return CreateCollection(domains);
         }
 
         public DomainCollection GetDomains(int nodeId)
         {
             var configurationValue = _options.Value;
-            var domains = _domainService.GetAssignedDomains(nodeId, configurationValue.HasDomainOnChildNode);
+            var domains = _domainService.GetAssignedDomains(nodeId, configurationValue.IncludeWildcardDomains);
             return CreateCollection(domains);
         }
 
