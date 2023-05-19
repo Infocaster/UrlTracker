@@ -7,8 +7,8 @@ namespace UrlTracker.Web.Tests.Controllers
 {
     public partial class UrlTrackerManagerControllerTests
     {
-        [TestCase(TestName = "GetNodesWithDomains")]
-        public void GetNodesWithDomains_Request_ReturnsUniqueNodes()
+        [TestCase(TestName = "GetNodesWithDomains returns domains if specified")]
+        public void GetNodesWithDomains_Request_ReturnsDomainsIfSpecified()
         {
             // arrange
             DomainProviderMock.Setup(obj => obj.GetDomains()).Returns(DomainCollection.Create(new[]
@@ -31,7 +31,31 @@ namespace UrlTracker.Web.Tests.Controllers
             {
                 Assert.That(result, Is.TypeOf<OkObjectResult>());
                 var resultObject = (result as OkObjectResult)?.Value as System.Collections.Generic.List<int>;
-                Assert.That(resultObject, Is.EquivalentTo(new[] { 1, 2, 3, 4 }));
+                Assert.That(resultObject, Is.EquivalentTo(new[] { 1, 2, 3 }));
+            });
+        }
+
+
+        [TestCase(TestName = "GetNodesWithDomains returns root content if no domains specified")]
+        public void GetNodesWithDomains_Request_ReturnsRootContentIfNoDomainsSpecified()
+        {
+            // arrange
+            DomainProviderMock.Setup(obj => obj.GetDomains()).Returns(DomainCollection.Create(new Domain[] { }));
+            UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetContentAtRoot()).Returns(new[]
+            {
+                TestPublishedContent.Create(3),
+                TestPublishedContent.Create(4)
+            });
+
+            // act
+            var result = _testSubject.GetNodesWithDomains();
+
+            // assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.TypeOf<OkObjectResult>());
+                var resultObject = (result as OkObjectResult)?.Value as System.Collections.Generic.List<int>;
+                Assert.That(resultObject, Is.EquivalentTo(new[] { 3, 4 }));
             });
         }
     }
