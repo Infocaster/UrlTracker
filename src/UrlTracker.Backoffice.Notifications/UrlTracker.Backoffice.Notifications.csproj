@@ -6,10 +6,9 @@
     <Title>URL Tracker Backoffice Notifications</Title>
     <Description>This package contains notification handlers for the URL Tracker to handle Umbraco content notifications</Description>
     <RootNamespace>UrlTracker.Backoffice.Notifications</RootNamespace>
-    <PackageReleaseNotes>1 new feature, 1 bugfix
+    <PackageReleaseNotes>1 bugfix
 
-- #126
-- Adds a new setting: IncludeWildcardDomains</PackageReleaseNotes>
+- Fix root content shown if explicit domains are assigned</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
