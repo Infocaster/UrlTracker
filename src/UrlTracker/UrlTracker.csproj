@@ -12,9 +12,10 @@
       Use v10 for umbraco 10, Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </Description>
     <RootNamespace>UrlTracker</RootNamespace>
-    <PackageReleaseNotes>1 bugfix
+    <PackageReleaseNotes>1 new feature, 1 bugfix
 
-- Fix root content shown if explicit domains are assigned</PackageReleaseNotes>
+- Fix #126
+- Include separate setting for child nodes and wildcard domains</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="10.0.0" />

@@ -4,9 +4,10 @@
     <Title>URL Tracker Middleware</Title>
     <Description>This package contains middleware to perform redirects and to register client errors with the URL Tracker</Description>
     <RootNamespace>UrlTracker.Middleware</RootNamespace>
-    <PackageReleaseNotes>1 bugfix
+    <PackageReleaseNotes>1 new feature, 1 bugfix
 
-- Fix root content shown if explicit domains are assigned</PackageReleaseNotes>
+- Fix #126
+- Include separate setting for child nodes and wildcard domains</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
