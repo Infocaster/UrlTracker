@@ -108,10 +108,14 @@ namespace UrlTracker.Backoffice.UI.Controllers
                               group domain by domain.NodeId into g
                               where g.Key.HasValue
                               select g.Key!.Value;
-            using (var cref = _umbracoContextFactoryAbstraction.EnsureUmbracoContext())
-                uniqueNodes = uniqueNodes.Union(cref.GetContentAtRoot().Select(c => c.Id)).ToList();
 
-            return Ok(uniqueNodes);
+            if (uniqueNodes?.Any() is not true)
+            {
+                using (var cref = _umbracoContextFactoryAbstraction.EnsureUmbracoContext())
+                    uniqueNodes = cref.GetContentAtRoot().Select(c => c.Id);
+            }
+
+            return Ok(uniqueNodes.ToList());
         }
 
         [HttpGet]
