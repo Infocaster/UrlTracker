@@ -20,6 +20,9 @@
     <Content Remove="package-lock.json" />
     <Content Remove="package.json" />
     <Content Remove="tsconfig.json" />
+      <None Include="package-lock.json" />
+      <None Include="package.json" />
+      <None Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <SupportedPlatform Include="browser" />
@@ -34,27 +37,7 @@
     <Folder Include="wwwroot\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="package-lock.json" />
-    <None Include="package.json" />
-    <None Include="tsconfig.json" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
     <ProjectReference Include="..\UrlTracker.Modules\UrlTracker.Modules.csproj" />
   </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
-  <!-- Build instructions -->
-  <Target Name="NpmInstallDebug" Inputs="package.json" Outputs="node_modules/.install-stamp" Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" BeforeTargets="BeforeBuild">
-    <Exec Command="npm ci" />
-    <Touch Files="node_modules/.install-stamp" AlwaysCreate="true" />
-  </Target>
-  <Target Name="NpmRunBuildDebug" DependsOnTargets="NpmInstallDebug" Inputs="@(FrontendFiles)" Outputs="frontend/.build-stamp" Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'" BeforeTargets="BeforeBuild">
-    <Exec Command="npm run build:webpack" />
-    <Touch Files="frontend/.build-stamp" AlwaysCreate="true" />
-  </Target>
-  <Target Name="RemoveBuildStamps" BeforeTargets="Clean">
-    <Delete Files="frontend/.build-stamp" />
-  </Target>
-  <!-- END Build instructions -->
 </Project>
