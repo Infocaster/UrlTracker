@@ -10,7 +10,7 @@
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Umbraco.Cms" Version="10.5.1" />
-    <PackageReference Include="uSync" Version="10.2.1" />
+    <PackageReference Include="uSync" Version="11.2.1" />
   </ItemGroup>
 
   <Import Project="..\..\src\UrlTracker.Backoffice.UI\build\UrlTracker.Backoffice.UI.targets" />
