@@ -1,7 +1,7 @@
-﻿import '@umbraco-ui/uui';
+﻿import { ngUrltrackerDashboard } from './dashboard/directive'
+import '@umbraco-ui/uui';
 import './dashboard/main.lit'
 import './dashboard/notifications/notification.lit'
-import { ngUrltrackerDashboard } from './dashboard/directive'
 import './dashboard/tabs/redirects.lit';
 import './dashboard/tabs/landingpage.lit';
 import './dashboard/tabs/recommendations.lit';
