@@ -12,6 +12,6 @@ namespace UrlTracker.Backoffice.UI.Extensions
         public string Alias { get; } = Defaults.Extensions.Overview;
 
         /// <inheritdoc />
-        public string View { get; } = Defaults.Routing.DashboardPageFolder + "landingpage.html";
+        public string View { get; } = "urltracker-landing-tab";
     }
 }

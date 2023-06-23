@@ -1,1 +1,0 @@
-export const basePath: string = "/App_Plugins/UrlTracker";

@@ -12,6 +12,6 @@ namespace UrlTracker.Backoffice.UI.Extensions
         public string Alias { get; } = Defaults.Extensions.AdvancedRedirects;
 
         /// <inheritdoc/>
-        public string View { get; } = Defaults.Routing.DashboardPageFolder + "advancedredirects.html";
+        public string View { get; } = "urltracker-advancedredirect-tab";
     }
 }

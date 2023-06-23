@@ -12,6 +12,6 @@ namespace UrlTracker.Backoffice.UI.Extensions
         public string Alias { get; } = Defaults.Extensions.Recommendations;
 
         /// <inheritdoc />
-        public string View { get; } = Defaults.Routing.DashboardPageFolder + "recommendations.html";
+        public string View { get; } = "urltracker-recommendations-tab";
     }
 }

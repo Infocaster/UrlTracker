@@ -8,7 +8,7 @@ namespace UrlTracker.Backoffice.UI
         : JavaScriptFile
     {
         public UrlTrackerScript()
-            : base(Defaults.Routing.AppPluginFolder + "script.bundle.js")
+            : base(Defaults.Routing.AppPluginFolder + "script.iife.js")
         { }
     }
 }

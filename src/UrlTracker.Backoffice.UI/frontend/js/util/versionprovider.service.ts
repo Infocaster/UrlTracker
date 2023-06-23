@@ -1,12 +1,8 @@
-declare var Umbraco: any;
-
 export interface IVersionProvider {
     get version(): string
 }
 
 export class VersionProvider implements IVersionProvider {
-
-    public static alias: string = "urlTrackerVersionProvider";
 
     get version(): string {
         
@@ -14,3 +10,5 @@ export class VersionProvider implements IVersionProvider {
         //return Umbraco.Sys.ServerVariables["urlTracker"].version;
     }
 }
+
+export default new VersionProvider();

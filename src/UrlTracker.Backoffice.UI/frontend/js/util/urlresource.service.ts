@@ -18,11 +18,6 @@ export interface IControllerUrlResource {
 
 export class UrlResource implements IUrlResource {
 
-    public static alias: string = "urlTrackerUrlResource";
-
-    public static $inject = ["umbRequestHelper"];
-    constructor(private umbRequestHelper: any) { }
-
     public getController(controller: string): IControllerUrlResource {
 
         let def = Umbraco.Sys.ServerVariables.urlTracker[controller];
@@ -49,3 +44,5 @@ class ControllerUrlResource implements IControllerUrlResource {
         return this.controller.base + this.controller[endpoint];
     }
 }
+
+export default new UrlResource();
