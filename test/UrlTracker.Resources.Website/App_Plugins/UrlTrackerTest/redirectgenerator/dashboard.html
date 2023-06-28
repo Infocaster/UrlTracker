@@ -1,0 +1,19 @@
+﻿<div ng-controller="urltrackertest.redirectgenerator.controller as vm">
+    <umb-box>
+        <umb-box-header title="Generate redirects"
+                        description="Press the buttons on the right to create random redirects">
+            <umb-button label="Generate 100"
+                        action="vm.generate()">
+            </umb-button>
+            <umb-button label="Clear"
+                        action="vm.clear()">
+            </umb-button>
+        </umb-box-header>
+        <umb-box-content>
+            <i ng-if="!vm.data">There is no data</i>
+            <ol ng-if="vm.data">
+                <li ng-repeat="redirect in vm.data.results">{{redirect}}</li>
+            </ol>
+        </umb-box-content>
+    </umb-box>
+</div>

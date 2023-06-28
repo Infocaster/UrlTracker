@@ -1,4 +1,4 @@
-﻿declare const Umbraco: any;
+﻿import variableResource, { IVariableResource } from "./variableresource.service";
 
 export interface IUrlResource {
 
@@ -18,18 +18,14 @@ export interface IControllerUrlResource {
 
 export class UrlResource implements IUrlResource {
 
+    constructor(private _variableResource: IVariableResource) { }
+
     public getController(controller: string): IControllerUrlResource {
 
-        let def = Umbraco.Sys.ServerVariables.urlTracker[controller];
-
-        if (!this.isControllerDefinition(def)) {
-            throw Error("Could not find a definition for controller named: " + controller);
-        }
-
-        return new ControllerUrlResource(def);
+        return new ControllerUrlResource(this._variableResource.get(controller, this.isControllerDefinition));
     }
 
-    private isControllerDefinition(obj: any): obj is IControllerDefinition {
+    private isControllerDefinition = (obj: any): obj is IControllerDefinition => {
 
         return "base" in obj;
     }
@@ -45,4 +41,4 @@ class ControllerUrlResource implements IControllerUrlResource {
     }
 }
 
-export default new UrlResource();
+export default new UrlResource(variableResource);

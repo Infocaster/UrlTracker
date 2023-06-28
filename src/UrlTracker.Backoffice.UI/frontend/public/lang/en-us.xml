@@ -35,4 +35,13 @@
     <key alias="featurelabel">Suggest a feature</key>
     <key alias="buglabel">Report a bug</key>
   </area>
+  <area alias="urlTrackerRedirectSource">
+    <key alias="url">URL</key>
+    <key alias="unknown">Unknown source type</key>
+    <key alias="regex">Pattern</key>
+  </area>
+  <area alias="urlTrackerRedirectTarget">
+    <key alias="unknown">Unknown target type</key>
+    <key alias="url">URL</key>
+  </area>
 </language>

@@ -6,6 +6,9 @@ import './dashboard/tabs/redirects.lit';
 import './dashboard/tabs/landingpage.lit';
 import './dashboard/tabs/recommendations.lit';
 import './dashboard/tabs/advancedredirects.lit';
+import './dashboard/tabs/redirects/source';
+import './dashboard/tabs/redirects/target';
+
 
 const module = angular.module("umbraco");
 

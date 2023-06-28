@@ -15,6 +15,7 @@ namespace UrlTracker.Resources.Website.Composing
             
             // Add a dashboard for experimenting with the settings
             builder.Dashboards()!.Add<UrlTrackerTestDashboard>();
+            builder.AddDashboard<UrlTrackerRedirectGeneratorDashboard>();
         }
     }
 
@@ -28,5 +29,17 @@ namespace UrlTracker.Resources.Website.Composing
         public string? Alias { get; } = "UrlTrackerTest";
 
         public string? View => "/App_Plugins/UrlTrackerTest/dashboard/dashboard.html";
+    }
+
+    [Weight(1001)]
+    public class UrlTrackerRedirectGeneratorDashboard : IDashboard
+    {
+        public string[] Sections { get; } = new[] { Constants.Applications.Content };
+
+        public IAccessRule[] AccessRules { get; } = Array.Empty<IAccessRule>();
+
+        public string? Alias { get; } = "UrlTrackerRedirectGenerator";
+
+        public string? View => "/App_Plugins/UrlTrackerTest/redirectgenerator/dashboard.html";
     }
 }

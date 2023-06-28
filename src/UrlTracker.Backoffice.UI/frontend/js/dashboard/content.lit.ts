@@ -4,7 +4,7 @@ import { IDashboardTab } from "./tab";
 import { customElement, state } from "lit/decorators.js";
 import { consume } from "@lit-labs/context";
 import { tabServiceContext } from "../context/tabservice.context";
-import { ILocalizationService } from "../umbraco/localizationService";
+import { ILocalizationService } from "../umbraco/localization.service";
 import { localizationServiceContext } from "../context/localizationservice.context";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import './footer/footer.lit'
@@ -52,8 +52,8 @@ export class UrlTrackerDashboardContent extends LitElement{
         this.loading++;
         try{
 
-            if (!this.tabService) throw Error("Tab service is not defined, but is required by this element.");
-            if (!this.localizationService) throw Error("localization service is not defined, but is required by this element");
+            if (!this.tabService) throw new Error("Tab service is not defined, but is required by this element.");
+            if (!this.localizationService) throw new Error("localization service is not defined, but is required by this element");
             
             let response = await this.tabService.GetTabs();
             
@@ -141,6 +141,7 @@ export class UrlTrackerDashboardContent extends LitElement{
         }
         .dashboard-body{
             flex: 1;
+            background-image: url('/app_plugins/urltracker/assets/images/background.svg');
         }
         .dashboard-body-container{
             padding: 2rem;

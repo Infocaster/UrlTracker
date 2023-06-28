@@ -1,8 +1,8 @@
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { IDashboardFooter } from "./footer";
-import { ILocalizationService } from "../../umbraco/localizationService";
-import { IVersionProvider } from "../../util/versionprovider.service";
+import { ILocalizationService } from "../../umbraco/localization.service";
+import { IVersionProvider } from "../../util/tools/versionprovider.service";
 import { consume } from "@lit-labs/context";
 import { versionProviderContext } from "../../context/versionprovider.context";
 import { localizationServiceContext } from "../../context/localizationservice.context";
@@ -20,13 +20,23 @@ export class DashboardFooter extends LitElement {
             flex-direction: row;
             justify-content: space-between;
         }
-        
-        .left {
 
+        .left a {
+            display: inline-block;
+            height: 100%;
         }
 
-        .right {
+        .left a img {
+            height: 100%;
+        }
 
+        .right ul {
+            list-style-type: none;
+        }
+
+        .right ul li {
+            float: left;
+            margin: 0 8px;
         }
     `;
 

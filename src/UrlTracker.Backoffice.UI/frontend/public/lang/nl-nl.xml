@@ -33,4 +33,13 @@
     <key alias="featurelabel">Doe een suggestie</key>
     <key alias="buglabel">Meld een bug</key>
   </area>
+  <area alias="urlTrackerRedirectSource">
+    <key alias="url">URL</key>
+    <key alias="unknown">Onbekende bronsoort</key>
+    <key alias="regex">Patroon</key>
+  </area>
+  <area alias="urlTrackerRedirectTarget">
+    <key alias="unknown">Onbekende doelsoort</key>
+    <key alias="url">URL</key>
+  </area>
 </language>

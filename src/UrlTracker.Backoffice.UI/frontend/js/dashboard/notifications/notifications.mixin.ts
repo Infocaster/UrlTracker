@@ -1,10 +1,9 @@
-import { ContextConsumer, consume } from "@lit-labs/context";
-import { LitElement, html, nothing } from "lit";
+import { ContextConsumer } from "@lit-labs/context";
+import { html, nothing } from "lit";
 import { INotificationService, notificationServiceContext } from "../../context/notificationservice.context";
 import { ILocalizationService, localizationServiceContext } from "../../context/localizationservice.context";
 import { ITranslatedNotification, ITranslatedNotificationCollection } from "./notification";
-
-type LitElementConstructor<T = LitElement> = new (...args: any[]) => T;
+import { LitElementConstructor } from "../../util/tools/litelementconstructor";
 
 export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructor>(Base: TBase, alias: string){
 
@@ -23,11 +22,11 @@ export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructo
 
         private _notificationServiceConsumer = new ContextConsumer(this, {context: notificationServiceContext});
         private _localizationServiceConsumer = new ContextConsumer(this, {context: localizationServiceContext});
-
+        
         protected get notificationService(): INotificationService | undefined {
             return this._notificationServiceConsumer.value
         };
-
+        
         protected get localizationService(): ILocalizationService | undefined {
             return this._localizationServiceConsumer.value;
         };
@@ -42,8 +41,8 @@ export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructo
             const notificationService = this.notificationService
             const localizationService = this.localizationService;
 
-            if (!notificationService) throw Error("notification service is required before calling this method");
-            if (!localizationService) throw Error("localization service is required before calling this method");
+            if (!notificationService) throw new Error("notification service is required before calling this method");
+            if (!localizationService) throw new Error("localization service is required before calling this method");
 
             let response = await notificationService.GetNotifications(alias);
             if (!response?.Notifications){

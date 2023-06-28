@@ -1,4 +1,5 @@
-import urlresource, { IControllerUrlResource, IUrlResource } from "../util/urlresource.service";
+import { axiosInstance } from "../util/tools/axios.service";
+import urlresource, { IControllerUrlResource, IUrlResource } from "../util/tools/urlresource.service";
 import { IPagedCollectionResponseBase } from "./models/PagedCollectionResponseBase";
 import { Axios } from "axios";
 
@@ -36,13 +37,5 @@ export class RecommendationsService implements IRecommendationsService {
         return response.data;
     }
 }
-
-const axiosInstance = new Axios({
-    transformResponse: [
-        (data) => {
-            return JSON.parse(data.substring(6));
-        }
-    ]
-});
 
 export default new RecommendationsService(axiosInstance, urlresource);

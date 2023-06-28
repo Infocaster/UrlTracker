@@ -1,7 +1,5 @@
 import { ContextProvider, createContext } from "@lit-labs/context";
-import { LitElement } from "lit";
-
-type LitElementConstructor<T = LitElement> = new (...args: any[]) => T;
+import { LitElementConstructor } from "../util/tools/litelementconstructor";
 
 export function UrlTrackerMainContext<TBase extends LitElementConstructor>(Base: TBase){
     return class MainContext extends Base {
