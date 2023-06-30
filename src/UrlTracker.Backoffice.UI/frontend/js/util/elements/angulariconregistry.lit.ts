@@ -5,12 +5,43 @@ import { consume } from "@lit-labs/context";
 import { iconHelperContext } from "../../context/iconhelper.context";
 import { LitElement, html, nothing } from "lit";
 
+class AngularIconRegistry extends UUIIconRegistry {
+
+    private _iconHelper?: IIconHelper;
+
+    public setIconHelper(iconHelper: IIconHelper): void {
+        this._iconHelper = iconHelper;
+    }
+
+    getIcon(iconName: string): Promise<string> | null {
+
+        console.log('getting the icon!');
+        if (!this._iconHelper) return super.getIcon(iconName);
+
+        return this.getIconFromHelper(iconName);
+    }
+
+    private async getIconFromHelper(iconName: string): Promise<string> {
+
+        let result = await this._iconHelper!.getIcon(iconName);
+        if (!result) return '';
+
+        return result.svgString.$$unwrapTrustedValue();
+    }
+}
+
 @customElement('urltracker-angular-icon-registry')
 export class AngularIconRegistryElement extends LitElement {
 
-    private _registry: UUIIconRegistry = new UUIIconRegistry();
+    private _registry: AngularIconRegistry = new AngularIconRegistry();
 
-    @consume({context: iconHelperContext})
+    constructor() {
+        
+        super();
+        this._registry.attach(this);
+    }
+
+    @consume({ context: iconHelperContext })
     private iconHelper?: IIconHelper;
 
     @state()
@@ -21,21 +52,7 @@ export class AngularIconRegistryElement extends LitElement {
 
         if (!this.iconHelper) throw new Error("Icon helper service is required to use this element");
 
-        this.loading++;
-        try{
-
-            let icons = await this.iconHelper.getAllIcons();
-    
-            icons.forEach((icon) => {
-                let svg = icon.svgString.$$unwrapTrustedValue();
-                this._registry.defineIcon(icon.name, svg);
-            });
-    
-            this._registry.attach(this);
-        }
-        finally {
-            this.loading--;
-        }
+        this._registry.setIconHelper(this.iconHelper);
     }
 
     disconnectedCallback(): void {

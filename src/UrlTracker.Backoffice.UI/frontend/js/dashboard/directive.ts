@@ -1,12 +1,11 @@
-﻿import { ILocalizationService } from "../umbraco/localization.service";
-import { UrlTrackerDashboard } from "./main.lit";
-import { localizationServiceContext, localizationServiceKey } from "../context/localizationservice.context";
-import { IIconHelper } from "../umbraco/icon.service";
-import { iconHelperContext, iconHelperKey } from "../context/iconhelper.context";
+﻿import { UrlTrackerDashboard } from "./main.lit";
+import { ILocalizationService, localizationServiceContext, localizationServiceKey } from "../context/localizationservice.context";
+import { IIconHelper, iconHelperContext, iconHelperKey } from "../context/iconhelper.context";
+import { IContentResource, contentResourceContext, contentResourceKey } from "../context/contentresource.context";
 
 ngUrltrackerDashboard.alias = "ngUrltrackerDashboard";
-ngUrltrackerDashboard.$inject = ["localizationService", "iconHelper"]
-export function ngUrltrackerDashboard(localizationService: ILocalizationService, iconHelper: IIconHelper): angular.IDirective {
+ngUrltrackerDashboard.$inject = ["localizationService", "iconHelper", "entityResource"]
+export function ngUrltrackerDashboard(localizationService: ILocalizationService, iconHelper: IIconHelper, contentResource: IContentResource): angular.IDirective {
 
     return {
         restrict: 'E',
@@ -16,6 +15,7 @@ export function ngUrltrackerDashboard(localizationService: ILocalizationService,
             
             dashboardElement.SetContext(localizationService, localizationServiceContext, localizationServiceKey);
             dashboardElement.SetContext(iconHelper, iconHelperContext, iconHelperKey);
+            dashboardElement.SetContext(contentResource, contentResourceContext, contentResourceKey)
             
             element[0].appendChild(dashboardElement);
         }

@@ -11,7 +11,10 @@ export default defineConfig({
             formats: ['iife']
         },
         outDir: 'wwwroot',
-        sourcemap: true
+        sourcemap: true,
+        rollupOptions: {
+            external: ['@umbraco-ui/uui']
+        }
     },
     publicDir: resolve(__dirname, 'frontend', 'public')
 });

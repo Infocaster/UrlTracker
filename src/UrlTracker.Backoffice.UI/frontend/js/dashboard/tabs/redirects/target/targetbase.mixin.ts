@@ -3,6 +3,7 @@ import { LitElementConstructor } from "../../../../util/tools/litelementconstruc
 import { ILocalizationService, localizationServiceContext } from "../../../../context/localizationservice.context";
 import { css, html, nothing } from "lit";
 import { IRedirectResponse, redirectContext } from "../../../../context/redirectitem.context";
+import { state } from "lit/decorators.js";
 
 export function UrlTrackerRedirectTarget<TBase extends LitElementConstructor>(Base: TBase, typeKey: string) {
     return class RedirectTarget extends Base {
@@ -23,6 +24,7 @@ export function UrlTrackerRedirectTarget<TBase extends LitElementConstructor>(Ba
         };
 
         private _redirectConsumer = new ContextConsumer(this, {context: redirectContext});
+
         protected get redirect(): IRedirectResponse | undefined {
             return this._redirectConsumer.value;
         }
@@ -49,7 +51,10 @@ export function UrlTrackerRedirectTarget<TBase extends LitElementConstructor>(Ba
         static styles = [
             css`
                 :host {
-                    display: inline-block;
+                    display: inline-flex;
+                    align-items: baseline;
+                    margin-left: 16px;
+                    row-gap: 8px;
                 }
 
                 span {
