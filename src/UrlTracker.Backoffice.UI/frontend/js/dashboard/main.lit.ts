@@ -14,6 +14,8 @@ import { versionProviderContext } from "../context/versionprovider.context";
 import { IRedirectService, redirectServiceContext } from "../context/redirectservice.context";
 import redirectService from "../services/redirect.service";
 import '../util/elements/angulariconregistry.lit'
+import { ITargetService, redirectTargetServiceContext } from "../context/redirecttargetservice.context";
+import targetService from "./tabs/redirects/target/target.service";
 
 @customElement('urltracker-dashboard')
 export class UrlTrackerDashboard extends UrlTrackerMainContext(LitElement) {
@@ -32,6 +34,9 @@ export class UrlTrackerDashboard extends UrlTrackerMainContext(LitElement) {
 
     @provide({context: redirectServiceContext})
     redirectService: IRedirectService = redirectService;
+
+    @provide({context: redirectTargetServiceContext})
+    redirectTargetService: ITargetService = targetService;
 
     protected render(): unknown {
         return html`

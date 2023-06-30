@@ -1,27 +1,44 @@
-import { LitElement } from "lit";
+import { LitElement, css, html } from "lit";
 import { UrlTrackerRedirectTarget } from "./targetbase.mixin";
 import { consume } from "@lit-labs/context";
-import { IContentResource } from "../../../../umbraco/content.service";
-import { contentResourceContext } from "../../../../context/contentresource.context";
-import { customElement } from "lit/decorators.js";
+import { customElement, state } from "lit/decorators.js";
+import { ITargetService, redirectTargetServiceContext } from "../../../../context/redirecttargetservice.context";
+import { IContentTargetResponse } from "./target.service";
+
+let baseType = UrlTrackerRedirectTarget(LitElement, "urlTrackerRedirectTarget_content");
 
 @customElement('urltracker-redirect-target-content')
-export class UrlTrackerContentRedirectTarget extends UrlTrackerRedirectTarget(LitElement, "urlTrackerRedirectTarget_content") {
+export class UrlTrackerContentRedirectTarget extends baseType {
 
-    @consume({context: contentResourceContext})
-    private contentResource?: IContentResource;
+    @consume({context: redirectTargetServiceContext})
+    private redirectTargetService?: ITargetService;
+
+    @state()
+    private contentItem?: IContentTargetResponse
 
     async connectedCallback(): Promise<void> {
         
         await super.connectedCallback();
 
-        if (!this.contentResource) throw new Error("This element requires the content resource");
+        if (!this.redirectTargetService) throw new Error("This element requires the redirect target resource");
         if (!this.redirect) throw new Error("This element requires a redirect");
 
         let [id, culture] = this.redirect.target.value.split(';');
 
-        let content = await this.contentResource.getById(Number.parseInt(id), 'Document');
-
-        console.log(content);
+        this.contentItem = await this.redirectTargetService.Content({ id: Number.parseInt(id), culture: culture });
     }
+
+    protected renderBody(): unknown {
+        
+        return html`<uui-icon .name=${this.contentItem?.icon}></uui-icon> ${this.contentItem?.name}`
+    }
+
+    static styles = [
+        ...baseType.styles,
+        css`
+            uui-icon {
+                align-self: center;
+            }
+        `
+    ]
 }

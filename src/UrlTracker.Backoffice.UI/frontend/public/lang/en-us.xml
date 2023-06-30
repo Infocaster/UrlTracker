@@ -43,5 +43,6 @@
   <area alias="urlTrackerRedirectTarget">
     <key alias="unknown">Unknown target type</key>
     <key alias="url">URL</key>
+    <key alias="content">Content</key>
   </area>
 </language>

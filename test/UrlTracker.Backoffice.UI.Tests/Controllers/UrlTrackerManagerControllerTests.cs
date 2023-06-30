@@ -17,10 +17,6 @@ namespace UrlTracker.Backoffice.UI.Tests.Controllers
             return new IMapDefinition[]
             {
                 CreateTestMap<UrlTrackerSettings, GetSettingsResponse>(new GetSettingsResponse()),
-                CreateTestMap<Domain, GetLanguagesFromNodeResponseLanguage>(new GetLanguagesFromNodeResponseLanguage("en-us", "English (USA)")
-                {
-                    Id = 1
-                }),
                 CreateTestMap<AddRedirectRequest, Redirect>(new Redirect()),
                 CreateTestMap<UpdateRedirectRequest, Redirect>(new Redirect()),
                 CreateTestMap<RedirectCollection, GetRedirectsResponse>(new GetRedirectsResponse(new List<RedirectViewModel>(), 0))

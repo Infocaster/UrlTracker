@@ -15,7 +15,6 @@ class AngularIconRegistry extends UUIIconRegistry {
 
     getIcon(iconName: string): Promise<string> | null {
 
-        console.log('getting the icon!');
         if (!this._iconHelper) return super.getIcon(iconName);
 
         return this.getIconFromHelper(iconName);

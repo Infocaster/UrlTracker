@@ -36,6 +36,12 @@ namespace UrlTracker.Web.Events
                 ["update"] = nameof(RedirectsController.Update)
             };
 
+            Dictionary<string, string> redirectTargetVariables = new()
+            {
+                ["base"] = _linkGenerator.GetUmbracoApiServiceBaseUrl<RedirectTargetController>(controller => controller.Content(default!))!,
+                ["content"] = nameof(RedirectTargetController.Content)
+            };
+
             Dictionary<string, string> notificationVariables = new()
             {
                 ["base"] = _linkGenerator.GetUmbracoApiServiceBaseUrl<NotificationsController>(controller => controller.Get(default!))!,
@@ -60,6 +66,7 @@ namespace UrlTracker.Web.Events
                 ["recommendations"] = recommendationVariables,
                 ["notifications"] = notificationVariables,
                 ["redirects"] = redirectVariables,
+                ["redirectTarget"] = redirectTargetVariables,
                 ["redirectSourceStrategies"] = redirectSourceStrategies,
                 ["redirectTargetStrategies"] = redirectTargetStrategies
             };

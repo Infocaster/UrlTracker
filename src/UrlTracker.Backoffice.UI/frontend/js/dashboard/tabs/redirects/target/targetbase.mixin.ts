@@ -3,7 +3,6 @@ import { LitElementConstructor } from "../../../../util/tools/litelementconstruc
 import { ILocalizationService, localizationServiceContext } from "../../../../context/localizationservice.context";
 import { css, html, nothing } from "lit";
 import { IRedirectResponse, redirectContext } from "../../../../context/redirectitem.context";
-import { state } from "lit/decorators.js";
 
 export function UrlTrackerRedirectTarget<TBase extends LitElementConstructor>(Base: TBase, typeKey: string) {
     return class RedirectTarget extends Base {

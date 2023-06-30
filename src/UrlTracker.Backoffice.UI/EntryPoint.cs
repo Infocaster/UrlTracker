@@ -49,6 +49,7 @@ namespace UrlTracker.Backoffice.UI
 
             builder.Services.AddSingleton<IRequestModelPatcher, RequestModelPatcher>();
             builder.Services.AddScoped<IRedirectRequestHandler, RedirectRequestHandler>();
+            builder.Services.AddScoped<IRedirectTargetRequestHandler, RedirectTargetRequestHandler>();
             builder.Services.AddScoped<IRecommendationRequestHandler, RecommendationRequestHandler>();
 
             builder.AddMvcAndRazor(options =>

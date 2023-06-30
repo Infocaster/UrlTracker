@@ -4,7 +4,7 @@ import { IIconHelper, iconHelperContext, iconHelperKey } from "../context/iconhe
 import { IContentResource, contentResourceContext, contentResourceKey } from "../context/contentresource.context";
 
 ngUrltrackerDashboard.alias = "ngUrltrackerDashboard";
-ngUrltrackerDashboard.$inject = ["localizationService", "iconHelper", "entityResource"]
+ngUrltrackerDashboard.$inject = ["localizationService", "iconHelper", "contentResource"]
 export function ngUrltrackerDashboard(localizationService: ILocalizationService, iconHelper: IIconHelper, contentResource: IContentResource): angular.IDirective {
 
     return {
