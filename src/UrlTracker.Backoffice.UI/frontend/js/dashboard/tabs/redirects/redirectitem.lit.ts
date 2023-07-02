@@ -1,10 +1,12 @@
 import { css, html, nothing } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, state } from "lit/decorators.js";
 import { UrlTrackerSelectableResultListItem } from "../../../util/elements/selectableresultlistitem.lit";
 import { IRedirectResponse } from "../../../services/redirect.service";
 import { redirectContext } from "../../../context/redirectitem.context";
 import sourceStrategyResolver from "./source/source.strategy";
 import targetStrategyResolver from "./target/target.strategy";
+import { consume } from "@lit-labs/context";
+import { ILocalizationService, localizationServiceContext } from "../../../context/localizationservice.context";
 
 let RedirectListItem = UrlTrackerSelectableResultListItem<IRedirectResponse>(redirectContext);
 
@@ -13,6 +15,20 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
 
     private sourceStrategy = sourceStrategyResolver;
     private targetStrategy = targetStrategyResolver;
+
+    @consume({context: localizationServiceContext})
+    private localizationService?: ILocalizationService;
+
+    @state()
+    private redirectToText?: string;
+
+    async connectedCallback(): Promise<void> {
+        super.connectedCallback();
+
+        if (!this.localizationService) throw new Error("This element requires the localization service");
+
+        this.redirectToText = await this.localizationService.localize("urlTrackerRedirectTarget_redirectto");
+    }
 
     private renderSource(): unknown {
 
@@ -30,7 +46,7 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
         return html`
             <div class="body">
                 ${this.renderSource()}
-                <div class="target">redirects to: ${this.renderTarget()}</div>
+                <div class="target">${this.redirectToText}: ${this.renderTarget()}</div>
                 <div class="actions"><uui-button>edit</uui-button><uui-button>Delete</uui-button></div>
             </div>
         `

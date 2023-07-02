@@ -1,5 +1,5 @@
 import { html } from "lit";
-import { IRedirectTargetStrategy, IRedirectTargetStrategyFactory } from "./target.strategy";
+import { IRedirectTargetStrategy, IRedirectTargetStrategyFactory } from "../target.strategy";
 import './fallbacktarget.lit'
 
 export class UnknownTargetStrategyFactory implements IRedirectTargetStrategyFactory {

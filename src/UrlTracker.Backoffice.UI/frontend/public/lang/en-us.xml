@@ -41,8 +41,10 @@
     <key alias="regex">Pattern</key>
   </area>
   <area alias="urlTrackerRedirectTarget">
+    <key alias="redirectto">Redirects to</key>
     <key alias="unknown">Unknown target type</key>
     <key alias="url">URL</key>
     <key alias="content">Content</key>
+    <key alias="contenterror">The selected content does not exist or is in the trashcan</key>
   </area>
 </language>

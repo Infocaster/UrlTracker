@@ -1,6 +1,6 @@
 import { IRedirectResponse } from "../../../../services/redirect.service";
 import { StrategyResolver } from "../../../../util/tools/strategy/strategyresolver";
-import { UnknownTargetStrategyFactory } from "./fallbacktarget";
+import { UnknownTargetStrategyFactory } from "./implementations/fallbacktarget";
 
 export interface IRedirectTargetStrategy {
     

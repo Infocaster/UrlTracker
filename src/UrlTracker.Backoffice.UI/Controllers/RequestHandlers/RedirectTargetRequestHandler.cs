@@ -25,7 +25,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         public ContentTargetResponse? GetContentTarget(GetContentTargetRequest request)
         {
             var content = _contentService.GetById(request.Id!.Value);
-            if (content is null) return null;
+            if (content is null || content.Trashed) return null;
 
             return new ContentTargetResponse(content.ContentType.Icon!, content.GetCultureName(request.Culture) ?? content.Name!);
         }

@@ -1,5 +1,5 @@
 import { LitElement, css } from "lit";
-import { UrlTrackerRedirectTarget } from "./targetbase.mixin";
+import { UrlTrackerRedirectTarget } from "../targetbase.mixin";
 import { customElement } from "lit/decorators.js";
 
 let baseType = UrlTrackerRedirectTarget(LitElement, "urlTrackerRedirectTarget_unknown");

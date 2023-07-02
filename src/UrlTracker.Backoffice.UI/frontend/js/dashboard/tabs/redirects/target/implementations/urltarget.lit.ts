@@ -1,5 +1,5 @@
 import { LitElement, css, html } from "lit";
-import { UrlTrackerRedirectTarget } from "./targetbase.mixin";
+import { UrlTrackerRedirectTarget } from "../targetbase.mixin";
 import { customElement } from "lit/decorators.js";
 import '@umbraco-ui/uui';
 

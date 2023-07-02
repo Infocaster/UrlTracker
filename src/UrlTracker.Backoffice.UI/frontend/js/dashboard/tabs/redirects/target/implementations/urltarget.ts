@@ -1,8 +1,8 @@
 import { html } from "lit";
-import { IRedirectResponse } from "../../../../services/redirect.service";
-import { IVariableResource } from "../../../../util/tools/variableresource.service";
-import { ITargetStrategies } from "./target.constants";
-import { IRedirectTargetStrategy, IRedirectTargetStrategyFactory } from "./target.strategy";
+import { IRedirectResponse } from "../../../../../services/redirect.service";
+import { IVariableResource } from "../../../../../util/tools/variableresource.service";
+import { ITargetStrategies } from "../target.constants";
+import { IRedirectTargetStrategy, IRedirectTargetStrategyFactory } from "../target.strategy";
 import './urltarget.lit';
 
 export class UrlTargetStrategyFactory implements IRedirectTargetStrategyFactory {

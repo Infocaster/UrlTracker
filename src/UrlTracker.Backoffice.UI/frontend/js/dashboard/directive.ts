@@ -1,11 +1,11 @@
 ﻿import { UrlTrackerDashboard } from "./main.lit";
 import { ILocalizationService, localizationServiceContext, localizationServiceKey } from "../context/localizationservice.context";
 import { IIconHelper, iconHelperContext, iconHelperKey } from "../context/iconhelper.context";
-import { IContentResource, contentResourceContext, contentResourceKey } from "../context/contentresource.context";
+import { IEditorService, editorServiceContext, editorServiceKey } from "../context/editorservice.context";
 
 ngUrltrackerDashboard.alias = "ngUrltrackerDashboard";
-ngUrltrackerDashboard.$inject = ["localizationService", "iconHelper", "contentResource"]
-export function ngUrltrackerDashboard(localizationService: ILocalizationService, iconHelper: IIconHelper, contentResource: IContentResource): angular.IDirective {
+ngUrltrackerDashboard.$inject = ["localizationService", "iconHelper", "editorService"]
+export function ngUrltrackerDashboard(localizationService: ILocalizationService, iconHelper: IIconHelper, editorService: IEditorService): angular.IDirective {
 
     return {
         restrict: 'E',
@@ -15,7 +15,7 @@ export function ngUrltrackerDashboard(localizationService: ILocalizationService,
             
             dashboardElement.SetContext(localizationService, localizationServiceContext, localizationServiceKey);
             dashboardElement.SetContext(iconHelper, iconHelperContext, iconHelperKey);
-            dashboardElement.SetContext(contentResource, contentResourceContext, contentResourceKey)
+            dashboardElement.SetContext(editorService, editorServiceContext, editorServiceKey)
             
             element[0].appendChild(dashboardElement);
         }

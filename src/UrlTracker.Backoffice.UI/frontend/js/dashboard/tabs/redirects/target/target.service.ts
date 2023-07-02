@@ -31,6 +31,8 @@ export class TargetService implements ITargetService {
             params: request
         });
 
+        if (response.status !== 200) throw new Error("Content item could not be found");
+
         return response.data;
     }
 }

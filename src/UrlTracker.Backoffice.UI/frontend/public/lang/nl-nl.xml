@@ -39,8 +39,10 @@
     <key alias="regex">Patroon</key>
   </area>
   <area alias="urlTrackerRedirectTarget">
+    <key alias="redirectto">Redirect naar</key>
     <key alias="unknown">Onbekende doelsoort</key>
     <key alias="url">URL</key>
     <key alias="content">Inhoud</key>
+    <key alias="contenterror">De gekozen inhoud bestaat niet of zit in de prullenbak</key>
   </area>
 </language>

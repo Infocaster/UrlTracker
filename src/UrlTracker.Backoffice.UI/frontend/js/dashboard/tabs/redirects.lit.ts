@@ -1,18 +1,22 @@
 import { LitElement, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { UrlTrackerNotificationWrapper } from "../notifications/notifications.mixin";
-import { consume } from "@lit-labs/context";
+import { consume, provide } from "@lit-labs/context";
 import { IRedirectService, redirectServiceContext } from "../../context/redirectservice.context";
 import { IRedirectCollectionResponse } from "../../services/redirect.service";
 import '../../util/elements/resultlist.lit';
 import '../../util/elements/resultlistitem.lit';
 import './redirects/redirectitem.lit';
+import { IChangeManager, changeManagerContext } from "../../context/changemanager.context";
 
 @customElement("urltracker-redirect-tab")
 export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElement, 'redirects') {
 
     @consume({context: redirectServiceContext})
     private _redirectService?: IRedirectService;
+
+    @provide({context: changeManagerContext})
+    public changeManager: IChangeManager = { element: this };
 
     @state()
     private _redirectCollection?: IRedirectCollectionResponse
