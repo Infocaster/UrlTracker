@@ -4,10 +4,9 @@
     <Title>URL Tracker Core Memory Cache</Title>
     <Description>This package contains an in-memory cache layer for the core services of the URL Tracker</Description>
     <RootNamespace>UrlTracker.Core.Caching.Memory</RootNamespace>
-    <PackageReleaseNotes>1 new feature, 1 bugfix
+    <PackageReleaseNotes>1 change
 
-- Fix #126
-- Include separate setting for child nodes and wildcard domains</PackageReleaseNotes>
+- Port to Umbraco 12</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="12.0.0" />

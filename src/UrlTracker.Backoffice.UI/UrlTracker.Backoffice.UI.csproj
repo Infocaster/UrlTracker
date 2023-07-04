@@ -1,14 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+<Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
     <PackageId>UrlTracker.Backoffice.UI</PackageId>
     <Title>URL Tracker Backoffice interface</Title>
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>1 new feature, 1 bugfix
+    <PackageReleaseNotes>1 change
 
-- Fix #126
-- Include separate setting for child nodes and wildcard domains</PackageReleaseNotes>
+- Port to Umbraco 12</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">
