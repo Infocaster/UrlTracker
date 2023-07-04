@@ -16,7 +16,7 @@
 - Include separate setting for child nodes and wildcard domains</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Core" Version="11.0.0" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="12.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Backoffice.Notifications\UrlTracker.Backoffice.Notifications.csproj" />
@@ -25,5 +25,11 @@
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
     <ProjectReference Include="..\UrlTracker.Middleware\UrlTracker.Middleware.csproj" />
     <ProjectReference Include="..\UrlTracker.Web\UrlTracker.Web.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Update="Microsoft.VisualStudio.Threading.Analyzers" Version="17.6.40">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 </Project>

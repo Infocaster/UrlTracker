@@ -42,7 +42,10 @@ namespace UrlTracker.Web.Map
                         url = Url.Parse(source.TargetNode.Url(_umbracoContextFactoryAbstraction, culture: !string.IsNullOrEmpty(source.Culture) ? source.Culture : null, UrlMode.Absolute));
 
                         // logic taken from the old url tracker:
-                        url.Port = request.Host.Port != 80 && configurationValue.AppendPortNumber ? request.Host.Port : (int?)null;
+                        if (request.Host.Port.HasValue)
+                        {
+                            url.Port = request.Host.Port != 80 && configurationValue.AppendPortNumber ? request.Host.Port : (int?)null;
+                        }
 
                         // also from the old url tracker:
                         if (request.Host.Host != url.Host && _domainProvider.GetDomains().Any(d => d.NodeId == source.TargetRootNode?.Id && d.Url.Host!.Equals(request.Host.Host)))

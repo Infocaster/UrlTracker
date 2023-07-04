@@ -44,7 +44,7 @@
   },
   "UrlTracker": {
     "HasDomainOnChildNode": false,
-    "AppendPortNumber": false,
+    "AppendPortNumber": true,
     "Enable": true,
     "Backoffice": {
       "Notifications": {

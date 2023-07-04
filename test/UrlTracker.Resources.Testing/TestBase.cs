@@ -21,6 +21,7 @@ using UrlTracker.Core.Intercepting.Preprocessing;
 using UrlTracker.Core.Validation;
 using UrlTracker.Middleware.Options;
 using UrlTracker.Modules.Options;
+using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Resources.Testing.Objects;
 using UrlTracker.Web.Abstraction;
@@ -165,7 +166,7 @@ namespace UrlTracker.Resources.Testing
 
             HttpContextMock = CreateHttpContextMock();
 
-            Mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<IScopeProvider>());
+            Mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<IScopeProvider>(), new VoidLogger<UmbracoMapper>());
 
             SetUp();
         }
