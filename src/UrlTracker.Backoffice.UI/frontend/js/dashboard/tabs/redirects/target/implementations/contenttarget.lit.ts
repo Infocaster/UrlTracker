@@ -6,7 +6,7 @@ import { ITargetService, redirectTargetServiceContext } from "../../../../../con
 import { IContentTargetResponse } from "../target.service";
 import { IEditorService, editorServiceContext } from "../../../../../context/editorservice.context";
 import { IChangeManager, changeManagerContext } from "../../../../../context/changemanager.context";
-import { ensureServiceNotUndefined } from "../../../../../util/tools/undefinedcheck";
+import { ensureServiceExists } from "../../../../../util/tools/existancecheck";
 
 export class ContentUpdateEvent extends Event {
     
@@ -52,7 +52,7 @@ export class UrlTrackerContentRedirectTarget extends baseType {
         
         await super.connectedCallback();
 
-        ensureServiceNotUndefined(this.changeManager, "changeManager");
+        ensureServiceExists(this.changeManager, "changeManager");
         this.changeManager.element.addEventListener(ContentUpdateEvent.event, this.onContentUpdate);
 
         await this.init();
@@ -62,7 +62,7 @@ export class UrlTrackerContentRedirectTarget extends baseType {
         
         super.disconnectedCallback();
 
-        ensureServiceNotUndefined(this.changeManager, "changeManager");
+        ensureServiceExists(this.changeManager, "changeManager");
         this.changeManager.element.removeEventListener(ContentUpdateEvent.event, this.onContentUpdate);
     }
 
@@ -76,8 +76,8 @@ export class UrlTrackerContentRedirectTarget extends baseType {
 
     private async init(): Promise<void> {
 
-        ensureServiceNotUndefined(this.redirectTargetService, "redirect target resource");
-        ensureServiceNotUndefined(this.redirect, "redirect");
+        ensureServiceExists(this.redirectTargetService, "redirect target resource");
+        ensureServiceExists(this.redirect, "redirect");
 
         this.loading++;
         this.errorText = undefined;
@@ -100,7 +100,7 @@ export class UrlTrackerContentRedirectTarget extends baseType {
 
     private onClick = (_: Event) => {
 
-        ensureServiceNotUndefined(this.editorService, "editor service");
+        ensureServiceExists(this.editorService, "editor service");
 
         const onClose = async () => {
             this.editorService!.close();
