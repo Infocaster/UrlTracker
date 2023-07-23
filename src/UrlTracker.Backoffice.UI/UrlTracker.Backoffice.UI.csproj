@@ -7,8 +7,8 @@
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
     <PackageReleaseNotes>1 new feature, 1 bugfix
 
-- Fix #126
-- Include separate setting for child nodes and wildcard domains</PackageReleaseNotes>
+- all bugs that were in v10
+- all new features from v10 now also available in v11</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">
@@ -20,9 +20,9 @@
     <Content Remove="package-lock.json" />
     <Content Remove="package.json" />
     <Content Remove="tsconfig.json" />
-      <None Include="package-lock.json" />
-      <None Include="package.json" />
-      <None Include="tsconfig.json" />
+    <None Include="package-lock.json" />
+    <None Include="package.json" />
+    <None Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <SupportedPlatform Include="browser" />

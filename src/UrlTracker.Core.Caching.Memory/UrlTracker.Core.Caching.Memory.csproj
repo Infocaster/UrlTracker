@@ -6,8 +6,8 @@
     <RootNamespace>UrlTracker.Core.Caching.Memory</RootNamespace>
     <PackageReleaseNotes>1 new feature, 1 bugfix
 
-- Fix #126
-- Include separate setting for child nodes and wildcard domains</PackageReleaseNotes>
+- all bugs that were in v10
+- all new features from v10 now also available in v11</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="11.0.0" />
