@@ -8,7 +8,6 @@ using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Backoffice.UI.Compatibility;
-using UrlTracker.Backoffice.UI.Extensions;
 using UrlTracker.Core;
 using UrlTracker.Core.Caching.Memory;
 using UrlTracker.Core.Caching.Memory.Options;
@@ -96,8 +95,6 @@ namespace UrlTracker.Resources.Testing
         protected IInterceptCache InterceptCache => InterceptCacheMock.Object;
         protected Mock<IRuntimeState> RuntimeStateMock { get; set; } = null!;
         protected IRuntimeState RuntimeState => RuntimeStateMock.Object;
-        protected Mock<IUrlTrackerDashboardPageCollection> UrlTrackerDashboardPageCollectionMock { get; set; } = null!;
-        protected IUrlTrackerDashboardPageCollection UrlTrackerDashboardPageCollection => UrlTrackerDashboardPageCollectionMock.Object;
         protected Mock<IStrategyMapCollection> StrategyMapCollectionMock { get; set; } = null!;
         protected IStrategyMapCollection StrategyMapCollection => StrategyMapCollectionMock.Object;
         protected Mock<IRedactionScoreService> RedactionScoreServiceMock { get; set; } = null!;
@@ -170,7 +167,6 @@ namespace UrlTracker.Resources.Testing
             ResponseAbstractionMock = new Mock<IResponseAbstraction>();
             InterceptCacheMock = new Mock<IInterceptCache>();
             RuntimeStateMock = new Mock<IRuntimeState>();
-            UrlTrackerDashboardPageCollectionMock = new Mock<IUrlTrackerDashboardPageCollection>();
             StrategyMapCollectionMock = new Mock<IStrategyMapCollection>();
             RedactionScoreServiceMock = new Mock<IRedactionScoreService>();
 

@@ -11,7 +11,6 @@ namespace UrlTracker.Backoffice.UI.Controllers
         {
             typeof(RedirectTargetController),
             typeof(RedirectsController),
-            typeof(ExtensionsController),
             typeof(RecommendationsController),
             typeof(NotificationsController)
         };

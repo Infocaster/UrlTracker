@@ -25,9 +25,9 @@ export class UrlResource implements IUrlResource {
         return new ControllerUrlResource(this._variableResource.get(controller, this.isControllerDefinition));
     }
 
-    private isControllerDefinition = (obj: any): obj is IControllerDefinition => {
+    private isControllerDefinition = (obj: unknown): obj is IControllerDefinition => {
 
-        return "base" in obj;
+        return obj instanceof Object && "base" in obj;
     }
 }
 

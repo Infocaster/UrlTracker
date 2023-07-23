@@ -11,7 +11,7 @@ export class RegexSourceStrategyFactory implements IRedirectSourceStrategyFactor
 
     getStrategy(redirect: IRedirectResponse): IRedirectSourceStrategy | undefined {
     
-        let key = this.variableResource.get<ISourceStrategies>('redirectSourceStrategies').regex;
+        const key = this.variableResource.get<ISourceStrategies>('redirectSourceStrategies').regex;
         if (redirect.source.strategy === key) {
 
             return {

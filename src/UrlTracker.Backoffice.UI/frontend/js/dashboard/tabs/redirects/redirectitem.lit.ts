@@ -8,7 +8,7 @@ import targetStrategyResolver from "./target/target.strategy";
 import { consume } from "@lit-labs/context";
 import { ILocalizationService, localizationServiceContext } from "../../../context/localizationservice.context";
 
-let RedirectListItem = UrlTrackerSelectableResultListItem<IRedirectResponse>(redirectContext);
+const RedirectListItem = UrlTrackerSelectableResultListItem<IRedirectResponse>(redirectContext);
 
 @customElement('urltracker-redirect-item')
 export class UrlTrackerRedirectItem extends RedirectListItem {

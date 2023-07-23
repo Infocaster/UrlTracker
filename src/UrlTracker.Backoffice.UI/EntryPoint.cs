@@ -6,7 +6,6 @@ using Umbraco.Extensions;
 using UrlTracker.Backoffice.UI.Compatibility;
 using UrlTracker.Backoffice.UI.Controllers;
 using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
-using UrlTracker.Backoffice.UI.Extensions;
 using UrlTracker.Backoffice.UI.Map;
 using UrlTracker.Backoffice.UI.UserNotifications;
 using UrlTracker.Web.Events;
@@ -30,20 +29,17 @@ namespace UrlTracker.Backoffice.UI
         public static IUmbracoBuilder ComposeUrlTrackerBackoffice(this IUmbracoBuilder builder)
         {
             builder.AddDashboard<UrlTrackerDashboard>();
-            builder.AddDefaultUrlTrackerDashboardPages()
-                   .AddDefaultUrlTrackerNotifications();
+            builder.AddDefaultUrlTrackerNotifications();
 
             builder.ManifestFilters()
                 .Append<UrlTrackerManifestFilter>();
             builder.BackOfficeAssets()
-                .Append<UrlTrackerScript>()
-                .Append<UrlTrackerStyle>();
+                .Append<UrlTrackerScript>();
 
             builder.MapDefinitions()
                 .Add<CsvMap>()
                 .Add<RedirectMap>()
-                .Add<RecommendationMap>()
-                .Add<ExtensionMap>();
+                .Add<RecommendationMap>();
 
             builder.AddNotificationHandler<ServerVariablesParsingNotification, ServerVariablesNotificationHandler>();
 
@@ -59,33 +55,6 @@ namespace UrlTracker.Backoffice.UI
                     manager.FeatureProviders.Add(new UrlTrackerControllerFeatureProvider());
                 });
             });
-
-            return builder;
-        }
-
-        /// <summary>
-        /// Add or change pages on the URL Tracker dashboard
-        /// </summary>
-        /// <param name="builder">The Umbraco service collection</param>
-        /// <returns>A builder for URL Tracker dashboard pages</returns>
-        public static UrlTrackerDashboardPageCollectionBuilder UrlTrackerDashboardPages(this IUmbracoBuilder builder)
-        {
-            builder.Services.AddUnique<IUrlTrackerDashboardPageCollection>(sp => sp.GetRequiredService<UrlTrackerDashboardPageCollection>());
-            return builder.WithCollectionBuilder<UrlTrackerDashboardPageCollectionBuilder>();
-        }
-
-        /// <summary>
-        /// Composes the default URL Tracker dashboard pages
-        /// </summary>
-        /// <param name="builder">The Umbraco service collection</param>
-        /// <returns>The Umbraco service collection after all the services are added</returns>
-        public static IUmbracoBuilder AddDefaultUrlTrackerDashboardPages(this IUmbracoBuilder builder)
-        {
-            builder.UrlTrackerDashboardPages()
-                .Add<OverviewDashboardPage>()
-                .Add<RecommendationsDashboardPage>()
-                .Add<RedirectsDashboardPage>()
-                .Add<AdvancedRedirectsDashboardPage>();
 
             return builder;
         }

@@ -11,7 +11,7 @@ export class UrlSourceStrategyFactory implements IRedirectSourceStrategyFactory 
 
     getStrategy(redirect: IRedirectResponse): IRedirectSourceStrategy | undefined {
     
-        let key = this.variableResource.get<ISourceStrategies>('redirectSourceStrategies').url;
+        const key = this.variableResource.get<ISourceStrategies>('redirectSourceStrategies').url;
         if (redirect.source.strategy === key) {
 
             return {

@@ -1,21 +1,18 @@
 import { LitElement, css, html, nothing } from "lit";
-import { TabService } from "../services/tabs.service";
-import { IDashboardTab } from "./tab";
+import tabStrategy, { ITab, TabStrategyCollection } from "./tab";
 import { customElement, state } from "lit/decorators.js";
 import { consume } from "@lit-labs/context";
-import { tabServiceContext } from "../context/tabservice.context";
 import { ILocalizationService } from "../umbraco/localization.service";
 import { localizationServiceContext } from "../context/localizationservice.context";
-import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import './footer/footer.lit'
 
 @customElement("urltracker-dashboard-content")
 export class UrlTrackerDashboardContent extends LitElement{
 
-    private _tabs?: Array<IDashboardTab>;
+    private _tabs?: Array<ITab>;
 
     @state()
-    set tabs(tabs: Array<IDashboardTab> | undefined) {
+    set tabs(tabs: Array<ITab> | undefined) {
         this._tabs = tabs;
         if (this._tabs && this._tabs.length > 0) {
             this.activeTab = this._tabs[0];
@@ -29,13 +26,12 @@ export class UrlTrackerDashboardContent extends LitElement{
     }
 
     @state()
-    private activeTab: IDashboardTab | null = null;
+    private activeTab: ITab | null = null;
 
     @state()
     public loading: number;
 
-    @consume({context: tabServiceContext})
-    public tabService?: TabService;
+    private tabStrategyCollection: TabStrategyCollection = tabStrategy;
 
     @consume({context: localizationServiceContext})
     public localizationService?: ILocalizationService;
@@ -52,22 +48,19 @@ export class UrlTrackerDashboardContent extends LitElement{
         this.loading++;
         try{
 
-            if (!this.tabService) throw new Error("Tab service is not defined, but is required by this element.");
             if (!this.localizationService) throw new Error("localization service is not defined, but is required by this element");
             
-            let response = await this.tabService.GetTabs();
-            
-            let titleAliases = response.results.map((item) => "urlTrackerDashboardTabs_" + item.alias);
-            let labelAliases = response.results.map((item) => "urlTrackerDashboardTabLabels_" + item.alias);
+            let titleAliases = this.tabStrategyCollection.map((item) => item.nameKey);
+            let labelAliases = this.tabStrategyCollection.map((item) => item.labelKey);
             
             let titlePromise = this.localizationService.localizeMany(titleAliases);
             let labels = await this.localizationService.localizeMany(labelAliases);
             let titles = await titlePromise;
             
-            let result: Array<IDashboardTab> = response.results.map((item, index) => ({
+            let result: Array<ITab> = this.tabStrategyCollection.map((item, index) => ({
                 name: titles[index],
                 label: labels[index] ? labels[index] : titles[index],
-                template: item.view.replace(/[^A-Za-z0-9\-]/g, '')
+                template: item.template
             }));
             
             this.tabs = result;
@@ -96,23 +89,23 @@ export class UrlTrackerDashboardContent extends LitElement{
                 tabsOrNothing = nothing;
             }
             contentOrLoader = html`
-            ${tabsOrNothing}
-            <uui-scroll-container class="dashboard-body">
-                <div class="dashboard-body-container">
-                    ${unsafeHTML(`<${this.activeTab?.template}></${this.activeTab?.template}>`)}
-                </div>
-            </uui-scroll-container>
-            <urltracker-dashboard-footer>
-            </urltracker-dashboard-footer>
+                ${tabsOrNothing}
+                <uui-scroll-container class="dashboard-body">
+                    <div class="dashboard-body-container">
+                        ${this.activeTab?.template}
+                    </div>
+                </uui-scroll-container>
+                <urltracker-dashboard-footer>
+                </urltracker-dashboard-footer>
             `;
         }
 
         return html`
-<div class="dashboard">
-    <div class="dashboard-content">
-        ${contentOrLoader}
-    </div>
-</div>
+            <div class="dashboard">
+                <div class="dashboard-content">
+                    ${contentOrLoader}
+                </div>
+            </div>
         `;
     }
 

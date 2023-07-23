@@ -11,7 +11,7 @@ export class StrategyResolver<TItem, TStrategy, TFactory extends {getStrategy(it
 
     public getStrategy(redirect: TItem) : TStrategy {
 
-        let strategy = this._factoryCollection
+        const strategy = this._factoryCollection
             .map((item) => item.getStrategy(redirect))
             .find((item) => !!item);
 

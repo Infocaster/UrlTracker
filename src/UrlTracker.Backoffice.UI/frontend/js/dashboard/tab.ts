@@ -1,6 +1,24 @@
-export interface IDashboardTab {
+export function createTabStrategy(alias: string, template: unknown): ITabStrategy {
+    return {
+        nameKey: "urlTrackerDashboardTabs_" + alias,
+        labelKey: "urlTrackerDashboardTabLabels_" + alias,
+        template: template
+    };
+}
+
+export interface ITabStrategy {
+    nameKey: string;
+    labelKey: string;
+    template: unknown;
+}
+
+export interface ITab {
 
     name: string;
     label?: string;
-    template: string;
+    template: unknown;
 }
+
+export type TabStrategyCollection = ITabStrategy[];
+
+export default [] as TabStrategyCollection;

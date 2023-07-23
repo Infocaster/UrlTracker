@@ -3,7 +3,6 @@ import { customElement, property } from "lit/decorators.js";
 import { IPaginationRequestBase } from "../../../services/models/paginationrequestbase";
 import { UUIPaginationElement, UUIPaginationEvent } from "@umbraco-ui/uui";
 import '@umbraco-ui/uui';
-import './dropdown.lit';
 import { DropdownChangeEvent, IDropdownValue, UrlTrackerDropdown } from "./dropdown.lit";
 import { Ref, createRef, ref } from "lit/directives/ref.js";
 import { ensureExists } from "../../tools/existancecheck";

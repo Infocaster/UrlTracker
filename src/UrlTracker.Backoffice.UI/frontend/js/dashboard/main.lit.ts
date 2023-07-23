@@ -1,10 +1,8 @@
-﻿import { css, html, LitElement } from "lit";
+﻿import { html, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
 import './content.lit'
 import { UrlTrackerMainContext } from "../context/maincontext.mixin";
 import { provide } from "@lit-labs/context";
-import { tabServiceContext } from "../context/tabservice.context";
-import tabsService, { TabService } from "../services/tabs.service";
 import notificationService, { INotificationService } from "./notifications/notification.service";
 import { notificationServiceContext } from "../context/notificationservice.context";
 import recommendationService, { IRecommendationsService } from "../services/recommendation.service";
@@ -19,9 +17,6 @@ import targetService from "./tabs/redirects/target/target.service";
 
 @customElement('urltracker-dashboard')
 export class UrlTrackerDashboard extends UrlTrackerMainContext(LitElement) {
-
-    @provide({context: tabServiceContext})
-    tabService: TabService = tabsService;
 
     @provide({context: notificationServiceContext})
     notificationService: INotificationService = notificationService;
