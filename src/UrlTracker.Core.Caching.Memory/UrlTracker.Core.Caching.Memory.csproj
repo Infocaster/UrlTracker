@@ -6,8 +6,8 @@
     <RootNamespace>UrlTracker.Core.Caching.Memory</RootNamespace>
     <PackageReleaseNotes>1 new feature, 1 bugfix
 
-- all bugs that were in v10
-- all new features from v10 now also available in v11</PackageReleaseNotes>
+- Fix #149
+- Adds new configuration to reflect changes in v10</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="11.0.0" />

@@ -7,8 +7,8 @@
     <RootNamespace>UrlTracker.Web</RootNamespace>
     <PackageReleaseNotes>1 new feature, 1 bugfix
 
-- all bugs that were in v10
-- all new features from v10 now also available in v11</PackageReleaseNotes>
+- Fix #149
+- Adds new configuration to reflect changes in v10</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->
