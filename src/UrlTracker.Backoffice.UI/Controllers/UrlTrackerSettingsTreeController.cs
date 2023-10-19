@@ -11,47 +11,47 @@ using Umbraco.Cms.Web.Common.ModelBinders;
 
 namespace UrlTracker.Backoffice.UI.Controllers
 {
-    [Tree(Constants.Applications.Settings, Defaults.Tree.Settings, TreeTitle = "UrlTracker settings", TreeGroup = "urlTrackerTreeGroup", SortOrder = 1)]
-    [PluginController(Defaults.Routing.Area)]
-    [ExcludeFromCodeCoverage]
-    public class UrlTrackerSettingsTreeController : TreeController
-    {
-        private readonly IMenuItemCollectionFactory _menuItemCollectionFactory;
-        public UrlTrackerSettingsTreeController(ILocalizedTextService localizedTextService,
-            UmbracoApiControllerTypeCollection umbracoApiControllerTypeCollection,
-            IMenuItemCollectionFactory menuItemCollectionFactory,
-            IEventAggregator eventAggregator)
-        : base(localizedTextService, umbracoApiControllerTypeCollection, eventAggregator)
-        {
-            _menuItemCollectionFactory = menuItemCollectionFactory;
-        }
+	[Tree(Constants.Applications.Settings, Defaults.Tree.Settings, TreeTitle = "UrlTracker settings", TreeGroup = "urlTrackerTreeGroup", SortOrder = 1)]
+	[PluginController(Defaults.Routing.Area)]
+	[ExcludeFromCodeCoverage]
+	public class UrlTrackerSettingsTreeController : TreeController
+	{
+		private readonly IMenuItemCollectionFactory _menuItemCollectionFactory;
+		public UrlTrackerSettingsTreeController(ILocalizedTextService localizedTextService,
+			UmbracoApiControllerTypeCollection umbracoApiControllerTypeCollection,
+			IMenuItemCollectionFactory menuItemCollectionFactory,
+			IEventAggregator eventAggregator)
+		: base(localizedTextService, umbracoApiControllerTypeCollection, eventAggregator)
+		{
+			_menuItemCollectionFactory = menuItemCollectionFactory;
+		}
 
-        protected override ActionResult<TreeNodeCollection> GetTreeNodes(string id, [ModelBinder(typeof(HttpQueryStringModelBinder))] FormCollection queryStrings)
-        {
-            return TreeNodeCollection.Empty;
-        }
+		protected override ActionResult<TreeNodeCollection> GetTreeNodes(string id, [ModelBinder(typeof(HttpQueryStringModelBinder))] FormCollection queryStrings)
+		{
+			return TreeNodeCollection.Empty;
+		}
 
-        protected override ActionResult<MenuItemCollection> GetMenuForNode(string id, [ModelBinder(typeof(HttpQueryStringModelBinder))] FormCollection queryStrings)
-        {
-            // return a new (empty) MenuItemCollection since the tree has no child nodes to interact with
-            return _menuItemCollectionFactory.Create();
-        }
+		protected override ActionResult<MenuItemCollection> GetMenuForNode(string id, [ModelBinder(typeof(HttpQueryStringModelBinder))] FormCollection queryStrings)
+		{
+			// return a new (empty) MenuItemCollection since the tree has no child nodes to interact with
+			return _menuItemCollectionFactory.Create();
+		}
 
-        protected override ActionResult<TreeNode?> CreateRootNode(FormCollection queryStrings)
-        {
-            var rootResult = base.CreateRootNode(queryStrings);
-            if (rootResult.Result is not null)
-            {
-                return rootResult;
-            }
+		protected override ActionResult<TreeNode?> CreateRootNode(FormCollection queryStrings)
+		{
+			var rootResult = base.CreateRootNode(queryStrings);
+			if (rootResult.Result is not null)
+			{
+				return rootResult;
+			}
 
-            var root = rootResult.Value!;
-            root.RoutePath = string.Format("{0}/{1}/{2}", Constants.Applications.Settings, Defaults.Tree.Settings, "overview");
-            root.Icon = "icon-umb-developer";
-            root.HasChildren = false;
-            root.MenuUrl = null;
+			var root = rootResult.Value!;
+			root.RoutePath = string.Format("{0}/{1}/{2}", Constants.Applications.Settings, Defaults.Tree.Settings, "dashboard");
+			root.Icon = "icon-umb-developer";
+			root.HasChildren = false;
+			root.MenuUrl = null;
 
-            return root;
-        }
-    }
+			return root;
+		}
+	}
 }
