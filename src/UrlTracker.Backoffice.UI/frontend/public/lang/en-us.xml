@@ -8,13 +8,13 @@
     <key alias="urlTrackerSettingsTree">URL Tracker settings</key>
   </area>
   <area alias="urlTrackerDashboardTabs">
-    <key alias="overview">Overview</key>
+    <key alias="dashboard">Dashboard</key>
     <key alias="recommendations">Recommendations</key>
     <key alias="redirects">Redirects</key>
     <key alias="advancedRedirects">Advanced redirects</key>
   </area>
   <area alias="urlTrackerDashboardTabLabels">
-    <key alias="overview">Overview</key>
+    <key alias="dashboard">Dashboard</key>
     <key alias="recommendations">Recommendations</key>
     <key alias="redirects">Redirects</key>
     <key alias="advancedRedirects">Advanced redirects</key>
@@ -34,6 +34,7 @@
     <key alias="logourl">https://infocaster.net</key>
     <key alias="featurelabel">Suggest a feature</key>
     <key alias="buglabel">Report a bug</key>
+    <key alias="wikilabel">Open the wiki</key>
   </area>
   <area alias="urlTrackerRedirectSource">
     <key alias="url">URL</key>

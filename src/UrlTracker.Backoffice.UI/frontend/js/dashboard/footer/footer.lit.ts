@@ -10,32 +10,53 @@ import { localizationServiceContext } from "../../context/localizationservice.co
 @customElement("urltracker-dashboard-footer")
 export class DashboardFooter extends LitElement {
   static styles = css`
-    footer {
+    .url-tracker__footer {
       background-color: white;
       box-sizing: border-box;
       border-top: 1px solid #e9e9eb;
       height: 50px;
       display: flex;
+      align-items: center;
       flex-direction: row;
-      justify-content: space-between;
     }
 
-    .left a {
-      display: inline-block;
+    .url-tracker__footer__logo {
       height: 100%;
     }
 
-    .left a img {
+    .url-tracker__footer__logo__link {
       height: 100%;
+      margin-right: 1rem;
     }
 
-    .right ul {
+    .url-tracker__footer__version {
+    }
+
+    .url-tracker__footer__links {
+      flex: 1;
+      margin-right: 2rem;
+    }
+
+    .url-tracker__footer__links ul {
+      display: flex;
+      justify-content: flex-end;
       list-style-type: none;
     }
 
-    .right ul li {
-      float: left;
-      margin: 0 8px;
+    .url-tracker__footer__links ul li {
+      margin-left: 2rem;
+    }
+
+    .url-tracker__footer__links ul li a:link,
+    a:visited,
+    a:hover,
+    a:active {
+      color: black;
+      text-decoration: none;
+    }
+
+    .url-tracker__footer__links ul li a:hover {
+      text-decoration: underline;
     }
   `;
 
@@ -70,17 +91,19 @@ export class DashboardFooter extends LitElement {
     }
 
     return html`
-      <footer>
-        <div class="left">
-          <a
-            href="${this.model.logoUrl}"
-            target="_blank"
-            rel="noopener noreferrer"
-            ><img src="${this.model.logo}" alt=""
-          /></a>
-          <span>${this.model.version}</span>
-        </div>
-        <div class="right">${linkList}</div>
+      <footer class="url-tracker__footer">
+        <a
+          href="${this.model.logoUrl}"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="url-tracker__footer__logo__link"
+          ><img
+            src="${this.model.logo}"
+            alt="Infocaster logo"
+            class="url-tracker__footer__logo"
+        /></a>
+        <div class="url-tracker__footer__version">v${this.model.version}</div>
+        <div class="url-tracker__footer__links">${linkList}</div>
       </footer>
     `;
   }
@@ -106,6 +129,7 @@ export class DashboardFooter extends LitElement {
         "urlTrackerDashboardFooter_logourl",
         "urlTrackerDashboardFooter_featurelabel",
         "urlTrackerDashboardFooter_buglabel",
+        "urlTrackerDashboardFooter_wikilabel",
       ])
       .then((result) => {
         this.model = {
@@ -114,13 +138,18 @@ export class DashboardFooter extends LitElement {
           version: this.versionProvider ? this.versionProvider.version : "",
           links: [
             {
-              url: "https://github.com/Infocaster/UrlTracker/Discussions",
+              url: "https://github.com/Infocaster/UrlTracker/discussions",
               title: result[2],
               target: "_blank",
             },
             {
-              url: "https://github.com/Infocaster/UrlTracker/Issues",
+              url: "https://github.com/Infocaster/UrlTracker/issues",
               title: result[3],
+              target: "_blank",
+            },
+            {
+              url: "https://github.com/Infocaster/UrlTracker/wiki",
+              title: result[4],
               target: "_blank",
             },
           ],
