@@ -34,6 +34,15 @@ namespace UrlTracker.IntegrationTests.Redirecting
             return result;
         }
 
+        protected Redirect CreateRedirectWithCulture(string culture)
+        {
+            var result = CreateRedirectToBase();
+            result.TargetUrl = "https://example.com/lorem/";
+            result.Culture = culture;
+
+            return result;
+        }
+
         protected Task<HttpResponseMessage> RequestDefaultUrlAsync(HttpClient? client = null)
         {
             return (client ?? WebsiteFactory.CreateStandardClient()).GetAsync("/dolor/sit");
@@ -138,6 +147,38 @@ namespace UrlTracker.IntegrationTests.Redirecting
             Assert.Multiple(() =>
             {
                 Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.Gone));
+            });
+        }
+
+        [TestCase(TestName = "Culture can be uppercase")]
+        public async Task Redirect_CultureUpperCase_ReturnsGone()
+        {
+            // arrange
+            await GetRedirectService().AddAsync(CreateRedirectWithCulture("EN-US"));
+
+            // act
+            var response = await RequestDefaultUrlAsync();
+
+            // assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(response.StatusCode, Is.EqualTo(_defaultRedirectCode));
+            });
+        }
+
+        [TestCase(TestName = "Culture can be lowercase")]
+        public async Task Redirect_CultureLowerCase_ReturnsGone()
+        {
+            // arrange
+            await GetRedirectService().AddAsync(CreateRedirectWithCulture("en-us"));
+
+            // act
+            var response = await RequestDefaultUrlAsync();
+
+            // assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(response.StatusCode, Is.EqualTo(_defaultRedirectCode));
             });
         }
     }

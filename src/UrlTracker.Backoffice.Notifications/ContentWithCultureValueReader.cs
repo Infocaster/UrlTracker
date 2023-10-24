@@ -41,13 +41,13 @@ namespace UrlTracker.Backoffice.Notifications
         /// <inheritdoc/>
         public string? GetValue(string propertyAlias)
         {
-            return _content.GetValue<string>(propertyAlias, culture: _culture);
+            return _content.GetValue<string>(propertyAlias, culture: _culture).DefaultIfNullOrWhiteSpace(null);
         }
 
         /// <inheritdoc/>
         public string? GetValue(IPublishedContent content, string propertyAlias)
         {
-            return content.Value<string>(_publishedValueFallback, propertyAlias, culture: _culture);
+            return content.Value<string>(_publishedValueFallback, propertyAlias, culture: _culture).DefaultIfNullOrWhiteSpace(null);
         }
 
         /// <inheritdoc/>

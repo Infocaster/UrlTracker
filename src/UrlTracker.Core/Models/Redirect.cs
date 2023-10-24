@@ -2,6 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
+using Umbraco.Cms.Core.Models.PublishedContent;
+using UrlTracker.Core.Validation.Attributes;
 
 namespace UrlTracker.Core.Models
 {
@@ -12,6 +15,9 @@ namespace UrlTracker.Core.Models
         public DateTime Inserted { get; set; }
         // id cannot be validated, because in some cases it's mandatory, but in others it's not
         public int? Id { get; set; }
+
+        [ValidCultureFormat]
+        public string? Culture { get; set; }
 
         public Guid? Key { get; set; }
 
