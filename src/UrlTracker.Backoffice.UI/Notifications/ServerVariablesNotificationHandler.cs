@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Routing;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Extensions;
+using UrlTracker.Backoffice.UI;
 using UrlTracker.Backoffice.UI.Controllers;
 
 namespace UrlTracker.Web.Events
@@ -12,10 +13,12 @@ namespace UrlTracker.Web.Events
     internal class ServerVariablesNotificationHandler : INotificationHandler<ServerVariablesParsingNotification>
     {
         private readonly LinkGenerator _linkGenerator;
+        private readonly IUrltrackerVersionProvider _urltrackerVersionProvider;
 
-        public ServerVariablesNotificationHandler(LinkGenerator linkGenerator)
+        public ServerVariablesNotificationHandler(LinkGenerator linkGenerator, IUrltrackerVersionProvider urltrackerVersionProvider)
         {
             _linkGenerator = linkGenerator;
+            _urltrackerVersionProvider = urltrackerVersionProvider;
         }
 
         public void Handle(ServerVariablesParsingNotification notification)
@@ -69,6 +72,7 @@ namespace UrlTracker.Web.Events
                 ["redirectTarget"] = redirectTargetVariables,
                 ["redirectSourceStrategies"] = redirectSourceStrategies,
                 ["redirectTargetStrategies"] = redirectTargetStrategies
+                ["version"] = _urltrackerVersionProvider.GetCurrentVersion()
             };
 
             notification.ServerVariables.Add("urlTracker", urlTrackerVariables);

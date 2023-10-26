@@ -1,13 +1,17 @@
+import { IVariableResource } from "./variableresource.service";
+import { IUrlTrackerVariables } from "./versionproviderservice.constants";
+
 export interface IVersionProvider {
     get version(): string
 }
 
 export class VersionProvider implements IVersionProvider {
 
+    constructor(private variableResource: IVariableResource) { }
     get version(): string {
-        
-        return "10.3.1";
-        //return Umbraco.Sys.ServerVariables["urlTracker"].version;
+
+        const version = this.variableResource.get<IUrlTrackerVariables>('urlTracker').version;
+        return version;
     }
 }
 

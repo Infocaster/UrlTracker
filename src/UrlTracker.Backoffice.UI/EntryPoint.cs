@@ -44,6 +44,7 @@ namespace UrlTracker.Backoffice.UI
             builder.AddNotificationHandler<ServerVariablesParsingNotification, ServerVariablesNotificationHandler>();
 
             builder.Services.AddSingleton<IRequestModelPatcher, RequestModelPatcher>();
+            builder.Services.AddSingleton<IUrltrackerVersionProvider, UrltrackerVersionProvider>();
             builder.Services.AddScoped<IRedirectRequestHandler, RedirectRequestHandler>();
             builder.Services.AddScoped<IRedirectTargetRequestHandler, RedirectTargetRequestHandler>();
             builder.Services.AddScoped<IRecommendationRequestHandler, RecommendationRequestHandler>();
