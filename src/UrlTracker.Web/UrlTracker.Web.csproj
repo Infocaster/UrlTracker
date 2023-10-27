@@ -5,9 +5,10 @@
     <Title>URL Tracker Web</Title>
     <Description>This package contains the web services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>1 change
+    <PackageReleaseNotes>2 bugfixes
 
-- Port to Umbraco 12</PackageReleaseNotes>
+- Fix #150
+- Fix #161</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->

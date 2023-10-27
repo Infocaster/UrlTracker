@@ -10,9 +10,10 @@
       Use v11 for umbraco 11, Use v10 for umbraco 10, Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </Description>
     <RootNamespace>UrlTracker</RootNamespace>
-    <PackageReleaseNotes>1 change
+    <PackageReleaseNotes>2 bugfixes
 
-- Port to Umbraco 12</PackageReleaseNotes>
+- Fix #150
+- Fix #161</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="12.0.0" />

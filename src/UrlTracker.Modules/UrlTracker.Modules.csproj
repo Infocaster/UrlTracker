@@ -4,9 +4,10 @@
     <Title>URL Tracker Module registration</Title>
     <Description>This package contains objects for module registration. It keeps helps keeping track of installed modules for the URL Tracker</Description>
     <RootNamespace>UrlTracker.Modules</RootNamespace>
-    <PackageReleaseNotes>1 change
+    <PackageReleaseNotes>2 bugfixes
 
-- Port to Umbraco 12</PackageReleaseNotes>
+- Fix #150
+- Fix #161</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Update="Microsoft.VisualStudio.Threading.Analyzers" Version="17.6.40">
