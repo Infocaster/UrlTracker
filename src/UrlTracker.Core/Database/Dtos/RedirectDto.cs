@@ -23,7 +23,7 @@ namespace UrlTracker.Core.Database.Dtos
         public DateTime CreateDate { get; set; }
 
         [Column("culture")]
-        [Length(10)]
+        [Length(11)]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string? Culture { get; set; }
 

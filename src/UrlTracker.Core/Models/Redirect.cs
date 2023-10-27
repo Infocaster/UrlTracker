@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Umbraco.Cms.Core.Models.PublishedContent;
+using UrlTracker.Core.Validation.Attributes;
 
 namespace UrlTracker.Core.Models
 {
@@ -18,7 +19,7 @@ namespace UrlTracker.Core.Models
         // id cannot be validated, because in some cases it's mandatory, but in others it's not
         public int? Id { get; set; }
 
-        [RegularExpression(@"^[a-z]{2}(?:-[A-Z]{2})?$")]
+        [ValidCultureFormat]
         public string? Culture { get; set; }
 
         [Required]
