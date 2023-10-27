@@ -5,10 +5,10 @@
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>1 new feature, 1 bugfix
+    <PackageReleaseNotes>2 bugfixes
 
-- Fix #126
-- Include separate setting for child nodes and wildcard domains</PackageReleaseNotes>
+- Fix #150
+- Fix #161</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">
@@ -20,6 +20,9 @@
     <Content Remove="package-lock.json" />
     <Content Remove="package.json" />
     <Content Remove="tsconfig.json" />
+    <None Include="package-lock.json" />
+    <None Include="package.json" />
+    <None Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <SupportedPlatform Include="browser" />
@@ -32,11 +35,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="package-lock.json" />
-    <None Include="package.json" />
-    <None Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
