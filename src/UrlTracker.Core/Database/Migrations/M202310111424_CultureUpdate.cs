@@ -2,7 +2,6 @@
 using System.Drawing.Text;
 using System.Runtime.Intrinsics.Arm;
 using NPoco;
-using Polly;
 using Umbraco.Cms.Core.Models.Membership;
 using Umbraco.Cms.Infrastructure.Migrations;
 using UrlTracker.Core.Database.Strategy;
