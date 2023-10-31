@@ -16,7 +16,7 @@
             /// <summary>
             /// The controller area. Adds an area segment to endpoint urls
             /// </summary>
-            public const string AreaWithConrtollerAction = "Umrbaco/Backoffice/"+Area+"/[controller]/[action]";
+            public const string AreaWithConrtollerAction = "Umbraco/Backoffice/"+Area+"/[controller]/[action]";
 
             /// <summary>
             /// The base folder for all static resources
