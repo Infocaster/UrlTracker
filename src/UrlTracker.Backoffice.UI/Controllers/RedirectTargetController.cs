@@ -12,6 +12,8 @@ using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
 namespace UrlTracker.Backoffice.UI.Controllers
 {
     [PluginController(Defaults.Routing.Area)]
+    [ApiController]
+    [Route(Defaults.Routing.AreaWithConrtollerAction)]
     internal class RedirectTargetController : UmbracoAuthorizedApiController
     {
         private readonly IRedirectTargetRequestHandler _requestHandler;

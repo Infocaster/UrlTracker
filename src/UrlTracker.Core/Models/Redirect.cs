@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using UrlTracker.Core.Validation.Attributes;
 
 namespace UrlTracker.Core.Models
 {

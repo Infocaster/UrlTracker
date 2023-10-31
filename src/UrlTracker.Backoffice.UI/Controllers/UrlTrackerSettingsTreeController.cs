@@ -14,7 +14,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
 	[Tree(Constants.Applications.Settings, Defaults.Tree.Settings, TreeTitle = "UrlTracker settings", TreeGroup = "urlTrackerTreeGroup", SortOrder = 1)]
 	[PluginController(Defaults.Routing.Area)]
 	[ExcludeFromCodeCoverage]
-	public class UrlTrackerSettingsTreeController : TreeController
+    public class UrlTrackerSettingsTreeController : TreeController
 	{
 		private readonly IMenuItemCollectionFactory _menuItemCollectionFactory;
 		public UrlTrackerSettingsTreeController(ILocalizedTextService localizedTextService,

@@ -34,11 +34,10 @@ namespace UrlTracker.IntegrationTests.Redirecting
             return result;
         }
 
-        protected Redirect CreateRedirectWithCulture(string culture)
+        protected Redirect CreateRedirectWithCulture(IPublishedContent content, string culture)
         {
             var result = CreateRedirectToBase();
-            result.TargetUrl = "https://example.com/lorem/";
-            result.Culture = culture;
+            result.Target = new ContentPageTargetStrategy(content, culture);
 
             return result;
         }
@@ -154,7 +153,8 @@ namespace UrlTracker.IntegrationTests.Redirecting
         public async Task Redirect_CultureUpperCase_ReturnsGone()
         {
             // arrange
-            await GetRedirectService().AddAsync(CreateRedirectWithCulture("EN-US"));
+            var targetContent = GetDefaultRootNode().FirstChild(ServiceProvider.GetRequiredService<IVariationContextAccessor>())!;
+            await GetRedirectService().AddAsync(CreateRedirectWithCulture(targetContent ,"EN-US"));
 
             // act
             var response = await RequestDefaultUrlAsync();
@@ -170,7 +170,8 @@ namespace UrlTracker.IntegrationTests.Redirecting
         public async Task Redirect_CultureLowerCase_ReturnsGone()
         {
             // arrange
-            await GetRedirectService().AddAsync(CreateRedirectWithCulture("en-us"));
+            var targetContent = GetDefaultRootNode().FirstChild(ServiceProvider.GetRequiredService<IVariationContextAccessor>())!;
+            await GetRedirectService().AddAsync(CreateRedirectWithCulture(targetContent, "en-us"));
 
             // act
             var response = await RequestDefaultUrlAsync();

@@ -12,6 +12,8 @@ using UrlTracker.Backoffice.UI.UserNotifications;
 namespace UrlTracker.Backoffice.UI.Controllers
 {
     [PluginController(Defaults.Routing.Area)]
+    [ApiController]
+    [Route(Defaults.Routing.AreaWithConrtollerAction)]
     internal class NotificationsController : UmbracoAuthorizedApiController
     {
         private readonly IOptionsSnapshot<UrlTrackerUserNotificationOptions> _notificationOptions;

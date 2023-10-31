@@ -11,7 +11,9 @@ namespace UrlTracker.Backoffice.UI.Controllers
     /// <summary>
     /// A controller for managing redirects for the URL Tracker
     /// </summary>
+    [ApiController]
     [PluginController(Defaults.Routing.Area)]
+    [Route(Defaults.Routing.AreaWithConrtollerAction)]
     internal class RedirectsController : UmbracoAuthorizedApiController
     {
         private readonly IRedirectRequestHandler _redirectRequestHandler;

@@ -18,7 +18,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Notification
             // arrange
 
             // act
-            var response = await WebsiteFactory.CreateStandardClient().GetAsync(_endpoint + "?alias=" + UrlTracker.Backoffice.UI.Defaults.Extensions.Overview);
+            var response = await WebsiteFactory.CreateStandardClient().GetAsync(_endpoint + "?alias=" + UrlTracker.Backoffice.UI.Defaults.Extensions.Dashboard);
 
             // assert
             Assert.That(response.IsSuccessStatusCode, Is.True);
