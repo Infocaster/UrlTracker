@@ -12,6 +12,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
             typeof(RedirectTargetController),
             typeof(RedirectsController),
             typeof(RecommendationsController),
+            typeof(RecommendationAnalysisController),
             typeof(NotificationsController)
         };
 

@@ -13,7 +13,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
 {
     [PluginController(Defaults.Routing.Area)]
     [ApiController]
-    [Route(Defaults.Routing.AreaWithConrtollerAction)]
+    [Route(Defaults.Routing.Route)]
     internal class RedirectTargetController : UmbracoAuthorizedApiController
     {
         private readonly IRedirectTargetRequestHandler _requestHandler;

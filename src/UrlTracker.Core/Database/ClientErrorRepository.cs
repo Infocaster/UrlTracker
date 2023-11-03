@@ -17,6 +17,8 @@ using UrlTracker.Core.Database.Dtos;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Factories;
 using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Models;
+using static Umbraco.Cms.Core.Constants;
 
 namespace UrlTracker.Core.Database
 {
@@ -216,5 +218,34 @@ namespace UrlTracker.Core.Database
 
             Database.Insert(dto);
         }
+
+        public async Task<IEnumerable<ReferrerResponse>> GetReferrersByClientIdAsync(int id)
+        {
+            var sql = Sql().SelectCount("occurrances")
+                            .AndSelect<ReferrerDto>("r", r => r.Url)
+                            .From<ClientError2ReferrerDto>("cr")
+                            .LeftJoin<ReferrerDto>("r")
+                            .On<ClientError2ReferrerDto, ReferrerDto>((l, r) => l.Referrer == r.Id, "cr", "r")
+                            .Where<ClientError2ReferrerDto>(e => e.ClientError == id, "cr")
+                            .GroupBy("cr.referrer", "r.url")
+                            .OrderByDescending("occurrances");
+
+            var dtos = await Database.FetchAsync<OccurrancesDto>(sql);
+            return dtos.Select(ReferrerFactory.Build);
+        }
+
+        public async Task<IEnumerable<DailyClientErrorResponse>> GetDailyClientErrorInRangeAsync(int clientError, DateTime start, DateTime end)
+        {
+            var query = Sql().Select("CAST(createDate AS date) AS dateOnly")
+                        .AndSelectCount("occurances")
+                        .From<ClientError2ReferrerDto>()
+                        .Where<ClientError2ReferrerDto>(e => e.CreateDate >= start
+                                                        && e.CreateDate <= end
+                                                        && e.ClientError == clientError)
+                        .GroupBy("CAST(createDate AS date)");
+            var dtos = await Database.FetchAsync<DailyClientErrorDto>(query);
+            return dtos.Select(DailyClientErrorFactory.Build);
+        }
+
     }
 }

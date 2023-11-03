@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,6 +24,8 @@ namespace UrlTracker.Core
         Task<ClientError?> GetAsync(string url);
         Task UpdateAsync(ClientError ClientError);
         Task ReportAsync(string url, DateTime moment, string? referrer);
+        Task<IEnumerable<ReferrerResponse>> GetClientErrorReferrersAsync(int id);
+        Task<IEnumerable<DailyClientErrorResponse>> GetInRangeAsync(int id, DateTime start, DateTime end);
     }
 
     public class ClientErrorService
@@ -121,6 +124,16 @@ namespace UrlTracker.Core
             return Task.FromResult<ClientError?>(_mapper.Map<ClientError>(entity.FirstOrDefault()));
         }
 
+
+        public Task<IEnumerable<DailyClientErrorResponse>> GetInRangeAsync(int id, DateTime start, DateTime end)
+        {
+
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            var entities = _clientErrorRepository.GetDailyClientErrorInRangeAsync(id, start, end);
+
+            return entities;
+        }
+
         public async Task ReportAsync(string url, DateTime moment, string? referrer)
         {
             using var scope = _scopeProvider.CreateScope();
@@ -148,6 +161,14 @@ namespace UrlTracker.Core
             _clientErrorRepository.Report(clientError, moment, referrerEntity);
 
             scope.Complete();
+        }
+
+        public async Task<IEnumerable<ReferrerResponse>> GetClientErrorReferrersAsync(int id)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete:true);
+
+            var referrers = await _clientErrorRepository.GetReferrersByClientIdAsync(id);
+            return referrers;
         }
     }
 }

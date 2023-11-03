@@ -108,7 +108,7 @@ namespace UrlTracker.Core.Database
             entity.ResetDirtyProperties();
         }
 
-        public RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationScoreParameters parameters)
+        public RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationScoreParameters parameters, RecommendationOrderingOptions orderingOptions)
         {
             var sql = Sql()
                 .Select<RecommendationDto>("r")
@@ -125,10 +125,19 @@ namespace UrlTracker.Core.Database
             sql.From<RecommendationDto>("r");
             sql.LeftJoin<RedactionScoreDto>("s").On<RecommendationDto, RedactionScoreDto>((le, re) => le.RecommendationStrategy == re.Id, "r", "s");
 
-            sql.OrderByDescending("orderscore");
+            sql = OrderByField(sql, orderingOptions.OrderBy, orderingOptions.Desc);
 
             var dtos = Database.Page<RecommendationDto>(page, pageSize, sql);
             return RecommendationEntityCollection.Create(dtos.Items.Select(dto => RecommendationFactory.BuildEntity(dto, _redactionScoreRepository.Get(dto.RecommendationStrategy)!)).ToList(), (int)dtos.TotalItems);
+        }
+
+        private Sql<ISqlContext> OrderByField(Sql<ISqlContext> sql, RecommendationOrderBy orderBy, bool desc)
+        {
+            if (desc)
+            {
+                return sql.OrderByDescending(orderBy.GetDatabaseFieldName());
+            }
+            return sql.OrderBy(orderBy.GetDatabaseFieldName());
         }
 
         public void Clear()

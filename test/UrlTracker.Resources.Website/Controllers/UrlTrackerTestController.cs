@@ -9,6 +9,7 @@ using Umbraco.Cms.Web.BackOffice.Controllers;
 using UrlTracker.Core;
 using UrlTracker.Core.Classification;
 using UrlTracker.Core.Database.Entities;
+using UrlTracker.Core.Database.Models;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Resources.Website.Models;
 
@@ -74,7 +75,7 @@ namespace UrlTracker.Resources.Website.Controllers
         [HttpGet]
         public IActionResult GetResults(double c1, double c2, double c3)
         {
-            var results = _recommendationService.Get(1, 100, new Core.Database.Models.RecommendationScoreParameters
+            var results = _recommendationService.Get(1, 100, new RecommendationOrderingOptions(), new Core.Database.Models.RecommendationScoreParameters
             {
                 RedactionFactor = c1,
                 VariableFactor = c2,
@@ -106,7 +107,7 @@ namespace UrlTracker.Resources.Website.Controllers
                 requestGenerator.Generate(25, "default, page")).Concat(
                 requestGenerator.Generate(25, "default, technicalFile")).ToList();
 
-            foreach(var r in requests)
+            foreach (var r in requests)
             {
                 r.Url = request.BaseUrl.TrimEnd('/') + r.Url;
                 SetRecommendation(r);

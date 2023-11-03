@@ -107,5 +107,10 @@ namespace UrlTracker.Core.Database
         {
             return Get(SqlContext.Query<IReferrer>().Where(e => e.Url == url)).FirstOrDefault();
         }
+
+        public IEnumerable<IReferrer?> GetAll(string url)
+        {
+            return Get(SqlContext.Query<IReferrer>().Where(e => e.Url == url));
+        }
     }
 }

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UrlTracker.Backoffice.UI.Controllers.Models.Base;
+﻿using UrlTracker.Backoffice.UI.Controllers.Models.Base;
+using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Backoffice.UI.Controllers.Models.Recommendations
 {
     internal class ListRecommendationRequest
         : PaginationRequest
     {
+        public string? Query { get; set; }
+        public RecommendationOrderBy OrderBy { get; set; }
+        public bool Desc { get; set; } = true;
+
     }
 }

@@ -13,7 +13,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
 {
     [PluginController(Defaults.Routing.Area)]
     [ApiController]
-    [Route(Defaults.Routing.AreaWithConrtollerAction)]
+    [Route(Defaults.Routing.Route)]
     internal class NotificationsController : UmbracoAuthorizedApiController
     {
         private readonly IOptionsSnapshot<UrlTrackerUserNotificationOptions> _notificationOptions;

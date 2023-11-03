@@ -17,7 +17,7 @@ namespace UrlTracker.Backoffice.UI.Map
                 (source, context) => new RecommendationCollectionResponse(context.MapEnumerable<IRecommendation, RecommendationResponse>(source), source.Total));
 
             mapper.Define<IRecommendation, RecommendationResponse>(
-                (source, context) => new RecommendationResponse(source.Id, source.Ignore, source.Url, source.Strategy.Key));
+                (source, context) => new RecommendationResponse(source.Id, source.Ignore, source.Url, source.Strategy.Key, source.VariableScore));
         }
     }
 }

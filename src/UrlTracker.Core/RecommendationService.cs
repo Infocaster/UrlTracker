@@ -15,9 +15,11 @@ namespace UrlTracker.Core
         void Clear();
         IRecommendation Create(string url, IRedactionScore score);
         IRecommendation Create(string url, Guid scoreKey);
-        RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationScoreParameters? parameters = null);
+        void Delete(IRecommendation recommendation);
+        RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationOrderingOptions orderingOptions, RecommendationScoreParameters? parameters = null);
         IRecommendation? Get(string url, IRedactionScore score);
         IRecommendation? Get(string url, Guid scoreKey);
+        IRecommendation? Get(int id);
         void Save(IRecommendation recommendation);
     }
 
@@ -34,10 +36,10 @@ namespace UrlTracker.Core
             _redactionScoreService = redactionScoreService;
         }
 
-        public RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationScoreParameters? parameters = null)
+        public RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationOrderingOptions orderingOptions, RecommendationScoreParameters? parameters = null)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
-            var result = _recommendationRepository.Get(page, pageSize, parameters ?? Core.Defaults.Parameters.ScoreParameters);
+            var result = _recommendationRepository.Get(page, pageSize, parameters ?? Core.Defaults.Parameters.ScoreParameters, orderingOptions);
 
             return result;
         }
@@ -82,12 +84,24 @@ namespace UrlTracker.Core
             return Get(url, score);
         }
 
+        public IRecommendation? Get(int id)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+
+            return _recommendationRepository.Get(id);
+        }
+
         public void Clear()
         {
             using var scope = _scopeProvider.CreateScope();
             _recommendationRepository.Clear();
 
             scope.Complete();
+        }
+
+        public void Delete(IRecommendation recommendation)
+        {
+            _recommendationRepository.Delete(recommendation);
         }
     }
 }
