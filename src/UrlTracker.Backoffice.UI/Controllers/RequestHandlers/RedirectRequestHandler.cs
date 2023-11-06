@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Backoffice.UI.Controllers.Models.Redirects;
@@ -11,9 +12,12 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
     {
         RedirectResponse Create(RedirectRequest request);
         RedirectResponse? Delete(int id);
-        RedirectResponse? Get(int id);
+        void DeleteBulk(int[] ids);
+        RedirectResponse? GetById(int id);
+        IEnumerable<IRedirect> Get(int[] ids);
         Task<RedirectCollectionResponse> GetAsync(ListRedirectRequest request);
         RedirectResponse? Update(int id, RedirectRequest request);
+        IEnumerable<RedirectResponse?> UpdateBulk(IEnumerable<RedirectBulkRequest> bulkRequest);
     }
 
     internal class RedirectRequestHandler : IRedirectRequestHandler
@@ -37,7 +41,14 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             return _mapper.Map<RedirectCollectionResponse>(entities)!;
         }
 
-        public RedirectResponse? Get(int id)
+        public IEnumerable<IRedirect> Get(int[] ids)
+        {
+            using var scope = _scopeProvider.CreateScope();
+
+           return _redirectRepository.GetMany();
+        }
+
+        public RedirectResponse? GetById(int id)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
 
@@ -60,18 +71,24 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         {
             using var scope = _scopeProvider.CreateScope();
 
-            var entity = _redirectRepository.Get(id);
-            if (entity is null) return null;
-
-            var newEntity = _mapper.Map<IRedirect>(request)!;
-            newEntity.Id = entity.Id;
-            if (newEntity.Key == default) newEntity.Key = entity.Key;
-            newEntity.CreateDate = entity.CreateDate;
-
-            _redirectRepository.Save(newEntity);
+            var newEntity = HandleUpdate(id, request);
 
             scope.Complete();
             return _mapper.Map<RedirectResponse>(newEntity);
+        }
+
+        public IEnumerable<RedirectResponse?> UpdateBulk(IEnumerable<RedirectBulkRequest> bulkRequest)
+        {
+            using var scope = _scopeProvider.CreateScope();
+            var response = new List<RedirectResponse?>();
+
+            foreach (var request in bulkRequest)
+            {
+                response.Add(_mapper.Map<RedirectResponse>(HandleUpdate(request.Id, request.Redirect)));
+            }
+
+            scope.Complete();
+            return response;
         }
 
         public RedirectResponse? Delete(int id)
@@ -82,7 +99,32 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
 
             _redirectRepository.Delete(entity);
             scope.Complete();
+
             return _mapper.Map<RedirectResponse>(entity);
+        }
+
+        public void DeleteBulk(int[] ids)
+        {
+            using var scope = _scopeProvider.CreateScope();
+            var response = new List<RedirectResponse?>();
+
+            _redirectRepository.DeleteBulk(ids);
+
+            scope.Complete();
+        }
+
+        private IRedirect? HandleUpdate(int id, RedirectRequest request)
+        {
+            var entity = _redirectRepository.Get(id);
+            if (entity is null) return null;
+
+            var newEntity = _mapper.Map<IRedirect>(request)!;
+            newEntity.Id = entity.Id;
+            if (newEntity.Key == default) newEntity.Key = entity.Key;
+            newEntity.CreateDate = entity.CreateDate;
+
+            _redirectRepository.Save(newEntity);
+            return newEntity;
         }
     }
 }

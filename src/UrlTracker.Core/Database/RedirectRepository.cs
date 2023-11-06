@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NPoco;
+using Org.BouncyCastle.Crypto;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Persistence.Querying;
 using Umbraco.Cms.Infrastructure.Persistence;
@@ -177,6 +178,16 @@ namespace UrlTracker.Core.Database
                 $"DELETE FROM {Defaults.DatabaseSchema.Tables.Redirect} WHERE id = @id"
             };
             return list;
+        }
+
+        public void DeleteBulk(int[] ids)
+        {
+
+            var deleteQuery = Sql().Delete()
+                                            .From<RedirectDto>()
+                                            .WhereIn<RedirectDto>(e => e.Id, ids);
+
+            Database.Execute(deleteQuery);
         }
     }
 }

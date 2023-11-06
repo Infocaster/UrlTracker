@@ -42,6 +42,11 @@ namespace UrlTracker.Core.Caching.Memory.Database
             ClearCaches();
         }
 
+        public void DeleteBulk(int[] ids)
+        {
+            _decoratee.DeleteBulk(ids);
+        }
+
         /// <inheritdoc/>
         public bool Exists(int id)
         {
