@@ -17,3 +17,4 @@ TestResults
 /src/UrlTracker.Web/frontend/.build-stamp
 node_modules
 /src/UrlTracker.Backoffice.UI/wwwroot
+/.vscode

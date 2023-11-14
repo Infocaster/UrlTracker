@@ -48,4 +48,24 @@
     <key alias="content">Content</key>
     <key alias="contenterror">The selected content does not exist or is in the trashcan</key>
   </area>
+  <area alias="urlTrackerRecommendationType">
+    <key alias="image">Image was not found</key>
+    <key alias="file">File was not found</key>
+    <key alias="page">Page was not found</key>
+    <key alias="technicalFile">Technical file was not found</key>
+    <key alias="unknown">Unknown recommendation type</key>
+  </area>  
+  <area alias="urlTrackerRecommendationImportance">
+    <key alias="VERY_IMPORTANT">VERY IMPORTANT</key>
+    <key alias="IMPORTANT">IMPORTANT</key>
+    <key alias="MODERATELY_IMPORTANT">MODERATELY IMPORTANT</key>
+    <key alias="SLIGHTLY_IMPORTANT">SLIGHTLY IMPORTANT</key>
+    <key alias="NOT_IMPORTANT">NOT IMPORTANT</key>
+  </area>  
+  <area alias="urlTrackerRecommendationItem">
+    <key alias="actions">Recommendations</key>
+	<key alias="action-temporary">Create a temporary redirect</key>
+	<key alias="action-permanent">Create a permanent redirect</key>
+	<key alias="action-ignore">Ignore this</key>
+  </area>
 </language>

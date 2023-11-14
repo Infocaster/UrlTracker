@@ -64,14 +64,23 @@ namespace UrlTracker.Web.Events
                 ["media"] = Core.Defaults.DatabaseSchema.RedirectTargetStrategies.Media.ToString()
             };
 
+            Dictionary<string, string> recommendationTypeStrategies = new()
+            {
+                ["image"] = Core.Defaults.DatabaseSchema.RedactionScores.Media.ToString(),
+                ["file"] = Core.Defaults.DatabaseSchema.RedactionScores.File.ToString(),
+                ["page"] = Core.Defaults.DatabaseSchema.RedactionScores.Page.ToString(),
+                ["technicalFile"] = Core.Defaults.DatabaseSchema.RedactionScores.TechnicalFile.ToString(),
+            };
+
             Dictionary<string, object> urlTrackerVariables = new()
             {
                 ["recommendations"] = recommendationVariables,
+                ["recommendationTypeStrategies"] = recommendationTypeStrategies,
                 ["notifications"] = notificationVariables,
                 ["redirects"] = redirectVariables,
                 ["redirectTarget"] = redirectTargetVariables,
                 ["redirectSourceStrategies"] = redirectSourceStrategies,
-                ["redirectTargetStrategies"] = redirectTargetStrategies
+                ["redirectTargetStrategies"] = redirectTargetStrategies,
                 ["version"] = _urltrackerVersionProvider.GetCurrentVersion()
             };
 
