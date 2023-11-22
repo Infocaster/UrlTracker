@@ -19,6 +19,10 @@ import {
 } from "./recommendationTag/recommendationTag";
 import "./recommendationTag/recommendationTag.lit";
 import "./recommendationitemAction.lit";
+import {
+  IEditorService,
+  editorServiceContext,
+} from "@/context/editorservice.context";
 
 const RecommendationListItem =
   UrlTrackerSelectableResultListItem<IRecommendationResponse>(
@@ -28,6 +32,9 @@ const RecommendationListItem =
 @customElement("urltracker-recommendation-item")
 export class UrlTrackerRecommendationItem extends RecommendationListItem {
   private recommendationTypeStrategy = recommendationTypeStrategyResolver;
+
+  @consume({ context: editorServiceContext })
+  private editorService?: IEditorService<any>;
 
   @state()
   private recommendationTagText = "";
@@ -102,6 +109,51 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
     console.log("ignoreRecommendation");
   }
 
+  private _openSidebar(_: Event) {
+    const options = {
+      title: "New redirect", // FIXME: translate
+      view: "/App_Plugins/UrlTracker/sidebar/recommendation/recommendations.html",
+      size: "small",
+      submit: this.submitPanel,
+      close: this.closePanel,
+      value: "",
+    };
+
+    this.editorService!.open(options);
+  }
+
+  submitPanel = (value: string) => {
+    this.model = value;
+    this.closePanel();
+  };
+
+  closePanel = () => {
+    this.editorService!.close();
+  };
+
+  private onClick = (_: Event) => {
+    ensureServiceExists(this.editorService, "editor service");
+
+    const onClose = async () => {
+      this.editorService!.close();
+      await this.init();
+      this.dispatchEvent(
+        new ContentUpdateEvent(this.contentId!, this.contentItem!)
+      );
+    };
+
+    this.editorService.contentEditor({
+      id: this.contentId!,
+      create: false,
+      submit: onClose,
+      close: onClose,
+      documentTypeAlias: "",
+      allowPublishAndClose: false,
+      allowSaveAndClose: false,
+      parentId: "",
+    });
+  };
+
   protected renderBody(): unknown {
     return html`
       <div class="body">
@@ -116,6 +168,7 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
             class="actions__help"
             label="Extra information"
             name="icon-help-alt"
+            @click=${this._openSidebar}
           ></uui-icon>
 
           <urltracker-recommendation-item-action

@@ -1,15 +1,42 @@
-export interface IEditorService {
-    contentEditor(editor: IContentEditor): void;
-    close(): void;
+export interface IEditorService<T extends string> {
+  contentEditor(editor: IContentEditor): void;
+  close: () => void;
+  closeAll: () => void;
+  copy: (editor: IEditor) => void;
+  embed: (editor: IEditor) => void;
+  focus: () => void;
+  getEditors: () => IEditor[];
+  open: (editor: ICustomEditor<T>) => void;
+  submit: (value: T) => void;
 }
 
 export interface IContentEditor {
-    id: string;
-    create: boolean;
-    submit: Function;
-    close: Function;
-    parentId: string;
-    documentTypeAlias: string;
-    allowSaveAndClose: boolean;
-    allowPublishAndClose: boolean;
+  id: string;
+  create: boolean;
+  submit: Function;
+  close: Function;
+  parentId: string;
+  documentTypeAlias: string;
+  allowSaveAndClose: boolean;
+  allowPublishAndClose: boolean;
+}
+
+interface IEditor {
+  id: string;
+  create: boolean;
+  submit: () => void;
+  close: () => void;
+  parentId: string;
+  documentTypeAlias: string;
+  allowSaveAndClose: boolean;
+  allowPublishAndClose: boolean;
+}
+
+export interface ICustomEditor<T> {
+  title: string;
+  view: string;
+  size: string;
+  submit: (value: string) => void;
+  close: () => void;
+  value: T;
 }

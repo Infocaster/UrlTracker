@@ -26,6 +26,7 @@ import {
 } from "../context/redirecttargetservice.context";
 import targetService from "./tabs/redirects/target/target.service";
 import { provide } from "@lit/context";
+import "../dashboard/sidebars/recommendations-main.lit";
 
 @customElement("urltracker-dashboard")
 export class UrlTrackerDashboard extends UrlTrackerMainContext(LitElement) {

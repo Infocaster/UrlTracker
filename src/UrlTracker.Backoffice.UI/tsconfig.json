@@ -18,7 +18,10 @@
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+	"paths": {
+		"@/*": ["./frontend/js/*"]
+	  },
   },
   "include": ["frontend/js"]
 }
