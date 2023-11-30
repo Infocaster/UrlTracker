@@ -54,9 +54,8 @@ export function UrlTrackerSelectableResultListItem<T>(
           align-items: center;
         }
 
-        uui-checkbox > #input {
-          color: rebeccapurple;
-          display: none;
+        uui-checkbox {
+          position: relative;
         }
       `,
     ];

@@ -20,6 +20,9 @@ import {
 } from "../../context/changemanager.context";
 import { recommendationServiceContext } from "../../context/recommendationservice.context";
 import { repeat } from "lit/directives/repeat.js";
+import "./recommendations/recommendationSearch.lit";
+import { RECOMMENDATION_SORT_TYPE } from "../../enums/sortType";
+import { DropdownChangeEvent } from "../../util/elements/inputs/dropdown.lit";
 
 @customElement("urltracker-recommendations-tab")
 export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
@@ -40,6 +43,25 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
   //   private paginationRef: Ref<UrlTrackerPagination> = createRef();
 
+  private _sortOptions = [
+    {
+      display: "Last occurrance descending",
+      value: RECOMMENDATION_SORT_TYPE.LAST_OCCURRENCE,
+    },
+    {
+      display: "Importance",
+      value: RECOMMENDATION_SORT_TYPE.IMPORTANCE,
+    },
+    {
+      display: "Url",
+      value: RECOMMENDATION_SORT_TYPE.URL,
+    },
+    {
+      display: "Amount of occurrences",
+      value: RECOMMENDATION_SORT_TYPE.OCCURRENCES,
+    },
+  ];
+
   private onFilterChange = (_: Event) => {
     this.init();
   };
@@ -53,7 +75,6 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   }
 
   private async init() {
-    console.log("init");
     ensureServiceExists(
       this._recommendationsService,
       "recommendations service"
@@ -63,7 +84,6 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     // let page = this.paginationRef.value.value;
     this._loading++;
     try {
-      console.log("try recommendation list");
       this._recommendationCollection = await this._recommendationsService?.list(
         {
           page: 1,
@@ -87,10 +107,31 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     );
   }
 
+  private _onSearch = ({ detail: { query } = {} }: CustomEvent) => {
+    //TODO: implement search
+    console.info("recommendations.lit.ts _onSearch not implemented");
+    console.info(query);
+  };
+
+  private _onSortChange = ({ data }: DropdownChangeEvent) => {
+    //TODO: implement sort
+    console.info("recommendations.lit.ts _onSortChange not implemented");
+    console.info(data);
+  };
+
   protected renderInternal(): unknown {
     return html`
       <div class="grid-root">
-        <div class="filters"></div>
+        <div class="filters">
+          <urltracker-recommendation-search
+            @search=${this._onSearch}
+          ></urltracker-recommendation-search>
+          <urltracker-dropdown
+            label="Order by"
+            .options=${this._sortOptions}
+            @change=${this._onSortChange}
+          ></urltracker-dropdown>
+        </div>
         <urltracker-result-list
           class="results"
           .loading=${!!this._loading}
@@ -123,8 +164,13 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     .filters {
       grid-column: 1 / span 2;
       grid-row: 1;
-      background-color: blue;
-      height: 100px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .filters urltracker-recommendation-search {
+      flex: 0 1 30%;
     }
 
     .results {

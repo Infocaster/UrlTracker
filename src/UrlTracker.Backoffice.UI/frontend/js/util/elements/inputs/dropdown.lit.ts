@@ -1,77 +1,86 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { Ref, createRef, ref } from "lit/directives/ref.js";
 import { ensureExists } from "../../tools/existancecheck";
+import { repeat } from "lit/directives/repeat.js";
 
 export interface IDropdownValue {
-    display: string;
-    value: unknown;
+  display: string;
+  value: unknown;
 }
 
 export class DropdownChangeEvent extends Event {
+  static event = "change";
+  public data = {} as IDropdownValue;
 
-    static event = "change"
-
-    constructor(public selected: IDropdownValue, eventInitDict?: EventInit) {
-        super(DropdownChangeEvent.event, eventInitDict);
-    }
+  constructor(public selected: IDropdownValue, eventInitDict?: EventInit) {
+    super(DropdownChangeEvent.event, eventInitDict);
+    this.data = selected;
+  }
 }
 
-@customElement('urltracker-dropdown')
+@customElement("urltracker-dropdown")
 export class UrlTrackerDropdown extends LitElement {
+  @property()
+  public label?: string;
 
-    @property()
-    public label?: string;
+  @property()
+  public options?: IDropdownValue[];
 
-    @property()
-    public options?: IDropdownValue[];
+  // Fixme: Refs are commented out because they break the ensureExists check
+  //   @property()
+  //   public get value(): IDropdownValue {
+  //     // ensureExists(this.selectRef.value);
+  //     ensureExists(this.options);
 
-    @property()
-    public get value(): IDropdownValue {
+  //     return this.options[Number.parseInt(this.selectRef.value.value)];
+  //   }
 
-        ensureExists(this.selectRef.value);
-        ensureExists(this.options);
+  //   public set value(index: number) {
+  //     // ensureExists(this.selectRef.value);
+  //     ensureExists(this.options);
 
-        return this.options[Number.parseInt(this.selectRef.value.value)];
-    }
+  //     if (this.options.length <= index) throw new Error("index is out of range");
 
-    public set value(index: number) {
+  //     // this.selectRef.value.value = index.toString();
+  //     this.requestUpdate("value");
+  //   }
 
-        ensureExists(this.selectRef.value);
-        ensureExists(this.options);
+  //   private selectRef: Ref<HTMLSelectElement> = createRef();
 
-        if (this.options.length <= index) throw new Error("index is out of range");
+  private onChange = (event: any) => {
+    this.dispatchEvent(new DropdownChangeEvent(event.target.value));
+  };
 
-        this.selectRef.value.value = index.toString();
-        this.requestUpdate('value');
-    }
-
-    private selectRef: Ref<HTMLSelectElement> = createRef();
-
-    private onChange = (_: Event) => {
-
-        let newValue = this.value;
-        this.dispatchEvent(new DropdownChangeEvent(newValue));
-    }
-
-    protected render(): unknown {
-        
-        return html`
-            <label>
-                ${this.label}:
-                <select ${ref(this.selectRef)} @change=${this.onChange}>
-                    ${this.options?.map((option, index) => html`<option .value=${index.toString()}>${option.display}</option>`)}
-                </select>
-            </label>
-        `;
-    }
-
-    static styles = css`
-        select {
-            background: none;
-            border: none;
-            font-weight: bolder;
-            font-size: 15px;
-        }
+  protected render(): unknown {
+    return html`
+      <label>
+        ${this.label}:
+        <select ${ref(this.selectRef)}>
+          ${this.options
+            ? repeat(
+                this.options,
+                (option) => option.value,
+                (option: any) =>
+                  html`<option
+                    .value=${option.value.toString()}
+                    @click=${this.onChange}
+                  >
+                    ${option.display}
+                  </option>`
+              )
+            : nothing}
+        </select>
+      </label>
     `;
+  }
+
+  static styles = css`
+    select {
+      background: none;
+      border: none;
+      font-weight: bolder;
+      font-size: 15px;
+    }
+  `;
 }

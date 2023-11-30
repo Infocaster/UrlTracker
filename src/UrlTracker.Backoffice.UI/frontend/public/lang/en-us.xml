@@ -68,4 +68,7 @@
 	<key alias="action-permanent">Create a permanent redirect</key>
 	<key alias="action-ignore">Ignore this</key>
   </area>
+  <area alias="urlTrackerRecommendationFilter">
+	<key alias="search-placeholder">Type to search...</key>
+  </area>
 </language>
