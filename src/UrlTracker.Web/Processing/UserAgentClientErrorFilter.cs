@@ -29,8 +29,12 @@ namespace UrlTracker.Web.Processing
             var userAgent = context.Request.Headers["User-Agent"].ToString();
             var clientInfo = uaParser.ParseUserAgent(userAgent);
 
-            //check if the options include the user agent from the request.
-            if (optionsValue.AllowedUserAgents.Contains(clientInfo.Family, StringComparer.InvariantCultureIgnoreCase)) return true;
+            foreach(var value in optionsValue.AllowedUserAgents)
+            {
+                //check if the options include the user agent from the request.
+                if (value.Contains(clientInfo.Family, StringComparison.InvariantCultureIgnoreCase)) return true;
+                continue;
+            }
 
             return false;
         }
