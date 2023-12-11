@@ -99,9 +99,31 @@
                                         </div>
                                     </div>
                                     <small>List of strings, currently {{vm.settings.BlockedUrlsList.length}}</small>
-                                    <p class="mt-2">All the items in this list will be ignored by the UrlTracker. This is an useful way to prevent getting 404's on things like wp-admin, which webcrawlers can generate. 
+                                    <p class="mt-2">
+                                        All the items in this list will be ignored by the UrlTracker. This is an useful way to prevent getting 404's on things like wp-admin, which webcrawlers can generate.
                                         <ul>
                                             <li ng-repeat="item in vm.settings.BlockedUrlsList">
+                                                {{item}}
+                                            </li>
+                                        </ul>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="umb-box urltracker-setting-box p-3">
+                                    <div class="row">
+                                        <div class="col">
+                                            <h4 class="m-0">UrlTracker:AllowedUserAgents</h4>
+                                        </div>
+                                        <div class="col-auto">
+                                            <span class="urltracker-label" ng-class="vm.settings.AllowedUserAgents.length > 0 ? 'urltracker-green-label' : 'urltracker-red-label'">{{(vm.settings.AllowedUserAgents.length > 0) ? vm.settings.AllowedUserAgents.length : 'Empty'}}</span>
+                                        </div>
+                                    </div>
+                                    <small>List of strings, currently {{vm.settings.AllowedUserAgents.length}}</small>
+                                    <p class="mt-2">
+                                        The UrlTracker will only log a 404 if the User Agent from the request matches one of the following values. This is achieved by a string.Contains function.
+                                        <ul>
+                                            <li ng-repeat="item in vm.settings.AllowedUserAgents">
                                                 {{item}}
                                             </li>
                                         </ul>
@@ -120,15 +142,52 @@
                             </div>
                             <div class="urltracker-timeline-body">
                                 <div class="urltracker-timeline-header">
-                                    <h5>11.0.0</h5>
+                                    <h5>12.0.0</h5>
                                     <div class="urltracker-timeline-date">
-                                        2022/10/23
+                                        2023/07/04
                                     </div>
                                 </div>
                                 <div class="urltracker-timeline-content">
                                     <ul>
-                                        <li>Support for new major version Umbraco 11</li>
+                                        <li>Support for new major version Umbraco 12</li>
                                         <li>New Umbraco, new timeline</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="urltracker-timeline-item">
+                            <div class="urltracker-timeline-figure">
+                                <span class="urltracker-timeline-dot">•</span>
+                            </div>
+                            <div class="urltracker-timeline-body">
+                                <div class="urltracker-timeline-header">
+                                    <h5>12.0.2</h5>
+                                    <div class="urltracker-timeline-date">
+                                        2023/10/27
+                                    </div>
+                                </div>
+                                <div class="urltracker-timeline-content">
+                                    <ul>
+                                        <li>Fixed issue #150</li>
+                                        <li>Fixed issue #161</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="urltracker-timeline-item">
+                            <div class="urltracker-timeline-figure">
+                                <span class="urltracker-timeline-dot">•</span>
+                            </div>
+                            <div class="urltracker-timeline-body">
+                                <div class="urltracker-timeline-header">
+                                    <h5>12.0.3</h5>
+                                    <div class="urltracker-timeline-date">
+                                        2023/12/11
+                                    </div>
+                                </div>
+                                <div class="urltracker-timeline-content">
+                                    <ul>
+                                        <li>Added an (optional) common User Agent filter to filter out bots</li>
                                     </ul>
                                 </div>
                             </div>
