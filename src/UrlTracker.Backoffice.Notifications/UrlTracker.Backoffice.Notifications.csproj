@@ -6,7 +6,7 @@
     <RootNamespace>UrlTracker.Backoffice.Notifications</RootNamespace>
     <PackageReleaseNotes>1 new features
 
-- Added User Agent check to prevent calls by bots being registered as 404</PackageReleaseNotes>
+- Added common User Agent check to prevent bots registering 404s</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
