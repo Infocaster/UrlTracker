@@ -18,7 +18,7 @@ namespace UrlTracker.Web.Processing
         }
 
         public ValueTask<bool> EvaluateCandidateAsync(HttpContext context)
-            => new(EvaluateCandidate(context));
+            => ValueTask.FromResult(EvaluateCandidate(context));
 
         private bool EvaluateCandidate(HttpContext context)
         {
@@ -33,7 +33,6 @@ namespace UrlTracker.Web.Processing
             {
                 //check if the options include the user agent from the request.
                 if (value.Contains(clientInfo.Family, StringComparison.InvariantCultureIgnoreCase)) return true;
-                continue;
             }
 
             return false;
