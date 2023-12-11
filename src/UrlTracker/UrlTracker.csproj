@@ -10,7 +10,9 @@
       Use v12 for umbraco 12, v11 for umbraco 11, Use v10 for umbraco 10, Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </Description>
     <RootNamespace>UrlTracker</RootNamespace>
-    <PackageReleaseNotes>Added a common User Agent check to filter out bots.</PackageReleaseNotes>
+    <PackageReleaseNotes>1 new features
+
+- Added User Agent check to prevent calls by bots being registered as 404</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="12.0.0" />

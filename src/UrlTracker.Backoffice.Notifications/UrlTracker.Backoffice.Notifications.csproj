@@ -4,7 +4,9 @@
     <Title>URL Tracker Backoffice Notifications</Title>
     <Description>This package contains notification handlers for the URL Tracker to handle Umbraco content notifications</Description>
     <RootNamespace>UrlTracker.Backoffice.Notifications</RootNamespace>
-    <PackageReleaseNotes>Added a common User Agent check to filter out bots.</PackageReleaseNotes>
+    <PackageReleaseNotes>1 new features
+
+- Added User Agent check to prevent calls by bots being registered as 404</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />

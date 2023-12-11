@@ -4,7 +4,9 @@
     <Title>URL Tracker Module registration</Title>
     <Description>This package contains objects for module registration. It keeps helps keeping track of installed modules for the URL Tracker</Description>
     <RootNamespace>UrlTracker.Modules</RootNamespace>
-    <PackageReleaseNotes>Added a common User Agent check to filter out bots.</PackageReleaseNotes>
+    <PackageReleaseNotes>1 new features
+
+- Added User Agent check to prevent calls by bots being registered as 404</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Update="Microsoft.VisualStudio.Threading.Analyzers" Version="17.6.40">

@@ -5,7 +5,9 @@
     <Title>URL Tracker Web</Title>
     <Description>This package contains the web services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>Added a common User Agent check to filter out bots.</PackageReleaseNotes>
+    <PackageReleaseNotes>1 new features
+
+- Added User Agent check to prevent calls by bots being registered as 404</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->
