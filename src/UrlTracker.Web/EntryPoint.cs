@@ -63,6 +63,7 @@ namespace UrlTracker.Web
         {
             builder.ClientErrorFilters()!
                 .Append<CoreConfigurationClientErrorFilter>()
+                .Append<UserAgentClientErrorFilter>()
                 .Append<NotFoundClientErrorFilter>()
                 .Append<BlacklistedUrlsClientErrorFilter>()
                 .Append<ConstantsClientErrorFilter>();
