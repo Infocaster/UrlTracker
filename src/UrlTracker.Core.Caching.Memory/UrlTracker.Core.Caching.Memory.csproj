@@ -4,10 +4,9 @@
     <Title>URL Tracker Core Memory Cache</Title>
     <Description>This package contains an in-memory cache layer for the core services of the URL Tracker</Description>
     <RootNamespace>UrlTracker.Core.Caching.Memory</RootNamespace>
-    <PackageReleaseNotes>2 bugfixes
+    <PackageReleaseNotes>1 feature
 
-- Fix #150
-- Fix #161</PackageReleaseNotes>
+- Added common User Agent check to prevent bots registering 404s</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="10.0.0" />

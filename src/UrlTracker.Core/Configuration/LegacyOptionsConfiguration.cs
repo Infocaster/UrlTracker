@@ -22,6 +22,7 @@ namespace UrlTracker.Core.Configuration
             options.BlockedUrlsList = urlTrackerOptionsValue.BlockedUrlsList;
             options.EnableLogging = urlTrackerOptionsValue.EnableLogging;
             options.IsDisabled = !urlTrackerOptionsValue.Enable;
+            options.AllowedUserAgents = urlTrackerOptionsValue.AllowedUserAgents;
         }
     }
 }
