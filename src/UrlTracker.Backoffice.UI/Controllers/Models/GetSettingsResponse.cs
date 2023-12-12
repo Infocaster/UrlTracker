@@ -12,5 +12,6 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models
         public bool IsNotFoundTrackingDisabled { get; set; }
         public bool AppendPortNumber { get; set; }
         public List<string> BlockedUrlsList { get; set; } = new List<string>();
+        public List<string> AllowedUserAgents { get; set; } = new List<string> { "IE", "Opera", "Google", "Safari", "Google Chrome", "Edge", "Mozilla", "Firefox" };
     }
 }
