@@ -112,6 +112,7 @@ namespace UrlTracker.Backoffice.UI.Map
             target.IsNotFoundTrackingDisabled = source.IsNotFoundTrackingDisabled;
             target.TrackingDisabled = source.TrackingDisabled;
             target.BlockedUrlsList = source.BlockedUrlsList;
+            target.AllowedUserAgents = source.AllowedUserAgents;
         }
     }
 }
