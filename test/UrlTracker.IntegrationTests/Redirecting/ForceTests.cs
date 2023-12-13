@@ -9,8 +9,14 @@ namespace UrlTracker.IntegrationTests.Redirecting
     public class ForceTests : RedirectTestBase
     {
         private string DefaultSourceUrl
-            => GetDefaultRootNode().FirstChild(ServiceProvider.GetRequiredService<IVariationContextAccessor>())!
-                                   .Url(ServiceProvider.GetRequiredService<IPublishedUrlProvider>(), mode: UrlMode.Absolute);
+        {
+            get
+            {
+                IPublishedContent defaultRootNode = GetDefaultRootNode();
+                return defaultRootNode.FirstChild(ServiceProvider.GetRequiredService<IVariationContextAccessor>())!
+                                           .Url(ServiceProvider.GetRequiredService<IPublishedUrlProvider>(), mode: UrlMode.Absolute);
+            }
+        }
 
         private Redirect CreateRedirect(bool force, string sourceUrl)
         {

@@ -13,8 +13,8 @@
   <!-- External references -->
   <ItemGroup>
     <PackageReference Include="UAParser" Version="3.1.47" />
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="12.0.0" />
-    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="12.0.0" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="13.0.0-rc5" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="13.0.0-rc5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
@@ -25,12 +25,6 @@
     <Compile Remove="node_modules\**" />
     <EmbeddedResource Remove="node_modules\**" />
     <None Remove="node_modules\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="Microsoft.VisualStudio.Threading.Analyzers" Version="17.6.40">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
   </ItemGroup>
   <!-- END Exclusions -->
 </Project>

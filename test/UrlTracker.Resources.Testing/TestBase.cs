@@ -174,15 +174,6 @@ namespace UrlTracker.Resources.Testing
         public virtual void SetUp()
         { }
 
-        [TearDown]
-        public void TearDownBase()
-        {
-            TearDown();
-        }
-
-        public virtual void TearDown()
-        { }
-
         protected virtual ICollection<IMapDefinition> CreateMappers()
         {
             return Array.Empty<IMapDefinition>();

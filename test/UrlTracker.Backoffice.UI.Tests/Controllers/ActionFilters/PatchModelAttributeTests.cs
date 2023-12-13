@@ -27,7 +27,7 @@ namespace UrlTracker.Backoffice.UI.Tests.Controllers.ActionFilters
         [TestCase("lorem/ipsum", "/lorem/ipsum", TestName = "OnActionExecuting prepends a slash if the url seems relative without a slash")]
         [TestCase("https://example.com", "https://example.com", TestName = "OnActionExecuting doesn't touch absolute urls")]
         [TestCase("/lorem/ipsum", "/lorem/ipsum", TestName = "OnActionExecuting doesn't touch relative urls with a leading slash")]
-        public void OnActionExecuting_IncomingUrls_PatchesModels(string inputUrl, string expected)
+        public void OnActionExecuting_IncomingUrls_PatchesModels(string? inputUrl, string? expected)
         {
             // arrange
             AddRedirectRequest input = new() { OldUrl = inputUrl, RedirectUrl = inputUrl };

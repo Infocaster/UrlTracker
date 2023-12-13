@@ -39,7 +39,7 @@
   },
   "uSync": {
     "Settings": {
-      "ImportOnFirstBoot": true
+      "ImportAtStartup": "All"
     }
   },
   "UrlTracker": {

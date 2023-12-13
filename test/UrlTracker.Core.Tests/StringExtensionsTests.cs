@@ -8,7 +8,7 @@ namespace UrlTracker.Core.Tests
         [TestCase("NL", "NL", TestName = "NormalizeCulture returns original string if input contains no dash")]
         [TestCase("nl-nl", "nl-NL", TestName = "NormalizeCulture returns input string with segment behind dash in uppercase")]
         [TestCase("nl-NL", "nl-NL", TestName = "NormalizeCulture returns input string if segment behind dash is already uppercase")]
-        public void NormalizeCulture_NormalFlow_ReturnsProperResult(string input, string expectedOutput)
+        public void NormalizeCulture_NormalFlow_ReturnsProperResult(string? input, string? expectedOutput)
         {
             // arrange
 

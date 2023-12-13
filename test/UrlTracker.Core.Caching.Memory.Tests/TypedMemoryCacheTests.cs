@@ -14,6 +14,12 @@ namespace UrlTracker.Core.Caching.Memory.Tests
             _testSubject = new TypedMemoryCache<string, object>(3);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _testSubject?.Dispose();
+        }
+
         [TestCase(TestName = "Memory cache calls factory only once")]
         public async Task GetOrCreateAsync_NormalFlow_CallsFactoryOnce()
         {
@@ -27,8 +33,8 @@ namespace UrlTracker.Core.Caching.Memory.Tests
             // assert
             Assert.Multiple(() =>
             {
-                Assert.False(factoryCalled);
-                Assert.AreSame(expected, result);
+                Assert.That(factoryCalled, Is.False);
+                Assert.That(expected, Is.SameAs(result));
             });
         }
 
@@ -47,8 +53,8 @@ namespace UrlTracker.Core.Caching.Memory.Tests
             // assert
             Assert.Multiple(() =>
             {
-                Assert.True(factoryCalled);
-                Assert.AreNotSame(first, result);
+                Assert.That(factoryCalled, Is.True);
+                Assert.That(first, Is.Not.SameAs(result));
             });
         }
     }

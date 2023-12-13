@@ -19,7 +19,8 @@ namespace UrlTracker.Core.Caching.Memory.Tests.Domain
             _testSubject = new DecoratorDomainProviderCaching(DomainProvider, _runtimeCache);
         }
 
-        public override void TearDown()
+        [TearDown]
+        public void TearDown()
         {
             _runtimeCache?.Dispose();
         }

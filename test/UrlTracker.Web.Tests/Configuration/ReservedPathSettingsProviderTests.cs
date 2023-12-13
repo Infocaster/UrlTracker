@@ -24,7 +24,7 @@ namespace UrlTracker.Web.Tests.Configuration
             var result = _testSubject!.Paths;
 
             // assert
-            CollectionAssert.AreEquivalent(new[] { "lorem/", "ipsum/", "dolor/", "sit/" }, result);
+            Assert.That(result, Is.EquivalentTo(new[] { "lorem/", "ipsum/", "dolor/", "sit/" }));
         }
     }
 }

@@ -2,20 +2,20 @@ mode: ContinuousDeployment
 branches:
   feature:
     tag: alpha
-    regex: ^v12/feature/
+    regex: ^v13/feature/
     source-branches: [ 'develop' ]
   develop:
     tag: beta
-    regex: ^v12/develop$
+    regex: ^v13/develop$
   master:
     tag: ''
-    regex: ^v12/main$
+    regex: ^v13/main$
   hotfix:
     tag: 'beta'
-    regex: ^v12/hotfix
+    regex: ^v13/hotfix
     source-branches: [ 'master' ]
   release:
     tag: 'rc'
-    regex: ^v12/release
+    regex: ^v13/release
 ignore:
   sha: []

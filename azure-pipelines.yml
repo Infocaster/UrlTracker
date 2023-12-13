@@ -59,11 +59,11 @@ stages:
         customCommand: 'run build:webpack-production'
 
     - task: UseDotNet@2
-      displayName: 'Use .NET 7'
+      displayName: 'Use .NET 8'
       inputs:
         packageType: 'sdk'
-        version: '7.x'
-        includePreviewVersions: true
+        version: '8.x'
+        includePreviewVersions: false
 
     - task: DotNetCoreCLI@2
       displayName: 'dotnet restore'
