@@ -5,9 +5,9 @@
     <Title>URL Tracker Web</Title>
     <Description>This package contains the web services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>1 new features
+    <PackageReleaseNotes>1 change
 
-- Added common User Agent check to prevent bots registering 404s</PackageReleaseNotes>
+- Update to Umbraco 13 latest release candidate</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->

@@ -4,8 +4,8 @@
     <Title>URL Tracker Module registration</Title>
     <Description>This package contains objects for module registration. It keeps helps keeping track of installed modules for the URL Tracker</Description>
     <RootNamespace>UrlTracker.Modules</RootNamespace>
-    <PackageReleaseNotes>1 new features
+    <PackageReleaseNotes>1 change
 
-- Added common User Agent check to prevent bots registering 404s</PackageReleaseNotes>
+- Update to Umbraco 13 latest release candidate</PackageReleaseNotes>
   </PropertyGroup>
 </Project>
