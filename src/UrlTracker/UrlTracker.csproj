@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>UrlTracker</PackageId>
     <Title>URL Tracker</Title>
@@ -13,7 +13,7 @@
     <RootNamespace>UrlTracker</RootNamespace>
     <PackageReleaseNotes>1 change
 
-- Update to Umbraco 13 latest release candidate</PackageReleaseNotes>
+- Update to Umbraco 13</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="13.0.0" />

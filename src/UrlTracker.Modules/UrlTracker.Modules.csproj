@@ -6,6 +6,6 @@
     <RootNamespace>UrlTracker.Modules</RootNamespace>
     <PackageReleaseNotes>1 change
 
-- Update to Umbraco 13 latest release candidate</PackageReleaseNotes>
+- Update to Umbraco 13</PackageReleaseNotes>
   </PropertyGroup>
 </Project>

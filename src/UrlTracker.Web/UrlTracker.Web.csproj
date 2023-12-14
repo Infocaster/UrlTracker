@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <!-- Package properties -->
   <PropertyGroup>
     <PackageId>UrlTracker.Web</PackageId>
@@ -7,7 +7,7 @@
     <RootNamespace>UrlTracker.Web</RootNamespace>
     <PackageReleaseNotes>1 change
 
-- Update to Umbraco 13 latest release candidate</PackageReleaseNotes>
+- Update to Umbraco 13</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->
