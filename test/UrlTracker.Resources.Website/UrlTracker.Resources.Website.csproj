@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="Umbraco.Cms" Version="13.0.0-rc5" />
+    <PackageReference Include="Umbraco.Cms" Version="13.0.0" />
     <PackageReference Include="uSync" Version="13.0.0-rc2" />
   </ItemGroup>
 

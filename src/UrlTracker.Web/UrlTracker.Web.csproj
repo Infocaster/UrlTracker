@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <!-- Package properties -->
   <PropertyGroup>
     <PackageId>UrlTracker.Web</PackageId>
@@ -13,8 +13,8 @@
   <!-- External references -->
   <ItemGroup>
     <PackageReference Include="UAParser" Version="3.1.47" />
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="13.0.0-rc5" />
-    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="13.0.0-rc5" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="13.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
