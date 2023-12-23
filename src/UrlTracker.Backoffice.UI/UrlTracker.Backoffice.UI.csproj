@@ -5,10 +5,9 @@
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>2 bugfixes
+    <PackageReleaseNotes>1 feature
 
-- Fix #150
-- Fix #161</PackageReleaseNotes>
+- Added common User Agent check to prevent bots registering 404s</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">
