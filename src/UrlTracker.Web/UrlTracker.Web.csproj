@@ -5,15 +5,15 @@
     <Title>URL Tracker Web</Title>
     <Description>This package contains the web services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>1 feature
+    <PackageReleaseNotes>1 change
 
-- Added common User Agent check to prevent bots registering 404s</PackageReleaseNotes>
+- Improve performance of client error registration</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->
   <ItemGroup>
-	  <PackageReference Include="UAParser" Version="3.1.47" />
-	  <PackageReference Include="Umbraco.Cms.Web.Website" Version="10.0.0" />
+    <PackageReference Include="UAParser" Version="3.1.47" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="10.0.0" />
     <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.0.0" />
   </ItemGroup>
   <ItemGroup>
