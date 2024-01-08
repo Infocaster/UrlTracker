@@ -16,5 +16,8 @@ namespace UrlTracker.Middleware
 
         public static void LogAbortClientErrorHandling(this ILogger logger, string reason)
             => logger.LogDebug(new EventId(3004), "Client error handling aborted: {reason}", reason);
+
+        public static void LogBackgroundProcessingFailure(this ILogger logger, Exception exception)
+            => logger.LogError(new EventId(3005), "An error occurred while processing a client error in the background");
     }
 }
