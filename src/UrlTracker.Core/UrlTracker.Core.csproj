@@ -4,9 +4,9 @@
     <Title>URL Tracker Core</Title>
     <Description>This package contains the core services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Core</RootNamespace>
-    <PackageReleaseNotes>1 change
+    <PackageReleaseNotes>1 bugfix
 
-- Improve performance of client error registration</PackageReleaseNotes>
+- Fix missing exception from log message</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Infrastructure" Version="10.0.0" />
