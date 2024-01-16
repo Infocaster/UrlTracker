@@ -5,9 +5,9 @@
     <Title>URL Tracker Web</Title>
     <Description>This package contains the web services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>1 bugfix
+    <PackageReleaseNotes>1 other changes
 
-- Fix missing exception from log message</PackageReleaseNotes>
+- Improved User Agent check performance</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->
