@@ -1,13 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <!-- Package properties -->
   <PropertyGroup>
     <PackageId>UrlTracker.Web</PackageId>
     <Title>URL Tracker Web</Title>
     <Description>This package contains the web services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>1 change
+    <PackageReleaseNotes>1 other changes
 
-- Update to Umbraco 13 latest release candidate</PackageReleaseNotes>
+- Improved User Agent check performance</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->

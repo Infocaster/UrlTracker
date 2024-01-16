@@ -1,12 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>UrlTracker.Core</PackageId>
     <Title>URL Tracker Core</Title>
     <Description>This package contains the core services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Core</RootNamespace>
-    <PackageReleaseNotes>1 change
+    <PackageReleaseNotes>1 other changes
 
-- Update to Umbraco 13 latest release candidate</PackageReleaseNotes>
+- Improved User Agent check performance</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Infrastructure" Version="13.0.0" />
