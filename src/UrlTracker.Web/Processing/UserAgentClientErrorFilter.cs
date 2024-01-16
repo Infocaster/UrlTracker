@@ -11,6 +11,7 @@ namespace UrlTracker.Web.Processing
     public class UserAgentClientErrorFilter : IClientErrorFilter
     {
         private readonly IOptionsMonitor<UrlTrackerSettings> _options;
+        private Parser _uaParser;
 
         public UserAgentClientErrorFilter(IOptionsMonitor<UrlTrackerSettings> options)
         {
@@ -25,9 +26,9 @@ namespace UrlTracker.Web.Processing
             var optionsValue = _options.CurrentValue;
             if (!optionsValue.AllowedUserAgents.Any()) return true;
 
-            var uaParser = Parser.GetDefault();
+            if (_uaParser is null) _uaParser = Parser.GetDefault();
             var userAgent = context.Request.Headers["User-Agent"].ToString();
-            var clientInfo = uaParser.ParseUserAgent(userAgent);
+            var clientInfo = _uaParser.ParseUserAgent(userAgent);
 
             foreach(var value in optionsValue.AllowedUserAgents)
             {
