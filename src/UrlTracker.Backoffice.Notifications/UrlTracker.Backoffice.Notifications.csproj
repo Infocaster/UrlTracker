@@ -6,9 +6,10 @@
     <Title>URL Tracker Backoffice Notifications</Title>
     <Description>This package contains notification handlers for the URL Tracker to handle Umbraco content notifications</Description>
     <RootNamespace>UrlTracker.Backoffice.Notifications</RootNamespace>
-    <PackageReleaseNotes>1 other changes
+    <PackageReleaseNotes>2 changes
 
-- Improved User Agent check performance</PackageReleaseNotes>
+- Improve client error registration performance
+- Improve user agent filter performance</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />

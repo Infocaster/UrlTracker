@@ -4,8 +4,9 @@
     <Title>URL Tracker Module registration</Title>
     <Description>This package contains objects for module registration. It keeps helps keeping track of installed modules for the URL Tracker</Description>
     <RootNamespace>UrlTracker.Modules</RootNamespace>
-    <PackageReleaseNotes>1 other changes
+    <PackageReleaseNotes>2 changes
 
-- Improved User Agent check performance</PackageReleaseNotes>
+- Improve client error registration performance
+- Improve user agent filter performance</PackageReleaseNotes>
   </PropertyGroup>
 </Project>

@@ -12,9 +12,10 @@
       Use v12 for umbraco 12, v11 for umbraco 11, Use v10 for umbraco 10, Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </Description>
     <RootNamespace>UrlTracker</RootNamespace>
-    <PackageReleaseNotes>1 other changes
+    <PackageReleaseNotes>2 changes
 
-- Improved User Agent check performance</PackageReleaseNotes>
+- Improve client error registration performance
+- Improve user agent filter performance</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="10.0.0" />
