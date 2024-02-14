@@ -21,6 +21,11 @@
             /// Use this message when a culture is provided, but in the wrong format
             /// </summary>
             public const string CultureConditionInvalidFormat = "The provided Culture is using an invalid format";
+
+            /// <summary>
+            /// Use this message when a regex is provided, but the regex pattern is invalid
+            /// </summary>
+            public const string RegexConditionInvalidFormat = "The provided Regex is not a valid regex pattern";
         }
     }
 }
