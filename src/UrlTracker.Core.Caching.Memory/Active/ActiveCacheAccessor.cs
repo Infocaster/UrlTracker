@@ -37,7 +37,7 @@ namespace UrlTracker.Core.Caching.Memory.Active
                     result = result.Concat(
                         redirects
                         .Where(r => rootNodeId is null || rootNodeId == r.TargetRootNodeId || r.TargetRootNodeId is null)
-                        .Where(r => culture == null || culture == r.Culture || r.Culture is null));
+                        .Where(r => culture == null || string.Equals(culture, r.Culture, System.StringComparison.OrdinalIgnoreCase) || r.Culture is null));
                 }
             }
 

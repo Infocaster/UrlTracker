@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
+using Umbraco.Cms.Core.Services;
 using UrlTracker.Core.Caching.Memory.Options;
 
 namespace UrlTracker.Core.Caching.Memory.Active
@@ -10,20 +12,23 @@ namespace UrlTracker.Core.Caching.Memory.Active
         private readonly IActiveRedirectCacheWriter _redirectCacheWriter;
         private readonly IActiveClientErrorCacheWriter _clientErrorCacheWriter;
         private readonly IOptions<UrlTrackerMemoryCacheOptions> _options;
+        private readonly IRuntimeState _runtimeState;
 
         public ActiveCacheBootloader(
             IActiveRedirectCacheWriter redirectCacheWriter,
             IActiveClientErrorCacheWriter clientErrorCacheWriter,
-            IOptions<UrlTrackerMemoryCacheOptions> options)
+            IOptions<UrlTrackerMemoryCacheOptions> options,
+            IRuntimeState runtimeState)
         {
             _redirectCacheWriter = redirectCacheWriter;
             _clientErrorCacheWriter = clientErrorCacheWriter;
             _options = options;
+            _runtimeState = runtimeState;
         }
 
         public void Initialize()
         {
-            if (!_options.Value.EnableActiveCache) return;
+            if (_runtimeState.Level < RuntimeLevel.Run || !_options.Value.EnableActiveCache) return;
 
             _redirectCacheWriter.RefreshRedirects();
             _clientErrorCacheWriter.RefreshNoLongerExists();
