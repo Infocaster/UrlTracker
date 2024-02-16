@@ -42,6 +42,15 @@ namespace UrlTracker.Core.Database
             return Task.FromResult<IReadOnlyCollection<IClientError>>(results.ToList());
         }
 
+        public Task<IReadOnlyCollection<IClientError>> GetNoLongerExistsAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
+        {
+            IQuery<IClientError> query = SqlContext.Query<IClientError>()
+                .Where(e => e.Strategy == Defaults.DatabaseSchema.ClientErrorStrategies.NoLongerExists)
+                .Where(e => urlsAndPaths.Contains(e.Url));
+            var results = Get(query);
+            return Task.FromResult<IReadOnlyCollection<IClientError>>(results.ToList());
+        }
+
         public async Task<int> CountAsync(DateTime start, DateTime end)
         {
             var query = Sql().SelectCount()
