@@ -5,11 +5,10 @@
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>1 new feature, 2 bugfixes
+    <PackageReleaseNotes>2 bugfixes
 
-- Fix maximum length on URLs
-- Fix errors when redirects contain invalid regex patterns
-- Add opt-in active cache</PackageReleaseNotes>
+- Fix premature execution of cache bootloader
+- Fix case sensitivity on in-memory culture comparison</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">
