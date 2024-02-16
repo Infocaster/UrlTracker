@@ -4,10 +4,11 @@
     <Title>URL Tracker Core Memory Cache</Title>
     <Description>This package contains an in-memory cache layer for the core services of the URL Tracker</Description>
     <RootNamespace>UrlTracker.Core.Caching.Memory</RootNamespace>
-    <PackageReleaseNotes>2 changes
+    <PackageReleaseNotes>1 new feature, 2 bugfixes
 
-- Improve client error registration performance
-- Improve user agent filter performance</PackageReleaseNotes>
+- Fix maximum length on URLs
+- Fix errors when redirects contain invalid regex patterns
+- Add opt-in active cache</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="13.0.0" />
