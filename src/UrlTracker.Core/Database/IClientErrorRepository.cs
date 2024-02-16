@@ -13,6 +13,7 @@ namespace UrlTracker.Core.Database
         Task<int> CountAsync(DateTime start, DateTime end);
         Task<ClientErrorEntityCollection> GetAsync(uint skip, uint take, string? query, OrderBy order, bool descending);
         Task<IReadOnlyCollection<IClientError>> GetAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null);
+        Task<IReadOnlyCollection<IClientError>> GetNoLongerExistsAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null);
         void Report(IClientError clientError, DateTime moment, IReferrer? referrer);
     }
 }

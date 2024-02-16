@@ -34,7 +34,7 @@ namespace UrlTracker.Core.Intercepting
 
             _logger.LogParameters(culture, rootNodeId, urls.ToList());
 
-            var results = await _clientErrorRepository.GetAsync(urls);
+            var results = await _clientErrorRepository.GetNoLongerExistsAsync(urls);
             _logger.LogResults<NoLongerExistsInterceptor>(results.Count);
 
             return GetBestResult(results);

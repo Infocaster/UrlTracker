@@ -23,6 +23,7 @@ namespace UrlTracker.Core.Database.Mappers
             DefineMap<IClientError, ClientErrorDto>(nameof(IClientError.Ignored), nameof(ClientErrorDto.Ignored));
             DefineMap<IClientError, ClientErrorDto>(nameof(IClientError.Key), nameof(ClientErrorDto.Key));
             DefineMap<IClientError, ClientErrorDto>(nameof(IClientError.Url), nameof(ClientErrorDto.Url));
+            DefineMap<IClientError, ClientErrorDto>(nameof(IClientError.Strategy), nameof(ClientErrorDto.Strategy));
         }
     }
 }
