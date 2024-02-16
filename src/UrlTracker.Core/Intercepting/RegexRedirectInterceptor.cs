@@ -38,7 +38,7 @@ namespace UrlTracker.Core.Intercepting
                     || redirect.TargetRootNodeId == null
                     || redirect.TargetRootNodeId == -1
                     || redirect.TargetRootNodeId == rootNodeId)
-                   && Regex.IsMatch(interceptString, redirect.SourceRegex!, RegexOptions.IgnoreCase))
+                   && IsRegexMatch(interceptString, redirect.SourceRegex!))
                 {
                     _logger.LogResults<RegexRedirectInterceptor>(1);
                     return new CachableInterceptBase<IRedirect>(redirect);
@@ -47,6 +47,23 @@ namespace UrlTracker.Core.Intercepting
 
             _logger.LogResults<RegexRedirectInterceptor>(0);
             return null;
+        }
+
+        /// <summary>
+        /// Tests if the intercepted string matches the regex of the redirect. 
+        /// Exceptions are caught to avoid blowing up the request pipeline if
+        /// the regex pattern is invalid.
+        /// </summary>
+        private static bool IsRegexMatch(string interceptString, string sourceRegex)
+        {
+            try
+            {
+                return Regex.IsMatch(interceptString, sourceRegex, RegexOptions.IgnoreCase);
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

@@ -26,7 +26,7 @@ namespace UrlTracker.Web.Processing
             var optionsValue = _options.CurrentValue;
             if (!optionsValue.AllowedUserAgents.Any()) return true;
 
-            if (_uaParser is null ) _uaParser = Parser.GetDefault();
+            if (_uaParser is null) _uaParser = Parser.GetDefault();
             var userAgent = context.Request.Headers["User-Agent"].ToString();
             var clientInfo = _uaParser.ParseUserAgent(userAgent);
 
