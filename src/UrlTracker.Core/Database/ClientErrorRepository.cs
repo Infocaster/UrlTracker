@@ -74,11 +74,22 @@ namespace UrlTracker.Core.Database
 
             Task<int> totalRecordsTask = Database.ExecuteScalarAsync<int>(countQuery);
 
-            var selectQuery = GetBaseQuery(isCount: false)
-                .Where<ClientErrorDto>(e => e.Ignored == false);
+            var aggregateQuery = Sql()
+                .Select<ClientError2ReferrerDto>(e => e.ClientError)
+                .AndSelectCount(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences)
+                .AndSelectMax<ClientError2ReferrerDto>(Defaults.DatabaseSchema.AggregateColumns.MostRecentOccurrence, null, e => e.CreateDate)
+                .From<ClientError2ReferrerDto>()
+                .GroupBy<ClientError2ReferrerDto>(e => e.ClientError)
+                ;
+
+            var selectQuery = Sql()
+                .Select<ClientErrorDto>("c")
+                .From<ClientErrorDto>("c")
+                .LeftJoin(aggregateQuery, "cr").On<ClientError2ReferrerDto, ClientErrorDto>((l, r) => l.ClientError == r.Id, "cr", "c")
+                .Where<ClientErrorDto>(e => e.Ignored == false, "c");
             if (query is not null)
             {
-                selectQuery.Where<ClientErrorDto>(e => e.Url.Contains(query));
+                selectQuery.Where<ClientErrorDto>(e => e.Url.Contains(query), "c");
             }
             string orderParameter = order switch
             {
@@ -88,7 +99,7 @@ namespace UrlTracker.Core.Database
                 _ => throw new ArgumentOutOfRangeException(nameof(order)),
             };
             selectQuery = selectQuery.GenericOrderBy(descending, orderParameter);
-            var dtos = await Database.SkipTakeAsync<ExtendedClientErrorDto>(skip, take, selectQuery).ConfigureAwait(false);
+            var dtos = await Database.SkipTakeAsync<ClientErrorDto>(skip, take, selectQuery).ConfigureAwait(false);
 
             return ClientErrorEntityCollection.Create(dtos.Select(ClientErrorFactory.BuildEntity), await totalRecordsTask);
         }
@@ -110,7 +121,7 @@ namespace UrlTracker.Core.Database
         {
             var sql = GetBaseQuery(false);
             sql.Where<ClientErrorDto>(e => e.Id == id);
-            var dto = Database.Fetch<ExtendedClientErrorDto>(sql).FirstOrDefault();
+            var dto = Database.Fetch<ClientErrorDto>(sql).FirstOrDefault();
 
             if (dto is null) return null;
 
@@ -123,7 +134,7 @@ namespace UrlTracker.Core.Database
 
             if (ids?.Any() is true) sql.WhereIn<ClientErrorDto>(e => e.Id, ids);
 
-            var dtos = Database.Fetch<ExtendedClientErrorDto>(sql);
+            var dtos = Database.Fetch<ClientErrorDto>(sql);
             return dtos.Select(ClientErrorFactory.BuildEntity);
         }
 
@@ -134,7 +145,7 @@ namespace UrlTracker.Core.Database
             var translator = new SqlTranslator<IClientError>(sql, query);
             sql = translator.Translate();
 
-            var dtos = Database.Fetch<ExtendedClientErrorDto>(sql);
+            var dtos = Database.Fetch<ClientErrorDto>(sql);
             return dtos.Select(ClientErrorFactory.BuildEntity);
         }
 
@@ -163,39 +174,11 @@ namespace UrlTracker.Core.Database
         protected override Sql<ISqlContext> GetBaseQuery(bool isCount)
         {
             var sql = Sql();
-
-            ISqlSyntaxProvider syntax = sql.SqlContext.SqlSyntax;
             sql = isCount
                 ? sql.SelectCount()
-                : sql.Select<ClientErrorDto>(e => e.Id, e => e.Key, e => e.Url, e => e.CreateDate, e => e.Ignored, e => e.Strategy)
-                     .AndSelect($"{syntax.GetQuotedColumnName(_occurrancesTableAlias)}.{syntax.GetQuotedColumnName("count")} as {syntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences)}")
-                     .AndSelect($"{syntax.GetQuotedColumnName(_occurrancesTableAlias)}.{syntax.GetQuotedColumnName("mostRecentOccurrence")} as {syntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.MostRecentOccurrence)}")
-                     .AndSelect($"{syntax.GetQuotedColumnName(_referrerTableAlias)}.{syntax.GetQuotedColumnName("url")} as {syntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.MostCommonReferrer)}");
+                : sql.SelectAll();
 
-            sql.From<ClientErrorDto>();
-            var clientErrorGroups = SqlContext.Templates.Get("clientErrorGroups", sql
-                => sql.SelectCount("count")
-                      .AndSelect<ClientError2ReferrerDto>(e => e.ClientError)
-                      .AndSelectMax<ClientError2ReferrerDto>("mostRecentOccurrence", null, e => e.CreateDate)
-                      .From<ClientError2ReferrerDto>()
-                      .GroupBy<ClientError2ReferrerDto>(e => e.ClientError));
-
-            var mostCommonReferrers = SqlContext.Templates.Get("mostCommonReferrers", sql
-                => sql.Select<ClientError2ReferrerDto>(_referrerTableAlias, e => e.ClientError, e => e.Referrer)
-                      .From(_referrerTableAlias, s => s.Select<ClientError2ReferrerDto>(e => e.ClientError, e => e.Referrer)
-                                    .Append(", ROW_NUMBER() over (PARTITION BY [clientError] ORDER BY COUNT([Referrer]) DESC) as rn")
-                                    .From<ClientError2ReferrerDto>()
-                                    .WhereNotNull<ClientError2ReferrerDto>(e => e.Referrer)
-                                    .GroupBy<ClientError2ReferrerDto>(e => e.ClientError, e => e.Referrer))
-                      .Where("rn = 1")
-                      );
-
-            sql.LeftJoin(clientErrorGroups.Sql(), _occurrancesTableAlias)
-               .On<ClientErrorDto, ClientError2ReferrerDto>((l, r) => l.Id == r.ClientError, null, _occurrancesTableAlias)
-               .LeftJoin(mostCommonReferrers.Sql(), _mostCommonReferrerTableAlias)
-               .On<ClientErrorDto, ClientError2ReferrerDto>((l, r) => l.Id == r.ClientError, null, _mostCommonReferrerTableAlias)
-               .LeftJoin<ReferrerDto>(_referrerTableAlias)
-               .On<ClientError2ReferrerDto, ReferrerDto>((l, r) => l.Referrer == r.Id, _mostCommonReferrerTableAlias, _referrerTableAlias);
+            sql = sql.From<ClientErrorDto>();
             return sql;
         }
 
@@ -224,6 +207,42 @@ namespace UrlTracker.Core.Database
             };
 
             Database.Insert(dto);
+        }
+
+        public async Task<IReadOnlyCollection<IClientErrorMetaData>> GetMetaDataAsync(params int[] clientErrors)
+        {
+            var sql = Sql();
+
+            ISqlSyntaxProvider syntax = sql.SqlContext.SqlSyntax;
+            sql = sql.SelectCount(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences)
+                     .AndSelectMax<ClientError2ReferrerDto>(Defaults.DatabaseSchema.AggregateColumns.MostRecentOccurrence, _occurrancesTableAlias, e => e.CreateDate)
+                     .AndSelect($"{syntax.GetQuotedColumnName(_occurrancesTableAlias)}.{syntax.GetQuotedColumnName("clientError")} as {syntax.GetQuotedColumnName("clientError")}")
+                     .AndSelect($"{syntax.GetQuotedColumnName(_referrerTableAlias)}.{syntax.GetQuotedColumnName("url")} as {syntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.MostCommonReferrer)}");
+
+            sql.From<ClientError2ReferrerDto>(_occurrancesTableAlias);
+
+            var mostCommonReferrers = SqlContext.Templates.Get("mostCommonReferrers", sql
+                => sql.Select<ClientError2ReferrerDto>(_referrerTableAlias, e => e.ClientError, e => e.Referrer)
+                      .From(_referrerTableAlias, s => s.Select<ClientError2ReferrerDto>(e => e.ClientError, e => e.Referrer)
+                                    .Append(", ROW_NUMBER() over (PARTITION BY [clientError] ORDER BY COUNT([Referrer]) DESC) as rn")
+                                    .From<ClientError2ReferrerDto>()
+                                    .WhereNotNull<ClientError2ReferrerDto>(e => e.Referrer)
+                                    .GroupBy<ClientError2ReferrerDto>(e => e.ClientError, e => e.Referrer))
+                      .Where("rn = 1")
+                      );
+
+            sql.LeftJoin(mostCommonReferrers.Sql(), _mostCommonReferrerTableAlias)
+               .On<ClientError2ReferrerDto, ClientError2ReferrerDto>((l, r) => l.ClientError == r.ClientError, _occurrancesTableAlias, _mostCommonReferrerTableAlias)
+               .LeftJoin<ReferrerDto>(_referrerTableAlias)
+               .On<ClientError2ReferrerDto, ReferrerDto>((l, r) => l.Referrer == r.Id, _mostCommonReferrerTableAlias, _referrerTableAlias);
+
+            sql.Where<ClientError2ReferrerDto>(e => clientErrors.Contains(e.ClientError), _occurrancesTableAlias)
+               .GroupBy<ClientError2ReferrerDto>(_occurrancesTableAlias, e => e.ClientError)
+               .Append($", {SqlSyntax.GetQuotedTableName(_referrerTableAlias)}.{SqlSyntax.GetQuotedTableName("url")}");
+
+            var dtos = await Database.FetchAsync<ClientErrorMetaDataDto>(sql);
+
+            return dtos.Select(ClientErrorFactory.BuildEntity).ToList();
         }
     }
 }

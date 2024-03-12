@@ -73,6 +73,11 @@ namespace UrlTracker.Core.Caching.Memory.Database
             return _decoratee.GetMany(ids);
         }
 
+        public Task<IReadOnlyCollection<IClientErrorMetaData>> GetMetaDataAsync(params int[] clientErrors)
+        {
+            return _decoratee.GetMetaDataAsync(clientErrors);
+        }
+
         public Task<IReadOnlyCollection<IClientError>> GetNoLongerExistsAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
         {
             return _options.Value.EnableActiveCache

@@ -15,5 +15,6 @@ namespace UrlTracker.Core.Database
         Task<IReadOnlyCollection<IClientError>> GetAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null);
         Task<IReadOnlyCollection<IClientError>> GetNoLongerExistsAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null);
         void Report(IClientError clientError, DateTime moment, IReferrer? referrer);
+        Task<IReadOnlyCollection<IClientErrorMetaData>> GetMetaDataAsync(params int[] clientErrors);
     }
 }

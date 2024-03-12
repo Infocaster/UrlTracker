@@ -14,6 +14,7 @@ namespace UrlTracker.Core.Caching.Memory.Active
         IReadOnlyCollection<IRedirect> GetRedirect(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null);
         void Set(IDictionary<string, List<IRedirect>> cache);
         void Set(IDictionary<string, List<IClientError>> cache);
+        IDictionary<string, List<IRedirect>> GetRedirectCache();
     }
 
     internal class ActiveCacheAccessor : IActiveCacheAccessor
@@ -67,6 +68,11 @@ namespace UrlTracker.Core.Caching.Memory.Active
         public void Set(IDictionary<string, List<IClientError>> cache)
         {
             _clientErrorDictionary = cache;
+        }
+
+        public IDictionary<string, List<IRedirect>> GetRedirectCache()
+        {
+            return _redirectDictionary;
         }
     }
 }
