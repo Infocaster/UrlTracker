@@ -4,10 +4,10 @@
     <Title>URL Tracker Middleware</Title>
     <Description>This package contains middleware to perform redirects and to register client errors with the URL Tracker</Description>
     <RootNamespace>UrlTracker.Middleware</RootNamespace>
-    <PackageReleaseNotes>2 bugfixes
+    <PackageReleaseNotes>2 changes
 
-- Fix premature execution of cache bootloader
-- Fix case sensitivity on in-memory culture comparison</PackageReleaseNotes>
+- Optimise SQL query performance
+- Optimise updates to the active cache</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />

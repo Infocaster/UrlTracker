@@ -11,10 +11,10 @@
       Use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </Description>
     <RootNamespace>UrlTracker</RootNamespace>
-    <PackageReleaseNotes>2 bugfixes
+    <PackageReleaseNotes>2 changes
 
-- Fix premature execution of cache bootloader
-- Fix case sensitivity on in-memory culture comparison</PackageReleaseNotes>
+- Optimise SQL query performance
+- Optimise updates to the active cache</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="13.0.0" />
