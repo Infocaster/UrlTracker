@@ -20,7 +20,7 @@ namespace UrlTracker.Web.Tests.Processing
 
         public static IEnumerable<TestCaseData> TestCases()
         {
-            var clientError = new ClientErrorEntity("https://example.com", false, Core.Defaults.DatabaseSchema.ClientErrorStrategies.NoLongerExists, default, default, default);
+            var clientError = new ClientErrorEntity("https://example.com", false, Core.Defaults.DatabaseSchema.ClientErrorStrategies.NoLongerExists);
             yield return new TestCaseData(clientError, 404, 410).SetName("HandleAsync rewrites response to 410 if status code is 404");
             yield return new TestCaseData(clientError, 200, 200).SetName("HandleAsync does nothing if status code is 200");
         }

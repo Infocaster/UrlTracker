@@ -52,7 +52,7 @@ namespace UrlTracker.Core.Caching.Memory.Database
         public void Delete(IRedirect entity)
         {
             _decoratee.Delete(entity);
-            ClearCaches();
+            DeleteFromCache(entity.Id);
         }
 
         /// <inheritdoc/>
@@ -106,12 +106,17 @@ namespace UrlTracker.Core.Caching.Memory.Database
         public void Save(IRedirect entity)
         {
             _decoratee.Save(entity);
-            ClearCaches();
+            UpdateFromCache(entity.Id);
         }
 
-        private void ClearCaches()
+        private void UpdateFromCache(int id)
         {
-            _distributedCache.RefreshAll(RedirectsCacheRefresher.UniqueKey);
+            _distributedCache.Refresh(RedirectsCacheRefresher.UniqueKey, id);
+        }
+
+        private void DeleteFromCache(int id)
+        {
+            _distributedCache.Remove(RedirectsCacheRefresher.UniqueKey, id);
         }
     }
 }

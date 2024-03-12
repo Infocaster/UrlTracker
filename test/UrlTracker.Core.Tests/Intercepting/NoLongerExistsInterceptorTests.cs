@@ -22,8 +22,8 @@ namespace UrlTracker.Core.Tests.Intercepting
 
         public static IEnumerable<TestCaseData> TestCases()
         {
-            var result1 = new ClientErrorEntity("https://example.com", false, Defaults.DatabaseSchema.ClientErrorStrategies.NoLongerExists, default, default, default);
-            var result2 = new ClientErrorEntity("https://example.com", false, Defaults.DatabaseSchema.ClientErrorStrategies.NotFound, default, default, default);
+            var result1 = new ClientErrorEntity("https://example.com", false, Defaults.DatabaseSchema.ClientErrorStrategies.NoLongerExists);
+            var result2 = new ClientErrorEntity("https://example.com", false, Defaults.DatabaseSchema.ClientErrorStrategies.NotFound);
 
             yield return new TestCaseData(
                 new IClientError[] { result1, result2 }, result1
