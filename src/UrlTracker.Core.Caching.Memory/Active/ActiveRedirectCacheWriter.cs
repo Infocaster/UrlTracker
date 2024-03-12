@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Caching.Memory;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Core.Database;
@@ -50,7 +51,7 @@ namespace UrlTracker.Core.Caching.Memory.Active
                 var cache = _cacheAccessor.GetRedirectCache();
                 if (!cache.TryGetValue(redirect.SourceUrl, out var list))
                 {
-                    list = [];
+                    list = new List<IRedirect>();
                     cache[redirect.SourceUrl] = list;
                 }
 
