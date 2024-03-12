@@ -5,10 +5,10 @@
     <Title>URL Tracker Web</Title>
     <Description>This package contains the web services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>1 new feature, 1 bugfix
+    <PackageReleaseNotes>2 changes
 
-- Fix caching on loadbalanced environments
-- Add opt-in active cache</PackageReleaseNotes>
+- Optimise SQL query performance
+- Optimise updates to the active cache</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->

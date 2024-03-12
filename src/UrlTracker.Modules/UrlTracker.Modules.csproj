@@ -4,9 +4,9 @@
     <Title>URL Tracker Module registration</Title>
     <Description>This package contains objects for module registration. It keeps helps keeping track of installed modules for the URL Tracker</Description>
     <RootNamespace>UrlTracker.Modules</RootNamespace>
-    <PackageReleaseNotes>1 new feature, 1 bugfix
+    <PackageReleaseNotes>2 changes
 
-- Fix caching on loadbalanced environments
-- Add opt-in active cache</PackageReleaseNotes>
+- Optimise SQL query performance
+- Optimise updates to the active cache</PackageReleaseNotes>
   </PropertyGroup>
 </Project>
