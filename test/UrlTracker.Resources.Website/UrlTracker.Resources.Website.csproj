@@ -311,15 +311,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Plugins\UrlTracker\assets\images\import-export-icon.svg" />
-    <Content Include="App_Plugins\UrlTracker\backoffice\urlTrackerSettingsTree\overview.html" />
-    <Content Include="App_Plugins\UrlTracker\Dashboards\overview.html" />
-    <Content Include="App_Plugins\UrlTracker\lang\en-US.user.xml" />
-    <Content Include="App_Plugins\UrlTracker\lang\nl-NL.user.xml" />
-    <Content Include="App_Plugins\UrlTracker\Overlays\importexport.html" />
-    <Content Include="App_Plugins\UrlTracker\Panels\details.html" />
-    <Content Include="App_Plugins\UrlTracker\script.bundle.js" />
-    <Content Include="App_Plugins\UrlTracker\style.css" />
     <Content Include="App_Plugins\uSync8\backoffice\uSync8\dashboard.html" />
     <Content Include="App_Plugins\uSync8\backoffice\uSync8\uSyncDashboardController.js" />
     <Content Include="App_Plugins\uSync8\changeDialog.html" />
@@ -402,8 +393,6 @@
     <Content Include="config\uSync8.config" />
     <Content Include="App_Plugins\uSync8\package.manifest" />
     <Content Include="App_Plugins\uSync8\addons.json" />
-    <Content Include="App_Plugins\UrlTracker\assets\urltracker-redirects-import.csv" />
-    <Content Include="App_Plugins\UrlTracker\package.manifest" />
     <Content Include="Media\Web.config" />
     <Content Include="config\tinyMceConfig.config" />
     <Content Include="config\HealthChecks.config" />

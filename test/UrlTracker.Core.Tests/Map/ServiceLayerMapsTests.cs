@@ -175,7 +175,7 @@ namespace UrlTracker.Core.Tests.Map
         public void Map_UrlTrackerClientError_ClientError()
         {
             // arrange
-            var input = new ClientErrorEntity("http://example.com/lorem", false, Defaults.DatabaseSchema.ClientErrorStrategies.NotFound, default, "http://example.com", default)
+            var input = new ClientErrorEntity("http://example.com/lorem", false, Defaults.DatabaseSchema.ClientErrorStrategies.NotFound)
             {
                 Id = 1000,
                 Ignored = false,
@@ -191,7 +191,6 @@ namespace UrlTracker.Core.Tests.Map
                 Assert.That(result.Id, Is.EqualTo(input.Id));
                 Assert.That(result.Ignored, Is.EqualTo(input.Ignored));
                 Assert.That(result.Inserted, Is.EqualTo(input.CreateDate));
-                Assert.That(result.MostCommonReferrer, Is.EqualTo(input.MostCommonReferrer));
                 Assert.That(result.Url, Is.EqualTo(input.Url));
             });
         }
@@ -200,7 +199,7 @@ namespace UrlTracker.Core.Tests.Map
         public void Map_UrlTrackerClientErrorCollection_ClientErrorCollection()
         {
             // arrange
-            var input = Core.Database.Entities.ClientErrorEntityCollection.Create(new[] { new ClientErrorEntity("http://example.com", false, Defaults.DatabaseSchema.ClientErrorStrategies.NotFound, default, default, default) }, 3);
+            var input = Core.Database.Entities.ClientErrorEntityCollection.Create(new[] { new ClientErrorEntity("http://example.com", false, Defaults.DatabaseSchema.ClientErrorStrategies.NotFound) }, 3);
 
             // act
             var result = Mapper.Map<Core.Models.ClientErrorCollection>(input);

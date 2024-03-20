@@ -5,9 +5,9 @@ namespace UrlTracker.Core.Database.Factories
 {
     internal static class ClientErrorFactory
     {
-        internal static IClientError BuildEntity(ExtendedClientErrorDto dto)
+        internal static IClientError BuildEntity(ClientErrorDto dto)
         {
-            var entity = new ClientErrorEntity(dto.Url, dto.Ignored, dto.Strategy, dto.TotalOccurrances ?? default, dto.MostCommonReferrer, dto.MostRecentOccurrance ?? default);
+            var entity = new ClientErrorEntity(dto.Url, dto.Ignored, dto.Strategy);
             try
             {
                 entity.DisableChangeTracking();
@@ -80,6 +80,18 @@ namespace UrlTracker.Core.Database.Factories
             }
 
             return dto;
+        }
+
+        internal static IClientErrorMetaData BuildEntity(ClientErrorMetaDataDto dto)
+        {
+            var entity = new ClientErrorMetaData
+            {
+                TotalOccurrances = dto.TotalOccurrances,
+                MostCommonReferrer = dto.MostCommonReferrer,
+                MostRecentOccurrance = dto.MostRecentOccurrance,
+                ClientError = dto.ClientError
+            };
+            return entity;
         }
     }
 }

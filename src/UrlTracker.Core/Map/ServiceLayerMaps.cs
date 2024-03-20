@@ -39,17 +39,11 @@ namespace UrlTracker.Core.Map
             mapper.Define<IClientError, ClientError>(
                 (source, context) => new ClientError(source.Url),
                 Map);
-
-            mapper.Define<Database.Entities.ClientErrorEntityCollection, Models.ClientErrorCollection>(
-                (source, context) => Models.ClientErrorCollection.Create(context.MapEnumerable<IClientError, ClientError>(source), source.Total));
         }
 
         private static void Map(IClientError source, ClientError target, MapperContext context)
         {
             target.Id = source.Id;
-            target.LatestOccurrence = source.MostRecentOccurrence;
-            target.MostCommonReferrer = source.MostCommonReferrer;
-            target.Occurrences = source.TotalOccurrences;
             target.Ignored = source.Ignored;
             target.Inserted = source.CreateDate;
         }

@@ -329,11 +329,12 @@
     <Compile Include="Database\DecoratorRedirectRepositoryCaching.cs" />
     <Compile Include="Database\Dtos\ClientError2ReferrerDto.cs" />
     <Compile Include="Database\Dtos\ClientErrorDto.cs" />
-    <Compile Include="Database\Dtos\ExtendedClientErrorDto.cs" />
+    <Compile Include="Database\Dtos\ClientErrorMetaDataDto.cs" />
     <Compile Include="Database\Dtos\RedirectDto.cs" />
     <Compile Include="Database\Dtos\ReferrerDto.cs" />
     <Compile Include="Database\Entities\ClientErrorEntity.cs" />
     <Compile Include="Database\Entities\ClientErrorEntityCollection.cs" />
+    <Compile Include="Database\Entities\ClientErrorMetaData.cs" />
     <Compile Include="Database\Entities\RedirectEntity.cs" />
     <Compile Include="Database\Entities\RedirectEntityCollection.cs" />
     <Compile Include="Database\Entities\ReferrerEntity.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using UrlTracker.Core.Database.Entities;
 
 namespace UrlTracker.Core.Models
 {
@@ -8,6 +9,21 @@ namespace UrlTracker.Core.Models
         {
             Url = url;
             Strategy = Defaults.DatabaseSchema.ClientErrorStrategies.NotFound;
+        }
+
+        public ClientError(IClientError clientError, IClientErrorMetaData metaData)
+            : this(clientError.Url)
+        {
+            Id = clientError.Id;
+            Ignored = clientError.Ignored;
+            Inserted = clientError.CreateDate;
+
+            if (metaData != null)
+            {
+                LatestOccurrence = metaData.MostRecentOccurrance ?? default;
+                MostCommonReferrer = metaData.MostCommonReferrer;
+                Occurrences = metaData.TotalOccurrances ?? default;
+            }
         }
 
         public int Id { get; set; }
