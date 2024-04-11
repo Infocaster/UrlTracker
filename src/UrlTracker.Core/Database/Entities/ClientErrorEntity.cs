@@ -16,12 +16,6 @@ namespace UrlTracker.Core.Database.Entities
 
         [DataMember]
         public Guid Strategy { get; set; }
-
-        public int TotalOccurrences { get; }
-
-        public string? MostCommonReferrer { get; }
-
-        public DateTime MostRecentOccurrence { get; }
     }
 
     [Serializable]
@@ -34,19 +28,12 @@ namespace UrlTracker.Core.Database.Entities
         private string _url;
         private bool _ignored;
 
-        public ClientErrorEntity(string url, bool ignored, Guid strategy, int totalOccurrences, string? mostCommonReferrer, DateTime mostRecentOccurrence)
+        public ClientErrorEntity(string url, bool ignored, Guid strategy)
         {
             _url = url;
             _ignored = ignored;
             _strategy = strategy;
-            TotalOccurrences = totalOccurrences;
-            MostCommonReferrer = mostCommonReferrer;
-            MostRecentOccurrence = mostRecentOccurrence;
         }
-
-        public ClientErrorEntity(string url, bool ignore, Guid strategy)
-            : this(url, ignore, strategy, default, default, default)
-        { }
 
         public string Url
         {
@@ -65,12 +52,6 @@ namespace UrlTracker.Core.Database.Entities
             get => _strategy;
             set => SetPropertyValueAndDetectChanges(value, ref _strategy, nameof(Strategy));
         }
-
-        public int TotalOccurrences { get; }
-
-        public string? MostCommonReferrer { get; }
-
-        public DateTime MostRecentOccurrence { get; }
 
         private string GetDebuggerDisplay()
         {

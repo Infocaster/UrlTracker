@@ -4,8 +4,9 @@
     <Title>URL Tracker Module registration</Title>
     <Description>This package contains objects for module registration. It keeps helps keeping track of installed modules for the URL Tracker</Description>
     <RootNamespace>UrlTracker.Modules</RootNamespace>
-    <PackageReleaseNotes>1 change
+    <PackageReleaseNotes>2 changes
 
-- Update to Umbraco 13</PackageReleaseNotes>
+- Optimise SQL query performance
+- Optimise updates to the active cache</PackageReleaseNotes>
   </PropertyGroup>
 </Project>

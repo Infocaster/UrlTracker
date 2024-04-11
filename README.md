@@ -44,7 +44,8 @@ The URL Tracker has several configurable properties that can be changed in appse
                 "CacheRegexRedirects": true,
                 "InterceptSlidingCacheMinutes": 2880,
                 "MaxCachedIntercepts": 5000,
-                "EnableInterceptCaching": true
+                "EnableInterceptCaching": true,
+                "EnableActiveCache": false
             }
         },
         "Pipeline": {
@@ -69,6 +70,7 @@ The URL Tracker has several configurable properties that can be changed in appse
 | UrlTracker:Caching:Memory:InterceptSlidingCacheMinutes | int?     | Set this value to the time in minutes that all redirects should be cached. By default, all redirects are cached for 2 days. Set to `null` to cache indefinitely.
 |          UrlTracker:Caching:Memory:MaxCachedIntercepts | long     | Set this value to the amount of intercepts that should be cached by the UrlTracker. This not only includes redirects, but also 200 OK responses, 410 GONE responses and 404 NOT FOUND responses.
 |       UrlTracker:Caching:Memory:EnableInterceptCaching | bool     | Set this value to `false` to completely disable redirect caching.
+|            UrlTracker:Caching:Memory:EnableActiveCache | bool     | Set this value to `true` to enable active caching. Active caching should be enabled when you notice bottlenecks on your database. This may significantly increase your performance. Notice that this will load all redirects into the working memory, so your memory usage might increase, depending on the amount redirects that you have
 |                             UrlTracker:Pipeline:Enable | bool     | Set this value to `false` to disable all URL Tracker middleware. The URL Tracker will no longer redirect requests nor track client error responses.
 |          UrlTracker:Pipeline:EnableClientErrorTracking | bool     | Set this value to `false` to disable tracking of client error responses.
 

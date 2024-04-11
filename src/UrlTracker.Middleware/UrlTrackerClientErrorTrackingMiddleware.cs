@@ -5,9 +5,9 @@ using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Services;
-using UrlTracker.Core;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Logging;
+using UrlTracker.Middleware.Background;
 using UrlTracker.Web;
 using UrlTracker.Web.Abstraction;
 using UrlTracker.Web.Processing;
@@ -20,29 +20,29 @@ namespace UrlTracker.Middleware
     public class UrlTrackerClientErrorTrackingMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IClientErrorService _clientErrorService;
         private readonly IClientErrorFilterCollection _clientErrorFilterCollection;
         private readonly ILogger<UrlTrackerClientErrorTrackingMiddleware> _logger;
         private readonly IRuntimeState _runtimeState;
+        private readonly IClientErrorProcessorQueue _processorQueue;
         private readonly IOptionsMonitor<RequestHandlerSettings> _requestHandlerOptions;
         private readonly IRequestAbstraction _requestAbstraction;
 
         /// <inheritdoc />
         public UrlTrackerClientErrorTrackingMiddleware(RequestDelegate next,
-                                                    IClientErrorService clientErrorService,
                                                     IClientErrorFilterCollection clientErrorFilterCollection,
                                                     ILogger<UrlTrackerClientErrorTrackingMiddleware> logger,
                                                     IOptionsMonitor<RequestHandlerSettings> requestHandlerOptions,
                                                     IRequestAbstraction requestAbstraction,
-                                                    IRuntimeState runtimeState)
+                                                    IRuntimeState runtimeState,
+                                                    IClientErrorProcessorQueue processorQueue)
         {
             _next = next;
-            _clientErrorService = clientErrorService;
             _clientErrorFilterCollection = clientErrorFilterCollection;
             _logger = logger;
             _requestHandlerOptions = requestHandlerOptions;
             _requestAbstraction = requestAbstraction;
             _runtimeState = runtimeState;
+            _processorQueue = processorQueue;
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace UrlTracker.Middleware
             var url = context.Request.GetUrl().ToString(UrlType.Absolute, requestHandlerOptionsValue.AddTrailingSlash);
             var referrer = context.Request.GetReferrer(_requestAbstraction);
 
-            await _clientErrorService.ReportAsync(url, DateTime.Now, referrer?.ToString());
+            await _processorQueue.WriteAsync(new ClientErrorProcessorItem(url, DateTime.Now, referrer?.ToString()));
         }
     }
 }

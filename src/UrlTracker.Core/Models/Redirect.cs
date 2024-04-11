@@ -31,6 +31,7 @@ namespace UrlTracker.Core.Models
 
         public string? SourceUrl { get; set; }
 
+        [ValidRegexPattern]
         public string? SourceRegex { get; set; }
 
         public bool RetainQuery { get; set; }

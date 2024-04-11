@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
@@ -65,7 +66,19 @@ namespace UrlTracker.Core
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
 
             var urlTrackerClientErrors = await _clientErrorRepository.GetAsync(skip, take, query, orderBy, descending);
-            return _mapper.Map<Models.ClientErrorCollection>(urlTrackerClientErrors)!;
+            IReadOnlyCollection<IClientErrorMetaData>? metadata = null;
+            if (urlTrackerClientErrors.Elements.Count > 0)
+            {
+                metadata = await _clientErrorRepository.GetMetaDataAsync(urlTrackerClientErrors.Elements.Select(e => e.Id).ToArray());
+            }
+
+            Models.ClientErrorCollection result = CreateCollection(urlTrackerClientErrors, metadata);
+            return result;
+        }
+
+        private static ClientErrorCollection CreateCollection(ClientErrorEntityCollection urlTrackerClientErrors, IReadOnlyCollection<IClientErrorMetaData>? metadata)
+        {
+            return ClientErrorCollection.Create(urlTrackerClientErrors.Select(e => new ClientError(e, metadata?.FirstOrDefault(md => md.ClientError == e.Id))), urlTrackerClientErrors.Total);
         }
 
         [ExcludeFromCodeCoverage]

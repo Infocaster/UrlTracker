@@ -5,9 +5,10 @@
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>1 change
+    <PackageReleaseNotes>2 changes
 
-- Update to Umbraco 13</PackageReleaseNotes>
+- Optimise SQL query performance
+- Optimise updates to the active cache</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">
