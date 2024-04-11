@@ -56,7 +56,7 @@ export class UrlTrackerDropdown extends LitElement {
     return html`
       <label>
         ${this.label}:
-        <select ${ref(this.selectRef)}>
+        <select>
           ${this.options
             ? repeat(
                 this.options,

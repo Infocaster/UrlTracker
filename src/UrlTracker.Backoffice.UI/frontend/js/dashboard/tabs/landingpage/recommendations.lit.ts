@@ -18,7 +18,7 @@ export class UrlTrackerRecommendations extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    this._collection = await this._recommendationsService?.list(1, 10);
+    this._collection = await this._recommendationsService?.list({page: 1, pageSize: 10});
   }
 
   protected render(): unknown {

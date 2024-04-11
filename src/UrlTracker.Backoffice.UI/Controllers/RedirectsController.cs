@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Linq;
 using System.Threading.Tasks;
-using J2N.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
@@ -39,7 +37,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         /// </summary>
         /// <param name="id">The unique identifier of the requested redirect</param>
         /// <returns>A 200 OK result with a redirect or 404 NOT FOUND if no redirect with given id exists</returns>
-        [HttpGet]
+        [HttpGet("{id}")]
         public IActionResult Get([FromRoute] int id)
         {
             var model = _redirectRequestHandler.GetById(id);

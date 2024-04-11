@@ -1,4 +1,4 @@
-export interface IEditorService<T extends string> {
+export interface IEditorService<T> {
   contentEditor(editor: IContentEditor): void;
   close: () => void;
   closeAll: () => void;
@@ -36,7 +36,7 @@ export interface ICustomEditor<T> {
   title: string;
   view: string;
   size: string;
-  submit: (value: string) => void;
+  submit: (value: T) => void;
   close: () => void;
   value: T;
 }

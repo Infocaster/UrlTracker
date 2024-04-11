@@ -23,6 +23,8 @@ import {
   IEditorService,
   editorServiceContext,
 } from "@/context/editorservice.context";
+import { ensureServiceExists } from "@/util/tools/existancecheck";
+import { ContentUpdateEvent } from "../redirects/target/implementations/contenttarget.lit";
 
 const RecommendationListItem =
   UrlTrackerSelectableResultListItem<IRecommendationResponse>(
@@ -58,9 +60,7 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    if (!this.localizationService) {
-      throw new Error("This element requires the localization service");
-    }
+    ensureServiceExists(this.localizationService, "localizationService");
     if (this.item) {
       this.recommendationType = calculateRecommendationType(this.item.score);
       this.tagText(this.recommendationType);
@@ -123,35 +123,12 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   }
 
   submitPanel = (value: string) => {
-    this.model = value;
+    //this.model = value;
     this.closePanel();
   };
 
   closePanel = () => {
     this.editorService!.close();
-  };
-
-  private onClick = (_: Event) => {
-    ensureServiceExists(this.editorService, "editor service");
-
-    const onClose = async () => {
-      this.editorService!.close();
-      await this.init();
-      this.dispatchEvent(
-        new ContentUpdateEvent(this.contentId!, this.contentItem!)
-      );
-    };
-
-    this.editorService.contentEditor({
-      id: this.contentId!,
-      create: false,
-      submit: onClose,
-      close: onClose,
-      documentTypeAlias: "",
-      allowPublishAndClose: false,
-      allowSaveAndClose: false,
-      parentId: "",
-    });
   };
 
   protected renderBody(): unknown {

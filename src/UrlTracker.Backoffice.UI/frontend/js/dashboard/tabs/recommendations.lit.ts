@@ -144,7 +144,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
           ${this.renderRecommendations()}
         </urltracker-result-list>
         <!-- <urltracker-pagination
-          ${ref(this.paginationRef)}
+          {ref(this.paginationRef)}
           class="pagination"
           total="100"
           @change=${this.onFilterChange}

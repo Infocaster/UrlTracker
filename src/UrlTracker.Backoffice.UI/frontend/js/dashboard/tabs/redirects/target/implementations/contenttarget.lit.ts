@@ -16,6 +16,7 @@ import {
   changeManagerContext,
 } from "../../../../../context/changemanager.context";
 import { ensureServiceExists } from "../../../../../util/tools/existancecheck";
+import { IRedirectResponse } from "@/services/redirect.service";
 
 export class ContentUpdateEvent extends Event {
   static event = "content-update";
@@ -44,7 +45,7 @@ export class UrlTrackerContentRedirectTarget extends baseType {
   private redirectTargetService?: ITargetService;
 
   @consume({ context: editorServiceContext })
-  private editorService?: IEditorService;
+  private editorService?: IEditorService<IRedirectResponse>;
 
   @consume({ context: changeManagerContext })
   private changeManager?: IChangeManager;

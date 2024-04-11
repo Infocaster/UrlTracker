@@ -5,6 +5,7 @@ export function UrlTrackerMainContext<TBase extends LitElementConstructor>(
   Base: TBase
 ) {
   return class MainContext extends Base {
+
     _contextCollection: Record<string, unknown> = {};
     public SetContext<T>(
       service: T,

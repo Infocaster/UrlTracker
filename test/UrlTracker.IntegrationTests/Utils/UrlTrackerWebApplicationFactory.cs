@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Web.Common.Authorization;
+using UrlTracker.Middleware.Background;
 using UrlTracker.Resources.Website;
 
 namespace UrlTracker.IntegrationTests.Utils
@@ -51,14 +53,22 @@ namespace UrlTracker.IntegrationTests.Utils
                     policy.AddRequirements(new TestRequirement());
                 });
             });
+
+            obj.RemoveAll(s => s.ServiceType == typeof(IClientErrorProcessorQueue));
+            obj.AddSingleton<IClientErrorProcessorQueue, QueuelessClientErrorHandler>();
         }
 
         public HttpClient CreateStandardClient()
-            => CreateClient(new WebApplicationFactoryClientOptions
+        {
+            HttpClient client = CreateClient(new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = false,
-                BaseAddress = new Uri("http://urltracker.ic")
+                BaseAddress = new Uri("http://urltracker.ic"),
             });
+
+            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Chrome", "123.0.0.0"));
+            return client;
+        }
 
         protected override void Dispose(bool disposing)
         {

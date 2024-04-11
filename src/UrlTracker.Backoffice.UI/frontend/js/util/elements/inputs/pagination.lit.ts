@@ -42,12 +42,12 @@ export class UrlTrackerPagination extends LitElement {
         }
     ];
 
-    @property()
+    @property({type: Object})
     public get value(): IPaginationRequestBase {
 
         return {
             page: this.paginationRef.value ? this.paginationRef.value.current - 1 : 0,
-            pageSize: (this.dropdownRef.value ? this.dropdownRef.value.value.value : this.pageSizes[0].value) as number
+            pageSize: 10 //(this.dropdownRef.value ? this.dropdownRef.value.value.value : this.pageSizes[0].value) as number
         };
     }
 
@@ -59,12 +59,12 @@ export class UrlTrackerPagination extends LitElement {
         let oldVal = this.value;
 
         this.paginationRef.value.current = val.page + 1;
-        this.dropdownRef.value.value = this.pageSizes.findIndex(el => el.value === val.pageSize);
+        // this.dropdownRef.value.value = this.pageSizes.findIndex(el => el.value === val.pageSize);
 
         this.requestUpdate('value', oldVal);
     }
 
-    @property()
+    @property({type: Number})
     public total: number = 0;
 
     private paginationRef: Ref<UUIPaginationElement> = createRef();
@@ -72,9 +72,10 @@ export class UrlTrackerPagination extends LitElement {
 
     private get totalPages(): number {
 
-        let pageSize = (this.dropdownRef.value ? this.dropdownRef.value.value.value : this.pageSizes[0].value) as number
+        return 10;
 
-        return this.total / pageSize;
+        // let pageSize = (this.dropdownRef.value ? this.dropdownRef.value.value.value : this.pageSizes[0].value) as number
+        // return this.total / pageSize;
     }
 
     private onPageChange = (e: Event) => {
