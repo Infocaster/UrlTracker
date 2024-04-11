@@ -4,10 +4,11 @@
     <Title>URL Tracker Backoffice Notifications</Title>
     <Description>This package contains notification handlers for the URL Tracker to handle Umbraco content notifications</Description>
     <RootNamespace>UrlTracker.Backoffice.Notifications</RootNamespace>
-    <PackageReleaseNotes>2 changes
+    <PackageReleaseNotes>1 new feature, 1 bugfix, 1 other change
 
-- Optimise SQL query performance
-- Optimise updates to the active cache</PackageReleaseNotes>
+- Fix stale caches on loadbalanced environments
+- (Experimental) Add active cache
+- Optimise performance</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
