@@ -4,8 +4,10 @@
     <Title>URL Tracker Module registration</Title>
     <Description>This package contains objects for module registration. It keeps helps keeping track of installed modules for the URL Tracker</Description>
     <RootNamespace>UrlTracker.Modules</RootNamespace>
-    <PackageReleaseNotes>1 feature
+    <PackageReleaseNotes>1 new feature, 1 bugfix, 1 other change
 
-- Added common User Agent check to prevent bots registering 404s</PackageReleaseNotes>
+- Fix stale caches on load balanced environments
+- (Experimental) Add active cache
+- Optimise database query performance</PackageReleaseNotes>
   </PropertyGroup>
 </Project>

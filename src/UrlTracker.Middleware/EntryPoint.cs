@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.DependencyInjection;
+using UrlTracker.Middleware.Background;
 using UrlTracker.Middleware.Options;
 using UrlTracker.Middleware.Processing;
 using UrlTracker.Web;
@@ -33,6 +34,9 @@ namespace UrlTracker.Middleware
 
             builder.ClientErrorFilters()!
                 .InsertBefore<CoreConfigurationClientErrorFilter, PipelineConfigurationClientErrorFilter>();
+
+            builder.Services.AddSingleton<IClientErrorProcessorQueue, ClientErrorProcessorQueue>();
+            builder.Services.AddHostedService<ClientErrorProcessor>();
 
             return builder;
         }

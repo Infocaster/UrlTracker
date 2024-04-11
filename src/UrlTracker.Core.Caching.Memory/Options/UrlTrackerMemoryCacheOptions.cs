@@ -26,6 +26,14 @@ namespace UrlTracker.Core.Caching.Memory.Options
         public bool EnableRegexRedirectCaching { get; set; } = true;
 
         /// <summary>
+        /// Set this value to <see langword="true"/> to increase cachability and performance at the expense of working memory
+        /// </summary>
+        /// <remarks>
+        /// <para>This option will load all redirects and no-longer-exists responses into memory to reduce traffic between the application and the database.</para>
+        /// </remarks>
+        public bool EnableActiveCache { get; set; } = false;
+
+        /// <summary>
         /// The time in minutes before an intercept is removed from cache after its last use
         /// </summary>
         /// <remarks>

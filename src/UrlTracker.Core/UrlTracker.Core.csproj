@@ -4,9 +4,11 @@
     <Title>URL Tracker Core</Title>
     <Description>This package contains the core services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Core</RootNamespace>
-    <PackageReleaseNotes>1 feature
+    <PackageReleaseNotes>1 new feature, 1 bugfix, 1 other change
 
-- Added common User Agent check to prevent bots registering 404s</PackageReleaseNotes>
+- Fix stale caches on load balanced environments
+- (Experimental) Add active cache
+- Optimise database query performance</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Infrastructure" Version="10.0.0" />

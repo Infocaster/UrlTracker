@@ -22,8 +22,8 @@ namespace UrlTracker.Core.Tests.Intercepting
 
         public static IEnumerable<TestCaseData> TestCases()
         {
-            var result1 = new ClientErrorEntity("https://example.com", false, Defaults.DatabaseSchema.ClientErrorStrategies.NoLongerExists, default, default, default);
-            var result2 = new ClientErrorEntity("https://example.com", false, Defaults.DatabaseSchema.ClientErrorStrategies.NotFound, default, default, default);
+            var result1 = new ClientErrorEntity("https://example.com", false, Defaults.DatabaseSchema.ClientErrorStrategies.NoLongerExists);
+            var result2 = new ClientErrorEntity("https://example.com", false, Defaults.DatabaseSchema.ClientErrorStrategies.NotFound);
 
             yield return new TestCaseData(
                 new IClientError[] { result1, result2 }, result1
@@ -37,7 +37,7 @@ namespace UrlTracker.Core.Tests.Intercepting
         public async Task InterceptAsync_NormalFlow_ReturnsResult(IClientError[] output, IClientError expected)
         {
             // arrange
-            ClientErrorRepositoryMock!.Setup(obj => obj.GetAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<string?>()))
+            ClientErrorRepositoryMock!.Setup(obj => obj.GetNoLongerExistsAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<string?>()))
                                      .ReturnsAsync(output);
 
             // act

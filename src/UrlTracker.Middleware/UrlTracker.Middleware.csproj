@@ -4,9 +4,11 @@
     <Title>URL Tracker Middleware</Title>
     <Description>This package contains middleware to perform redirects and to register client errors with the URL Tracker</Description>
     <RootNamespace>UrlTracker.Middleware</RootNamespace>
-    <PackageReleaseNotes>1 feature
+    <PackageReleaseNotes>1 new feature, 1 bugfix, 1 other change
 
-- Added common User Agent check to prevent bots registering 404s</PackageReleaseNotes>
+- Fix stale caches on load balanced environments
+- (Experimental) Add active cache
+- Optimise database query performance</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />

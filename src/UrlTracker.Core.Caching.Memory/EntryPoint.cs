@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
+using UrlTracker.Core.Caching.Memory.Active;
 using UrlTracker.Core.Caching.Memory.Database;
 using UrlTracker.Core.Caching.Memory.Domain;
 using UrlTracker.Core.Caching.Memory.Intercepting;
@@ -41,9 +42,22 @@ namespace UrlTracker.Core.Caching.Memory
             }
             if (settings.EnableRegexRedirectCaching)
             {
-                builder.Services.Decorate<IRedirectRepository>((decoratee, factory) => new DecoratorRedirectRepositoryCaching(decoratee, factory.GetRequiredService<IMemoryCache>(), factory.GetRequiredService<IInterceptCache>()));
+                builder.Services.Decorate<IRedirectRepository>((decoratee, factory)
+                    => new DecoratorRedirectRepositoryCaching(
+                        decoratee,
+                        factory.GetRequiredService<IMemoryCache>(),
+                        factory.GetRequiredService<DistributedCache>(),
+                        factory.GetRequiredService<IActiveCacheAccessor>(),
+                        factory.GetRequiredService<IOptions<UrlTrackerMemoryCacheOptions>>()));
             }
+
+            builder.Services.Decorate<IClientErrorRepository, DecoratorClientErrorRepositoryCaching>();
+
             builder.Services.AddSingleton<IInterceptCache, InterceptCache>();
+            builder.Services.AddSingleton<IActiveCacheAccessor, ActiveCacheAccessor>();
+            builder.Services.AddSingleton<IActiveRedirectCacheWriter, ActiveRedirectCacheWriter>();
+            builder.Services.AddSingleton<IActiveClientErrorCacheWriter, ActiveClientErrorCacheWriter>();
+            builder.AddComponent<ActiveCacheBootloader>();
 
             builder.ComposeNotificationHandlers()
                 .ComposeConfigurations();
@@ -60,6 +74,9 @@ namespace UrlTracker.Core.Caching.Memory
 
         private static IUmbracoBuilder ComposeNotificationHandlers(this IUmbracoBuilder builder)
         {
+            builder.CacheRefreshers().Add<RedirectsCacheRefresher>();
+            builder.AddNotificationHandler<RedirectsChangedNotification, RedirectsChangedNotificationHandler>();
+            builder.AddNotificationHandler<RedirectsChangedNotification, ActiveCacheRedirectChangeHandler>();
             builder.AddNotificationHandler<DomainDeletedNotification, ContentChangeNotificationHandler>();
             builder.AddNotificationHandler<DomainSavedNotification, ContentChangeNotificationHandler>();
             return builder;

@@ -20,6 +20,7 @@ using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Core.Intercepting.Preprocessing;
 using UrlTracker.Core.Map;
 using UrlTracker.Core.Validation;
+using UrlTracker.Middleware.Background;
 using UrlTracker.Middleware.Options;
 using UrlTracker.Modules.Options;
 using UrlTracker.Resources.Testing.Mocks;
@@ -71,6 +72,8 @@ namespace UrlTracker.Resources.Testing
         protected IRedirectService RedirectService => RedirectServiceMock.Object;
         protected Mock<IClientErrorService> ClientErrorServiceMock { get; set; } = null!;
         protected IClientErrorService ClientErrorService => ClientErrorServiceMock.Object;
+        protected Mock<IClientErrorProcessorQueue> ClientErrorProcessorQueueMock { get; set; } = null!;
+        protected IClientErrorProcessorQueue ClientErrorProcessorQueue => ClientErrorProcessorQueueMock.Object;
         protected Mock<IRequestModelPatcher> RequestModelPatcherMock { get; set; } = null!;
         protected IRequestModelPatcher RequestModelPatcher => RequestModelPatcherMock.Object;
         protected Mock<IInterceptService> InterceptServiceMock { get; set; } = null!;
@@ -154,6 +157,7 @@ namespace UrlTracker.Resources.Testing
             InterceptConverterCollectionMock = new Mock<IInterceptConverterCollection>();
             RedirectServiceMock = new Mock<IRedirectService>();
             ClientErrorServiceMock = new Mock<IClientErrorService>();
+            ClientErrorProcessorQueueMock = new Mock<IClientErrorProcessorQueue>();
             ScopeProviderMock = new ScopeProviderMock();
             RequestModelPatcherMock = new Mock<IRequestModelPatcher>();
             InterceptServiceMock = new Mock<IInterceptService>();
