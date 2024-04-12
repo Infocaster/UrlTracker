@@ -33,7 +33,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
             };
 
             // act
-            var response = await WebsiteFactory.CreateStandardClient().PutAsync(_endpoint + "/" + model.Id, JsonContent.Create(request));
+            var response = await WebsiteFactory.CreateStandardClient().PostAsync(_endpoint + "/" + model.Id, JsonContent.Create(request));
             response.EnsureSuccessStatusCode();
             var responseModel = await DeserializeResponseAsync<RedirectResponse>(response);
             var redirect = await GetRedirectService().GetAsync(model.Id!.Value);

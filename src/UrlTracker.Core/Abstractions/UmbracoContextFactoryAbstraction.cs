@@ -66,6 +66,11 @@ namespace UrlTracker.Core.Abstractions
         {
             return _cref.UmbracoContext.Content?.GetAtRoot() ?? Enumerable.Empty<IPublishedContent>();
         }
+
+        public IPublishedContent? GetMediaById(int id)
+        {
+            return _cref.UmbracoContext.Media?.GetById(id);
+        }
     }
 
     /// <summary>

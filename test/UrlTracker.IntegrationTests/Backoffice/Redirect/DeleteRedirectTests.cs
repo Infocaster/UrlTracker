@@ -11,7 +11,7 @@
             var model = await CreateStandardRedirectAsync();
 
             // act
-            var response = await WebsiteFactory.CreateStandardClient().DeleteAsync(_endpoint + "/" + model.Id);
+            var response = await WebsiteFactory.CreateStandardClient().PostAsync(_endpoint + "/" + model.Id, null);
             response.EnsureSuccessStatusCode();
             var redirect = await GetRedirectService().GetAsync(model.Id!.Value);
 

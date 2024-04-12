@@ -2,7 +2,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using UrlTracker.Core.Domain.Models;
 
 namespace UrlTracker.Core.Models
 {
@@ -85,20 +84,15 @@ namespace UrlTracker.Core.Models
         : ITargetStrategy
     {
         /// <inheritdoc />
-        public UrlTargetStrategy(Url url)
+        public UrlTargetStrategy(string url)
         {
             Url = url;
         }
-
-        /// <inheritdoc />
-        public UrlTargetStrategy(string url)
-            : this(Url.Parse(url))
-        { }
 
         /// <summary>
         /// The URL to redirect to
         /// </summary>
         [Required]
-        public Url Url { get; }
+        public string Url { get; }
     }
 }

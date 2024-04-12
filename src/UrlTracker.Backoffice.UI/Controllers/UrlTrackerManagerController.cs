@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.IO;
 using System.Threading.Tasks;
-using CsvHelper;
-using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Infrastructure.Scoping;
@@ -13,7 +9,6 @@ using Umbraco.Cms.Web.Common.Attributes;
 using UrlTracker.Backoffice.UI.Controllers.ActionFilters;
 using UrlTracker.Backoffice.UI.Controllers.Models;
 using UrlTracker.Core;
-using UrlTracker.Core.Models;
 
 namespace UrlTracker.Backoffice.UI.Controllers
 {
@@ -97,71 +92,6 @@ namespace UrlTracker.Backoffice.UI.Controllers
             clientError.Ignored = true;
             await _clientErrorService.UpdateAsync(clientError);
             return NoContent();
-        }
-
-        [HttpPost]
-        [ExcludeFromCodeCoverage]
-        public async Task<IActionResult> ImportRedirects()
-        {
-            /* ToDo: Controllers should not do validation. This should happen in model validation preferrably
-             *    We can't do that in this case though, because file uploads don't work in web api
-             *    Controllers should only deal with the outcome of validation. Is there a way to do that here as well?
-             */
-            if (HttpContext.Request.Form.Files.Count < 1)
-            {
-                ModelState.AddModelError("file", "No files were uploaded");
-                return BadRequest(ModelState);
-            }
-            var file = HttpContext.Request.Form.Files[0];
-            if (!file.FileName.EndsWith(".csv", StringComparison.InvariantCultureIgnoreCase))
-            {
-                ModelState.AddModelError("file", "Uploaded file does not have a valid extension");
-                return BadRequest(ModelState);
-            }
-
-            using StreamReader sr = new(file.OpenReadStream());
-            using CsvReader cr = new(sr, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
-
-            var records = cr.GetRecords<CsvRedirect>();
-            var redirects = _mapper.MapEnumerable<CsvRedirect, Redirect>(records);
-
-            using var scope = _scopeProvider.CreateScope();
-            foreach (var redirect in redirects)
-            {
-                await _redirectService.AddAsync(redirect);
-            }
-
-            scope.Complete();
-            return Ok(redirects.Count);
-        }
-
-        [HttpGet]
-        [ExcludeFromCodeCoverage]
-        public async Task<IActionResult> ExportRedirects()
-        {
-            var redirects = await _redirectService.GetAsync();
-            var csvRedirects = _mapper.MapEnumerable<Redirect, CsvRedirect>(redirects);
-            string? csvContent;
-
-            // File stream result will close and dispose the stream. The stream must be kept open here or else the file result will throw exceptions
-            MemoryStream ms = new();
-            using StreamWriter sw = new(ms, leaveOpen: true);
-            using CsvWriter cw = new(sw, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";", NewLine = Environment.NewLine });
-
-            cw.WriteHeader<CsvRedirect>();
-            await cw.NextRecordAsync().ConfigureAwait(false);
-            await cw.WriteRecordsAsync<CsvRedirect>(csvRedirects).ConfigureAwait(false);
-
-            await cw.FlushAsync().ConfigureAwait(false);
-            csvContent = sw.ToString();
-
-            ms.Position = 0;
-
-            string filename = $"urltracker-redirects-{DateTime.UtcNow:yyyy-MM-dd}.csv";
-
-            // set this header so that umbraco javascript understands how to name the file
-            Response.Headers.Add("x-filename", filename);
-            return base.File(ms, "text/csv", filename);
         }
 
         private static void ExtractOrderParameters(OrderBy sortType, out bool descending, out Core.Database.Models.OrderBy orderBy)
