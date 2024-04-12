@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
@@ -24,6 +20,8 @@ namespace UrlTracker.Backoffice.UI.Controllers
         }
 
         [HttpGet]
+        [Produces(typeof(ContentTargetResponse))]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult Content([FromQuery] GetContentTargetRequest request)
         {
             var model = _requestHandler.GetContentTarget(request);

@@ -20,9 +20,10 @@ namespace UrlTracker.Backoffice.UI.Controllers
     // FIXME: This controller is for so many things at once. Separate into redirect, clienterror and dashboard or something
     [PluginController("urltracker")]
     [PatchModel]
+    [Obsolete("This controller should no longer be used and should be phased out. Use a dedicated controller for dedicated features")]
     [SuppressMessage("Style", "VSTHRD200:Use \"Async\" suffix for async methods", Justification = "Controller endpoints are routed by convention, so names cannot be changed without consequences")]
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-    public class UrlTrackerManagerController
+    internal class UrlTrackerManagerController
         : UmbracoAuthorizedApiController
     {
         private readonly IRedirectService _redirectService;

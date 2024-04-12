@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace UrlTracker.Backoffice.UI.UserNotifications
 {
@@ -26,31 +22,15 @@ namespace UrlTracker.Backoffice.UI.UserNotifications
     /// <summary>
     /// A notification that can be shown to the user of the URL Tracker
     /// </summary>
-    public class UrlTrackerUserNotification
-    {
-        /// <summary>
-        /// Any short string that is unique to this notification.
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
-        /// A string that references a translation in a translation file. For example: "urltrackernotifications_newversiontitle"
-        /// </summary>
-        public string TranslatableTitleComponent { get; set; }
-
-        /// <summary>
-        /// The string arguments that need to be passed to the translator while building the translated string
-        /// </summary>
-        public ICollection<string> TitleArguments { get; set; }
-        
-        /// <summary>
-        /// A string that references a translation in a translation file. For example: "urltrackernotifications_newversionbody"
-        /// </summary>
-        public string TranslatableBodyComponent { get; set; }
-
-        /// <summary>
-        /// The string arguments that need to be passed to the translator while building the translated string
-        /// </summary>
-        public ICollection<string> BodyArguments { get; set; }
-    }
+    /// <param name="Id"> Any short string that is unique to this notification. </param>
+    /// <param name="TranslatableTitleComponent"> A string that references a translation in a translation file. For example: "urltrackernotifications_newversiontitle" </param>
+    /// <param name="TitleArguments"> The string arguments that need to be passed to the translator while building the translated string </param>
+    /// <param name="TranslatableBodyComponent"> A string that references a translation in a translation file. For example: "urltrackernotifications_newversionbody" </param>
+    /// <param name="BodyArguments"> The string arguments that need to be passed to the translator while building the translated string </param>
+    public record UrlTrackerUserNotification(
+        string Id,
+        string TranslatableTitleComponent,
+        ICollection<string> TitleArguments,
+        string TranslatableBodyComponent,
+        ICollection<string> BodyArguments);
 }

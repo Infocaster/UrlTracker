@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
@@ -24,6 +19,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         }
 
         [HttpGet]
+        [Produces(typeof(UrlTrackerUserNotificationOptions))]
         public IActionResult Get(string alias)
         {
             var model = _notificationOptions.Get(alias);

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 
 namespace UrlTracker.Backoffice.UI.UserNotifications
@@ -12,14 +8,12 @@ namespace UrlTracker.Backoffice.UI.UserNotifications
     {
         public void Configure(string name, UrlTrackerUserNotificationOptions options)
         {
-            options.Notifications.Add(new UrlTrackerUserNotification
-            {
-                Id = "0a224b9b-" + name,
-                TranslatableTitleComponent = $"urlTrackerNotifications_{name}welcometitle",
-                TitleArguments = Array.Empty<string>(),
-                TranslatableBodyComponent = $"urlTrackerNotifications_{name}welcomebody",
-                BodyArguments = Array.Empty<string>(),
-            });
+            options.Notifications.Add(new UrlTrackerUserNotification(
+                "0a224b9b-" + name,
+                $"urlTrackerNotifications_{name}welcometitle",
+                Array.Empty<string>(),
+                $"urlTrackerNotifications_{name}welcomebody",
+                Array.Empty<string>()));
         }
 
         // Nothing to configure for unnamed options

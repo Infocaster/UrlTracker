@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
@@ -25,6 +27,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         }
 
         [HttpGet]
+        [Produces(typeof(RedirectCollectionResponse))]
         public async Task<IActionResult> List([FromQuery] ListRedirectRequest request)
         {
             var model = await _redirectRequestHandler.GetAsync(request);
@@ -38,6 +41,8 @@ namespace UrlTracker.Backoffice.UI.Controllers
         /// <param name="id">The unique identifier of the requested redirect</param>
         /// <returns>A 200 OK result with a redirect or 404 NOT FOUND if no redirect with given id exists</returns>
         [HttpGet("{id}")]
+        [Produces(typeof(RedirectResponse))]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult Get([FromRoute] int id)
         {
             var model = _redirectRequestHandler.GetById(id);
@@ -53,6 +58,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         /// <returns>201 CREATED with the new redirect as body if the creation was successful or 400 BAD REQUEST if the request was invalid</returns>
         /// <exception cref="NotImplementedException"></exception>
         [HttpPost]
+        [Produces(typeof(RedirectResponse))]
         public IActionResult Create([FromBody] RedirectRequest request)
         {
             var model = _redirectRequestHandler.Create(request);
@@ -66,8 +72,10 @@ namespace UrlTracker.Backoffice.UI.Controllers
         /// <param name="id">The unique identifier of the requested redirect</param>
         /// <param name="request">The new properties of the redirect</param>
         /// <returns>200 OK with the new redirect as body if the update was successful, 404 NOT FOUND if no redirect with given id exists or 400 BAD REQUEST if the request was invalid</returns>
-        [HttpPut]
+        [HttpPost]
         [Route("{id}")]
+        [Produces(typeof(RedirectResponse))]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult Update([FromRoute] int id, [FromBody] RedirectRequest request)
         {
             var model = _redirectRequestHandler.Update(id, request);
@@ -76,7 +84,9 @@ namespace UrlTracker.Backoffice.UI.Controllers
             return Ok(model);
         }
 
-        [HttpPut]
+        [HttpPost]
+        [Produces(typeof(IEnumerable<RedirectResponse>))]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult UpdateBulk([FromBody] RedirectBulkRequest[] request)
         {
             var model = _redirectRequestHandler.UpdateBulk(request);
@@ -91,8 +101,10 @@ namespace UrlTracker.Backoffice.UI.Controllers
         /// <param name="id">The unique identifier of the requested redirect</param>
         /// <returns>204 NO CONTENT if the redirect was deleted successfully or 404 NOT FOUND if no redirect with given id exists</returns>
         /// <exception cref="NotImplementedException"></exception>
-        [HttpDelete]
+        [HttpPost]
         [Route("{id}")]
+        [Produces(typeof(RedirectResponse))]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult Delete([FromRoute] int id)
         {
             var model = _redirectRequestHandler.Delete(id);
@@ -101,8 +113,10 @@ namespace UrlTracker.Backoffice.UI.Controllers
             return Ok(model);
         }
 
-        [HttpDelete]
-        public IActionResult DeleteBulkAsync([FromBody] int[] ids)
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+        public IActionResult DeleteBulk([FromBody] int[] ids)
         {
             var existingRecords = _redirectRequestHandler.Get(ids);
             if (ids.Any(x => !existingRecords.Select(x => x.Id).Contains(x)))

@@ -25,8 +25,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [Produces( typeof(RecommendationCollectionResponse))]
+        [Produces(typeof(RecommendationCollectionResponse))]
         public IActionResult List([FromQuery] ListRecommendationRequest request)
         {
             var result = _requestHandler.Get(request);
@@ -34,10 +33,8 @@ namespace UrlTracker.Backoffice.UI.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
         [Produces(typeof(RecommendationResponse))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesErrorResponseType(typeof(NotFoundResult))]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult Update([FromBody] UpdateRequest request)
         {
             var result = _requestHandler.Update(request);
@@ -46,10 +43,8 @@ namespace UrlTracker.Backoffice.UI.Controllers
         }
 
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
         [Produces(typeof(RecommendationResponse))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesErrorResponseType(typeof(NotFoundResult))]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult UpdateBulk(IEnumerable<UpdateRequest> request)
         {
             var result = _requestHandler.Update(request);
@@ -58,6 +53,8 @@ namespace UrlTracker.Backoffice.UI.Controllers
         }
 
         [HttpPost]
+        [Produces(typeof(RecommendationResponse))]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult Delete([FromBody] DeleteRequest request)
         {
             var result = _requestHandler.Delete(request);
