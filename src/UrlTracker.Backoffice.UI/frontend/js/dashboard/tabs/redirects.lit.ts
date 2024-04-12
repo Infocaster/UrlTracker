@@ -23,6 +23,7 @@ import { UrlTrackerPagination } from "../../util/elements/inputs/pagination.lit"
 import { Ref, createRef, ref } from "lit/directives/ref.js";
 import { repeat } from "lit/directives/repeat.js";
 import { PropertyValueMap } from "lit";
+import { ifDefined } from "lit/directives/if-defined.js";
 
 @customElement("urltracker-redirect-tab")
 export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
@@ -95,7 +96,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
         <urltracker-pagination
           ${ref(this.paginationRef)}
           class="pagination"
-          total="${this._redirectCollection?.total}"
+          total="${ifDefined(this._redirectCollection?.total)}"
           @change=${this.onFilterChange}
         ></urltracker-pagination>
       </div>

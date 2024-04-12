@@ -24,7 +24,6 @@ import {
   editorServiceContext,
 } from "@/context/editorservice.context";
 import { ensureServiceExists } from "@/util/tools/existancecheck";
-import { ContentUpdateEvent } from "../redirects/target/implementations/contenttarget.lit";
 
 const RecommendationListItem =
   UrlTrackerSelectableResultListItem<IRecommendationResponse>(

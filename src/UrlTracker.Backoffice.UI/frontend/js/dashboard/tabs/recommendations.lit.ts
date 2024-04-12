@@ -22,7 +22,7 @@ import { recommendationServiceContext } from "../../context/recommendationservic
 import { repeat } from "lit/directives/repeat.js";
 import "./recommendations/recommendationSearch.lit";
 import { RECOMMENDATION_SORT_TYPE } from "../../enums/sortType";
-import { DropdownChangeEvent } from "../../util/elements/inputs/dropdown.lit";
+import { DropdownChangeEvent, IDropdownValue } from "../../util/elements/inputs/dropdown.lit";
 
 @customElement("urltracker-recommendations-tab")
 export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
@@ -41,24 +41,28 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   @state()
   private _loading: number = 0;
 
-  //   private paginationRef: Ref<UrlTrackerPagination> = createRef();
+  private paginationRef: Ref<UrlTrackerPagination> = createRef();
 
-  private _sortOptions = [
+  private _sortOptions: IDropdownValue[] = [
     {
       display: "Last occurrance descending",
       value: RECOMMENDATION_SORT_TYPE.LAST_OCCURRENCE,
+      key: RECOMMENDATION_SORT_TYPE.LAST_OCCURRENCE.toString()
     },
     {
       display: "Importance",
       value: RECOMMENDATION_SORT_TYPE.IMPORTANCE,
+      key: RECOMMENDATION_SORT_TYPE.IMPORTANCE.toString()
     },
     {
       display: "Url",
       value: RECOMMENDATION_SORT_TYPE.URL,
+      key: RECOMMENDATION_SORT_TYPE.URL.toString()
     },
     {
       display: "Amount of occurrences",
       value: RECOMMENDATION_SORT_TYPE.OCCURRENCES,
+      key: RECOMMENDATION_SORT_TYPE.OCCURRENCES.toString()
     },
   ];
 
@@ -143,12 +147,12 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
         >
           ${this.renderRecommendations()}
         </urltracker-result-list>
-        <!-- <urltracker-pagination
+        <urltracker-pagination
           {ref(this.paginationRef)}
           class="pagination"
           total="100"
           @change=${this.onFilterChange}
-        ></urltracker-pagination> -->
+        ></urltracker-pagination>
       </div>
     `;
   }
