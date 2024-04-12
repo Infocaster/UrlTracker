@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Backoffice.UI.Controllers.Models.Recommendations.Analysis;
 using UrlTracker.Core;
-using UrlTracker.Core.Database;
 using UrlTracker.Core.Models;
 
 namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers

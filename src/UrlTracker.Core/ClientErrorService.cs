@@ -108,11 +108,15 @@ namespace UrlTracker.Core
         }
 
         [ExcludeFromCodeCoverage]
-        public Task<ClientError?> GetAsync(int id)
+        public async Task<ClientError?> GetAsync(int id)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
             var result = _clientErrorRepository.Get(id);
-            return Task.FromResult(_mapper.Map<ClientError>(result));
+            if (result is null) return null;
+
+            var metaData = await _clientErrorRepository.GetMetaDataAsync(result.Id);
+
+            return new ClientError(result, metaData.FirstOrDefault(md => md.ClientError == result.Id));
         }
 
         [ExcludeFromCodeCoverage]
@@ -128,12 +132,17 @@ namespace UrlTracker.Core
         }
 
         [ExcludeFromCodeCoverage]
-        public Task<ClientError?> GetAsync(string url)
+        public async Task<ClientError?> GetAsync(string url)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
-            var entity = _clientErrorRepository.Get(scope.SqlContext.Query<IClientError>().Where(e => e.Url == url));
+            var entity = _clientErrorRepository
+                .Get(scope.SqlContext.Query<IClientError>().Where(e => e.Url == url))
+                .FirstOrDefault();
 
-            return Task.FromResult<ClientError?>(_mapper.Map<ClientError>(entity.FirstOrDefault()));
+            if (entity is null) return null;
+
+            var metaData = await _clientErrorRepository.GetMetaDataAsync(entity.Id);
+            return new ClientError(entity, metaData.FirstOrDefault(md => md.ClientError == entity.Id));
         }
 
 
@@ -177,7 +186,7 @@ namespace UrlTracker.Core
 
         public async Task<IEnumerable<ReferrerResponse>> GetClientErrorReferrersAsync(int id)
         {
-            using var scope = _scopeProvider.CreateScope(autoComplete:true);
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
 
             var referrers = await _clientErrorRepository.GetReferrersByClientIdAsync(id);
             return referrers;
