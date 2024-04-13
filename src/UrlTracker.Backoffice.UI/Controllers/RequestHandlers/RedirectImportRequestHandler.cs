@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -9,6 +11,7 @@ using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Backoffice.UI.Controllers.Models;
 using UrlTracker.Backoffice.UI.Controllers.Models.RedirectImport;
 using UrlTracker.Core;
+using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Models;
 
 namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
@@ -16,6 +19,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
     internal interface IRedirectImportRequestHandler
     {
         Task<Stream> ExportAsLegacyCSVAsync();
+        Task<Stream> ExportExampleLegacyCSVAsync();
         Task<int> ImportCSVAsync(ImportRedirectRequest request);
     }
 
@@ -24,15 +28,18 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         private readonly IScopeProvider _scopeProvider;
         private readonly IRedirectService _redirectService;
         private readonly IUmbracoMapper _mapper;
+        private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactoryAbstraction;
 
         public RedirectImportRequestHandler(
             IScopeProvider scopeProvider,
             IRedirectService redirectService,
-            IUmbracoMapper mapper)
+            IUmbracoMapper mapper,
+            IUmbracoContextFactoryAbstraction umbracoContextFactoryAbstraction)
         {
             _scopeProvider = scopeProvider;
             _redirectService = redirectService;
             _mapper = mapper;
+            _umbracoContextFactoryAbstraction = umbracoContextFactoryAbstraction;
         }
 
         public async Task<int> ImportCSVAsync(ImportRedirectRequest request)
@@ -74,6 +81,48 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         public async Task<Stream> ExportAsLegacyCSVAsync()
         {
             var redirects = await _redirectService.GetAsync();
+            return await ExportRedirectsAsLegacyCSVAsync(redirects);
+        }
+
+        public Task<Stream> ExportExampleLegacyCSVAsync()
+        {
+            using var cref = _umbracoContextFactoryAbstraction.EnsureUmbracoContext();
+
+            var exampleContent = cref.GetContentAtRoot().FirstOrDefault();
+            var cultureKvp = exampleContent?.Cultures.FirstOrDefault();
+            var culture = cultureKvp.HasValue ? cultureKvp.Value.Key : null;
+
+            // We are hardcoding redirects here, because they serve as examples.
+            //    They show how a correctly formatted redirect might look.
+            return ExportRedirectsAsLegacyCSVAsync(new[]
+            {
+                new Redirect
+                {
+                    Force = true,
+                    Id = 1,
+                    Inserted = DateTime.UtcNow.Date,
+                    Key = Guid.NewGuid(),
+                    Permanent = true,
+                    RetainQuery = true,
+                    Source = new UrlSourceStrategy("https://example.com/lorem/ipsum"),
+                    Target = new ContentPageTargetStrategy(exampleContent, culture),
+                },
+                new Redirect
+                {
+                    Force = false,
+                    Id = 2,
+                    Inserted = DateTime.UtcNow.Date,
+                    Key = Guid.NewGuid(),
+                    Permanent = false,
+                    RetainQuery = false,
+                    Source = new RegexSourceStrategy("^[0-9]+$"),
+                    Target = new UrlTargetStrategy("https://example.com/lorem/ipsum")
+                }
+            });
+        }
+
+        private async Task<Stream> ExportRedirectsAsLegacyCSVAsync(IEnumerable<Redirect> redirects)
+        {
             var csvRedirects = _mapper.MapEnumerable<Redirect, CsvRedirect>(redirects);
             string? csvContent;
 

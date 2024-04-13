@@ -52,5 +52,19 @@ namespace UrlTracker.Backoffice.UI.Controllers
             Response.Headers.Add("x-filename", filename);
             return File(fileStream, "text/csv", filename);
         }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ExportExampleAsync()
+        {
+            // NOTE: stream does not need to be disposed, because the file result will dispose of it automatically
+            var fileStream = await _requestHandler.ExportExampleLegacyCSVAsync();
+
+            string filename = "example-redirect-import.csv";
+
+            // set this header so that umbraco javascript understands how to name the file
+            Response.Headers.Add("x-filename", filename);
+            return File(fileStream, "text/csv", filename);
+        }
     }
 }
