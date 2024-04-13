@@ -1,5 +1,4 @@
-﻿using System;
-using Umbraco.Cms.Core.Models.Entities;
+﻿using Umbraco.Cms.Core.Models.Entities;
 
 namespace UrlTracker.Core.Database.Entities
 {
@@ -16,7 +15,6 @@ namespace UrlTracker.Core.Database.Entities
     internal class RecommendationEntity
         : EntityBase, IRecommendation
     {
-        private decimal _redactionScore;
         private IRedactionScore _strategy;
         private bool _ignore;
         private int _variableScore;

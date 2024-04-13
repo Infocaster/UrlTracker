@@ -7,7 +7,6 @@ using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Scoping;
-using UrlTracker.Backoffice.UI.Compatibility;
 using UrlTracker.Core;
 using UrlTracker.Core.Caching.Memory;
 using UrlTracker.Core.Caching.Memory.Options;
@@ -74,8 +73,6 @@ namespace UrlTracker.Resources.Testing
         protected IClientErrorService ClientErrorService => ClientErrorServiceMock.Object;
         protected Mock<IClientErrorProcessorQueue> ClientErrorProcessorQueueMock { get; set; } = null!;
         protected IClientErrorProcessorQueue ClientErrorProcessorQueue => ClientErrorProcessorQueueMock.Object;
-        protected Mock<IRequestModelPatcher> RequestModelPatcherMock { get; set; } = null!;
-        protected IRequestModelPatcher RequestModelPatcher => RequestModelPatcherMock.Object;
         protected Mock<IInterceptService> InterceptServiceMock { get; set; } = null!;
         protected IInterceptService InterceptService => InterceptServiceMock.Object;
         protected Mock<IResponseInterceptHandlerCollection> ResponseInterceptHandlerCollectionMock { get; set; } = null!;
@@ -159,7 +156,6 @@ namespace UrlTracker.Resources.Testing
             ClientErrorServiceMock = new Mock<IClientErrorService>();
             ClientErrorProcessorQueueMock = new Mock<IClientErrorProcessorQueue>();
             ScopeProviderMock = new ScopeProviderMock();
-            RequestModelPatcherMock = new Mock<IRequestModelPatcher>();
             InterceptServiceMock = new Mock<IInterceptService>();
             ResponseInterceptHandlerCollectionMock = new Mock<IResponseInterceptHandlerCollection>();
             ResponseInterceptHandlerMock = new Mock<ISpecificResponseInterceptHandler>();

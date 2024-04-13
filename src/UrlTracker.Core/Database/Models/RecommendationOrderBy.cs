@@ -18,14 +18,11 @@ public static class EnumExtensions
 {
     public static string GetDatabaseFieldName(this RecommendationOrderBy orderBy)
     {
-        switch (orderBy)
+        return orderBy switch
         {
-            case RecommendationOrderBy.LastOccurrence:
-                return "[updateDate]";
-            case RecommendationOrderBy.Url:
-                return "[url]";
-            default:
-                return "orderscore";
-        }
+            RecommendationOrderBy.LastOccurrence => "[updateDate]",
+            RecommendationOrderBy.Url => "[url]",
+            _ => "orderscore",
+        };
     }
 }

@@ -85,9 +85,9 @@ namespace UrlTracker.Core.Database.Entities
         }
 
         /// <inheritdoc />
-        public bool Equals(EntityStrategy other)
+        public bool Equals(EntityStrategy? other)
         {
-            return Strategy == other.Strategy && Value == other.Value;
+            return other is not null && Strategy == other.Strategy && Value == other.Value;
         }
 
         /// <inheritdoc />

@@ -99,7 +99,7 @@ namespace UrlTracker.Backoffice.Notifications
                         var root = content.Root()!;
                         foreach (var item in content.Descendants(_variationContextAccessor, valueReader.GetCulture()).Prepend(content))
                         {
-                            redirects.Add(CreateRedirect(root, item, valueReader.GetCulture(), "Url has changed"));
+                            redirects.Add(CreateRedirect(item, valueReader.GetCulture()));
                         }
                     }
                 }
@@ -169,7 +169,7 @@ namespace UrlTracker.Backoffice.Notifications
                             //    but it's acceptable, since only the id of the published content item will be saved.
                             //    I think it would still be better to use the new IPublishedContent, in case we might
                             //    do more with it in the future.
-                            redirects.Add(CreateRedirect(newRoot, item, c, "This page or an ancestor was moved"));
+                            redirects.Add(CreateRedirect(item, c));
                         }
                     }
                 }
@@ -205,7 +205,7 @@ namespace UrlTracker.Backoffice.Notifications
             }
         }
 
-        private Redirect CreateRedirect(IPublishedContent root, IPublishedContent item, string? culture, string? notes)
+        private Redirect CreateRedirect(IPublishedContent item, string? culture)
         {
             return new Redirect
             {
@@ -256,7 +256,7 @@ namespace UrlTracker.Backoffice.Notifications
             return configurationValue.Enable && notifcationsOptionsValue.Enable;
         }
 
-        private IEnumerable<IPublishedContent> DescendantsAndSelfForAllCultures(IPublishedContent content)
+        private static IEnumerable<IPublishedContent> DescendantsAndSelfForAllCultures(IPublishedContent content)
         {
             return content.AsEnumerableOfOne().Concat(content.ChildrenForAllCultures?.SelectMany(child => DescendantsAndSelfForAllCultures(child)) ?? Enumerable.Empty<IPublishedContent>());
         }

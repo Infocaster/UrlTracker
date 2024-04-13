@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Extensions;
-using UrlTracker.Backoffice.UI.Compatibility;
 using UrlTracker.Backoffice.UI.Controllers;
 using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
 using UrlTracker.Backoffice.UI.Map;
@@ -43,7 +42,6 @@ namespace UrlTracker.Backoffice.UI
 
             builder.AddNotificationHandler<ServerVariablesParsingNotification, ServerVariablesNotificationHandler>();
 
-            builder.Services.AddSingleton<IRequestModelPatcher, RequestModelPatcher>();
             builder.Services.AddSingleton<IUrltrackerVersionProvider, UrltrackerVersionProvider>();
             builder.Services.AddScoped<IRedirectRequestHandler, RedirectRequestHandler>();
             builder.Services.AddScoped<IRedirectTargetRequestHandler, RedirectTargetRequestHandler>();

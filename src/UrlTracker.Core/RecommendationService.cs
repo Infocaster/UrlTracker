@@ -74,9 +74,8 @@ namespace UrlTracker.Core
 
         public IRecommendation Create(string url, Guid scoreKey)
         {
-            var score = _redactionScoreService.Get(scoreKey);
-
-            if (score is null) throw new ArgumentException("No redaction score exists for given key", nameof(scoreKey));
+            var score = _redactionScoreService.Get(scoreKey)
+                ?? throw new ArgumentException("No redaction score exists for given key", nameof(scoreKey));
 
             return Create(url, score);
         }
@@ -97,8 +96,8 @@ namespace UrlTracker.Core
 
         public IRecommendation? Get(string url, Guid scoreKey)
         {
-            var score = _redactionScoreService.Get(scoreKey);
-            if (score is null) throw new ArgumentException("No redaction score exists for given key", nameof(scoreKey));
+            var score = _redactionScoreService.Get(scoreKey)
+                ?? throw new ArgumentException("No redaction score exists for given key", nameof(scoreKey));
 
             return Get(url, score);
         }
