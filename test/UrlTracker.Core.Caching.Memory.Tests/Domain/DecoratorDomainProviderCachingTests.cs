@@ -3,23 +3,27 @@ using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Cache;
 using UrlTracker.Core.Caching.Memory.Domain;
+using UrlTracker.Core.Domain;
 using UrlTracker.Core.Domain.Models;
-using UrlTracker.Resources.Testing;
 
 namespace UrlTracker.Core.Caching.Memory.Tests.Domain
 {
-    public class DecoratorDomainProviderCachingTests : TestBase
+    public class DecoratorDomainProviderCachingTests
     {
         private ObjectCacheAppCache? _runtimeCache;
         private DecoratorDomainProviderCaching? _testSubject;
+        private Mock<IDomainProvider>? _domainProviderMock;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
+            _domainProviderMock = new Mock<IDomainProvider>();
             _runtimeCache = new ObjectCacheAppCache();
-            _testSubject = new DecoratorDomainProviderCaching(DomainProvider, _runtimeCache);
+            _testSubject = new DecoratorDomainProviderCaching(_domainProviderMock.Object, _runtimeCache);
         }
 
-        public override void TearDown()
+        [TearDown]
+        public void TearDown()
         {
             _runtimeCache?.Dispose();
         }
@@ -29,7 +33,7 @@ namespace UrlTracker.Core.Caching.Memory.Tests.Domain
         {
             // arrange
             var output = DomainCollection.Create(Enumerable.Empty<Core.Domain.Models.Domain>());
-            DomainProviderMock!.Setup(obj => obj.GetDomains())
+            _domainProviderMock!.Setup(obj => obj.GetDomains())
                 .Returns(output);
 
             // act
@@ -37,7 +41,7 @@ namespace UrlTracker.Core.Caching.Memory.Tests.Domain
             var result2 = _testSubject.GetDomains();
 
             // assert
-            DomainProviderMock.Verify(obj => obj.GetDomains(), Times.Once);
+            _domainProviderMock.Verify(obj => obj.GetDomains(), Times.Once);
             Assert.That(result1, Is.SameAs(result2));
         }
     }

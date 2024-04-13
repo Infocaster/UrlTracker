@@ -4,21 +4,24 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Map;
 using UrlTracker.Core.Models;
-using UrlTracker.Resources.Testing;
+using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Resources.Testing.Objects;
 
 namespace UrlTracker.Core.Tests.Map
 {
-    public class ContentPageTargetStrategyMapTests : TestBase
+    public class ContentPageTargetStrategyMapTests
     {
-        private static IPublishedContent _testContent = TestPublishedContent.Create(1234);
+        private static readonly IPublishedContent _testContent = TestPublishedContent.Create(1234);
         private ContentPageTargetStrategyMap _testSubject = null!;
+        private UmbracoContextFactoryAbstractionMock _umbracoContextFactoryAbstractionMock;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            UmbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetContentById(1234)).Returns(_testContent);
+            _umbracoContextFactoryAbstractionMock = new UmbracoContextFactoryAbstractionMock();
+            _umbracoContextFactoryAbstractionMock.CrefMock.Setup(obj => obj.GetContentById(1234)).Returns(_testContent);
 
-            _testSubject = new ContentPageTargetStrategyMap(UmbracoContextFactoryAbstractionMock.UmbracoContextFactory);
+            _testSubject = new ContentPageTargetStrategyMap(_umbracoContextFactoryAbstractionMock.UmbracoContextFactory);
         }
 
         public static IEnumerable<TestCaseData> ConvertToSimpleTestCaseSource()

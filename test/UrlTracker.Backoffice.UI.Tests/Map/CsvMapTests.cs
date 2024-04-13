@@ -1,27 +1,34 @@
 ﻿using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Scoping;
 using UrlTracker.Backoffice.UI.Controllers.Models;
 using UrlTracker.Backoffice.UI.Map;
 using UrlTracker.Core.Models;
-using UrlTracker.Resources.Testing;
+using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Resources.Testing.Objects;
 
 namespace UrlTracker.Backoffice.UI.Tests.Map
 {
-    public class CsvMapTests : TestBase
+    public class CsvMapTests
     {
-        protected override ICollection<IMapDefinition> CreateMappers()
+        private IUmbracoMapper _mapper;
+        private UmbracoContextFactoryAbstractionMock _umbracoContextFactoryAbstractionMock;
+
+        private ICollection<IMapDefinition> CreateMappers()
         {
             return new IMapDefinition[]
             {
-                new CsvMap(UmbracoContextFactoryAbstractionMock!.UmbracoContextFactory)
+                new CsvMap(_umbracoContextFactoryAbstractionMock!.UmbracoContextFactory)
             };
         }
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            UmbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => TestPublishedContent.Create(id));
+            _umbracoContextFactoryAbstractionMock = new UmbracoContextFactoryAbstractionMock();
+            _umbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => TestPublishedContent.Create(id));
+            _mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<ICoreScopeProvider>());
         }
 
         [TestCase(TestName = "Map Redirect to CsvRedirect with content")]
@@ -37,7 +44,7 @@ namespace UrlTracker.Backoffice.UI.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<CsvRedirect>(input)!;
+            var result = _mapper!.Map<CsvRedirect>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -55,7 +62,7 @@ namespace UrlTracker.Backoffice.UI.Tests.Map
             var input = new Redirect();
 
             // act
-            var result = Mapper!.Map<CsvRedirect>(input)!;
+            var result = _mapper!.Map<CsvRedirect>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -85,7 +92,7 @@ namespace UrlTracker.Backoffice.UI.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<Redirect>(input)!;
+            var result = _mapper!.Map<Redirect>(input)!;
 
             // assert
             Assert.Multiple(() =>

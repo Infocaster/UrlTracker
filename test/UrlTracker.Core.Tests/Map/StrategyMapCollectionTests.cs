@@ -3,16 +3,16 @@ using NUnit.Framework;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Map;
 using UrlTracker.Core.Models;
-using UrlTracker.Resources.Testing;
 
 namespace UrlTracker.Core.Tests.Map
 {
-    public class StrategyMapCollectionTests : TestBase
+    public class StrategyMapCollectionTests
     {
         private Mock<IStrategyMap<ISourceStrategy>> _strategyMapMock = null!;
         private StrategyMapCollection _testSubject = null!;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
             _strategyMapMock = new Mock<IStrategyMap<ISourceStrategy>>();
             _testSubject = new StrategyMapCollection(() => new[] { _strategyMapMock.Object });

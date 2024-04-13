@@ -1,19 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Moq;
 using NUnit.Framework;
+using UrlTracker.Core.Domain;
 using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Core.Intercepting.Preprocessing;
-using UrlTracker.Resources.Testing;
 
 namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
 {
-    public class DomainUrlPreprocessorTests : TestBase
+    public class DomainUrlPreprocessorTests
     {
+        private Mock<IDomainProvider> _domainProviderMock;
         private DomainUrlPreprocessor? _testSubject;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            _testSubject = new DomainUrlPreprocessor(DomainProvider);
+            _domainProviderMock = new Mock<IDomainProvider>();
+            _testSubject = new DomainUrlPreprocessor(_domainProviderMock.Object);
         }
 
         public static IEnumerable<TestCaseData> NormalFlowTestCases()
@@ -23,7 +28,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
             (
                 DomainCollection.Create(new List<Core.Domain.Models.Domain>
                 {
-                    new Core.Domain.Models.Domain(0, 1, "example domain", "en-us", Url.Parse("example.com"))
+                    new(0, 1, "example domain", "en-us", Url.Parse("example.com"))
                 }),
                 "en-us",
                 (int?)1,
@@ -33,7 +38,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
             (
                 DomainCollection.Create(new List<Core.Domain.Models.Domain>
                 {
-                    new Core.Domain.Models.Domain(1, 2, "www example domain", "en-us", Url.Parse("www.example.com"))
+                    new(1, 2, "www example domain", "en-us", Url.Parse("www.example.com"))
                 }),
                 null,
                 null,
@@ -43,7 +48,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
             (
                 DomainCollection.Create(new List<Core.Domain.Models.Domain>
                 {
-                    new Core.Domain.Models.Domain(1, 2, "example domain", "en-us", Url.Parse("https://example.com"))
+                    new(1, 2, "example domain", "en-us", Url.Parse("https://example.com"))
                 }),
                 null,
                 null,
@@ -53,7 +58,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
             (
                 DomainCollection.Create(new List<Core.Domain.Models.Domain>
                 {
-                    new Core.Domain.Models.Domain(1, 2, "example domain", "en-us", Url.Parse("/lorem"))
+                    new(1, 2, "example domain", "en-us", Url.Parse("/lorem"))
                 }),
                 "en-us",
                 (int?)2,
@@ -63,7 +68,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
             (
                 DomainCollection.Create(new List<Core.Domain.Models.Domain>
                 {
-                    new Core.Domain.Models.Domain(1, 2, "example domain", "en-us", Url.Parse("/lorem"))
+                    new(1, 2, "example domain", "en-us", Url.Parse("/lorem"))
                 }),
                 "en-us",
                 (int?)2,
@@ -73,7 +78,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
             (
                 DomainCollection.Create(new List<Core.Domain.Models.Domain>
                 {
-                    new Core.Domain.Models.Domain(1, 2, "example domain", "en-us", Url.Parse("example.com/lorem"))
+                    new(1, 2, "example domain", "en-us", Url.Parse("example.com/lorem"))
                 }),
                 null,
                 null,
@@ -83,7 +88,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
             (
                 DomainCollection.Create(new List<Core.Domain.Models.Domain>
                 {
-                    new Core.Domain.Models.Domain(1, 2, "example domain", "en-us", Url.Parse("example.com:443/lorem"))
+                    new(1, 2, "example domain", "en-us", Url.Parse("example.com:443/lorem"))
                 }),
                 null,
                 null,
@@ -93,7 +98,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
             (
                 DomainCollection.Create(new List<Core.Domain.Models.Domain>
                 {
-                    new Core.Domain.Models.Domain(1, 2, "example domain", "en-us", Url.Parse("example.com:443/lorem"))
+                    new(1, 2, "example domain", "en-us", Url.Parse("example.com:443/lorem"))
                 }),
                 "en-us",
                 (int?)2,
@@ -106,10 +111,10 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
         {
             // arrange
             var input = Url.Parse(inputUrl);
-            DomainProviderMock!.Setup(obj => obj.GetDomains()).Returns(domains).Verifiable();
+            _domainProviderMock!.Setup(obj => obj.GetDomains()).Returns(domains).Verifiable();
 
             // act
-            var result = await _testSubject!.PreprocessUrlAsync(input, DefaultInterceptContext!);
+            var result = await _testSubject!.PreprocessUrlAsync(input, new DefaultInterceptContext());
 
             // assert
             Assert.That(result.GetCulture(), Is.EqualTo(culture));

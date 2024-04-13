@@ -4,29 +4,38 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Scoping;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Map;
 using UrlTracker.Core.Models;
-using UrlTracker.Resources.Testing;
+using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Resources.Testing.Objects;
 
 namespace UrlTracker.Core.Tests.Map
 {
-    public class ServiceLayerMapsTests : TestBase
+    public class ServiceLayerMapsTests
     {
-        protected override ICollection<IMapDefinition> CreateMappers()
+        private UmbracoMapper _mapper;
+        private Mock<IStrategyMapCollection> _strategyMapCollectionMock;
+        private UmbracoContextFactoryAbstractionMock _umbracoContextFactoryAbstractionMock;
+
+        private ICollection<IMapDefinition> CreateMappers()
         {
             return new[]
             {
-                new ServiceLayerMaps(StrategyMapCollection)
+                new ServiceLayerMaps(_strategyMapCollectionMock.Object)
             };
         }
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            StrategyMapCollectionMock.Setup(obj => obj.Map<ISourceStrategy>(It.IsAny<EntityStrategy>())).Returns((EntityStrategy es) => new UrlSourceStrategy(es.Value));
-            StrategyMapCollectionMock.Setup(obj => obj.Map<ITargetStrategy>(It.IsAny<EntityStrategy>())).Returns(new ContentPageTargetStrategy(TestPublishedContent.Create(1234), "en-US"));
-            UmbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => TestPublishedContent.Create(id));
+            _strategyMapCollectionMock = new Mock<IStrategyMapCollection>();
+            _strategyMapCollectionMock.Setup(obj => obj.Map<ISourceStrategy>(It.IsAny<EntityStrategy>())).Returns((EntityStrategy es) => new UrlSourceStrategy(es.Value));
+            _strategyMapCollectionMock.Setup(obj => obj.Map<ITargetStrategy>(It.IsAny<EntityStrategy>())).Returns(new ContentPageTargetStrategy(TestPublishedContent.Create(1234), "en-US"));
+            _umbracoContextFactoryAbstractionMock = new UmbracoContextFactoryAbstractionMock();
+            _umbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => TestPublishedContent.Create(id));
+            _mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<ICoreScopeProvider>());
         }
 
         [TestCase(TestName = "Map IRedirect to Redirect")]
@@ -43,7 +52,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<Redirect>(input)!;
+            var result = _mapper!.Map<Redirect>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -63,7 +72,7 @@ namespace UrlTracker.Core.Tests.Map
             var input = Database.Entities.RedirectEntityCollection.Create(new[] { new RedirectEntity(default, default, default, EntityStrategy.UrlSource("https://example.com"), EntityStrategy.UrlTarget("https://example.com")) }, 3);
 
             // act
-            var result = Mapper!.Map<Core.Models.RedirectCollection>(input)!;
+            var result = _mapper!.Map<Core.Models.RedirectCollection>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -88,7 +97,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<IRedirect>(input)!;
+            var result = _mapper!.Map<IRedirect>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -113,7 +122,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<IClientError>(input)!;
+            var result = _mapper!.Map<IClientError>(input)!;
 
             // assert
             Assert.Multiple(() =>
@@ -137,7 +146,7 @@ namespace UrlTracker.Core.Tests.Map
             };
 
             // act
-            var result = Mapper!.Map<ClientError>(input)!;
+            var result = _mapper!.Map<ClientError>(input)!;
 
             // assert
             Assert.Multiple(() =>

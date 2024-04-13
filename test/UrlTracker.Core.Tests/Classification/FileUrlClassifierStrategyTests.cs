@@ -1,26 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using UrlTracker.Core.Classification;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Domain.Models;
-using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Logging;
 
 namespace UrlTracker.Core.Tests.Classification
 {
-    public class FileUrlClassifierStrategyTests : TestBase
+    public class FileUrlClassifierStrategyTests
     {
         private FileUrlClassifierStrategy _testSubject = null!;
+        private Mock<IRedactionScoreService> _redactionScoreServiceMock;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            RedactionScoreServiceMock.Setup(obj => obj.Get(It.Is<Guid>(k => k == Defaults.DatabaseSchema.RedactionScores.File))).Returns(new RedactionScoreEntity());
-            _testSubject = new FileUrlClassifierStrategy(RedactionScoreService, new VoidLogger<FileUrlClassifierStrategy>());
+            _redactionScoreServiceMock = new Mock<IRedactionScoreService>();
+            _redactionScoreServiceMock.Setup(obj => obj.Get(It.Is<Guid>(k => k == Defaults.DatabaseSchema.RedactionScores.File))).Returns(new RedactionScoreEntity());
+            _testSubject = new FileUrlClassifierStrategy(_redactionScoreServiceMock.Object, new VoidLogger<FileUrlClassifierStrategy>());
         }
 
         [TestCase("http://example.com/file.pdf", false, TestName = "When the url is a file, this method returns a file classifier")]

@@ -5,17 +5,21 @@ using NUnit.Framework;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Core.Intercepting.Preprocessing;
-using UrlTracker.Resources.Testing;
 
 namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
 {
-    public class InterceptPreprocessorCollectionTests : TestBase
+    public class InterceptPreprocessorCollectionTests
     {
+        private Mock<IInterceptPreprocessor> _interceptPreprocessorMock;
+        private Mock<IDefaultInterceptContextFactory> _defaultInterceptContextFactoryMock;
         private InterceptPreprocessorCollection? _testSubject;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            _testSubject = new InterceptPreprocessorCollection(() => new List<IInterceptPreprocessor> { InterceptPreprocessor }, DefaultInterceptContextFactory);
+            _interceptPreprocessorMock = new Mock<IInterceptPreprocessor>();
+            _defaultInterceptContextFactoryMock = new Mock<IDefaultInterceptContextFactory>();
+            _testSubject = new InterceptPreprocessorCollection(() => new List<IInterceptPreprocessor> { _interceptPreprocessorMock.Object }, _defaultInterceptContextFactoryMock.Object);
         }
 
         public static IEnumerable<TestCaseData> TestCases()
@@ -38,10 +42,10 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
         public async Task PreprocessUrlAsync_NormalFlow_ReturnsPopulatedContext(IInterceptContext inputContext, IInterceptContext factoryContext, IInterceptContext expected)
         {
             // arrange
-            InterceptPreprocessorMock!.Setup(obj => obj.PreprocessUrlAsync(It.IsAny<Url>(), It.IsAny<IInterceptContext>()))
+            _interceptPreprocessorMock!.Setup(obj => obj.PreprocessUrlAsync(It.IsAny<Url>(), It.IsAny<IInterceptContext>()))
                                      .ReturnsAsync((Url url, IInterceptContext context) => context)
                                      .Verifiable();
-            DefaultInterceptContextFactoryMock!.Setup(obj => obj.Create())
+            _defaultInterceptContextFactoryMock!.Setup(obj => obj.Create())
                                               .Returns(factoryContext);
 
             // act
@@ -49,7 +53,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Preprocessing
 
             // assert
             Assert.That(result, Is.EqualTo(expected));
-            InterceptPreprocessorMock.Verify();
+            _interceptPreprocessorMock.Verify();
         }
     }
 }

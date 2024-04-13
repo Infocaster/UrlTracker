@@ -4,15 +4,15 @@ using NUnit.Framework;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Map;
 using UrlTracker.Core.Models;
-using UrlTracker.Resources.Testing;
 
 namespace UrlTracker.Core.Tests.Map
 {
-    public class StrategyMapBaseTests : TestBase
+    public class StrategyMapBaseTests
     {
         private TestStrategyMap _testSubject = null!;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
             _testSubject = new TestStrategyMap();
         }

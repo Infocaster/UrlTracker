@@ -2,22 +2,28 @@
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting;
-using UrlTracker.Resources.Testing;
+using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Resources.Testing.Logging;
 
 namespace UrlTracker.Core.Tests.Intercepting
 {
-    public class RegexRedirectInterceptorTests : TestBase
+    public class RegexRedirectInterceptorTests
     {
         private RegexRedirectInterceptor? _testSubject;
+        private Mock<IRedirectRepository>? _redirectRepositoryMock;
+        private DefaultInterceptContext? _defaultInterceptContext;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            _testSubject = new RegexRedirectInterceptor(RedirectRepository, new VoidLogger<RegexRedirectInterceptor>());
-            DefaultInterceptContext!.SetRootNode(9999);
+            _redirectRepositoryMock = new Mock<IRedirectRepository>();
+            _defaultInterceptContext = new DefaultInterceptContext();
+            _testSubject = new RegexRedirectInterceptor(_redirectRepositoryMock.Object, new VoidLogger<RegexRedirectInterceptor>());
+            _defaultInterceptContext.SetRootNode(9999);
         }
 
         public static IEnumerable<TestCaseData> NormalFlowTestCases()
@@ -54,11 +60,11 @@ namespace UrlTracker.Core.Tests.Intercepting
         public async Task InterceptAsync_NormalFlow_ReturnsMatch(IRedirect redirect, Url input, IRedirect expected)
         {
             // arrange
-            RedirectRepositoryMock!.Setup(obj => obj.GetWithRegexAsync())
+            _redirectRepositoryMock!.Setup(obj => obj.GetWithRegexAsync())
                                   .ReturnsAsync(new List<IRedirect> { redirect });
 
             // act
-            var result = await _testSubject!.InterceptAsync(input, DefaultInterceptContext!);
+            var result = await _testSubject!.InterceptAsync(input, _defaultInterceptContext!);
 
             // assert
             Assert.That(result?.Info, Is.EqualTo(expected));

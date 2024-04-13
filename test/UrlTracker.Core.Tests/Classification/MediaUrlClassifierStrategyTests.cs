@@ -1,26 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using UrlTracker.Core.Classification;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Domain.Models;
-using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Logging;
 
 namespace UrlTracker.Core.Tests.Classification
 {
-    public class MediaUrlClassifierStrategyTests : TestBase
+    public class MediaUrlClassifierStrategyTests
     {
         private MediaUrlClassifierStrategy _testSubject = null!;
+        private Mock<IRedactionScoreService> _redactionScoreServiceMock;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            RedactionScoreServiceMock.Setup(obj => obj.Get(It.Is<Guid>(k => k == Defaults.DatabaseSchema.RedactionScores.Media))).Returns(new RedactionScoreEntity());
-            _testSubject = new MediaUrlClassifierStrategy(RedactionScoreService, new VoidLogger<MediaUrlClassifierStrategy>());
+            _redactionScoreServiceMock = new Mock<IRedactionScoreService>();
+            _redactionScoreServiceMock.Setup(obj => obj.Get(It.Is<Guid>(k => k == Defaults.DatabaseSchema.RedactionScores.Media))).Returns(new RedactionScoreEntity());
+            _testSubject = new MediaUrlClassifierStrategy(_redactionScoreServiceMock.Object, new VoidLogger<MediaUrlClassifierStrategy>());
         }
 
         [TestCase("http://example.com/image.jpg", false, TestName = "When the url is an image, this method returns an image classifier")]
