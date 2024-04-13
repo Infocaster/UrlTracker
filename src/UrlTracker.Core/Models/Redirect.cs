@@ -1,15 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Net;
-using Umbraco.Cms.Core.Models.PublishedContent;
 
 namespace UrlTracker.Core.Models
 {
     [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
     [ExcludeFromCodeCoverage]
-    public class Redirect
+    public class Redirect : IValidatableObject
     {
         public DateTime Inserted { get; set; }
         // id cannot be validated, because in some cases it's mandatory, but in others it's not
@@ -31,6 +30,16 @@ namespace UrlTracker.Core.Models
 
         [Required]
         public ITargetStrategy Target { get; set; }
+
+        /// <inheritdoc />
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            List<ValidationResult> validationResults = new();
+            Validator.TryValidateObject(Source, new ValidationContext(Source, validationContext, validationContext.Items), validationResults, true);
+            Validator.TryValidateObject(Target, new ValidationContext(Target, validationContext, validationContext.Items), validationResults, true);
+
+            return validationResults;
+        }
 
         private string GetDebuggerDisplay()
         {

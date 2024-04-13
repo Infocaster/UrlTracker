@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
@@ -13,6 +10,7 @@ namespace UrlTracker.Core
     public interface IRecommendationService
     {
         void Clear();
+        int Count(DateTime? startDate, DateTime? endDate, Guid[]? recommendationTypes);
         IRecommendation Create(string url, IRedactionScore score);
         IRecommendation Create(string url, Guid scoreKey);
         void Delete(IRecommendation recommendation);
@@ -40,6 +38,27 @@ namespace UrlTracker.Core
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
             var result = _recommendationRepository.Get(page, pageSize, parameters ?? Core.Defaults.Parameters.ScoreParameters, orderingOptions);
+
+            return result;
+        }
+
+        public int Count(DateTime? startDate, DateTime? endDate, Guid[]? recommendationTypes)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+
+            var query = scope.SqlContext.Query<IRecommendation>();
+
+            if (startDate.HasValue) query = query.Where(e => e.UpdateDate >= startDate);
+            if (endDate.HasValue) query = query.Where(e => e.UpdateDate <= endDate);
+            if (recommendationTypes is not null)
+            {
+                var redactionScores = _redactionScoreService
+                    .GetAll(recommendationTypes)
+                    .Select(rs => rs.Id);
+                query.WhereIn(e => e.StrategyId, redactionScores);
+            }
+
+            var result = _recommendationRepository.Count(query);
 
             return result;
         }

@@ -9,6 +9,5 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Recommendations
         public string? Query { get; set; }
         public RecommendationOrderBy OrderBy { get; set; }
         public bool Desc { get; set; } = true;
-
     }
 }

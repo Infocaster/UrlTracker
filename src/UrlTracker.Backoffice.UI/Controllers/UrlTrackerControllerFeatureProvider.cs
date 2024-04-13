@@ -14,7 +14,8 @@ namespace UrlTracker.Backoffice.UI.Controllers
             typeof(RecommendationsController),
             typeof(RecommendationAnalysisController),
             typeof(NotificationsController),
-            typeof(RedirectImportController)
+            typeof(RedirectImportController),
+            typeof(LandingPageController)
         };
 
         protected override bool IsController(TypeInfo typeInfo)

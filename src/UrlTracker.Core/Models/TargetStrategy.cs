@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using Umbraco.Cms.Core.Models.PublishedContent;
+using UrlTracker.Core.Validation.Attributes;
 
 namespace UrlTracker.Core.Models
 {
@@ -42,6 +43,7 @@ namespace UrlTracker.Core.Models
         /// <summary>
         /// The culture of this content item to redirect to
         /// </summary>
+        [ValidCultureFormat]
         public string? Culture { get; }
 
         /// <inheritdoc />
