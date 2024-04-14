@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Core.Scoping;
-using UrlTracker.Backoffice.UI.Controllers.Models;
+using UrlTracker.Backoffice.UI.Controllers.Models.RedirectImport;
 using UrlTracker.Backoffice.UI.Map;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing.Mocks;

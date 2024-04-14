@@ -25,6 +25,7 @@ internal class RecommendationAnalysisController : UmbracoAuthorizedApiController
     [HttpGet]
     [Route("{id}")]
     [Produces(typeof(RecommendationHistory))]
+    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetHistoryAsync([FromRoute] int id, [FromQuery] int pastDays = 20)
     {
         var result = await _requestHandler.GetHistoryAsync(new RecommendationHistoryRequest()
@@ -32,6 +33,9 @@ internal class RecommendationAnalysisController : UmbracoAuthorizedApiController
             Id = id,
             PastDays = pastDays
         });
+
+        if (result is null) return NotFound();
+
         return Ok(result);
     }
 

@@ -8,7 +8,6 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Infrastructure.Scoping;
-using UrlTracker.Backoffice.UI.Controllers.Models;
 using UrlTracker.Backoffice.UI.Controllers.Models.RedirectImport;
 using UrlTracker.Core;
 using UrlTracker.Core.Abstractions;

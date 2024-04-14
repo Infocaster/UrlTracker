@@ -1,7 +1,8 @@
-﻿namespace UrlTracker.Backoffice.UI.Controllers.Models.LandingPage
+﻿using System.Runtime.Serialization;
+
+namespace UrlTracker.Backoffice.UI.Controllers.Models.LandingPage
 {
-    internal class NumericMetricResponse
-    {
-        public int Value { get; set; }
-    }
+    [DataContract]
+    internal record NumericMetricResponse(
+        [property: DataMember(Name = "value")] int Value);
 }

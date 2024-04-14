@@ -8,12 +8,25 @@ import { Axios } from "axios";
 import { IQueryRequestBase } from "./models/queryrequestbase";
 import { IPaginationRequestBase } from "./models/paginationrequestbase";
 
+interface IFlatRecommendationResponse {
+  id: number;
+  ignore: boolean;
+  url: string;
+  strategy: string;
+  score: number;
+  updatedate: string;
+}
+
+type IFlatRecommendationCollection =
+  IPagedCollectionResponseBase<IFlatRecommendationResponse>;
+
 export interface IRecommendationResponse {
   id: number;
   ignore: boolean;
   url: string;
   strategy: string;
   score: number;
+  updatedate: Date;
 }
 
 export type IRecommendationCollection =
@@ -38,14 +51,18 @@ export class RecommendationsService implements IRecommendationsService {
   public async list(
     request: IListRecommendationRequest
   ): Promise<IRecommendationCollection> {
-    let response = await this.axios.get<IRecommendationCollection>(
+    let response = await this.axios.get<IFlatRecommendationCollection>(
       this.controller.getUrl("list"),
       {
         params: request,
       }
     );
 
-    return response.data;
+    // normalize all dates into a date object so that we can use a consistent date api in the business logic
+    return {
+      ...response.data,
+      results: response.data.results.map((r) => {return {...r, updatedate: new Date(r.updatedate)}})
+    };
   }
 }
 

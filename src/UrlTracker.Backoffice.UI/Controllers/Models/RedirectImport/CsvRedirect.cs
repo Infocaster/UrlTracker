@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using CsvHelper.Configuration.Attributes;
 
-namespace UrlTracker.Backoffice.UI.Controllers.Models
+namespace UrlTracker.Backoffice.UI.Controllers.Models.RedirectImport
 {
     [ExcludeFromCodeCoverage]
     public class CsvRedirect

@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
-using UrlTracker.Backoffice.UI.UserNotifications;
+using UrlTracker.Backoffice.UI.Controllers.Models.Notifications;
+using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
 
 namespace UrlTracker.Backoffice.UI.Controllers
 {
@@ -11,19 +12,19 @@ namespace UrlTracker.Backoffice.UI.Controllers
     [Route(Defaults.Routing.Route)]
     internal class NotificationsController : UmbracoAuthorizedApiController
     {
-        private readonly IOptionsSnapshot<UrlTrackerUserNotificationOptions> _notificationOptions;
+        private readonly INotificationsRequestHandler _requestHandler;
 
-        public NotificationsController(IOptionsSnapshot<UrlTrackerUserNotificationOptions> notificationOptions)
+        public NotificationsController(INotificationsRequestHandler requestHandler)
         {
-            _notificationOptions = notificationOptions;
+            _requestHandler = requestHandler;
         }
 
         [HttpGet]
-        [Produces(typeof(UrlTrackerUserNotificationOptions))]
+        [Produces(typeof(IEnumerable<NotificationResponse>))]
         public IActionResult Get(string alias)
         {
-            var model = _notificationOptions.Get(alias);
-            return Ok(model);
+            var response = _requestHandler.List(alias);
+            return Ok(response);
         }
     }
 }

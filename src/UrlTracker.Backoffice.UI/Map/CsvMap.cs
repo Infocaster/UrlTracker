@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Umbraco.Cms.Core.Mapping;
-using UrlTracker.Backoffice.UI.Controllers.Models;
+using UrlTracker.Backoffice.UI.Controllers.Models.RedirectImport;
 using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Models;
 

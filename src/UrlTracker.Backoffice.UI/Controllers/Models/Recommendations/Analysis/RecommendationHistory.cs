@@ -1,27 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.Serialization;
 
 namespace UrlTracker.Backoffice.UI.Controllers.Models.Recommendations.Analysis;
 
-public class RecommendationHistory
-{
-    public DateTime FirstOccurance { get; set; }
-    public DateTime LastOccurance { get; set; }
-    public double AveragePerDay { get; set; }
-    public RecomendationTrend Trend { get; set; } = RecomendationTrend.Unknown;
-    public IEnumerable<DailyOccurance> DailyOccurances { get; set; } = new List<DailyOccurance>();
-}
+[DataContract]
+internal record RecommendationHistory(
+    [property: DataMember(Name = "firstOccurance")] DateTime FirstOccurance,
+    [property: DataMember(Name = "lastOccurance")] DateTime LastOccurance,
+    [property: DataMember(Name = "averagePerDay")] double AveragePerDay,
+    [property: DataMember(Name = "dailyOccurances")] IEnumerable<DailyOccurance> DailyOccurances,
+    [property: DataMember(Name = "trend")] RecomendationTrend Trend = RecomendationTrend.Unknown);
 
-public class DailyOccurance
-{
-    public int Occurances { get; set; }
-    public DateTime DateTime { get; set; }
-}
+[DataContract]
+internal record DailyOccurance(
+    [property: DataMember(Name = "occurances")] int Occurances,
+    [property: DataMember(Name = "dateTime")] DateTime DateTime);
 
-public enum RecomendationTrend
+internal enum RecomendationTrend
 {
     Unknown,
     Stable,

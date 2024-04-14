@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Umbraco.Cms.Core.Mapping;
+﻿using Umbraco.Cms.Core.Mapping;
 using UrlTracker.Backoffice.UI.Controllers.Models.Recommendations;
 using UrlTracker.Core.Database.Entities;
 
@@ -17,7 +12,7 @@ namespace UrlTracker.Backoffice.UI.Map
                 (source, context) => new RecommendationCollectionResponse(context.MapEnumerable<IRecommendation, RecommendationResponse>(source), source.Total));
 
             mapper.Define<IRecommendation, RecommendationResponse>(
-                (source, context) => new RecommendationResponse(source.Id, source.Ignore, source.Url, source.Strategy.Key, source.VariableScore));
+                (source, context) => new RecommendationResponse(source.Id, source.Ignore, source.Url, source.Strategy.Key, source.VariableScore, source.UpdateDate));
         }
     }
 }

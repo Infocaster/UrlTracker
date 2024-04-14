@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
+using UrlTracker.Backoffice.UI.Controllers.Models.LandingPage;
 using UrlTracker.Core;
 
 namespace UrlTracker.Backoffice.UI.Controllers
@@ -19,7 +20,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         }
 
         [HttpGet]
-        [Produces(typeof(int))]
+        [Produces(typeof(NumericMetricResponse))]
         public IActionResult GetNumericMetric()
         {
             // the numeric metric is all the recommendations that have been updated within the past week
@@ -30,7 +31,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
                 Core.Defaults.DatabaseSchema.RedactionScores.Page
             });
 
-            return Ok(result);
+            return Ok(new NumericMetricResponse(result));
         }
     }
 }

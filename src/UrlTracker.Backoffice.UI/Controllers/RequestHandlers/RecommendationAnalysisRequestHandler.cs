@@ -10,8 +10,8 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
 {
     internal interface IRecommendationAnalysisRequestHandler
     {
-        Task<RecommendationHistory> GetHistoryAsync(RecommendationHistoryRequest request);
-        Task<IEnumerable<ReferrerResponse>> GetMostCommonReferrersAsync(int id);
+        Task<RecommendationHistory?> GetHistoryAsync(RecommendationHistoryRequest request);
+        Task<IEnumerable<ReferrerResponse>?> GetMostCommonReferrersAsync(int id);
     }
     internal class RecommendationAnalysisRequestHandler : IRecommendationAnalysisRequestHandler
     {
@@ -25,10 +25,10 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             _clientErrorService = clientErrorService;
         }
 
-        public async Task<IEnumerable<ReferrerResponse>> GetMostCommonReferrersAsync(int id)
+        public async Task<IEnumerable<ReferrerResponse>?> GetMostCommonReferrersAsync(int id)
         {
             var recommendation = _recommendationService.Get(id);
-            if (recommendation == null) return Array.Empty<ReferrerResponse>();
+            if (recommendation == null) return null;
 
             var clientError = await _clientErrorService.GetAsync(recommendation.Url);
             if (clientError == null || clientError.Ignored) return Array.Empty<ReferrerResponse>();
@@ -37,26 +37,24 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             return referrers;
         }
 
-        public async Task<RecommendationHistory> GetHistoryAsync(RecommendationHistoryRequest request)
+        public async Task<RecommendationHistory?> GetHistoryAsync(RecommendationHistoryRequest request)
         {
             var recommendation = _recommendationService.Get(request.Id);
-            if (recommendation == null) return new RecommendationHistory();
+            if (recommendation == null) return null;
 
             var clientError = await _clientErrorService.GetAsync(recommendation.Url);
-            if (clientError == null || clientError.Ignored) return new RecommendationHistory();
+            if (clientError == null || clientError.Ignored) return new RecommendationHistory(default, default, default, Enumerable.Empty<DailyOccurance>());
 
             var dailyClientErrors = await _clientErrorService.GetInRangeAsync(clientError.Id, DateTime.Now.AddDays(-request.PastDays), DateTime.Now);
             var inPastDays = FillEmptyDays(dailyClientErrors, request.PastDays);
             var trend = TrendCalculator.GetRecomendationTrend(TrendCalculator.CalculateLinearTrend(dailyClientErrors));
 
-            return new RecommendationHistory()
-            {
-                FirstOccurance = clientError.Inserted,
-                LastOccurance = clientError.LatestOccurrence,
-                AveragePerDay = GetDailyAverage(inPastDays),
-                Trend = trend,
-                DailyOccurances = inPastDays
-            };
+            return new RecommendationHistory(
+                clientError.Inserted,
+                clientError.LatestOccurrence,
+                GetDailyAverage(inPastDays),
+                inPastDays,
+                trend);
         }
 
         private static double GetDailyAverage(IEnumerable<DailyOccurance> occurances)
@@ -90,11 +88,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
                 .Select(date =>
                 {
                     DailyClientErrorResponse? response = values.FirstOrDefault(r => r.Date == date);
-                    return new DailyOccurance
-                    {
-                        Occurances = response?.Occurrances ?? 0,
-                        DateTime = date
-                    };
+                    return new DailyOccurance(response?.Occurrances ?? 0, date);
                 });
 
             return filledList;
