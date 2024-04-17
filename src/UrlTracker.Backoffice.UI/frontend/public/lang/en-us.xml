@@ -48,6 +48,16 @@
     <key alias="content">Content</key>
     <key alias="contenterror">The selected content does not exist or is in the trashcan</key>
   </area>
+  <area alias="urlTrackerRedirectActions">
+	<key alias="header">Actions</key>
+	<key alias="new">New redirect</key>
+	<key alias="export">Export redirects</key>
+  </area>  
+  <area alias="urlTrackerRedirectUpload">
+	<key alias="header">Import</key>
+	<key alias="info">Drop a csv file in the box below to import redirects.</key>
+	<key alias="help">You can download template here</key>
+  </area>
   <area alias="urlTrackerRecommendationType">
     <key alias="image">Image was not found</key>
     <key alias="file">File was not found</key>

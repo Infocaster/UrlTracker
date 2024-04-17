@@ -18,6 +18,10 @@ import {
 import "../../util/elements/resultlist.lit";
 import "../../util/elements/resultlistitem.lit";
 import "../../util/elements/inputs/pagination.lit";
+import "../../util/elements/redirectActions.lit";
+import "../../util/elements/inputs/addRedirectAction.lit";
+import "../../util/elements/inputs/exportRedirectsAction.lit";
+import "../../util/elements/inputs/redirectImport.lit";
 import "./redirects/redirectitem.lit";
 import { UrlTrackerPagination } from "../../util/elements/inputs/pagination.lit";
 import { Ref, createRef, ref } from "lit/directives/ref.js";
@@ -79,20 +83,44 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     );
   }
 
+  private _onAddRedirect = (e: any) => {
+    // TODO: implement logic
+    console.info("add redirect");
+    console.info(e);
+  };
+
+  private _onExportRedirects = (e: any) => {
+    // TODO: implement logic
+    console.info("export redirects");
+    console.info(e);
+  };
+
   protected renderInternal(): unknown {
     return html`
-      <div class="grid-root">
+      <div class="redirect-container">
         <div class="filters"></div>
-        <urltracker-result-list
-          class="results"
-          .loading=${!!this._loading}
-          .header=${`Results (${
-            this._redirectCollection ? this._redirectCollection.total : 0
-          })`}
-        >
-          ${this.renderRedirects()}
-        </urltracker-result-list>
-        <div class="actions"></div>
+        <div class="main">
+          <urltracker-result-list
+            class="results"
+            .loading=${!!this._loading}
+            .header=${`Results (${
+              this._redirectCollection ? this._redirectCollection.total : 0
+            })`}
+          >
+            ${this.renderRedirects()}
+          </urltracker-result-list>
+          <div class="functions">
+            <urltracker-redirect-actions>
+              <urltracker-add-redirect-action
+                @click=${this._onAddRedirect}
+              ></urltracker-add-redirect-action>
+              <urltracker-export-redirects-action
+                @click=${this._onExportRedirects}
+              ></urltracker-export-redirects-action>
+            </urltracker-redirect-actions>
+            <urltracker-redirect-import></urltracker-redirect-import>
+          </div>
+        </div>
         <urltracker-pagination
           ${ref(this.paginationRef)}
           class="pagination"
@@ -104,34 +132,39 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   }
 
   static styles = css`
-    .grid-root {
-      display: grid;
-      grid-template-columns: 2;
-      grid-template-rows: 3;
-      gap: 16px;
+    .redirect-container {
+      display: flex;
+      flex-direction: column;
     }
 
     .filters {
-      grid-column: 1 / span 2;
-      grid-row: 1;
+      margin-bottom: 2rem;
+    }
+
+    .main {
+      display: flex;
+      margin-bottom: 2rem;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    urltracker-result-list {
+      flex: 1 1 32rem;
+    }
+
+    .filters {
       background-color: blue;
       height: 100px;
     }
 
     .results {
-      grid-column: 1;
-      grid-row: 2;
     }
 
-    .actions {
-      grid-column: 2;
-      grid-row: 2 / span 2;
-      background-color: green;
-    }
-
-    .pagination {
-      grid-column: 1;
-      grid-row: 3;
+    .functions {
+      flex: 1 0 15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
   `;
 }
