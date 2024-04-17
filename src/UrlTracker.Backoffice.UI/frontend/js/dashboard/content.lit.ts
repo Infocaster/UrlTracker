@@ -1,13 +1,15 @@
 import { LitElement, css, html, nothing } from "lit";
 import tabStrategy, { ITab, TabStrategyCollection } from "./tab";
 import { customElement, state } from "lit/decorators.js";
-import { consume } from "@lit/context";
+import { consume, provide } from "@lit/context";
 import { ILocalizationService } from "../umbraco/localization.service";
 import { localizationServiceContext } from "../context/localizationservice.context";
 import "./footer/footer.lit";
+import { tabContext } from "../context/tabcontext.context";
 
 @customElement("urltracker-dashboard-content")
 export class UrlTrackerDashboardContent extends LitElement {
+  @provide({ context: tabContext })
   private _tabs?: Array<ITab>;
 
   @state()
