@@ -20,7 +20,8 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
 	"paths": {
-		"@/*": ["./frontend/js/*"]
+		"@/*": ["./frontend/js/*"],
+		"@sidebar": ["./frontend/js/dashboard/sidebars/*"]
 	  },
   },
   "include": ["frontend/js"]

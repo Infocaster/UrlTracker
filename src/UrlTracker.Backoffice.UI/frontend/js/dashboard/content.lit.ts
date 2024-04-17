@@ -1,16 +1,23 @@
-import { LitElement, css, html, nothing } from "lit";
-import tabStrategy, { ITab, TabStrategyCollection } from "./tab";
-import { customElement, state } from "lit/decorators.js";
+import {
+  IEditorService,
+  editorServiceContext,
+} from "@/context/editorservice.context";
 import { consume, provide } from "@lit/context";
-import { ILocalizationService } from "../umbraco/localization.service";
+import { LitElement, css, html, nothing } from "lit";
+import { customElement, state } from "lit/decorators.js";
 import { localizationServiceContext } from "../context/localizationservice.context";
-import "./footer/footer.lit";
 import { tabContext } from "../context/tabcontext.context";
+import { ILocalizationService } from "../umbraco/localization.service";
+import "./footer/footer.lit";
+import tabStrategy, { ITab, TabStrategyCollection } from "./tab";
 
 @customElement("urltracker-dashboard-content")
 export class UrlTrackerDashboardContent extends LitElement {
   @provide({ context: tabContext })
   private _tabs?: Array<ITab>;
+
+  @consume({ context: editorServiceContext })
+  private editorService?: IEditorService<any>;
 
   @state()
   set tabs(tabs: Array<ITab> | undefined) {
@@ -74,6 +81,28 @@ export class UrlTrackerDashboardContent extends LitElement {
     }
   }
 
+  submitPanel = (value: string) => {
+    this.model = value;
+    this.closePanel();
+  };
+
+  closePanel = () => {
+    this.editorService!.close();
+  };
+
+  private _openSidebar(_: Event) {
+    const options = {
+      title: "New redirect", // FIXME: translate
+      view: "/App_Plugins/UrlTracker/sidebar/redirect/simpleRedirect.html",
+      size: "medium",
+      submit: this.submitPanel,
+      close: this.closePanel,
+      value: "",
+    };
+
+    this.editorService!.open(options);
+  }
+
   render() {
     let contentOrLoader;
 
@@ -94,6 +123,19 @@ export class UrlTrackerDashboardContent extends LitElement {
                 >${item.name}</uui-tab
               >`
           )}
+          <uui-button
+            class="new-redirect"
+            style=""
+            look="primary"
+            color="positive"
+            label="Basic"
+            @click="${this._openSidebar}"
+          >
+            <uui-icon-registry-essential>
+              <uui-icon name="add"></uui-icon>
+            </uui-icon-registry-essential>
+            New redirect
+          </uui-button>
         </uui-tab-group>`;
       } else {
         tabsOrNothing = nothing;
@@ -145,6 +187,10 @@ export class UrlTrackerDashboardContent extends LitElement {
     }
     .dashboard-body-container {
       padding: 2rem;
+    }
+
+    .new-redirect {
+      margin: auto 1rem auto auto;
     }
   `;
 }

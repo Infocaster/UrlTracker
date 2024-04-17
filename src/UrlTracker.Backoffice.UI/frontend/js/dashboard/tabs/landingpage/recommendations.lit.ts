@@ -1,4 +1,4 @@
-import { LitElement, html, nothing } from "lit";
+import { LitElement, css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import {
   IRecommendationCollection,
@@ -6,6 +6,9 @@ import {
 } from "../../../services/recommendation.service";
 import { consume } from "@lit/context";
 import { recommendationServiceContext } from "../../../context/recommendationservice.context";
+import "../../../util/elements/redirects/simpleRedirect/createSimpleRedirect.lit";
+import { localizationServiceContext } from "../../../context/localizationservice.context";
+import { ILocalizationService } from "../../../umbraco/localization.service";
 
 @customElement("urltracker-recommendation-list")
 export class UrlTrackerRecommendations extends LitElement {
@@ -31,4 +34,15 @@ export class UrlTrackerRecommendations extends LitElement {
 
     return html` <div>${collection}</div> `;
   }
+
+  static styles = [
+    css`
+      .create-redirect {
+        width: 575px;
+        height: 685px;
+        padding: 20px;
+        background-color: rebeccapurple;
+      }
+    `,
+  ];
 }

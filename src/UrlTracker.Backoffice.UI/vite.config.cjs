@@ -19,6 +19,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": resolve(__dirname, "frontend", "js"),
+      "@sidebar": resolve(__dirname, "frontend", "js", "dashboard", "sidebars"),
     },
   },
 });

@@ -78,6 +78,17 @@
 	<key alias="action-permanent">Create a permanent redirect</key>
 	<key alias="action-ignore">Ignore this</key>
   </area>
+  <area alias="urlTrackerNewRedirect">
+    <key alias="permanent">Is the redirect permanent?</key>
+	<key alias="permanent-info">A permanent redirect is better for your site’s performance, but cannot be changed afterwards. Permanent redirects are a signal to google and other search engines to update their search results to the target that you specify. It makes the internet “forget” your incoming URLs so to speak.</key>
+	<key alias="incoming-url">Incoming URL</key>
+	<key alias="incoming-url-info">Enter the URL which should be redirected from</key>
+	<key alias="outgoing-url">Outgoing URL</key>
+	<key alias="outgoing-url-info">Select where the URL should redirect to</key>
+	<key alias="outgoing-url-content">Content</key>
+	<key alias="outgoing-url-media">Media</key>
+	<key alias="outgoing-url-url">URL</key>
+  </area>
   <area alias="urlTrackerRecommendationFilter">
 	<key alias="search-placeholder">Type to search...</key>
   </area>
