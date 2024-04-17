@@ -20,7 +20,6 @@ export class UrlTrackerRecommendationTag extends LitElement {
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    console.log(this.color);
 
     if (!this.localizationService)
       throw new Error("This element requires the localization service");

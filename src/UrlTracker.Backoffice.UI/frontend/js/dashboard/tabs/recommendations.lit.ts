@@ -1,28 +1,28 @@
 import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { UrlTrackerNotificationWrapper } from "../notifications/notifications.mixin";
 import { Ref, createRef, ref } from "lit/directives/ref.js";
+import {
+  IRecommendationCollection,
+  IRecommendationsService,
+} from "../../services/recommendation.service";
 import { UrlTrackerPagination } from "../../util/elements/inputs/pagination.lit";
 import {
   ensureExists,
   ensureServiceExists,
 } from "../../util/tools/existancecheck";
-import recommendationService, {
-  IRecommendationCollection,
-  IRecommendationsService,
-} from "../../services/recommendation.service";
+import { UrlTrackerNotificationWrapper } from "../notifications/notifications.mixin";
 
-import "./recommendations/recommendationitem.lit";
 import { consume, provide } from "@lit/context";
+import { repeat } from "lit/directives/repeat.js";
 import {
   IChangeManager,
   changeManagerContext,
 } from "../../context/changemanager.context";
 import { recommendationServiceContext } from "../../context/recommendationservice.context";
-import { repeat } from "lit/directives/repeat.js";
-import "./recommendations/recommendationSearch.lit";
 import { RECOMMENDATION_SORT_TYPE } from "../../enums/sortType";
 import { DropdownChangeEvent, IDropdownValue } from "../../util/elements/inputs/dropdown.lit";
+import "./recommendations/recommendationSearch.lit";
+import "./recommendations/recommendationitem.lit";
 
 @customElement("urltracker-recommendations-tab")
 export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
@@ -40,6 +40,12 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
   @state()
   private _loading: number = 0;
+
+  @state()
+  private _error: string | null = null;
+
+  @state()
+  private _totalPages = 0;
 
   private paginationRef: Ref<UrlTrackerPagination> = createRef();
 
@@ -94,6 +100,24 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
           pageSize: 25,
         }
       );
+      ensureExists(
+        this.paginationRef.value?.value,
+        "pagination ref does not exist"
+      );
+
+      let page = this.paginationRef.value.value;
+
+      if (page.page < 1) page.page = 1;
+
+      this._loading++;
+
+      this._recommendationCollection = await this._recommendationsService?.list(
+        { ...page }
+      );
+
+      this._totalPages = this._recommendationCollection.total;
+    } catch (error: any) {
+      this._error = error.message;
     } finally {
       this._loading--;
     }
@@ -111,6 +135,16 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     );
   }
 
+  private renderPagination(): unknown {
+    return html` ${this._totalPages}
+      <urltracker-pagination
+        ${ref(this.paginationRef)}
+        class="pagination"
+        .total=${this._totalPages}
+        .testpages=${this._totalPages}
+        @change=${this.onFilterChange}
+      ></urltracker-pagination>`;
+  }
   private _onSearch = ({ detail: { query } = {} }: CustomEvent) => {
     //TODO: implement search
     console.info("recommendations.lit.ts _onSearch not implemented");
@@ -124,6 +158,10 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   };
 
   protected renderInternal(): unknown {
+    if (this._error !== null) {
+      return html`<div class="error">${this._error}</div>`;
+    }
+
     return html`
       <div class="grid-root">
         <div class="filters">
@@ -147,12 +185,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
         >
           ${this.renderRecommendations()}
         </urltracker-result-list>
-        <urltracker-pagination
-          {ref(this.paginationRef)}
-          class="pagination"
-          total="100"
-          @change=${this.onFilterChange}
-        ></urltracker-pagination>
+        ${this.renderPagination()}
       </div>
     `;
   }
