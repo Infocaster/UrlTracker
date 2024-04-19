@@ -1,7 +1,7 @@
-import { UrlTrackerResultListItem } from "./resultlistitem.lit";
-import { css, html } from "lit";
-import { UUIBooleanInputEvent } from "@umbraco-ui/uui";
 import { ContextProvider, createContext } from "@lit/context";
+import { UUIBooleanInputEvent } from "@umbraco-ui/uui";
+import { css, html } from "lit";
+import { UrlTrackerResultListItem } from "./resultlistitem.lit";
 
 export function UrlTrackerSelectableResultListItem<T>(
   context: ReturnType<typeof createContext<T>>

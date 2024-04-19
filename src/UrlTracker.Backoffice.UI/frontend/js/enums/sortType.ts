@@ -7,3 +7,12 @@ export const RECOMMENDATION_SORT_TYPE = {
 
 export type RecommendationSortType =
   (typeof RECOMMENDATION_SORT_TYPE)[keyof typeof RECOMMENDATION_SORT_TYPE];
+
+
+export const REDIRECTTYPE_SORT_TYPE = {
+  PERMANENT: 0,
+  TEMPORARY: 1,
+} as const;
+
+export type RedirectSortType =
+  (typeof REDIRECTTYPE_SORT_TYPE)[keyof typeof REDIRECTTYPE_SORT_TYPE];
