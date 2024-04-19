@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UrlTracker.Backoffice.UI.Controllers.Models.Notifications;
 using UrlTracker.Backoffice.UI.UserNotifications;
 
 namespace UrlTracker.IntegrationTests.Backoffice.Notification
@@ -22,8 +23,8 @@ namespace UrlTracker.IntegrationTests.Backoffice.Notification
 
             // assert
             Assert.That(response.IsSuccessStatusCode, Is.True);
-            var result = await DeserializeResponseAsync<UrlTrackerUserNotificationOptions>(response);
-            Assert.That(result?.Notifications.Any(), Is.True);
+            var result = await DeserializeResponseAsync<IEnumerable<NotificationResponse>>(response);
+            Assert.That(result?.Any(), Is.True);
         }
     }
 }

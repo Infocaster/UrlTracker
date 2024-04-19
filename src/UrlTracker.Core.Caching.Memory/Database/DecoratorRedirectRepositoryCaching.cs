@@ -85,9 +85,9 @@ namespace UrlTracker.Core.Caching.Memory.Database
         }
 
         /// <inheritdoc/>
-        public Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, bool descending)
+        public Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, RedirectType types, bool descending)
         {
-            return _decoratee.GetAsync(skip, take, query, descending);
+            return _decoratee.GetAsync(skip, take, query, types, descending);
         }
 
         /// <inheritdoc/>

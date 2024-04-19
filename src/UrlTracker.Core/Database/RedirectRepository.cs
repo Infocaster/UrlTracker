@@ -29,7 +29,7 @@ namespace UrlTracker.Core.Database
 
         #region Old Implementation
 
-        public async Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, bool descending)
+        public async Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, RedirectType types, bool descending)
         {
             var countQuery = Sql().SelectCount();
             countQuery = PopulateRedirectQuery(countQuery);
@@ -50,31 +50,36 @@ namespace UrlTracker.Core.Database
                 q = q.From<RedirectDto>();
                 if (query is not null)
                 {
-                    bool queryIsInt = int.TryParse(query, out var queryInt);
                     q = q.Where<RedirectDto>(e => e.SourceValue!.Contains(query)
                                                || e.TargetValue!.Contains(query));
+                }
+
+                /* There are three options for redirect types:
+                 * - Only permanent
+                 * - Only temporary
+                 * - Both
+                 * 
+                 * NOTE: for now it's OK to just check if flag permanent is unequal to flag temporary.
+                 *    Should more options become available, this code needs to be updated.
+                 */
+
+                if (types.HasFlag(RedirectType.Temporary) != types.HasFlag(RedirectType.Permanent))
+                {
+                    if (types.HasFlag(RedirectType.Temporary))
+                    {
+                        q = q.Where<RedirectDto>(e => e.Permanent == false);
+                    }
+
+                    if (types.HasFlag(RedirectType.Permanent))
+                    {
+                        q = q.Where<RedirectDto>(e => e.Permanent == true);
+                    }
                 }
 
                 return q;
             }
         }
 
-        /*
-         * ToDo: The original code only gets entries from the database where the rootnodeid and the culture intercept those
-         *      that are found in the domain provider, so that's what we keep doing here. This doesn't make any sense to me,
-         *      because the incoming url doesn't make any claims about culture yet.
-         *      It only makes sense once you actually redirect. When you redirect, you'll want to redirect to a particular domain
-         *      that may be bound to a culture. By selecting a root node id and a culture, one can select the right domain to
-         *      redirect to, while also preserving the freedom to change the culture and domains on each node. That would prevent
-         *      the url tracker from redirecting to an old domain.
-         *      
-         *      The new approach does intercepting in a specific order:
-         *       - First attempt to intercept on a set of urls and paths
-         *       - At last attempt to intercept by regex (at this point, the domain shouldn't matter anymore)
-         *       
-         * Bonus: It would be awesome if somebody changes an existing domain, that we insert all required redirects to redirect
-         *      the old domain to the new one
-         */
         public async Task<IReadOnlyCollection<IRedirect>> GetAsync(IEnumerable<string> urlsAndPaths)
         {
             // get base query

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Infrastructure.Scoping;
@@ -37,7 +38,9 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         {
             using var scope = _scopeProvider.CreateScope();
 
-            var entities = await _redirectRepository.GetAsync(request.Page * request.PageSize, request.PageSize, request.Query, true);
+            var combinedType = request.Types?.Aggregate((l, r) => l | r) ?? RedirectType.All;
+            
+            var entities = await _redirectRepository.GetAsync(request.Page * request.PageSize, request.PageSize, request.Query, combinedType, true);
             return _mapper.Map<RedirectCollectionResponse>(entities)!;
         }
 
