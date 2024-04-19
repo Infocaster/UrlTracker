@@ -1,9 +1,10 @@
 import { Axios } from "axios";
-import urlresource, { IControllerUrlResource, IUrlResource } from "../util/tools/urlresource.service";
 import { axiosInstance } from "../util/tools/axios.service";
+import urlresource, { IControllerUrlResource, IUrlResource } from "../util/tools/urlresource.service";
 import { IPagedCollectionResponseBase } from "./models/PagedCollectionResponseBase";
 import { IPaginationRequestBase } from "./models/paginationrequestbase";
 import { IQueryRequestBase } from "./models/queryrequestbase";
+import { IRedirectFilterRequestBase } from "./models/redirectfilterrequestbase";
 
 export interface IRedirectResponseStrategy {
 
@@ -24,7 +25,7 @@ export interface IRedirectResponse {
 }
 
 export type IRedirectCollectionResponse = IPagedCollectionResponseBase<IRedirectResponse>;
-export type IListRedirectRequest = IPaginationRequestBase & IQueryRequestBase;
+export type IListRedirectRequest = IPaginationRequestBase & IRedirectFilterRequestBase & IQueryRequestBase;
 
 export interface IRedirectService {
 

@@ -1,4 +1,4 @@
-import { REDIRECTTYPE_SORT_TYPE } from "@/enums/sortType";
+import { REDIRECTTYPE_SORT_TYPE, RedirectSortType } from "@/enums/sortType";
 import { DropdownChangeEvent, IDropdownValue } from "@/util/elements/inputs/dropdown.lit";
 import { consume, provide } from "@lit/context";
 import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
@@ -49,12 +49,15 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   private _loading: number = 0;
 
   private paginationRef: Ref<UrlTrackerPagination> = createRef();
-
-  private onFilterChange = (_: Event) => {
-    this.init();
-  };
+  private query = "";
+  private selectedType: RedirectSortType = REDIRECTTYPE_SORT_TYPE.ALL;
 
   private _sortOptions: IDropdownValue[] = [
+    {
+      display: "Alle",
+      value: REDIRECTTYPE_SORT_TYPE.ALL,
+      key: REDIRECTTYPE_SORT_TYPE.ALL.toString()
+    },
     {
       display: "Permanent",
       value: REDIRECTTYPE_SORT_TYPE.PERMANENT,
@@ -71,43 +74,41 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): Promise<void> {
     super.firstUpdated(_changedProperties);
-
     await this.init();
   }
 
   private async init() {
     ensureServiceExists(this._redirectService, "redirect service");
+    await this.search();
+  }
+
+  private async search() {
     ensureExists(this.paginationRef.value);
 
-    let page = this.paginationRef.value.value;
+    const page = this.paginationRef.value.value;
+    const type = this.selectedType;
+    const query = this.query;
+
     this._loading++;
     try {
-      this._redirectCollection = await this._redirectService?.list({ ...page });
+      this._redirectCollection = await this._redirectService?.list({ ...page, types: type, query});
     } finally {
       this._loading--;
     }
   }
 
-  private renderRedirects(): unknown {
-    if (!this._redirectCollection?.results) return nothing;
-    return repeat(
-      this._redirectCollection.results,
-      (redirect) => redirect.id,
-      (r) =>
-        html`<urltracker-redirect-item .item=${r}></urltracker-redirect-item>`
-    );
-  }
-
-  private _onSearch = ({ detail: { query } = {} }: CustomEvent) => {
-    //TODO: implement search
-    console.info("recommendations.lit.ts _onSearch not implemented");
-    console.info(query);
+  private onSearch = ({ detail: { query } = {} }: CustomEvent) => {
+    this.query = query;
+    this.search();
   };
 
-  private _onSortChange = ({ data }: DropdownChangeEvent) => {
-    //TODO: implement sort
-    console.info("recommendations.lit.ts _onSortChange not implemented");
-    console.info(data);
+  private onTypeChange = ({ data }: DropdownChangeEvent) => {
+    this.selectedType = data.value as RedirectSortType;
+    this.search();
+  };
+
+  private onFilterChange = (_: Event) => {
+    this.init();
   };
 
   private _onAddRedirect = (e: any) => {
@@ -122,17 +123,27 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     console.info(e);
   };
 
+  private renderRedirects(): unknown {
+    if (!this._redirectCollection?.results) return nothing;
+    return repeat(
+      this._redirectCollection.results,
+      (redirect) => redirect.id,
+      (r) =>
+        html`<urltracker-redirect-item .item=${r}></urltracker-redirect-item>`
+    );
+  }
+
   protected renderInternal(): unknown {
     return html`
       <div class="grid-root">
         <div class="filters">
           <urltracker-redirects-search
-            @search=${this._onSearch}
+            @search=${this.onSearch}
           ></urltracker-redirects-search>
           <urltracker-dropdown
             label="Type"
             .options=${this._sortOptions}
-            @change=${this._onSortChange}
+            @change=${this.onTypeChange}
           ></urltracker-dropdown>
         </div>
         <urltracker-result-list

@@ -12,6 +12,7 @@ export type RecommendationSortType =
 export const REDIRECTTYPE_SORT_TYPE = {
   PERMANENT: 0,
   TEMPORARY: 1,
+  ALL: 2,
 } as const;
 
 export type RedirectSortType =
