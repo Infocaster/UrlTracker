@@ -8,6 +8,6 @@ namespace UrlTracker.Core.Database
         : IReadWriteQueryRepository<int, IRecommendation>
     {
         void Clear();
-        RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationScoreParameters parameters, RecommendationOrderingOptions orderingOptions);
+        RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationScoreParameters parameters, RecommendationOrderingOptions orderingOptions, RecommendationFilterOptions filterOptions);
     }
 }

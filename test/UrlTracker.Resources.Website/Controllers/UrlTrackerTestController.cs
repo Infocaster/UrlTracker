@@ -75,7 +75,7 @@ namespace UrlTracker.Resources.Website.Controllers
         [HttpGet]
         public IActionResult GetResults(double c1, double c2, double c3)
         {
-            var results = _recommendationService.Get(1, 100, new RecommendationOrderingOptions(), new Core.Database.Models.RecommendationScoreParameters
+            var results = _recommendationService.Get(1, 100, new RecommendationOrderingOptions(), new RecommendationFilterOptions(), new Core.Database.Models.RecommendationScoreParameters
             {
                 RedactionFactor = c1,
                 VariableFactor = c2,
