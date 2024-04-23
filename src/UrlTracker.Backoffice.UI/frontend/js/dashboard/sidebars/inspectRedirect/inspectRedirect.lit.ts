@@ -1,13 +1,14 @@
 import {
-    IEditorService,
-    editorServiceContext,
+  IEditorService,
+  editorServiceContext,
 } from "@/context/editorservice.context";
 import {
-    ILocalizationService,
-    localizationServiceContext,
+  ILocalizationService,
+  localizationServiceContext,
 } from "@/context/localizationservice.context";
 import { scopeContext } from "@/context/scope.context";
 import { IScope } from "@/models/scope.model";
+import { IRedirectResponse } from "@/services/redirect.service";
 import { consume } from "@lit/context";
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
@@ -26,15 +27,14 @@ import { customElement, state } from "lit/decorators.js";
     private _localizationService?: ILocalizationService;
   
     @state()
-    private _headerText = "";
+    private data!: IRedirectResponse;
+
+    private _headerText = "Inspect Redirect";
   
     async connectedCallback(): Promise<void> {
         super.connectedCallback();
-  
-        console.log("model");
-        console.log(this.$scope?.model);
-        console.log(this.$scope?.model.title);
-        this._headerText = this.$scope?.model.title ?? "";
+        this.data = this.$scope?.model.value;
+        this._headerText = this.$scope?.model.title ?? "Inspect Redirect";
     }
   
     close() {
@@ -44,7 +44,20 @@ import { customElement, state } from "lit/decorators.js";
     protected render() {
       return html`<div class="header">${this._headerText}</div>
         <div class="main">
-            <h1>hello</h1>
+            <uui-box>
+              <div class="item">
+                <dt>Permanent</dt>
+                <dd>${this.data.permanent ? "Yes" : "No"}</dd>
+              </div>
+              <div class="item">
+                <dt>Created at</dt>
+                <dd>${new Intl.DateTimeFormat('nl-NL', { dateStyle: "medium", timeStyle: "medium" }).format(new Date())}</dd>
+              </div>
+              <div class="item">
+                <dt>Last updated on</dt>
+                <dd>last update property nog toevoegen!</dd>
+              </div>
+            </uui-box>
         </div>
         <div class="footer">
           <uui-button look="default" color="default" @click=${this.close}
@@ -81,6 +94,15 @@ import { customElement, state } from "lit/decorators.js";
         background-color: white;
         padding: 10px 20px;
         box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
+      }
+
+      .item {
+        display: grid;
+        grid-template-columns: 160px 1fr;
+
+        dt {
+          font-weight: 600;
+        }
       }
     `;
   }

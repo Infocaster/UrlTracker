@@ -103,7 +103,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 
   private openInspectPanel(data: IRedirectResponse) {
     const options = {
-      title: "New redirect", // FIXME: translate
+      title: data.source.value,
       view: "/App_Plugins/UrlTracker/sidebar/redirect/inspectRedirect.html",
       size: "medium",
       submit: this.closePanel,
