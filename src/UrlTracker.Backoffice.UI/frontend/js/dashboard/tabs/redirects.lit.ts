@@ -14,7 +14,7 @@ import {
   IRedirectService,
   redirectServiceContext,
 } from "../../context/redirectservice.context";
-import { IRedirectCollectionResponse } from "../../services/redirect.service";
+import { IRedirectCollectionResponse, IRedirectResponse } from "../../services/redirect.service";
 import "../../util/elements/inputs/addRedirectAction.lit";
 import "../../util/elements/inputs/exportRedirectsAction.lit";
 import "../../util/elements/inputs/pagination.lit";
@@ -111,6 +111,21 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     this.init();
   };
 
+  private onInspect = (e: CustomEvent<IRedirectResponse>) => {
+    console.info("inspect redirect");
+    console.info(e.detail);
+  };
+
+  private onEdit = (e: CustomEvent<IRedirectResponse>) => {
+    console.info("edit redirect");
+    console.info(e.detail);
+  };
+
+  private onDelete = (e: CustomEvent<IRedirectResponse>) => {
+    console.info("delete redirect");
+    console.info(e.detail);
+  };
+
   private _onAddRedirect = (e: any) => {
     // TODO: implement logic
     console.info("add redirect");
@@ -129,7 +144,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
       this._redirectCollection.results,
       (redirect) => redirect.id,
       (r) =>
-        html`<urltracker-redirect-item .item=${r}></urltracker-redirect-item>`
+        html`<urltracker-redirect-item .item=${r} @inspect=${this.onInspect} @edit=${this.onEdit} @delete=${this.onDelete}></urltracker-redirect-item>`
     );
   }
 
