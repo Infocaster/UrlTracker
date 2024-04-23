@@ -3,14 +3,14 @@ import { UUIBooleanInputEvent } from "@umbraco-ui/uui";
 import { css, html } from "lit";
 import { UrlTrackerResultListItem } from "./resultlistitem.lit";
 
-export function UrlTrackerSelectableResultListItem<T>(
+export function UrlTrackerSelectableResultListItem<T extends Record<string, any>>(
   context: ReturnType<typeof createContext<T>>
 ) {
   return class SelectableResultListItem extends UrlTrackerResultListItem {
-    private _item?: T;
+    private _item: T = {} as T;
     private _itemProvider = new ContextProvider(this, { context: context });
 
-    public get item(): T | undefined {
+    public get item(): T {
       return this._item;
     }
 

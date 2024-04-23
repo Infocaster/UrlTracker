@@ -37,6 +37,21 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
     );
   }
 
+  private handleInspect(e: Event): void {
+    e.stopPropagation();
+    this.dispatchEvent(new CustomEvent("inspect", { detail: this.item }));
+  }
+
+  private handleEdit(e: Event): void {
+    e.stopPropagation();
+    this.dispatchEvent(new CustomEvent("edit", { detail: this.item }));
+  }
+
+  private handleDelete(e: Event): void {
+    e.stopPropagation();
+    this.dispatchEvent(new CustomEvent("delete", { detail: this.item }));
+  }
+
   private renderSource(): unknown {
     if (!this.item) return nothing;
     return this.sourceStrategy.getStrategy(this.item).getTemplate();
@@ -49,16 +64,16 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
 
   protected renderBody(): unknown {
     return html`
-      <div class="body">
+      <div class="body" @click=${this.handleInspect}>
         ${this.renderSource()}
         <div class="target">${this.redirectToText}: ${this.renderTarget()}</div>
         <div class="actions">
-          <urltracker-button-link text="Edit">
+          <urltracker-button-link @click=${this.handleEdit} text="Edit">
             <uui-icon-registry-essential>
               <uui-icon name="edit"></uui-icon>
             </uui-icon-registry-essential>
           </urltracker-button-link>
-          <urltracker-button-link text="Delete">
+          <urltracker-button-link @click=${this.handleDelete} text="Delete">
             <uui-icon-registry-essential>
               <uui-icon name="delete"></uui-icon>
             </uui-icon-registry-essential>
