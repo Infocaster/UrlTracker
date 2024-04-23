@@ -1,10 +1,19 @@
-﻿namespace UrlTracker.Core.Database.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace UrlTracker.Core.Database.Models;
 
 
 public class RecommendationOrderingOptions
 {
     public bool Desc { get; set; } = true;
     public RecommendationOrderBy OrderBy { get; set; }
+}
+
+public class RecommendationFilterOptions
+{
+    public string? Query { get; set; }
+    public IEnumerable<Guid>? Types { get; set; }
 }
 
 public enum RecommendationOrderBy

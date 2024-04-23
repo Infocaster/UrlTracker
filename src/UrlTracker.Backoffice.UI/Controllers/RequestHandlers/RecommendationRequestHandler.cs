@@ -48,11 +48,19 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         public RecommendationCollectionResponse Get(ListRecommendationRequest request)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
-            var result = _recommendationService.Get(request.Page, request.PageSize, orderingOptions: new RecommendationOrderingOptions()
-            {
-                OrderBy = request.OrderBy,
-                Desc = request.Desc,
-            });
+            var result = _recommendationService.Get(
+                request.Page,
+                request.PageSize,
+                new RecommendationOrderingOptions()
+                {
+                    OrderBy = request.OrderBy,
+                    Desc = request.Desc,
+                },
+                new RecommendationFilterOptions
+                {
+                    Query = request.Query,
+                    Types = request.Types
+                });
 
             return _mapper.Map<RecommendationCollectionResponse>(result)!;
         }
