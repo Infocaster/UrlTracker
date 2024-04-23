@@ -1,33 +1,34 @@
-﻿import { html, LitElement } from "lit";
+﻿import { provide } from "@lit/context";
+import { html, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
-import "./content.lit";
 import { UrlTrackerMainContext } from "../context/maincontext.mixin";
-import notificationService, {
-  INotificationService,
-} from "./notifications/notification.service";
 import { notificationServiceContext } from "../context/notificationservice.context";
-import recommendationService, {
-  IRecommendationsService,
-} from "../services/recommendation.service";
 import { recommendationServiceContext } from "../context/recommendationservice.context";
-import versionProvider, {
-  IVersionProvider,
-} from "../util/tools/versionprovider.service";
-import { versionProviderContext } from "../context/versionprovider.context";
 import {
   IRedirectService,
   redirectServiceContext,
 } from "../context/redirectservice.context";
-import redirectService from "../services/redirect.service";
-import "../util/elements/angulariconregistry.lit";
 import {
   ITargetService,
   redirectTargetServiceContext,
 } from "../context/redirecttargetservice.context";
+import { versionProviderContext } from "../context/versionprovider.context";
+import recommendationService, {
+  IRecommendationsService,
+} from "../services/recommendation.service";
+import redirectService from "../services/redirect.service";
+import "../util/elements/angulariconregistry.lit";
+import versionProvider, {
+  IVersionProvider,
+} from "../util/tools/versionprovider.service";
+import "./content.lit";
+import notificationService, {
+  INotificationService,
+} from "./notifications/notification.service";
 import targetService from "./tabs/redirects/target/target.service";
-import { provide } from "@lit/context";
 
 //Sidebar imports
+import "@sidebar/inspectRedirect-main.lit";
 import "@sidebar/recommendations-main.lit";
 import "@sidebar/simpleRedirect-main.lit";
 

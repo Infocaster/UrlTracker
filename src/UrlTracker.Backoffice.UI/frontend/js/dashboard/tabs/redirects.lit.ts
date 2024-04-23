@@ -1,3 +1,4 @@
+import { IEditorService, editorServiceContext } from "@/context/editorservice.context";
 import { REDIRECTTYPE_SORT_TYPE, RedirectSortType } from "@/enums/sortType";
 import { DropdownChangeEvent, IDropdownValue } from "@/util/elements/inputs/dropdown.lit";
 import { consume, provide } from "@lit/context";
@@ -38,6 +39,9 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 ) {
   @consume({ context: redirectServiceContext })
   private _redirectService?: IRedirectService;
+
+  @consume({ context: editorServiceContext })
+  private editorService?: IEditorService<any>;
 
   @provide({ context: changeManagerContext })
   public changeManager: IChangeManager = { element: this };
@@ -97,6 +101,39 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     }
   }
 
+  private openInspectPanel(data: IRedirectResponse) {
+    const options = {
+      title: "New redirect", // FIXME: translate
+      view: "/App_Plugins/UrlTracker/sidebar/redirect/inspectRedirect.html",
+      size: "medium",
+      submit: this.closePanel,
+      close: this.closePanel,
+      value: data,
+    };
+    this.editorService!.open(options);
+  }
+
+  private openNewRedirectPanel(data: IRedirectResponse) {
+    const options = {
+      title: "New redirect", // FIXME: translate
+      view: "/App_Plugins/UrlTracker/sidebar/redirect/simpleRedirect.html",
+      size: "medium",
+      submit: this.submitNewRedirectPanel,
+      close: this.closePanel,
+      value: data,
+    };
+
+    this.editorService!.open(options);
+  }
+
+  submitNewRedirectPanel = (value: IRedirectResponse) => {
+    this.closePanel();
+  };
+
+  closePanel = () => {
+    this.editorService!.close();
+  };
+
   private onSearch = ({ detail: { query } = {} }: CustomEvent) => {
     this.query = query;
     this.search();
@@ -114,11 +151,13 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   private onInspect = (e: CustomEvent<IRedirectResponse>) => {
     console.info("inspect redirect");
     console.info(e.detail);
+    this.openInspectPanel(e.detail);
   };
 
   private onEdit = (e: CustomEvent<IRedirectResponse>) => {
     console.info("edit redirect");
     console.info(e.detail);
+    this.openNewRedirectPanel(e.detail);
   };
 
   private onDelete = (e: CustomEvent<IRedirectResponse>) => {
@@ -126,14 +165,13 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     console.info(e.detail);
   };
 
-  private _onAddRedirect = (e: any) => {
-    // TODO: implement logic
+  private onAddRedirect = (e: any) => {
     console.info("add redirect");
     console.info(e);
+    this.openNewRedirectPanel(e.detail);
   };
 
-  private _onExportRedirects = (e: any) => {
-    // TODO: implement logic
+  private onExportRedirects = (e: any) => {
     console.info("export redirects");
     console.info(e);
   };
@@ -180,10 +218,10 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
         <div class="functions">
           <urltracker-redirect-actions>
             <urltracker-add-redirect-action
-              @click=${this._onAddRedirect}
+              @click=${this.onAddRedirect}
             ></urltracker-add-redirect-action>
             <urltracker-export-redirects-action
-              @click=${this._onExportRedirects}
+              @click=${this.onExportRedirects}
             ></urltracker-export-redirects-action>
           </urltracker-redirect-actions>
           <urltracker-redirect-import></urltracker-redirect-import>
