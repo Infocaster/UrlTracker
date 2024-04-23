@@ -97,13 +97,14 @@ export class UrlTrackerPagination extends LitElement {
         `;
     }
     static styles = css`
-        :host {
+        form {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
             gap: 16px;
         }
+
         urltracker-pageselect {
             background-color: white;
         }

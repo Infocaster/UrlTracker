@@ -146,15 +146,22 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
             @change=${this.onTypeChange}
           ></urltracker-dropdown>
         </div>
-        <urltracker-result-list
-          class="results"
-          .loading=${!!this._loading}
-          .header=${`Results (${
-            this._redirectCollection ? this._redirectCollection.total : 0
-          })`}
-        >
-          ${this.renderRedirects()}
-        </urltracker-result-list>
+        <div class="results">
+          <urltracker-result-list
+            .loading=${!!this._loading}
+            .header=${`Results (${
+              this._redirectCollection ? this._redirectCollection.total : 0
+            })`}
+          >
+            ${this.renderRedirects()}
+          </urltracker-result-list>
+          <urltracker-pagination
+            ${ref(this.paginationRef)}
+            class="pagination"
+            total="${ifDefined(this._redirectCollection?.total)}"
+            @change=${this.onFilterChange}
+          ></urltracker-pagination>
+        </div>
         <div class="functions">
           <urltracker-redirect-actions>
             <urltracker-add-redirect-action
@@ -167,21 +174,13 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
           <urltracker-redirect-import></urltracker-redirect-import>
         </div>
       </div>
-      <urltracker-pagination
-        ${ref(this.paginationRef)}
-        class="pagination"
-        total="${ifDefined(this._redirectCollection?.total)}"
-        @change=${this.onFilterChange}
-      ></urltracker-pagination>
     `;
   }
 
   static styles = css`
     .grid-root {
       display: grid;
-      grid-template-columns: 2;
-      grid-template-rows: 3;
-      gap: 16px;
+      gap: 1rem;
     }
 
     .filters {
@@ -209,6 +208,12 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 
     .functions {
       flex: 1 0 15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .results {
       display: flex;
       flex-direction: column;
       gap: 1rem;

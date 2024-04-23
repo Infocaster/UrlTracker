@@ -1,5 +1,5 @@
 // based on https://our.umbraco.com/apidocs/v8/ui/#/api/umbraco.services.editorService
-export interface IEditorService<T extends string> {
+export interface IEditorService<T extends any> {
   contentEditor(editor: IContentEditor): void;
   close: () => void;
   closeAll: () => void;
