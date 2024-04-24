@@ -184,6 +184,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 
   private onSelectItem = (e: any) => {
     this.selectedItems.push(e.item.id);
+    this.requestUpdate();
   }
 
   private onDeselectItem = (e: any) => {
