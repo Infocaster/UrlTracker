@@ -127,10 +127,12 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   }
 
   submitNewRedirectPanel = (value: IRedirectResponse) => {
+    console.info("submit new redirect", value);
     this.closePanel();
   };
 
   closePanel = () => {
+    console.info("close panel");
     this.editorService!.close();
   };
 

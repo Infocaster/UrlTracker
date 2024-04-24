@@ -1,8 +1,4 @@
 import {
-  IEditorService,
-  editorServiceContext,
-} from "@/context/editorservice.context";
-import {
   ILocalizationService,
   localizationServiceContext,
 } from "@/context/localizationservice.context";
@@ -17,8 +13,6 @@ export const ContentElementTag = "urltracker-sidebar-simple-redirect";
 
 @customElement(ContentElementTag)
 export class UrlTrackerSidebarSimpleRedirect extends LitElement {
-  @consume({ context: editorServiceContext })
-  private editorService?: IEditorService<any>;
 
   @consume({ context: scopeContext })
   private $scope?: IScope;
@@ -32,11 +26,11 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   @state()
   private redirectData: IRedirectResponse = {
       source: {
-          strategy: "",
+          strategy: "url",
           value: ""
       },
       target: {
-          strategy: "",
+          strategy: "url",
           value: ""
       },
       permanent: false,
@@ -46,9 +40,8 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    console.log(this.$scope?.model);
 
-    if(this.$scope?.model.value.id) {
+    if(this.$scope!.model.value?.id) {
       // Editing existing redirect
       this.redirectData = this.$scope?.model.value;
       this.headerText = `Edit: ${this.$scope?.model.value.source.value}` ?? "Edit redirect";
@@ -59,12 +52,11 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   }
 
   save() {
-    console.log(this.redirectData);
-    //this.$scope?.model.submit(this.redirectData);
+    this.$scope!.model.submit(this.redirectData);
   }
 
   close() {
-    this.$scope?.model.close();
+    this.$scope!.model.close();
   }
 
   protected render() {

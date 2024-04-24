@@ -2,6 +2,7 @@ import {
   IEditorService,
   editorServiceContext,
 } from "@/context/editorservice.context";
+import { IRedirectResponse } from "@/services/redirect.service";
 import { consume, provide } from "@lit/context";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
@@ -81,8 +82,8 @@ export class UrlTrackerDashboardContent extends LitElement {
     }
   }
 
-  submitPanel = (value: string) => {
-    this.model = value;
+  submitPanel = (redirect: IRedirectResponse) => {
+    console.log("submitPanel", redirect);
     this.closePanel();
   };
 

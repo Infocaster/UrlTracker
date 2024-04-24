@@ -54,6 +54,7 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
       ></urltracker-redirect-permanent>
       <urltracker-redirect-incoming-url
         class="border-bottom"
+        .incomingStrategy=${this.redirect.source.strategy}
         .incomingUrl=${this.redirect.source.value}
         @input=${this.onIncomingUrlInput}
       ></urltracker-redirect-incoming-url>

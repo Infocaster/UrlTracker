@@ -15,6 +15,9 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
   @property({ type: String })
   private incomingUrl: string = "";
 
+  @property({ type: String })
+  private incomingStrategy: string = "url";
+
   @state()
   private _headerText: string = "";
 
@@ -25,6 +28,7 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
+
     this._localizeHeaderText();
     this._localizeInfoText();
   }
