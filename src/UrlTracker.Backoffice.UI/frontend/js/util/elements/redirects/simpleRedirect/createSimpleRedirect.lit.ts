@@ -1,34 +1,48 @@
-import { LitElement, css, html, nothing } from "lit";
-import { customElement, state } from "lit/decorators.js";
-import { IRecommendationCollection } from "../../../../services/recommendation.service";
-import "./redirectPermanent.lit";
+import { LitElement, css, html } from "lit";
+import { customElement } from "lit/decorators.js";
 import "./redirectIncomingUrl.lit";
 import "./redirectOutgoingUrl.lit";
+import "./redirectPermanent.lit";
+import { ITypeButton } from "./simpleRedirectTypeProvider";
 
 @customElement("urltracker-create-simple-redirect")
 export class UrlTrackerCreateSimpleRedirect extends LitElement {
-  @state()
-  private _collection?: IRecommendationCollection;
+  async connectedCallback(): Promise<void> {
+    super.connectedCallback();
+  }
 
-  private _onToggle = ({ detail }: any) => {
+  private onToggle = ({ detail }: { detail: boolean}) => {
     console.log("on toggle");
     console.log(detail);
   };
 
-  async connectedCallback(): Promise<void> {
-    super.connectedCallback();
+  private onIncomingUrlInput = ({ detail }: { detail: string}) => {
+    console.log("on input");
+    console.log(detail);
+  }
+
+  private onOutgoingUrlInput = ({ detail }: { detail: string}) => {
+    console.log("on input");
+    console.log(detail);
+  }
+
+  private onTypeChange = ({ detail }: { detail: ITypeButton}) => {
+    console.log("on type change");
+    console.log(detail);
   }
 
   protected render(): unknown {
     return html`
       <urltracker-redirect-permanent
         class="border-bottom"
-        @toggle=${this._onToggle}
+        @toggle=${this.onToggle}
       ></urltracker-redirect-permanent>
       <urltracker-redirect-incoming-url
         class="border-bottom"
+        @input=${this.onIncomingUrlInput}
       ></urltracker-redirect-incoming-url>
-      <urltracker-redirect-outgoing-url></urltracker-redirect-outgoing-url>
+      <urltracker-redirect-outgoing-url @input=${this.onOutgoingUrlInput} @typechange=${this.onTypeChange}>
+      </urltracker-redirect-outgoing-url>
     `;
   }
 

@@ -1,11 +1,17 @@
-import { LitElement, css, html, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { debounce } from "@/util/functions/debounce";
 import { consume } from "@lit/context";
+import { UUIInputEvent } from "@umbraco-ui/uui";
+import { LitElement, css, html } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
+import { Ref, createRef, ref } from "lit/directives/ref.js";
 import { localizationServiceContext } from "../../../../context/localizationservice.context";
 import { ILocalizationService } from "../../../../umbraco/localization.service";
 
 @customElement("urltracker-redirect-incoming-url")
 export class UrlTrackerRedirectIncomingUrl extends LitElement {
+  @consume({ context: localizationServiceContext })
+  private _localizationService?: ILocalizationService;
+
   @property({ type: String })
   private _data: string = "";
 
@@ -15,17 +21,10 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
   @state()
   private _infoText: string = "";
 
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
+  private inputRef: Ref<HTMLInputElement> = createRef();
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-
-    // if (!this._localizationService)
-    //   throw new Error(
-    //     "localization service is not defined, but is required by this element"
-    //   );
-
     this._localizeHeaderText();
     this._localizeInfoText();
   }
@@ -46,18 +45,27 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
     this._infoText = text ?? "";
   };
 
-  private _onInput = (e: any) => {
-    console.log(e);
+  private onInput = (e: UUIInputEvent) => {
+    this.dispatchEvent(
+      new CustomEvent("input", {
+        detail: this.inputRef.value?.shadowRoot?.querySelector('input')?.value ?? '',
+        bubbles: true,
+        composed: false,
+      })
+    );
   };
+
+  private _debouncedOnInput = debounce(this.onInput, 500);
 
   protected render(): unknown {
     return html`
       <p><strong>${this._headerText}</strong></p>
       <p>${this._infoText}</p>
       <uui-input
+        ${ref(this.inputRef)}
         .value=${this._data}
         placeholder="https://example.com/"
-        @input=${this._onInput}
+        @input=${this._debouncedOnInput}
       ></uui-input>
     `;
   }

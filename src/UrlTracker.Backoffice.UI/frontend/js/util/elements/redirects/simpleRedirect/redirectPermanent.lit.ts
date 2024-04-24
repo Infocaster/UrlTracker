@@ -1,6 +1,6 @@
-import { LitElement, css, html, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
 import { consume } from "@lit/context";
+import { LitElement, css, html } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
 import { localizationServiceContext } from "../../../../context/localizationservice.context";
 import { ILocalizationService } from "../../../../umbraco/localization.service";
 
@@ -42,7 +42,7 @@ export class UrlTrackerRedirectPermanent extends LitElement {
   };
 
   private _onToggleChange = (e: any) => {
-    this.toggled = e.originalTarget._checked;
+    this.toggled = !this.toggled;
 
     this.dispatchEvent(
       new CustomEvent("toggle", {
