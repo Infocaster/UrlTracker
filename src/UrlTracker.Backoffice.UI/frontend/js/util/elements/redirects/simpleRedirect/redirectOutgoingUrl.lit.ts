@@ -15,7 +15,10 @@ import { ITypeButton } from "./simpleRedirectTypeProvider";
 @customElement("urltracker-redirect-outgoing-url")
 export class UrlTrackerRedirectOutgoingUrl extends LitElement {
   @property({ type: String })
-  private _data: string = "";
+  private outgoingUrl: string = "";
+
+  @property({ type: String })
+  private outgoingStrategy: string = "url";
 
   @state()
   private _headerText: string = "";
@@ -55,14 +58,13 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
     
-    // if (!this._localizationService)
-    //   throw new Error(
-    //     "localization service is not defined, but is required by this element"
-    //   );
-
     this._localizeHeaderText();
     this._localizeInfoText();
     this._localizeButtonLabels();
+
+    this._selectedType = this._typeButtons.find(
+      (item) => item.value === this.outgoingStrategy
+    ) ?? this._typeButtons.find((item) => item.value === "url")!;
   }
 
   private _localizeHeaderText = async () => {
@@ -137,7 +139,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
       </uui-button-group>
       <uui-input
         ${ref(this.inputRef)}
-        .value=${this._data}
+        .value=${this.outgoingUrl}
         .placeholder=${this._selectedType.placeholder}
         @input=${this._debouncedOnInput}
       ></uui-input>

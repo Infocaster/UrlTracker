@@ -7,7 +7,7 @@ import { ILocalizationService } from "../../../../umbraco/localization.service";
 @customElement("urltracker-redirect-permanent")
 export class UrlTrackerRedirectPermanent extends LitElement {
   @property({ type: Boolean })
-  public toggled: boolean = false;
+  public isPermanent: boolean = false;
 
   @state()
   private _headerText: string = "";
@@ -42,11 +42,11 @@ export class UrlTrackerRedirectPermanent extends LitElement {
   };
 
   private _onToggleChange = (e: any) => {
-    this.toggled = !this.toggled;
+    this.isPermanent = !this.isPermanent;
 
     this.dispatchEvent(
       new CustomEvent("toggle", {
-        detail: this.toggled,
+        detail: this.isPermanent,
         bubbles: true,
         composed: true,
       })
@@ -59,7 +59,7 @@ export class UrlTrackerRedirectPermanent extends LitElement {
       <p>${this._infoText}</p>
       <uui-toggle
         label=""
-        .checked=${this.toggled}
+        .checked=${this.isPermanent}
         @change=${this._onToggleChange}
       ></uui-toggle>
     `;

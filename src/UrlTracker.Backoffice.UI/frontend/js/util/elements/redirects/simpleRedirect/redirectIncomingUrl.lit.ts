@@ -13,7 +13,7 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
   private _localizationService?: ILocalizationService;
 
   @property({ type: String })
-  private _data: string = "";
+  private incomingUrl: string = "";
 
   @state()
   private _headerText: string = "";
@@ -46,9 +46,10 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
   };
 
   private onInput = (e: UUIInputEvent) => {
+    this.incomingUrl = this.inputRef.value?.shadowRoot?.querySelector('input')?.value ?? ''
     this.dispatchEvent(
       new CustomEvent("input", {
-        detail: this.inputRef.value?.shadowRoot?.querySelector('input')?.value ?? '',
+        detail: this.incomingUrl,
         bubbles: true,
         composed: false,
       })
@@ -63,7 +64,7 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
       <p>${this._infoText}</p>
       <uui-input
         ${ref(this.inputRef)}
-        .value=${this._data}
+        .value=${this.incomingUrl}
         placeholder="https://example.com/"
         @input=${this._debouncedOnInput}
       ></uui-input>

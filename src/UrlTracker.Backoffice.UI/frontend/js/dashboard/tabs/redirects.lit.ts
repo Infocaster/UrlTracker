@@ -113,7 +113,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     this.editorService!.open(options);
   }
 
-  private openNewRedirectPanel(data: IRedirectResponse) {
+  private openNewRedirectPanel(data?: IRedirectResponse) {
     const options = {
       title: "New redirect", // FIXME: translate
       view: "/App_Plugins/UrlTracker/sidebar/redirect/simpleRedirect.html",
@@ -168,7 +168,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   private onAddRedirect = (e: any) => {
     console.info("add redirect");
     console.info(e);
-    this.openNewRedirectPanel(e.detail);
+    this.openNewRedirectPanel();
   };
 
   private onExportRedirects = (e: any) => {

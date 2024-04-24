@@ -8,8 +8,9 @@ import {
 } from "@/context/localizationservice.context";
 import { scopeContext } from "@/context/scope.context";
 import { IScope } from "@/models/scope.model";
+import { IRedirectResponse } from "@/services/redirect.service";
 import { consume } from "@lit/context";
-import { LitElement, css, html, svg } from "lit";
+import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
 export const ContentElementTag = "urltracker-sidebar-simple-redirect";
@@ -26,23 +27,40 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   private _localizationService?: ILocalizationService;
 
   @state()
-  private _headerText = "";
+  private headerText = "";
+
+  @state()
+  private redirectData: IRedirectResponse = {
+      source: {
+          strategy: "",
+          value: ""
+      },
+      target: {
+          strategy: "",
+          value: ""
+      },
+      permanent: false,
+      retainQuery: true,
+      force: false,
+  } as IRedirectResponse;
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-
-    console.log("model");
     console.log(this.$scope?.model);
-    console.log(this.$scope?.model.title);
 
-    setTimeout(() => {
-      this._headerText = this.$scope?.model.title ?? "";
-    }, 10);
+    if(this.$scope?.model.value.id) {
+      // Editing existing redirect
+      this.redirectData = this.$scope?.model.value;
+      this.headerText = `Edit: ${this.$scope?.model.value.source.value}` ?? "Edit redirect";
+    } else {
+      // Creating new redirect
+      this.headerText = "Create new redirect";
+    }
+  }
 
-    // if (!this._localizationService)
-    //   throw new Error(
-    //     "Some services are missing, check: localizationService, editorService, assetsService"
-    //   );
+  save() {
+    console.log(this.redirectData);
+    //this.$scope?.model.submit(this.redirectData);
   }
 
   close() {
@@ -50,15 +68,15 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   }
 
   protected render() {
-    return html`<div class="header">${this._headerText}</div>
+    return html`<div class="header">${this.headerText}</div>
       <div class="main">
-        <urltracker-create-simple-redirect></urltracker-create-simple-redirect>
+        <urltracker-create-simple-redirect .redirect=${this.redirectData} @update=${({detail}: {detail: IRedirectResponse}) => this.redirectData = detail }></urltracker-create-simple-redirect>
       </div>
       <div class="footer">
         <uui-button look="default" color="default" @click=${this.close}
           >Cancel</uui-button
         >
-        <uui-button look="primary" color="positive">Save</uui-button>
+        <uui-button look="primary" color="positive"  @click=${this.save}>Save</uui-button>
       </div>`;
   }
 

@@ -1,5 +1,6 @@
+import { IRedirectResponse } from "@/services/redirect.service";
 import { LitElement, css, html } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import "./redirectIncomingUrl.lit";
 import "./redirectOutgoingUrl.lit";
 import "./redirectPermanent.lit";
@@ -7,41 +8,60 @@ import { ITypeButton } from "./simpleRedirectTypeProvider";
 
 @customElement("urltracker-create-simple-redirect")
 export class UrlTrackerCreateSimpleRedirect extends LitElement {
+  @property({ type: Object })
+  public redirect!: IRedirectResponse
+
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
+
+    this.redirect = this.redirect;
   }
 
   private onToggle = ({ detail }: { detail: boolean}) => {
-    console.log("on toggle");
-    console.log(detail);
+    this.redirect.permanent = detail;
+    this.updateRedirect();
   };
 
   private onIncomingUrlInput = ({ detail }: { detail: string}) => {
-    console.log("on input");
-    console.log(detail);
+    this.redirect.source.value = detail;
+    this.updateRedirect();
   }
 
   private onOutgoingUrlInput = ({ detail }: { detail: string}) => {
-    console.log("on input");
-    console.log(detail);
+    this.redirect.target.value = detail;
+    this.updateRedirect();
   }
 
   private onTypeChange = ({ detail }: { detail: ITypeButton}) => {
-    console.log("on type change");
-    console.log(detail);
+    this.redirect.target.strategy = detail.value;
+    this.updateRedirect();
   }
 
+  private updateRedirect = () => this.dispatchEvent(
+    new CustomEvent("update", {
+      detail: this.redirect,
+      bubbles: true,
+      composed: true,
+    })
+  );
+  
   protected render(): unknown {
     return html`
       <urltracker-redirect-permanent
         class="border-bottom"
+        .isPermanent=${this.redirect.permanent}
         @toggle=${this.onToggle}
       ></urltracker-redirect-permanent>
       <urltracker-redirect-incoming-url
         class="border-bottom"
+        .incomingUrl=${this.redirect.source.value}
         @input=${this.onIncomingUrlInput}
       ></urltracker-redirect-incoming-url>
-      <urltracker-redirect-outgoing-url @input=${this.onOutgoingUrlInput} @typechange=${this.onTypeChange}>
+      <urltracker-redirect-outgoing-url
+        .outgoingStrategy=${this.redirect.target.strategy}
+        .outgoingUrl=${this.redirect.target.value} 
+        @input=${this.onOutgoingUrlInput} 
+        @typechange=${this.onTypeChange}>
       </urltracker-redirect-outgoing-url>
     `;
   }
