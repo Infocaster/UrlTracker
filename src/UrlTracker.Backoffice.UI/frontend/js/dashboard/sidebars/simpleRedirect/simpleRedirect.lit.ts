@@ -29,11 +29,11 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   @state()
   private redirectData: IRedirectResponse = {
       source: {
-          strategy: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url,
+          strategy: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').url,
           value: ""
       },
       target: {
-          strategy: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').url,
+          strategy: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url,
           value: ""
       },
       permanent: false,
