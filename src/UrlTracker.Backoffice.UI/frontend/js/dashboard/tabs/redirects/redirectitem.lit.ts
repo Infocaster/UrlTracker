@@ -69,14 +69,10 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
         <div class="target">${this.redirectToText}: ${this.renderTarget()}</div>
         <div class="actions">
           <urltracker-button-link @click=${this.handleEdit} text="Edit">
-            <uui-icon-registry-essential>
               <uui-icon name="edit"></uui-icon>
-            </uui-icon-registry-essential>
           </urltracker-button-link>
           <urltracker-button-link @click=${this.handleDelete} text="Delete">
-            <uui-icon-registry-essential>
               <uui-icon name="delete"></uui-icon>
-            </uui-icon-registry-essential>
           </urltracker-button-link>
         </div>
       </div>

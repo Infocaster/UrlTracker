@@ -54,9 +54,7 @@ export class UrlTrackerRecommendationSearch extends LitElement {
       @input=${this._debouncedOnSearchInput}
     >
       <div class="prepend" slot="prepend">
-        <uui-icon-registry-essential>
           <uui-icon name="search"></uui-icon>
-        </uui-icon-registry-essential>
       </div>
     </uui-input>`;
   }

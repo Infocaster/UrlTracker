@@ -1,6 +1,6 @@
+import "@umbraco-ui/uui";
 import { css, html } from "lit";
 import { customElement } from "lit/decorators.js";
-import "@umbraco-ui/uui";
 import { UrlTrackerRedirectAction } from "./redirectActionBase.lit";
 
 @customElement("urltracker-export-redirects-action")
@@ -21,9 +21,7 @@ export class UrlTrackerExportRedirectsAction extends UrlTrackerRedirectAction {
 
   protected override render(): unknown {
     return html` <div @click=${this._onAddClick}>
-      <uui-icon-registry-essential>
         <uui-icon name="download"></uui-icon>
-      </uui-icon-registry-essential>
       ${this._actionText}
     </div>`;
   }

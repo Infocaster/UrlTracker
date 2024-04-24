@@ -145,9 +145,7 @@ export class UrlTrackerDashboardContent extends LitElement {
             label="Basic"
             @click="${this._openSidebar}"
           >
-            <uui-icon-registry-essential>
               <uui-icon name="add"></uui-icon>
-            </uui-icon-registry-essential>
             New redirect
           </uui-button>
         </uui-tab-group>`;

@@ -1,9 +1,9 @@
+import { consume } from "@lit/context";
 import { UUIIconRegistry } from "@umbraco-ui/uui";
-import { IIconHelper } from "../../umbraco/icon.service";
+import { LitElement, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { iconHelperContext } from "../../context/iconhelper.context";
-import { consume } from "@lit/context";
-import { LitElement, html, nothing } from "lit";
+import { IIconHelper } from "../../umbraco/icon.service";
 
 class AngularIconRegistry extends UUIIconRegistry {
   private _iconHelper?: IIconHelper;
@@ -57,6 +57,10 @@ export class AngularIconRegistryElement extends LitElement {
 
   protected render(): unknown {
     if (this.loading) return nothing;
-    return html`<slot></slot>`;
+    return html`
+     <uui-icon-registry-essential>
+      <slot></slot>
+     </uui-icon-registry-essential>
+    `;
   }
 }
