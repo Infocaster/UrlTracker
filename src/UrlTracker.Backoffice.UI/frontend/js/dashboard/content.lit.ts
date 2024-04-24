@@ -2,7 +2,9 @@ import {
   IEditorService,
   editorServiceContext,
 } from "@/context/editorservice.context";
-import { IRedirectResponse } from "@/services/redirect.service";
+import { redirectServiceContext } from "@/context/redirectservice.context";
+import { IRedirectResponse, IRedirectService } from "@/services/redirect.service";
+import { ensureServiceExists } from "@/util/tools/existancecheck";
 import { consume, provide } from "@lit/context";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
@@ -19,6 +21,9 @@ export class UrlTrackerDashboardContent extends LitElement {
 
   @consume({ context: editorServiceContext })
   private editorService?: IEditorService<any>;
+
+  @consume({ context: redirectServiceContext })
+  private _redirectService?: IRedirectService;
 
   @state()
   set tabs(tabs: Array<ITab> | undefined) {
@@ -52,6 +57,8 @@ export class UrlTrackerDashboardContent extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
+    ensureServiceExists(this._redirectService, "redirect service");
+
     this.loading++;
     try {
       if (!this.localizationService)
@@ -82,8 +89,14 @@ export class UrlTrackerDashboardContent extends LitElement {
     }
   }
 
-  submitPanel = (redirect: IRedirectResponse) => {
-    console.log("submitPanel", redirect);
+  submitPanel = (value: IRedirectResponse) => {
+    console.info("submit new or update redirect", value);
+    if(value.id) {
+      this._redirectService?.update(value);
+    }
+    else {
+      this._redirectService?.create(value);
+    }
     this.closePanel();
   };
 

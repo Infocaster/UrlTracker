@@ -127,12 +127,18 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   }
 
   submitNewRedirectPanel = (value: IRedirectResponse) => {
-    console.info("submit new redirect", value);
+    console.info("submit new or update redirect", value);
+    if(value.id) {
+      this._redirectService?.update(value);
+    }
+    else {
+      this._redirectService?.create(value);
+    }
+
     this.closePanel();
   };
 
   closePanel = () => {
-    console.info("close panel");
     this.editorService!.close();
   };
 
@@ -151,26 +157,20 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   };
 
   private onInspect = (e: CustomEvent<IRedirectResponse>) => {
-    console.info("inspect redirect");
-    console.info(e.detail);
     this.openInspectPanel(e.detail);
   };
 
-  private onEdit = (e: CustomEvent<IRedirectResponse>) => {
-    console.info("edit redirect");
-    console.info(e.detail);
+  private onAddRedirect = (e: any) => {
+    this.openNewRedirectPanel();
+  };
+
+  private onEditRedirect = (e: CustomEvent<IRedirectResponse>) => {
     this.openNewRedirectPanel(e.detail);
   };
 
-  private onDelete = (e: CustomEvent<IRedirectResponse>) => {
+  private onDeleteRedirect = (e: CustomEvent<IRedirectResponse>) => {
     console.info("delete redirect");
     console.info(e.detail);
-  };
-
-  private onAddRedirect = (e: any) => {
-    console.info("add redirect");
-    console.info(e);
-    this.openNewRedirectPanel();
   };
 
   private onExportRedirects = (e: any) => {
@@ -184,7 +184,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
       this._redirectCollection.results,
       (redirect) => redirect.id,
       (r) =>
-        html`<urltracker-redirect-item .item=${r} @inspect=${this.onInspect} @edit=${this.onEdit} @delete=${this.onDelete}></urltracker-redirect-item>`
+        html`<urltracker-redirect-item .item=${r} @inspect=${this.onInspect} @edit=${this.onEditRedirect} @delete=${this.onDeleteRedirect}></urltracker-redirect-item>`
     );
   }
 

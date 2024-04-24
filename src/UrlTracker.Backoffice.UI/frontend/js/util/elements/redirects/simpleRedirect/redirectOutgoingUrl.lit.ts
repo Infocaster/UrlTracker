@@ -2,7 +2,9 @@ import {
   ILocalizationService,
   localizationServiceContext,
 } from "@/context/localizationservice.context";
+import { ITargetStrategies } from "@/dashboard/tabs/redirects/target/target.constants";
 import { debounce } from "@/util/functions/debounce";
+import variableresourceService from "@/util/tools/variableresource.service";
 import { consume } from "@lit/context";
 import { UUIInputEvent } from "@umbraco-ui/uui";
 import { LitElement, css, html } from "lit";
@@ -35,21 +37,21 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     {
       label: "urlTrackerNewRedirect_outgoing-url-content",
       labelFallback: "Content",
-      value: "content",
+      value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content,
       placeholder: "link to content placeholder",
       disabled: true,
     },
     {
       label: "urlTrackerNewRedirect_outgoing-url-media",
       labelFallback: "Media",
-      value: "media",
+      value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').media,
       placeholder: "link to media placeholder",
       disabled: true,
     },
     {
       label: "urlTrackerNewRedirect_outgoing-url-url",
       labelFallback: "URL",
-      value: "url",
+      value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url,
       placeholder: "https://example.com/",
       disabled: false,
     },
@@ -65,10 +67,12 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     this._localizeInfoText();
     this._localizeButtonLabels();
 
+    console.log(this._typeButtons)
+
     //@TODO: Create Content and Media type redirect functionality. Only URL type is implemented.
     this._selectedType = this._typeButtons.find(
       (item) => item.value === this.outgoingStrategy
-    ) ?? this._typeButtons.find((item) => item.value === "url")!;
+    ) ?? this._typeButtons.find((item) => item.value === variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url)!;
   }
 
   private _localizeHeaderText = async () => {

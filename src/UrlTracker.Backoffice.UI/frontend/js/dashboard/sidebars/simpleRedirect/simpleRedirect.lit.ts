@@ -3,8 +3,11 @@ import {
   localizationServiceContext,
 } from "@/context/localizationservice.context";
 import { scopeContext } from "@/context/scope.context";
+import { ISourceStrategies } from "@/dashboard/tabs/redirects/source/source.constants";
+import { ITargetStrategies } from "@/dashboard/tabs/redirects/target/target.constants";
 import { IScope } from "@/models/scope.model";
 import { IRedirectResponse } from "@/services/redirect.service";
+import variableresourceService from "@/util/tools/variableresource.service";
 import { consume } from "@lit/context";
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
@@ -26,11 +29,11 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   @state()
   private redirectData: IRedirectResponse = {
       source: {
-          strategy: "url",
+          strategy: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url,
           value: ""
       },
       target: {
-          strategy: "url",
+          strategy: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').url,
           value: ""
       },
       permanent: false,
