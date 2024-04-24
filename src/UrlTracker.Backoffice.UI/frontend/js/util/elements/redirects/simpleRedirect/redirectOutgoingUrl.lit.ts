@@ -37,18 +37,21 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
       labelFallback: "Content",
       value: "content",
       placeholder: "link to content placeholder",
+      disabled: true,
     },
     {
       label: "urlTrackerNewRedirect_outgoing-url-media",
       labelFallback: "Media",
       value: "media",
       placeholder: "link to media placeholder",
+      disabled: true,
     },
     {
       label: "urlTrackerNewRedirect_outgoing-url-url",
       labelFallback: "URL",
       value: "url",
       placeholder: "https://example.com/",
+      disabled: false,
     },
   ] as ITypeButton[];
 
@@ -62,6 +65,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     this._localizeInfoText();
     this._localizeButtonLabels();
 
+    //@TODO: Create Content and Media type redirect functionality. Only URL type is implemented.
     this._selectedType = this._typeButtons.find(
       (item) => item.value === this.outgoingStrategy
     ) ?? this._typeButtons.find((item) => item.value === "url")!;
@@ -133,6 +137,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
               ? "primary"
               : "outline"}
             color="default"
+            .disabled=${item.disabled}
             @click=${(e: Event) => this.onTypeChange(item, e)}
           ></uui-button>`
         )}
