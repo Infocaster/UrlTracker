@@ -16,6 +16,7 @@ import {
   redirectServiceContext,
 } from "../../context/redirectservice.context";
 import { IRedirectCollectionResponse, IRedirectResponse } from "../../services/redirect.service";
+import '../../util/elements/bulkActions.lit';
 import "../../util/elements/inputs/addRedirectAction.lit";
 import "../../util/elements/inputs/exportRedirectsAction.lit";
 import "../../util/elements/inputs/pagination.lit";
@@ -47,16 +48,18 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   public changeManager: IChangeManager = { element: this };
 
   @state()
-  private _redirectCollection?: IRedirectCollectionResponse;
+  private redirectCollection?: IRedirectCollectionResponse;
 
   @state()
-  private _loading: number = 0;
+  private loading: number = 0;
 
-  private paginationRef: Ref<UrlTrackerPagination> = createRef();
+  @state()
+  private selectedItems: number[] = [];
+  
   private query = "";
   private selectedType: RedirectSortType = REDIRECTTYPE_SORT_TYPE.ALL;
-
-  private _sortOptions: IDropdownValue[] = [
+  private paginationRef: Ref<UrlTrackerPagination> = createRef();
+  private sortOptions: IDropdownValue[] = [
     {
       display: "Alle",
       value: REDIRECTTYPE_SORT_TYPE.ALL,
@@ -93,11 +96,11 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     const type = this.selectedType;
     const query = this.query;
 
-    this._loading++;
+    this.loading++;
     try {
-      this._redirectCollection = await this._redirectService?.list({ ...page, types: type, query});
+      this.redirectCollection = await this._redirectService?.list({ ...page, types: type, query});
     } finally {
-      this._loading--;
+      this.loading--;
     }
   }
 
@@ -179,13 +182,34 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     console.info(e);
   };
 
+  private onSelectItem = (e: any) => {
+    this.selectedItems.push(e.item.id);
+  }
+
+  private onDeselectItem = (e: any) => {
+    this.selectedItems = this.selectedItems.filter(i => i !== e.item.id);
+  }
+
+  private onSelectAll = (e: any) => {
+    if(this.selectedItems.length === this.redirectCollection?.total) {
+      this.selectedItems = [];
+    }
+    else {
+      this.selectedItems = Array.from(new Set([...this.redirectCollection?.results.map(r => r.id) ?? [], ...this.selectedItems]));
+    }
+  }
+
+  private onClearSelection = (e: any) => {
+    this.selectedItems = [];
+  }
+
   private renderRedirects(): unknown {
-    if (!this._redirectCollection?.results) return nothing;
+    if (!this.redirectCollection?.results) return nothing;
     return repeat(
-      this._redirectCollection.results,
+      this.redirectCollection.results,
       (redirect) => redirect.id,
       (r) =>
-        html`<urltracker-redirect-item .item=${r} @inspect=${this.onInspect} @edit=${this.onEditRedirect} @delete=${this.onDeleteRedirect}></urltracker-redirect-item>`
+        html`<urltracker-redirect-item .item=${r} .isSelected=${this.selectedItems.some(i => i === r.id)} @selected=${this.onSelectItem} @deselected=${this.onDeselectItem} @inspect=${this.onInspect} @edit=${this.onEditRedirect} @delete=${this.onDeleteRedirect}></urltracker-redirect-item>`
     );
   }
 
@@ -198,26 +222,37 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
           ></urltracker-redirects-search>
           <urltracker-dropdown
             label="Type"
-            .options=${this._sortOptions}
+            .options=${this.sortOptions}
             @change=${this.onTypeChange}
           ></urltracker-dropdown>
         </div>
+
+        <urltracker-bulk-actions 
+          class="bulk"
+          .selectedCount=${this.selectedItems.length}
+          .total=${this.redirectCollection ? this.redirectCollection.total : 0}
+          @select-all=${this.onSelectAll}
+          @clear-selection=${this.onClearSelection}
+        ></urltracker-bulk-actions>
+
         <div class="results">
           <urltracker-result-list
-            .loading=${!!this._loading}
+            .loading=${!!this.loading}
             .header=${`Results (${
-              this._redirectCollection ? this._redirectCollection.total : 0
+              this.redirectCollection ? this.redirectCollection.total : 0
             })`}
           >
             ${this.renderRedirects()}
           </urltracker-result-list>
+
           <urltracker-pagination
             ${ref(this.paginationRef)}
             class="pagination"
-            total="${ifDefined(this._redirectCollection?.total)}"
+            total="${ifDefined(this.redirectCollection?.total)}"
             @change=${this.onFilterChange}
           ></urltracker-pagination>
         </div>
+
         <div class="functions">
           <urltracker-redirect-actions>
             <urltracker-add-redirect-action
@@ -245,6 +280,11 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
       display: flex;
       align-items: center;
       gap: 1rem;
+    }
+
+    .bulk {
+      grid-column: 1 / span 2;
+      grid-row: 2;
     }
 
     .filters urltracker-redirects-search {

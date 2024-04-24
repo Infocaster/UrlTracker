@@ -8,6 +8,7 @@ export function UrlTrackerSelectableResultListItem<T extends Record<string, any>
 ) {
   return class SelectableResultListItem extends UrlTrackerResultListItem {
     private _item: T = {} as T;
+    private _isSelected: boolean = false;
     private _itemProvider = new ContextProvider(this, { context: context });
 
     public get item(): T {
@@ -20,13 +21,22 @@ export function UrlTrackerSelectableResultListItem<T extends Record<string, any>
       this.requestUpdate("item");
     }
 
+    public get isSelected(): boolean {
+      return this._isSelected;
+    }
+
+    public set isSelected(value: boolean) {
+      this._isSelected = value;
+      this.requestUpdate("isSelected");
+    }
+
     protected renderBody(): unknown {
       return html`<slot></slot>`;
     }
 
     protected render(): unknown {
       return html`
-        <uui-checkbox @change=${this.onCheckboxPress}></uui-checkbox>
+        <uui-checkbox .checked=${this.isSelected} @change=${this.onCheckboxPress}></uui-checkbox>
         ${this.renderBody()}
       `;
     }
