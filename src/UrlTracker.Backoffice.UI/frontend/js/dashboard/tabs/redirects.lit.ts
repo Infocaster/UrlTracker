@@ -126,16 +126,17 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     this.editorService!.open(options);
   }
 
-  submitNewRedirectPanel = (value: IRedirectResponse) => {
+  submitNewRedirectPanel = async (value: IRedirectResponse) => {
     console.info("submit new or update redirect", value);
     if(value.id) {
-      this._redirectService?.update(value);
+      await this._redirectService?.update(value);
     }
     else {
-      this._redirectService?.create(value);
+      await this._redirectService?.create(value);
     }
 
     this.closePanel();
+    this.search();
   };
 
   closePanel = () => {
@@ -168,9 +169,9 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     this.openNewRedirectPanel(e.detail);
   };
 
-  private onDeleteRedirect = (e: CustomEvent<IRedirectResponse>) => {
-    console.info("delete redirect");
-    console.info(e.detail);
+  private onDeleteRedirect = async (e: CustomEvent<IRedirectResponse>) => {
+    await this._redirectService?.delete(e.detail.id);
+    this.search();
   };
 
   private onExportRedirects = (e: any) => {
