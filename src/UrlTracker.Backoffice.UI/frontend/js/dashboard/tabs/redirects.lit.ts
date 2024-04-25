@@ -178,9 +178,8 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     this.search();
   };
 
-  private onExportRedirects = (e: any) => {
-    console.info("export redirects");
-    console.info(e);
+  private onExportRedirects = async (e: any) => {
+    //await this._redirectService?.export();
   };
 
   private onSelectItem = (e: any) => {
@@ -208,15 +207,17 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   private onConvertSelection = async (e: any) => {
     const selectedRedirects = this.redirectCollection?.results.filter(r => this.selectedItems.some(i => i === r.id)) || [];
     const bulkToUpdate = selectedRedirects.map(r => ({...r, permanent: true}));
-    redirectService.updateBulk(bulkToUpdate);
+    await redirectService.updateBulk(bulkToUpdate);
     this.selectedItems = [];
+    this.search();
   }
 
   private onDeleteSelection = async (e: any) => {
     const selectedRedirects = this.redirectCollection?.results.filter(r => this.selectedItems.some(i => i === r.id)) || [];
     const bulkToDelete = selectedRedirects.map(r => r.id);
-    redirectService.deleteBulk(bulkToDelete);
+    await redirectService.deleteBulk(bulkToDelete);
     this.selectedItems = [];
+    this.search();
   }
 
   private renderRedirects(): unknown {

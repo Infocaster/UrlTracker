@@ -68,7 +68,14 @@ export class RedirectService implements IRedirectService {
     }
 
     public async updateBulk(request: IRedirectResponse[]): Promise<IRedirectResponse[]> {
-        let response = await this.axios.post<IRedirectResponse[]>(this.controller.getUrl('updateBulk'), request);
+        const payload = request.map((r) => ({
+            ...r,
+            redirect: {
+                source: r.source,
+                target: r.target
+            }
+        }));
+        let response = await this.axios.post<IRedirectResponse[]>(this.controller.getUrl('updateBulk'), payload);
         return response.data;
     }
 

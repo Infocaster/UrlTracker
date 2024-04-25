@@ -45,7 +45,6 @@ export class RecommendationsService implements IRecommendationsService {
   constructor(private axios: Axios, private urlResource: IUrlResource) {}
 
   private get controller(): IControllerUrlResource {
-    console.log(this.urlResource.getController("recommendations"));
     return this.urlResource.getController("recommendations");
   }
 

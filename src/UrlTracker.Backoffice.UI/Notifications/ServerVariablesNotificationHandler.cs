@@ -36,7 +36,9 @@ namespace UrlTracker.Web.Events
                 ["get"] = nameof(RedirectsController.Get),
                 ["delete"] = nameof(RedirectsController.Delete),
                 ["create"] = nameof(RedirectsController.Create),
-                ["update"] = nameof(RedirectsController.Update)
+                ["update"] = nameof(RedirectsController.Update),
+                ["updateBulk"] = nameof(RedirectsController.UpdateBulk),
+                ["deleteBulk"] = nameof(RedirectsController.DeleteBulk)
             };
 
             Dictionary<string, string> redirectTargetVariables = new()
