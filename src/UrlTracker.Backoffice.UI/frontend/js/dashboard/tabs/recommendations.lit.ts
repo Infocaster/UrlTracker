@@ -237,20 +237,20 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
         ${this.renderBulkActions()}
 
-        <urltracker-result-list
-          class="results"
-          .loading=${!!this._loading}
-          .header=${`Results (${
-            this._recommendationCollection
-              ? this._recommendationCollection.total
-              : 0
-          })`}
-        >
-          ${this.renderRecommendations()}
-        </urltracker-result-list>
+        <div class="results">
+          <urltracker-result-list
+            .loading=${!!this._loading}
+            .header=${`Results (${
+              this._recommendationCollection
+                ? this._recommendationCollection.total
+                : 0
+            })`}
+          >
+            ${this.renderRecommendations()}
+          </urltracker-result-list>
 
-        ${this.renderPagination()}
-        
+          ${this.renderPagination()}
+        </div>
       </div>
     `;
   }
@@ -258,17 +258,15 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   static styles = css`
     .grid-root {
       display: grid;
-      grid-template-columns: 2;
-      grid-template-rows: 3;
-      gap: 16px;
+      gap: 1rem;
     }
 
     .filters {
       grid-column: 1 / span 2;
       grid-row: 1;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 1rem;
     }
 
     .filters urltracker-recommendation-search {
@@ -282,12 +280,9 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
     .results {
       grid-column: 1 / span 2;
-      grid-row: 3;
-    }
-
-    .pagination {
-      grid-column: 1 / span 2;
-      grid-row: 4;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
   `;
 }

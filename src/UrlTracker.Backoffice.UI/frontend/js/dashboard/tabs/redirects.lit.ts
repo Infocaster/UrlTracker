@@ -318,6 +318,13 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
       gap: 1rem;
     }
 
+    .main {
+      display: flex;
+      margin-bottom: 2rem;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
     .filters {
       grid-column: 1 / span 2;
       grid-row: 1;
@@ -326,20 +333,19 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
       gap: 1rem;
     }
 
+    .filters urltracker-redirects-search {
+      flex: 0 1 30%;
+    }
+
     .bulk {
       grid-column: 1 / span 2;
       grid-row: 2;
     }
 
-    .filters urltracker-redirects-search {
-      flex: 0 1 30%;
-    }
-
-    .main {
+    .results {
       display: flex;
-      margin-bottom: 2rem;
-      gap: 2rem;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 1rem;
     }
 
     urltracker-result-list {
@@ -348,12 +354,6 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 
     .functions {
       flex: 1 0 15rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .results {
       display: flex;
       flex-direction: column;
       gap: 1rem;
