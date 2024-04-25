@@ -1,7 +1,9 @@
 import { ensureExists } from "@/util/tools/existancecheck";
 import { consume } from "@lit/context";
+import { UUIInputEvent } from "@umbraco-ui/uui";
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { Ref, createRef, ref } from "lit/directives/ref.js";
 import { localizationServiceContext } from "../../../context/localizationservice.context";
 import { ILocalizationService } from "../../../umbraco/localization.service";
 import { debounce } from "../../../util/functions/debounce";
@@ -13,6 +15,8 @@ export class UrlTrackerRecommendationSearch extends LitElement {
 
   @consume({ context: localizationServiceContext })
   private localizationService?: ILocalizationService;
+
+  private inputRef: Ref<HTMLInputElement> = createRef();
 
   async connectedCallback() {
     super.connectedCallback();
@@ -29,9 +33,8 @@ export class UrlTrackerRecommendationSearch extends LitElement {
     this._placeholderText = actionsText ?? this._placeholderText;
   }
 
-  // uui docs dont specifiy what the event type is
-  private _onSearchInput = (e: any) => {
-    this._dispatchSearch(e.explicitOriginalTarget.value);
+  private _onSearchInput = (e: UUIInputEvent) => {
+    this._dispatchSearch(this.inputRef.value?.shadowRoot?.querySelector('input')?.value ?? '');
   };
 
   private _dispatchSearch = (searchQuery: string) => {
@@ -50,6 +53,7 @@ export class UrlTrackerRecommendationSearch extends LitElement {
 
   protected render(): unknown {
     return html` <uui-input
+     ${ref(this.inputRef)}
       .placeholder=${this._placeholderText}
       @input=${this._debouncedOnSearchInput}
     >

@@ -20,7 +20,7 @@ import {
   changeManagerContext,
 } from "../../context/changemanager.context";
 import { recommendationServiceContext } from "../../context/recommendationservice.context";
-import { RECOMMENDATION_SORT_TYPE } from "../../enums/sortType";
+import { RECOMMENDATION_SORT_TYPE, RecommendationSortType } from "../../enums/sortType";
 import { DropdownChangeEvent, IDropdownValue } from "../../util/elements/inputs/dropdown.lit";
 import "./recommendations/recommendationSearch.lit";
 import "./recommendations/recommendationitem.lit";
@@ -51,6 +51,8 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   @state()
   private selectedItems: number[] = [];
 
+  private query = "";
+  private selectedType: RecommendationSortType = RECOMMENDATION_SORT_TYPE.LAST_OCCURRENCE;
   private paginationRef: Ref<UrlTrackerPagination> = createRef();
 
   private _sortOptions: IDropdownValue[] = [
@@ -76,12 +78,67 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     },
   ];
 
+  protected async firstUpdated(
+    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
+  ): Promise<void> {
+    super.firstUpdated(_changedProperties);
+
+    await this.init();
+  }
+
+  private async init() {
+    ensureServiceExists(
+      this._recommendationsService,
+      "recommendations service"
+    );
+
+    await this.search();
+  }
+
+  private async search() {
+    this._loading++;
+    try {
+      this._recommendationCollection = await this._recommendationsService?.list(
+        {
+          page: 1,
+          pageSize: 25,
+        }
+      );
+      ensureExists(
+        this.paginationRef.value?.value,
+        "pagination ref does not exist"
+      );
+
+      let page = this.paginationRef.value.value;
+
+      if (page.page < 1) page.page = 1;
+
+      this._recommendationCollection = await this._recommendationsService?.list(
+        { ...page }
+      );
+    } catch (error: any) {
+      this._error = error.message;
+    } finally {
+      this._loading--;
+    }
+  }
+
+  private onSearch = ({ detail: { query } = {} }: CustomEvent) => {
+    this.query = query;
+    this.search();
+  };
+
+  private onSortChange = ({ data }: DropdownChangeEvent) => {
+    this.selectedType = data.value as RecommendationSortType;
+    this.search();
+  };
+
   private onInspect = (e: CustomEvent<IRecommendationResponse>) => {
     //this.openInspectPanel(e.detail);
   };
 
   private onFilterChange = (_: Event) => {
-    this.init();
+    this.search();
   };
 
   private onSelectItem = (e: any) => {
@@ -113,61 +170,6 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     this.selectedItems = [];
     //this.search();
   }
-
-  protected async firstUpdated(
-    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
-  ): Promise<void> {
-    super.firstUpdated(_changedProperties);
-
-    await this.init();
-  }
-
-  private async init() {
-    ensureServiceExists(
-      this._recommendationsService,
-      "recommendations service"
-    );
-
-    this._loading++;
-    try {
-      this._recommendationCollection = await this._recommendationsService?.list(
-        {
-          page: 1,
-          pageSize: 25,
-        }
-      );
-      ensureExists(
-        this.paginationRef.value?.value,
-        "pagination ref does not exist"
-      );
-
-      let page = this.paginationRef.value.value;
-
-      if (page.page < 1) page.page = 1;
-
-      this._recommendationCollection = await this._recommendationsService?.list(
-        { ...page }
-      );
-
-      this._totalPages = this._recommendationCollection.total;
-    } catch (error: any) {
-      this._error = error.message;
-    } finally {
-      this._loading--;
-    }
-  }
-
-  private _onSearch = ({ detail: { query } = {} }: CustomEvent) => {
-    //TODO: implement search
-    console.info("recommendations.lit.ts _onSearch not implemented");
-    console.info(query);
-  };
-
-  private _onSortChange = ({ data }: DropdownChangeEvent) => {
-    //TODO: implement sort
-    console.info("recommendations.lit.ts _onSortChange not implemented");
-    console.info(data);
-  };
 
   private renderRecommendations(): unknown {
     if (!this._recommendationCollection?.results) return nothing;
@@ -226,12 +228,12 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       <div class="grid-root">
         <div class="filters">
           <urltracker-recommendation-search
-            @search=${this._onSearch}
+            @search=${this.onSearch}
           ></urltracker-recommendation-search>
           <urltracker-dropdown
             label="Order by"
             .options=${this._sortOptions}
-            @change=${this._onSortChange}
+            @change=${this.onSortChange}
           ></urltracker-dropdown>
         </div>
 
