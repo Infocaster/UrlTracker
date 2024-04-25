@@ -15,7 +15,7 @@ import {
   IRedirectService,
   redirectServiceContext,
 } from "../../context/redirectservice.context";
-import { IRedirectCollectionResponse, IRedirectResponse } from "../../services/redirect.service";
+import redirectService, { IRedirectCollectionResponse, IRedirectResponse } from "../../services/redirect.service";
 import '../../util/elements/bulkActions.lit';
 import "../../util/elements/inputs/addRedirectAction.lit";
 import "../../util/elements/inputs/exportRedirectsAction.lit";
@@ -157,7 +157,8 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   };
 
   private onFilterChange = (_: Event) => {
-    this.init();
+    this.selectedItems = [];
+    this.search();
   };
 
   private onInspect = (e: CustomEvent<IRedirectResponse>) => {
@@ -196,11 +197,25 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
       this.selectedItems = [];
     }
     else {
-      this.selectedItems = Array.from(new Set([...this.redirectCollection?.results.map(r => r.id) ?? [], ...this.selectedItems]));
+      this.selectedItems = this.redirectCollection?.results.map(r => r.id) || [];
     }
   }
 
   private onClearSelection = (e: any) => {
+    this.selectedItems = [];
+  }
+
+  private onConvertSelection = async (e: any) => {
+    const selectedRedirects = this.redirectCollection?.results.filter(r => this.selectedItems.some(i => i === r.id)) || [];
+    const bulkToUpdate = selectedRedirects.map(r => ({...r, permanent: true}));
+    redirectService.updateBulk(bulkToUpdate);
+    this.selectedItems = [];
+  }
+
+  private onDeleteSelection = async (e: any) => {
+    const selectedRedirects = this.redirectCollection?.results.filter(r => this.selectedItems.some(i => i === r.id)) || [];
+    const bulkToDelete = selectedRedirects.map(r => r.id);
+    redirectService.deleteBulk(bulkToDelete);
     this.selectedItems = [];
   }
 
@@ -234,7 +249,21 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
           .total=${this.redirectCollection ? this.redirectCollection.total : 0}
           @select-all=${this.onSelectAll}
           @clear-selection=${this.onClearSelection}
-        ></urltracker-bulk-actions>
+        >
+          <uui-button
+            look="secondary"
+            @click=${this.onConvertSelection}
+          >
+            <uui-icon name="lock"></uui-icon> Convert to permanent redirect
+          </uui-button>
+          <uui-button
+            look="secondary"
+            @click=${this.onDeleteSelection}
+          >
+            <uui-icon name="delete"></uui-icon>
+            Delete
+          </uui-button>
+        </urltracker-bulk-actions>
 
         <div class="results">
           <urltracker-result-list

@@ -50,9 +50,9 @@ export class UrlTrackerBulkActions extends LitElement {
                     </uui-button>
                     <span>${this.selectedCount} of ${this.total} selected</span>
                 </div>   
-            </div>   
-            <div class="bulk-actions-custom">
-                <slot></slot>
+                <div class="bulk-actions-custom">
+                    <slot></slot>
+                </div>
             </div>
         `;
     }

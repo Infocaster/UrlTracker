@@ -64,19 +64,16 @@ export class RedirectService implements IRedirectService {
     }
 
     public async delete(id: number): Promise<void> {
-
         await this.axios.post(this.controller.getUrl('delete') + `/${id}`);
     }
 
     public async updateBulk(request: IRedirectResponse[]): Promise<IRedirectResponse[]> {
-
-        let response = await this.axios.post<IRedirectResponse[]>(this.controller.getUrl('updatebulk'), request);
+        let response = await this.axios.post<IRedirectResponse[]>(this.controller.getUrl('updateBulk'), request);
         return response.data;
     }
 
     public async deleteBulk(ids: number[]): Promise<void> {
-
-        await this.axios.post(this.controller.getUrl('deletebulk'), ids);
+        await this.axios.post(this.controller.getUrl('deleteBulk'), ids);
     }
 }
 
