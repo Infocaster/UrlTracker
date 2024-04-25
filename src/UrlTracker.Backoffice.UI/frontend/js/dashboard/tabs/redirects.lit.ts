@@ -226,6 +226,33 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     this.search();
   }
 
+  private renderBulkActions() {
+    if(!this.selectedItems.length) return nothing;
+    return html`
+      <urltracker-bulk-actions 
+        class="bulk"
+        .selectedCount=${this.selectedItems.length}
+        .total=${this.redirectCollection ? this.redirectCollection.total : 0}
+        @select-all=${this.onSelectAll}
+        @clear-selection=${this.onClearSelection}
+      >
+        <uui-button
+          look="secondary"
+          @click=${this.onConvertSelection}
+        >
+          <uui-icon name="lock"></uui-icon> Convert to permanent redirect
+        </uui-button>
+        <uui-button
+          look="secondary"
+          @click=${this.onDeleteSelection}
+        >
+          <uui-icon name="delete"></uui-icon>
+          Delete
+        </uui-button>
+      </urltracker-bulk-actions>
+    `;
+  }
+
   private renderRedirects(): unknown {
     if (!this.redirectCollection?.results) return nothing;
     return repeat(
@@ -250,27 +277,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
           ></urltracker-dropdown>
         </div>
 
-        <urltracker-bulk-actions 
-          class="bulk"
-          .selectedCount=${this.selectedItems.length}
-          .total=${this.redirectCollection ? this.redirectCollection.total : 0}
-          @select-all=${this.onSelectAll}
-          @clear-selection=${this.onClearSelection}
-        >
-          <uui-button
-            look="secondary"
-            @click=${this.onConvertSelection}
-          >
-            <uui-icon name="lock"></uui-icon> Convert to permanent redirect
-          </uui-button>
-          <uui-button
-            look="secondary"
-            @click=${this.onDeleteSelection}
-          >
-            <uui-icon name="delete"></uui-icon>
-            Delete
-          </uui-button>
-        </urltracker-bulk-actions>
+        ${this.renderBulkActions()}
 
         <div class="results">
           <urltracker-result-list
