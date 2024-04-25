@@ -179,8 +179,14 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   };
 
   private onExportRedirects = async (e: any) => {
+    //@TODO: implement export
     //await this._redirectService?.export();
   };
+
+  private onImportRedirects = async (e: any) => {
+    //@TODO: implement import
+    //await this._redirectService?.import();
+  }
 
   private onSelectItem = (e: any) => {
     this.selectedItems.push(e.item.id);

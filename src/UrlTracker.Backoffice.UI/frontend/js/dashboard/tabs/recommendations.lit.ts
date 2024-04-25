@@ -89,9 +89,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       this._recommendationsService,
       "recommendations service"
     );
-    // ensureExists(this.paginationRef.value);
 
-    // let page = this.paginationRef.value.value;
     this._loading++;
     try {
       this._recommendationCollection = await this._recommendationsService?.list(
@@ -108,8 +106,6 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       let page = this.paginationRef.value.value;
 
       if (page.page < 1) page.page = 1;
-
-      this._loading++;
 
       this._recommendationCollection = await this._recommendationsService?.list(
         { ...page }
@@ -136,7 +132,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   }
 
   private renderPagination(): unknown {
-    return html` ${this._totalPages}
+    return html`
       <urltracker-pagination
         ${ref(this.paginationRef)}
         class="pagination"
@@ -216,7 +212,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     }
 
     .pagination {
-      grid-column: 1;
+      grid-column: 1 / span 2;
       grid-row: 3;
     }
   `;
