@@ -1,7 +1,7 @@
 import { AngularBridgeMixin } from "@/util/bridge/angularbridge.mixin";
 import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
-import "./inspectRecommendations/inspectRecommendations.lit";
+import "./explainRecommendations/explainRecommendations.lit";
 
 @customElement("urltracker-inspect-recommendations-sidebar")
 export class InspectRecommendationsSidebar extends AngularBridgeMixin(

@@ -16,7 +16,7 @@ import {
 } from "../context/localizationservice.context";
 import { UrlTrackerDashboard } from "./main.lit";
 import { AnalyseRecommendationSidebar } from "./sidebars/analyseRecommendation-main.lit";
-import { InspectRecommendationsSidebar } from "./sidebars/inspectRecommendations-main.lit";
+import { InspectRecommendationsSidebar } from "./sidebars/explainRecommendations-main.lit";
 import { InspectRedirectSidebar } from "./sidebars/inspectRedirect-main.lit";
 import { SimpleRedirectSidebar } from "./sidebars/simpleRedirect-main.lit";
 

@@ -1,44 +1,34 @@
-import {
-  IEditorService,
-  editorServiceContext,
-} from "@/context/editorservice.context";
-import {
-  ILocalizationService,
-  localizationServiceContext,
-} from "@/context/localizationservice.context";
 import { scopeContext } from "@/context/scope.context";
 import { IScope } from "@/models/scope.model";
-import { IRedirectResponse } from "@/services/redirect.service";
 import { consume } from "@lit/context";
 import { LitElement, css, html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement } from "lit/decorators.js";
 
 export const ContentElementTag = "urltracker-sidebar-inspect-recommendations";
 
+export const RECCOMENDATION_ACTIONS = {
+  MAKE_PERMANENT: "MAKE_PERMANENT",
+  MAKE_TEMPORARY: "MAKE_TEMPORARY",
+  IGNORE: "IGNORE",
+} as const;
+
+export type IRecommendationAction =
+  (typeof RECCOMENDATION_ACTIONS)[keyof typeof RECCOMENDATION_ACTIONS];
+
 @customElement(ContentElementTag)
 export class UrlTrackerSidebarRecommendations extends LitElement {
-  @consume({ context: editorServiceContext })
-  private editorService?: IEditorService<any>;
-
   @consume({ context: scopeContext })
   private $scope?: IScope;
-
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
-
-  @state()
-  private data!: IRedirectResponse;
 
   private _headerText = "";
 
   async connectedCallback(): Promise<void> {
       super.connectedCallback();
-      this.data = this.$scope?.model.value;
       this._headerText = this.$scope?.model.title ?? "Recommendations";
   }
 
-  save() {
-    this.editorService?.close();
+  save(action: IRecommendationAction = RECCOMENDATION_ACTIONS.IGNORE) {
+    this.$scope?.model.submit(action);
   }
 
   close() {
@@ -55,7 +45,7 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
             <ul>
               <li>You run a campaign but it’s momentarily suspended and will be continued next month or year</li>
             </ul>
-            <uui-button look="primary" @click=${this.save}>Apply this recommendation</uui-button>
+            <uui-button look="primary" @click=${() => this.save(RECCOMENDATION_ACTIONS.MAKE_TEMPORARY)}>Apply this recommendation</uui-button>
           </uui-box>
           <uui-box headline="Create a permanent redirect">
             <p>A permanent redirect will redirect users to a different page, but will also tell google and other search engines that the current URL is no longer relevant. Use this option if content is moved to a different URL forever.</p>
@@ -64,11 +54,11 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
               <li>You used to post your blogs on /news, but they are now found below /blogs</li>
               <li>You rely on an image in a social media post, but the image no longer exists or has moved</li>
             </ul>
-            <uui-button look="primary" @click=${this.save}>Apply this recommendation</uui-button>
+            <uui-button look="primary" @click=${() => this.save(RECCOMENDATION_ACTIONS.MAKE_PERMANENT)}>Apply this recommendation</uui-button>
           </uui-box>
           <uui-box headline="Ignore this">
             <p>A temporary redirect will redirect users to a different page, but will also tell google and other search engines that the content on this URL will be back later. Use this option if content is only temporarily moved to a different URL.</p>
-            <uui-button look="primary" @click=${this.save}>Apply this recommendation</uui-button>
+            <uui-button look="primary" @click=${() => this.save(RECCOMENDATION_ACTIONS.IGNORE)}>Apply this recommendation</uui-button>
           </uui-box>
       </div>
       <div class="footer">

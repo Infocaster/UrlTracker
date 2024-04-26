@@ -23,6 +23,7 @@ import {
 import { recommendationServiceContext } from "../../context/recommendationservice.context";
 import { RECOMMENDATION_SORT_TYPE, RecommendationSortType } from "../../enums/sortType";
 import { DropdownChangeEvent, IDropdownValue } from "../../util/elements/inputs/dropdown.lit";
+import { IRecommendationAction, RECCOMENDATION_ACTIONS } from "../sidebars/explainRecommendations/explainRecommendations.lit";
 import "./recommendations/recommendationSearch.lit";
 import "./recommendations/recommendationitem.lit";
 
@@ -130,12 +131,21 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       title: `Recommendations for: ${data.url}`,
       view: "/App_Plugins/UrlTracker/sidebar/recommendations/inspectRecommendations.html",
       size: "medium",
-      submit: this.closePanel,
+      submit: this.submitExplanationPanel,
       close: this.closePanel,
       value: data,
     };
     this.editorService!.open(options);
   }
+
+  private submitExplanationPanel = (action: IRecommendationAction) => {
+    switch (action) {
+      case RECCOMENDATION_ACTIONS.MAKE_PERMANENT: break;
+      case RECCOMENDATION_ACTIONS.MAKE_TEMPORARY: break;
+      case RECCOMENDATION_ACTIONS.IGNORE: break;
+    }
+    this.editorService!.close();
+  };
 
   private openAnalysePanel(data: IRecommendationResponse) {
     const options = {

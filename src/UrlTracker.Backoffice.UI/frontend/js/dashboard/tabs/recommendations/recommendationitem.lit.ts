@@ -98,30 +98,25 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
 
   private handleExplain(e: Event): void {
     e.stopPropagation();
-    console.log("explain");
     this.dispatchEvent(new CustomEvent("explain", { detail: this.item }));
   }
 
   private handleAnalyse(e: Event): void {
-    console.log("analyse");
     e.stopPropagation();
     this.dispatchEvent(new CustomEvent("analyse", { detail: this.item }));
   }
 
   private handleCreateTemporaryRedirect(e: Event): void {
-    console.log("createTemporaryRedirect");
     e.stopPropagation();
     this.dispatchEvent(new CustomEvent("createTemporary", { detail: this.item }));
   }
 
   private handleCreatePermanentRedirect(e: Event): void {
-    console.log("createPermanentRedirect");
     e.stopPropagation();
     this.dispatchEvent(new CustomEvent("createPermanent", { detail: this.item }));
   }
 
   private handleIgnoreRecommendation(e: Event): void {
-    console.log("ignoreRecommendation");
     e.stopPropagation();
     this.dispatchEvent(new CustomEvent("ignore", { detail: this.item }));
   }
