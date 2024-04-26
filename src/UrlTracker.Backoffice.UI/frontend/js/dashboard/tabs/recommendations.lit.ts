@@ -127,7 +127,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
   private openInspectPanel(data: IRecommendationResponse) {
     const options = {
-      title: data.url,
+      title: `Recommendations for: ${data.url}`,
       view: "/App_Plugins/UrlTracker/sidebar/recommendations/inspectRecommendations.html",
       size: "medium",
       submit: this.closePanel,

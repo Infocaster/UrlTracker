@@ -154,7 +154,7 @@ export function ngInspectRecommendationsSidebar(
     restrict: "E",
     link: function (_scope, element) {
       let redirectSidebarElement = document.createElement(
-        "urltracker-inspect-redirect-sidebar"
+        "urltracker-inspect-recommendations-sidebar"
       ) as SimpleRedirectSidebar;
 
       redirectSidebarElement.SetContext(

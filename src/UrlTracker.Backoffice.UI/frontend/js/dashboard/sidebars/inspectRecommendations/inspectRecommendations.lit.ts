@@ -8,12 +8,12 @@ import {
 } from "@/context/localizationservice.context";
 import { scopeContext } from "@/context/scope.context";
 import { IScope } from "@/models/scope.model";
+import { IRedirectResponse } from "@/services/redirect.service";
 import { consume } from "@lit/context";
-import { LitElement, css, html, svg } from "lit";
+import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { ifDefined } from "lit/directives/if-defined.js";
 
-export const ContentElementTag = "urltracker-sidebar-recommendations";
+export const ContentElementTag = "urltracker-sidebar-inspect-recommendations";
 
 @customElement(ContentElementTag)
 export class UrlTrackerSidebarRecommendations extends LitElement {
@@ -26,22 +26,103 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
   @consume({ context: localizationServiceContext })
   private localizationService?: ILocalizationService;
 
-  async connectedCallback(): Promise<void> {
-    super.connectedCallback();
+  @state()
+  private data!: IRedirectResponse;
 
-    if (!this.localizationService)
-      throw new Error(
-        "Some services are missing, check: localizationService, editorService, assetsService"
-      );
+  private _headerText = "Inspect Redirect";
+
+  async connectedCallback(): Promise<void> {
+      super.connectedCallback();
+      this.data = this.$scope?.model.value;
+      this._headerText = this.$scope?.model.title ?? "Recommendations";
+  }
+
+  save() {
+    this.editorService?.close();
   }
 
   close() {
-    this.editorService!.close();
+    this.$scope?.model.close();
   }
 
   protected render() {
-    return html` <h1>test sidebar</h1> `;
+    return html`
+      <div class="header">${this._headerText}</div>
+      <div class="main">
+          <uui-box headline="Create a temporary redirect">
+            <p>A temporary redirect will redirect users to a different page, but will also tell google and other search engines that the content on this URL will be back later. Use this option if content is only temporarily moved to a different URL.</p>
+            <span>Example usage:</span>
+            <ul>
+              <li>You run a campaign but it’s momentarily suspended and will be continued next month or year</li>
+            </ul>
+            <uui-button look="primary" @click=${this.save}>Apply this recommendation</uui-button>
+          </uui-box>
+          <uui-box headline="Create a permanent redirect">
+            <p>A permanent redirect will redirect users to a different page, but will also tell google and other search engines that the current URL is no longer relevant. Use this option if content is moved to a different URL forever.</p>
+            <span>Example usage:</span>
+            <ul>
+              <li>You used to post your blogs on /news, but they are now found below /blogs</li>
+              <li>You rely on an image in a social media post, but the image no longer exists or has moved</li>
+            </ul>
+            <uui-button look="primary" @click=${this.save}>Apply this recommendation</uui-button>
+          </uui-box>
+          <uui-box headline="Ignore this">
+            <p>A temporary redirect will redirect users to a different page, but will also tell google and other search engines that the content on this URL will be back later. Use this option if content is only temporarily moved to a different URL.</p>
+            <uui-button look="primary" @click=${this.save}>Apply this recommendation</uui-button>
+          </uui-box>
+      </div>
+      <div class="footer">
+        <uui-button look="default" color="default" @click=${this.close}
+          >Cancel</uui-button
+        >
+      </div>
+    `;
   }
 
-  static styles = css``;
+  static styles = css`
+  :host {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    padding: 10px 20px;
+    height: 2.5rem;
+    background-color: white;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
+  }
+
+  .main {
+    flex: 1;
+    padding: 16px 20px;
+  }
+
+  uui-box {
+    margin-bottom: 1rem;
+    font-family: lato, sans-serif;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 1.25;
+  }
+
+  ul, p {
+    margin-top: 0;
+  }
+
+  uui-box uui-button {
+    width: 100%;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    background-color: white;
+    padding: 10px 20px;
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
+  }
+`;
 }
