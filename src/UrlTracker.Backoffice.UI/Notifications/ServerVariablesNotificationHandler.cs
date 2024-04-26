@@ -26,7 +26,10 @@ namespace UrlTracker.Web.Events
             Dictionary<string, string> recommendationVariables = new()
             {
                 ["base"] = _linkGenerator.GetUmbracoApiServiceBaseUrl<RecommendationsController>(controller => controller.List(default!))!,
-                ["list"] = nameof(RecommendationsController.List)
+                ["list"] = nameof(RecommendationsController.List),
+                ["update"] = nameof(RecommendationsController.Update),
+                ["updateBulk"] = nameof(RecommendationsController.UpdateBulk),
+                ["delete"] = nameof(RecommendationsController.Delete)
             };
 
             Dictionary<string, string> redirectVariables = new()

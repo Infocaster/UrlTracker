@@ -24,6 +24,7 @@ import {
 } from "@/services/redirect.service";
 import variableresourceService from "@/util/tools/variableresource.service";
 import { consume, provide } from "@lit/context";
+import { ifDefined } from "lit/directives/if-defined.js";
 import { repeat } from "lit/directives/repeat.js";
 import {
   IChangeManager,
@@ -65,16 +66,10 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   public changeManager: IChangeManager = { element: this };
 
   @state()
-  private _recommendationCollection?: IRecommendationCollection;
+  private recommendationCollection?: IRecommendationCollection;
 
   @state()
-  private _loading: number = 0;
-
-  @state()
-  private _error: string | null = null;
-
-  @state()
-  private _totalPages = 0;
+  private loading: number = 0;
 
   @state()
   private selectedItems: number[] = [];
@@ -121,36 +116,27 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       "recommendations service"
     );
     ensureServiceExists(this._redirectService, "redirect service");
+    ensureExists(this._recommendationsService, "recommendations service");
     ensureServiceExists(this.editorService, "editor service");
 
     await this.search();
   }
 
   private async search() {
-    this._loading++;
+    ensureExists(this.paginationRef.value);
+
+    const page = {
+      page: this.paginationRef.value!.value.page + 1,
+      pageSize: this.paginationRef.value!.value.pageSize,
+    }
+    const type = this.selectedType;
+    const query = this.query;
+
+    this.loading++;
     try {
-      this._recommendationCollection = await this._recommendationsService?.list(
-        {
-          page: 1,
-          pageSize: 25,
-        }
-      );
-      ensureExists(
-        this.paginationRef.value?.value,
-        "pagination ref does not exist"
-      );
-
-      let page = this.paginationRef.value.value;
-
-      if (page.page < 1) page.page = 1;
-
-      this._recommendationCollection = await this._recommendationsService?.list(
-        { ...page }
-      );
-    } catch (error: any) {
-      this._error = error.message;
+      this.recommendationCollection = await this._recommendationsService?.list({ ...page, query, OrderBy: type});
     } finally {
-      this._loading--;
+      this.loading--;
     }
   }
 
@@ -202,7 +188,15 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     this.openNewRedirectPanel(redirect);
   };
 
-  private handleIgnore = async (event: CustomEvent<IRecommendationResponse>) => {};
+  private handleIgnore = async (event: CustomEvent<IRecommendationResponse>) => {
+    await this._recommendationsService!.update({
+      id: event.detail.id,
+      recommendationStrategy: event.detail.strategy,
+      ignore: true,
+    });
+
+    this.search();
+  };
 
   private openNewRedirectPanel(data?: IRedirectResponse) {
     const options = {
@@ -307,11 +301,11 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   };
 
   private onSelectAll = (e: any) => {
-    if (this.selectedItems.length === this._recommendationCollection?.total) {
+    if (this.selectedItems.length === this.recommendationCollection?.total) {
       this.selectedItems = [];
     } else {
       this.selectedItems =
-        this._recommendationCollection?.results.map((r) => r.id) || [];
+        this.recommendationCollection?.results.map((r) => r.id) || [];
     }
   };
 
@@ -321,7 +315,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
   private onDeleteSelection = async (e: any) => {
     const selectedRedirects =
-      this._recommendationCollection?.results.filter((r) =>
+      this.recommendationCollection?.results.filter((r) =>
         this.selectedItems.some((i) => i === r.id)
       ) || [];
     const bulkToDelete = selectedRedirects.map((r) => r.id);
@@ -331,9 +325,9 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   };
 
   private renderRecommendations(): unknown {
-    if (!this._recommendationCollection?.results) return nothing;
+    if (!this.recommendationCollection?.results) return nothing;
     return repeat(
-      this._recommendationCollection.results,
+      this.recommendationCollection.results,
       (recommendation) => recommendation.id,
       (r) =>
         html`<urltracker-recommendation-item
@@ -354,8 +348,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     return html` <urltracker-pagination
       ${ref(this.paginationRef)}
       class="pagination"
-      .total=${this._totalPages}
-      .testpages=${this._totalPages}
+      total="${ifDefined(this.recommendationCollection?.total)}"
       @change=${this.onFilterChange}
     ></urltracker-pagination>`;
   }
@@ -366,8 +359,8 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       <urltracker-bulk-actions
         class="bulk"
         .selectedCount=${this.selectedItems.length}
-        .total=${this._recommendationCollection
-          ? this._recommendationCollection.total
+        .total=${this.recommendationCollection
+          ? this.recommendationCollection.total
           : 0}
         @select-all=${this.onSelectAll}
         @clear-selection=${this.onClearSelection}
@@ -381,10 +374,6 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   }
 
   protected renderInternal(): unknown {
-    if (this._error !== null) {
-      return html`<div class="error">${this._error}</div>`;
-    }
-
     return html`
       <div class="grid-root">
         <div class="filters">
@@ -402,10 +391,10 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
         <div class="results">
           <urltracker-result-list
-            .loading=${!!this._loading}
+            .loading=${!!this.loading}
             .header=${`Results (${
-              this._recommendationCollection
-                ? this._recommendationCollection.total
+              this.recommendationCollection
+                ? this.recommendationCollection.total
                 : 0
             })`}
           >
