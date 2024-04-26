@@ -13,10 +13,10 @@ import { consume } from "@lit/context";
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
-export const ContentElementTag = "urltracker-sidebar-inspect-recommendations";
+export const ContentElementTag = "urltracker-sidebar-analyse-recommendation";
 
 @customElement(ContentElementTag)
-export class UrlTrackerSidebarRecommendations extends LitElement {
+export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
   @consume({ context: editorServiceContext })
   private editorService?: IEditorService<any>;
 
@@ -49,27 +49,6 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
     return html`
       <div class="header">${this._headerText}</div>
       <div class="main">
-          <uui-box headline="Create a temporary redirect">
-            <p>A temporary redirect will redirect users to a different page, but will also tell google and other search engines that the content on this URL will be back later. Use this option if content is only temporarily moved to a different URL.</p>
-            <span>Example usage:</span>
-            <ul>
-              <li>You run a campaign but it’s momentarily suspended and will be continued next month or year</li>
-            </ul>
-            <uui-button look="primary" @click=${this.save}>Apply this recommendation</uui-button>
-          </uui-box>
-          <uui-box headline="Create a permanent redirect">
-            <p>A permanent redirect will redirect users to a different page, but will also tell google and other search engines that the current URL is no longer relevant. Use this option if content is moved to a different URL forever.</p>
-            <span>Example usage:</span>
-            <ul>
-              <li>You used to post your blogs on /news, but they are now found below /blogs</li>
-              <li>You rely on an image in a social media post, but the image no longer exists or has moved</li>
-            </ul>
-            <uui-button look="primary" @click=${this.save}>Apply this recommendation</uui-button>
-          </uui-box>
-          <uui-box headline="Ignore this">
-            <p>A temporary redirect will redirect users to a different page, but will also tell google and other search engines that the content on this URL will be back later. Use this option if content is only temporarily moved to a different URL.</p>
-            <uui-button look="primary" @click=${this.save}>Apply this recommendation</uui-button>
-          </uui-box>
       </div>
       <div class="footer">
         <uui-button look="default" color="default" @click=${this.close}

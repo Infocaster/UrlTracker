@@ -96,10 +96,16 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
     return recommendationTagFactory(this.recommendationType, text ?? "");
   }
 
-  private handleInspect(e: Event): void {
+  private handleExplain(e: Event): void {
     e.stopPropagation();
-    console.log("inspect");
-    this.dispatchEvent(new CustomEvent("inspect", { detail: this.item }));
+    console.log("explain");
+    this.dispatchEvent(new CustomEvent("explain", { detail: this.item }));
+  }
+
+  private handleAnalyse(e: Event): void {
+    console.log("analyse");
+    e.stopPropagation();
+    this.dispatchEvent(new CustomEvent("analyse", { detail: this.item }));
   }
 
   private handleCreateTemporaryRedirect(e: Event): void {
@@ -120,15 +126,9 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
     this.dispatchEvent(new CustomEvent("ignore", { detail: this.item }));
   }
 
-  private handleOpenExplanation(e: Event): void {
-    console.log("openExplanation");
-    e.stopPropagation();
-    this.dispatchEvent(new CustomEvent("openExplanation", { detail: this.item }));
-  }
-
   protected renderBody(): unknown {
     return html`
-      <div class="body" @click=${this.handleInspect}>
+      <div class="body" @click=${this.handleAnalyse}>
         <div class="type">
           ${this.renderRecommendationType()}
           ${this.renderTag(this.recommendationTagText)}
@@ -140,7 +140,7 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
             class="actions__help"
             label="Extra information"
             name="icon-help-alt"
-            @click=${this.handleOpenExplanation}
+            @click=${this.handleExplain}
           ></uui-icon>
 
           <urltracker-recommendation-item-action

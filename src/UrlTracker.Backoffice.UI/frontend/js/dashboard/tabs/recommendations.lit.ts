@@ -125,10 +125,22 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     }
   }
 
-  private openInspectPanel(data: IRecommendationResponse) {
+  private openExplanationPanel(data: IRecommendationResponse) {
     const options = {
       title: `Recommendations for: ${data.url}`,
       view: "/App_Plugins/UrlTracker/sidebar/recommendations/inspectRecommendations.html",
+      size: "medium",
+      submit: this.closePanel,
+      close: this.closePanel,
+      value: data,
+    };
+    this.editorService!.open(options);
+  }
+
+  private openAnalysePanel(data: IRecommendationResponse) {
+    const options = {
+      title: `Recommendations for: ${data.url}`,
+      view: "/App_Plugins/UrlTracker/sidebar/recommendations/analyseRecommendation.html",
       size: "medium",
       submit: this.closePanel,
       close: this.closePanel,
@@ -151,8 +163,12 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     this.search();
   };
 
-  private onInspect = (e: CustomEvent<IRecommendationResponse>) => {
-    this.openInspectPanel(e.detail);
+  private onExplain = (e: CustomEvent<IRecommendationResponse>) => {
+    this.openExplanationPanel(e.detail);
+  };
+
+  private onAnalyse = (e: CustomEvent<IRecommendationResponse>) => {
+    this.openAnalysePanel(e.detail);
   };
 
   private onFilterChange = (_: Event) => {
@@ -200,7 +216,8 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
           .isSelected=${this.selectedItems.some(i => i === r.id)} 
           @selected=${this.onSelectItem} 
           @deselected=${this.onDeselectItem} 
-          @inspect=${this.onInspect}
+          @explain=${this.onExplain}
+          @analyse=${this.onAnalyse}
         ></urltracker-recommendation-item>`
     );
   }

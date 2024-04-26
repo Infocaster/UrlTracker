@@ -28,6 +28,7 @@ import notificationService, {
 import targetService from "./tabs/redirects/target/target.service";
 
 //Sidebar imports
+import "@sidebar/analyseRecommendation-main.lit";
 import "@sidebar/inspectRecommendations-main.lit";
 import "@sidebar/inspectRedirect-main.lit";
 import "@sidebar/simpleRedirect-main.lit";
