@@ -49,6 +49,12 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
     return html`
       <div class="header">${this._headerText}</div>
       <div class="main">
+        <uui-box>
+          <p>
+          This entry indicates that an image could not be found. As a consequence, certain pages may not be displayed correctly and visitors might lack visual context to the content on particular pages. Check out the referrer information to see on which pages the image is requested.
+Redirect this url to an existing image to restore the user experience. Alternatively, you can check out the referrer overview below to see from which pages the image is requested. After manually repairing the images, you can mark this recommendation as resolved.
+          </p>
+        </uui-box>
       </div>
       <div class="footer">
         <uui-button look="default" color="default" @click=${this.close}
