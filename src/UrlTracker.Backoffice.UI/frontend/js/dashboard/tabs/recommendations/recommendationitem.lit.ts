@@ -58,8 +58,8 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-
     ensureServiceExists(this.localizationService, "localizationService");
+
     if (this.item) {
       this.recommendationType = calculateRecommendationType(this.item.score);
       this.tagText(this.recommendationType);
@@ -97,13 +97,15 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   }
 
   private handleExplain(e: Event): void {
-    e.stopPropagation();
+    
     this.dispatchEvent(new CustomEvent("explain", { detail: this.item }));
+    e.stopPropagation();
   }
 
   private handleAnalyse(e: Event): void {
-    e.stopPropagation();
+    
     this.dispatchEvent(new CustomEvent("analyse", { detail: this.item }));
+    e.stopPropagation();
   }
 
   private handleCreateTemporaryRedirect(e: Event): void {
@@ -140,15 +142,15 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
 
           <urltracker-recommendation-item-action
             actionTextKey="temporary"
-            .action="${this.handleCreateTemporaryRedirect}"
+            .action="${(e: Event) => this.handleCreateTemporaryRedirect(e)}"
           ></urltracker-recommendation-item-action>
           <urltracker-recommendation-item-action
             actionTextKey="permanent"
-            .action="${this.handleCreatePermanentRedirect}"
+            .action="${(e: Event) => this.handleCreatePermanentRedirect(e)}"
           ></urltracker-recommendation-item-action>
           <urltracker-recommendation-item-action
             actionTextKey="ignore"
-            .action="${this.handleIgnoreRecommendation}"
+            .action="${(e: Event) => this.handleIgnoreRecommendation(e)}"
           ></urltracker-recommendation-item-action>
         </div>
       </div>

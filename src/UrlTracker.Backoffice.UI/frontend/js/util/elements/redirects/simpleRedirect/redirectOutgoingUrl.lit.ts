@@ -67,8 +67,6 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     this._localizeInfoText();
     this._localizeButtonLabels();
 
-    console.log(this._typeButtons)
-
     //@TODO: Create Content and Media type redirect functionality. Only URL type is implemented.
     this._selectedType = this._typeButtons.find(
       (item) => item.value === this.outgoingStrategy

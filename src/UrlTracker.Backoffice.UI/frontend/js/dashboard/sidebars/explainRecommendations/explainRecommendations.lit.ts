@@ -28,7 +28,11 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
   }
 
   save(action: IRecommendationAction = RECCOMENDATION_ACTIONS.IGNORE) {
-    this.$scope?.model.submit(action);
+    const data = {
+      action,
+      recommendation: this.$scope?.model.value,
+    };
+    this.$scope?.model.submit(data);
   }
 
   close() {

@@ -13,7 +13,16 @@ import {
 } from "../../util/tools/existancecheck";
 import { UrlTrackerNotificationWrapper } from "../notifications/notifications.mixin";
 
-import { IEditorService, editorServiceContext } from "@/context/editorservice.context";
+import {
+  IEditorService,
+  editorServiceContext,
+} from "@/context/editorservice.context";
+import { redirectServiceContext } from "@/context/redirectservice.context";
+import {
+  IRedirectResponse,
+  IRedirectService,
+} from "@/services/redirect.service";
+import variableresourceService from "@/util/tools/variableresource.service";
 import { consume, provide } from "@lit/context";
 import { repeat } from "lit/directives/repeat.js";
 import {
@@ -21,11 +30,22 @@ import {
   changeManagerContext,
 } from "../../context/changemanager.context";
 import { recommendationServiceContext } from "../../context/recommendationservice.context";
-import { RECOMMENDATION_SORT_TYPE, RecommendationSortType } from "../../enums/sortType";
-import { DropdownChangeEvent, IDropdownValue } from "../../util/elements/inputs/dropdown.lit";
-import { IRecommendationAction, RECCOMENDATION_ACTIONS } from "../sidebars/explainRecommendations/explainRecommendations.lit";
+import {
+  RECOMMENDATION_SORT_TYPE,
+  RecommendationSortType,
+} from "../../enums/sortType";
+import {
+  DropdownChangeEvent,
+  IDropdownValue,
+} from "../../util/elements/inputs/dropdown.lit";
+import {
+  IRecommendationAction,
+  RECCOMENDATION_ACTIONS,
+} from "../sidebars/explainRecommendations/explainRecommendations.lit";
 import "./recommendations/recommendationSearch.lit";
 import "./recommendations/recommendationitem.lit";
+import { ISourceStrategies } from "./redirects/source/source.constants";
+import { ITargetStrategies } from "./redirects/target/target.constants";
 
 @customElement("urltracker-recommendations-tab")
 export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
@@ -34,6 +54,9 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 ) {
   @consume({ context: recommendationServiceContext })
   private _recommendationsService?: IRecommendationsService;
+
+  @consume({ context: redirectServiceContext })
+  private _redirectService?: IRedirectService;
 
   @consume({ context: editorServiceContext })
   private editorService?: IEditorService<any>;
@@ -57,29 +80,30 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   private selectedItems: number[] = [];
 
   private query = "";
-  private selectedType: RecommendationSortType = RECOMMENDATION_SORT_TYPE.LAST_OCCURRENCE;
+  private selectedType: RecommendationSortType =
+    RECOMMENDATION_SORT_TYPE.LAST_OCCURRENCE;
   private paginationRef: Ref<UrlTrackerPagination> = createRef();
 
   private _sortOptions: IDropdownValue[] = [
     {
       display: "Last occurrance descending",
       value: RECOMMENDATION_SORT_TYPE.LAST_OCCURRENCE,
-      key: RECOMMENDATION_SORT_TYPE.LAST_OCCURRENCE.toString()
+      key: RECOMMENDATION_SORT_TYPE.LAST_OCCURRENCE.toString(),
     },
     {
       display: "Importance",
       value: RECOMMENDATION_SORT_TYPE.IMPORTANCE,
-      key: RECOMMENDATION_SORT_TYPE.IMPORTANCE.toString()
+      key: RECOMMENDATION_SORT_TYPE.IMPORTANCE.toString(),
     },
     {
       display: "Url",
       value: RECOMMENDATION_SORT_TYPE.URL,
-      key: RECOMMENDATION_SORT_TYPE.URL.toString()
+      key: RECOMMENDATION_SORT_TYPE.URL.toString(),
     },
     {
       display: "Amount of occurrences",
       value: RECOMMENDATION_SORT_TYPE.OCCURRENCES,
-      key: RECOMMENDATION_SORT_TYPE.OCCURRENCES.toString()
+      key: RECOMMENDATION_SORT_TYPE.OCCURRENCES.toString(),
     },
   ];
 
@@ -92,7 +116,11 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   }
 
   private async init() {
-    ensureServiceExists(this._recommendationsService, "recommendations service");
+    ensureServiceExists(
+      this._recommendationsService,
+      "recommendations service"
+    );
+    ensureServiceExists(this._redirectService, "redirect service");
     ensureServiceExists(this.editorService, "editor service");
 
     await this.search();
@@ -126,6 +154,81 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     }
   }
 
+  private handleCreatePermanentRedirect = async (
+    event: CustomEvent<IRecommendationResponse>
+  ) => {
+    const redirect = {
+      source: {
+        strategy: variableresourceService.get<ISourceStrategies>(
+          "redirectSourceStrategies"
+        ).url,
+        value: event.detail.url,
+      },
+      target: {
+        strategy: variableresourceService.get<ITargetStrategies>(
+          "redirectTargetStrategies"
+        ).url,
+        value: "",
+      },
+      permanent: true,
+      retainQuery: true,
+      force: false,
+    } as IRedirectResponse;
+
+    this.openNewRedirectPanel(redirect);
+  };
+
+  private handleCreateTemporaryRedirect = async (
+    event: CustomEvent<IRecommendationResponse>
+  ) => {
+    const redirect = {
+      source: {
+        strategy: variableresourceService.get<ISourceStrategies>(
+          "redirectSourceStrategies"
+        ).url,
+        value: event.detail.url,
+      },
+      target: {
+        strategy: variableresourceService.get<ITargetStrategies>(
+          "redirectTargetStrategies"
+        ).url,
+        value: "",
+      },
+      permanent: false,
+      retainQuery: true,
+      force: false,
+    } as IRedirectResponse;
+
+    this.openNewRedirectPanel(redirect);
+  };
+
+  private handleIgnore = async (event: CustomEvent<IRecommendationResponse>) => {};
+
+  private openNewRedirectPanel(data?: IRedirectResponse) {
+    const options = {
+      title: "New redirect",
+      view: "/App_Plugins/UrlTracker/sidebar/redirect/simpleRedirect.html",
+      size: "medium",
+      submit: this.submitNewRedirectPanel,
+      close: this.closePanel,
+      value: data,
+    };
+
+    this.editorService!.open(options);
+  }
+
+  submitNewRedirectPanel = async (value: IRedirectResponse) => {
+    console.info("submit new or update redirect", value);
+    if (value.id) {
+      await this._redirectService?.update(value);
+    } else {
+      await this._redirectService?.create(value);
+    }
+
+    this.closePanel();
+    this.search();
+  };
+
   private openExplanationPanel(data: IRecommendationResponse) {
     const options = {
       title: `Recommendations for: ${data.url}`,
@@ -138,13 +241,22 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     this.editorService!.open(options);
   }
 
-  private submitExplanationPanel = (action: IRecommendationAction) => {
-    switch (action) {
-      case RECCOMENDATION_ACTIONS.MAKE_PERMANENT: break;
-      case RECCOMENDATION_ACTIONS.MAKE_TEMPORARY: break;
-      case RECCOMENDATION_ACTIONS.IGNORE: break;
-    }
+  private submitExplanationPanel = (payload: {
+    recommendation: IRecommendationResponse;
+    action: IRecommendationAction;
+  }) => {
     this.editorService!.close();
+    switch (payload.action) {
+      case RECCOMENDATION_ACTIONS.MAKE_PERMANENT:
+        this.handleCreatePermanentRedirect(payload.recommendation);
+        break;
+      case RECCOMENDATION_ACTIONS.MAKE_TEMPORARY:
+        this.handleCreateTemporaryRedirect(payload.recommendation);
+        break;
+      case RECCOMENDATION_ACTIONS.IGNORE:
+        this.handleIgnore(payload.recommendation);
+        break;
+    }
   };
 
   private openAnalysePanel(data: IRecommendationResponse) {
@@ -188,32 +300,35 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   private onSelectItem = (e: any) => {
     this.selectedItems.push(e.item.id);
     this.requestUpdate();
-  }
+  };
 
   private onDeselectItem = (e: any) => {
-    this.selectedItems = this.selectedItems.filter(i => i !== e.item.id);
-  }
+    this.selectedItems = this.selectedItems.filter((i) => i !== e.item.id);
+  };
 
   private onSelectAll = (e: any) => {
-    if(this.selectedItems.length === this._recommendationCollection?.total) {
+    if (this.selectedItems.length === this._recommendationCollection?.total) {
       this.selectedItems = [];
+    } else {
+      this.selectedItems =
+        this._recommendationCollection?.results.map((r) => r.id) || [];
     }
-    else {
-      this.selectedItems = this._recommendationCollection?.results.map(r => r.id) || [];
-    }
-  }
+  };
 
   private onClearSelection = (e: any) => {
     this.selectedItems = [];
-  }
+  };
 
   private onDeleteSelection = async (e: any) => {
-    const selectedRedirects = this._recommendationCollection?.results.filter(r => this.selectedItems.some(i => i === r.id)) || [];
-    const bulkToDelete = selectedRedirects.map(r => r.id);
+    const selectedRedirects =
+      this._recommendationCollection?.results.filter((r) =>
+        this.selectedItems.some((i) => i === r.id)
+      ) || [];
+    const bulkToDelete = selectedRedirects.map((r) => r.id);
     //await redirectService.deleteBulk(bulkToDelete);
     this.selectedItems = [];
     //this.search();
-  }
+  };
 
   private renderRecommendations(): unknown {
     if (!this._recommendationCollection?.results) return nothing;
@@ -223,40 +338,41 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       (r) =>
         html`<urltracker-recommendation-item
           .item=${r}
-          .isSelected=${this.selectedItems.some(i => i === r.id)} 
-          @selected=${this.onSelectItem} 
-          @deselected=${this.onDeselectItem} 
+          .isSelected=${this.selectedItems.some((i) => i === r.id)}
+          @selected=${this.onSelectItem}
+          @deselected=${this.onDeselectItem}
           @explain=${this.onExplain}
           @analyse=${this.onAnalyse}
+          @createPermanent=${this.handleCreatePermanentRedirect}
+          @createTemporary=${this.handleCreateTemporaryRedirect}
+          @ignore=${this.handleIgnore}
         ></urltracker-recommendation-item>`
     );
   }
 
   private renderPagination(): unknown {
-    return html`
-      <urltracker-pagination
-        ${ref(this.paginationRef)}
-        class="pagination"
-        .total=${this._totalPages}
-        .testpages=${this._totalPages}
-        @change=${this.onFilterChange}
-      ></urltracker-pagination>`;
+    return html` <urltracker-pagination
+      ${ref(this.paginationRef)}
+      class="pagination"
+      .total=${this._totalPages}
+      .testpages=${this._totalPages}
+      @change=${this.onFilterChange}
+    ></urltracker-pagination>`;
   }
 
   private renderBulkActions(): unknown {
-    if(!this.selectedItems.length) return nothing;
+    if (!this.selectedItems.length) return nothing;
     return html`
       <urltracker-bulk-actions
         class="bulk"
         .selectedCount=${this.selectedItems.length}
-        .total=${this._recommendationCollection ? this._recommendationCollection.total : 0}
+        .total=${this._recommendationCollection
+          ? this._recommendationCollection.total
+          : 0}
         @select-all=${this.onSelectAll}
         @clear-selection=${this.onClearSelection}
       >
-        <uui-button
-          look="secondary"
-          @click=${this.onDeleteSelection}
-        >
+        <uui-button look="secondary" @click=${this.onDeleteSelection}>
           <uui-icon name="delete"></uui-icon>
           Delete
         </uui-button>
