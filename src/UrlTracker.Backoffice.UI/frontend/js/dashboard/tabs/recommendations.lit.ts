@@ -248,13 +248,13 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     this.editorService!.close();
     switch (payload.action) {
       case RECCOMENDATION_ACTIONS.MAKE_PERMANENT:
-        this.handleCreatePermanentRedirect(payload.recommendation);
+        this.handleCreatePermanentRedirect(new CustomEvent("", { detail: payload.recommendation }));
         break;
       case RECCOMENDATION_ACTIONS.MAKE_TEMPORARY:
-        this.handleCreateTemporaryRedirect(payload.recommendation);
+        this.handleCreateTemporaryRedirect(new CustomEvent("", { detail: payload.recommendation }));
         break;
       case RECCOMENDATION_ACTIONS.IGNORE:
-        this.handleIgnore(payload.recommendation);
+        this.handleIgnore(new CustomEvent("", { detail: payload.recommendation }));
         break;
     }
   };
