@@ -13,6 +13,7 @@ import {
 } from "../../util/tools/existancecheck";
 import { UrlTrackerNotificationWrapper } from "../notifications/notifications.mixin";
 
+import { IEditorService, editorServiceContext } from "@/context/editorservice.context";
 import { consume, provide } from "@lit/context";
 import { repeat } from "lit/directives/repeat.js";
 import {
@@ -32,6 +33,9 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 ) {
   @consume({ context: recommendationServiceContext })
   private _recommendationsService?: IRecommendationsService;
+
+  @consume({ context: editorServiceContext })
+  private editorService?: IEditorService<any>;
 
   @provide({ context: changeManagerContext })
   public changeManager: IChangeManager = { element: this };
@@ -87,10 +91,8 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   }
 
   private async init() {
-    ensureServiceExists(
-      this._recommendationsService,
-      "recommendations service"
-    );
+    ensureServiceExists(this._recommendationsService, "recommendations service");
+    ensureServiceExists(this.editorService, "editor service");
 
     await this.search();
   }
@@ -123,6 +125,22 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     }
   }
 
+  private openInspectPanel(data: IRecommendationResponse) {
+    const options = {
+      title: data.url,
+      view: "/App_Plugins/UrlTracker/sidebar/recommendations/inspectRecommendations.html",
+      size: "medium",
+      submit: this.closePanel,
+      close: this.closePanel,
+      value: data,
+    };
+    this.editorService!.open(options);
+  }
+
+  closePanel = () => {
+    this.editorService!.close();
+  };
+
   private onSearch = ({ detail: { query } = {} }: CustomEvent) => {
     this.query = query;
     this.search();
@@ -134,7 +152,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   };
 
   private onInspect = (e: CustomEvent<IRecommendationResponse>) => {
-    //this.openInspectPanel(e.detail);
+    this.openInspectPanel(e.detail);
   };
 
   private onFilterChange = (_: Event) => {

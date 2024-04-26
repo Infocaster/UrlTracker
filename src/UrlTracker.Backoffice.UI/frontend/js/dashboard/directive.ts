@@ -137,3 +137,45 @@ export function ngInspectRedirectSidebar(
     },
   };
 }
+
+ngInspectRecommendationsSidebar.alias = "ngUrltrackerInspectRecommendationsSidebar";
+ngInspectRecommendationsSidebar.$inject = [
+  "localizationService",
+  "iconHelper",
+  "editorService",
+];
+
+export function ngInspectRecommendationsSidebar(
+  localizationService: ILocalizationService,
+  iconHelper: IIconHelper,
+  editorService: IEditorService<any>
+): angular.IDirective {
+  return {
+    restrict: "E",
+    link: function (_scope, element) {
+      let redirectSidebarElement = document.createElement(
+        "urltracker-inspect-redirect-sidebar"
+      ) as SimpleRedirectSidebar;
+
+      redirectSidebarElement.SetContext(
+        localizationService,
+        localizationServiceContext,
+        localizationServiceKey
+      );
+
+      redirectSidebarElement.SetContext(
+        iconHelper,
+        iconHelperContext,
+        iconHelperKey
+      );
+      redirectSidebarElement.SetContext(
+        editorService,
+        editorServiceContext,
+        editorServiceKey
+      );
+      redirectSidebarElement.SetContext(_scope, scopeContext, scopeContextKey);
+
+      element[0].appendChild(redirectSidebarElement);
+    },
+  };
+}

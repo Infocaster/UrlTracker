@@ -6,11 +6,7 @@ import "./inspectRedirect/inspectRedirect.lit";
 @customElement("urltracker-inspect-redirect-sidebar")
 export class InspectRedirectSidebar extends AngularBridgeMixin(
   LitElement,
-  html`
-    <urltracker-angular-icon-registry>
-      <urltracker-sidebar-inspect-redirect></urltracker-sidebar-inspect-redirect>
-    </urltracker-angular-icon-registry>
- `
+  html`<urltracker-sidebar-inspect-redirect></urltracker-sidebar-inspect-redirect>`
 ) {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();

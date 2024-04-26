@@ -6,10 +6,7 @@ import "./simpleRedirect/simpleRedirect.lit";
 @customElement("urltracker-simple-redirect-sidebar")
 export class SimpleRedirectSidebar extends AngularBridgeMixin(
   LitElement,
-  html`
-  <urltracker-angular-icon-registry>
-    <urltracker-sidebar-simple-redirect></urltracker-sidebar-simple-redirect>
-  </urltracker-angular-icon-registry>`
+  html`<urltracker-sidebar-simple-redirect></urltracker-sidebar-simple-redirect>`
 ) {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();

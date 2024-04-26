@@ -12,7 +12,7 @@ export class UrlTrackerRecommendationItemAction extends LitElement {
   public actionTextKey?: string;
 
   @property()
-  public action?: () => void;
+  public action?: (e: Event) => void;
 
   @state()
   private actionText = "";
