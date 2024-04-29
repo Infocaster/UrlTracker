@@ -1,9 +1,11 @@
 import { IRedirectResponse } from "@/services/redirect.service";
 import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import "./redirectForce.lit";
 import "./redirectIncomingUrl.lit";
 import "./redirectOutgoingUrl.lit";
 import "./redirectPermanent.lit";
+import "./redirectPreserveQuerystring.lit";
 import { ITypeButton } from "./simpleRedirectTypeProvider";
 
 @customElement("urltracker-create-simple-redirect")
@@ -14,8 +16,18 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
   @property({ type: Boolean })
   public advancedView = false;
 
-  private onToggle = ({ detail }: { detail: boolean}) => {
+  private onTogglePermanent = ({ detail }: { detail: boolean}) => {
     this.redirect.permanent = detail;
+    this.updateRedirect();
+  };
+
+  private onTogglePreserveQuerystring = ({ detail }: { detail: boolean}) => {
+    this.redirect.retainQuery = detail;
+    this.updateRedirect();
+  };
+
+  private onToggleForce = ({ detail }: { detail: boolean}) => {
+    this.redirect.force = detail;
     this.updateRedirect();
   };
 
@@ -29,7 +41,12 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
     this.updateRedirect();
   }
 
-  private onTypeChange = ({ detail }: { detail: ITypeButton}) => {
+  private onIncomingTypeChange = ({ detail }: { detail: ITypeButton}) => {
+    this.redirect.source.strategy = detail.value;
+    this.updateRedirect();
+  }
+
+  private onOutgoingTypeChange = ({ detail }: { detail: ITypeButton}) => {
     this.redirect.target.strategy = detail.value;
     this.updateRedirect();
   }
@@ -47,20 +64,32 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
       <urltracker-redirect-permanent
         class="border-bottom"
         .isPermanent=${this.redirect.permanent}
-        @toggle=${this.onToggle}
+        @toggle=${this.onTogglePermanent}
       ></urltracker-redirect-permanent>
       <urltracker-redirect-incoming-url
         class="border-bottom"
+        .advancedView=${this.advancedView}
         .incomingStrategy=${this.redirect.source.strategy}
         .incomingUrl=${this.redirect.source.value}
         @input=${this.onIncomingUrlInput}
+        @typechange=${this.onIncomingTypeChange}
       ></urltracker-redirect-incoming-url>
       <urltracker-redirect-outgoing-url
+        class="border-bottom"
         .outgoingStrategy=${this.redirect.target.strategy}
         .outgoingUrl=${this.redirect.target.value} 
         @input=${this.onOutgoingUrlInput} 
-        @typechange=${this.onTypeChange}>
+        @typechange=${this.onOutgoingTypeChange}>
       </urltracker-redirect-outgoing-url>
+      <urltracker-redirect-preserve-querystring
+        class="border-bottom"
+        .preserve=${this.redirect.retainQuery}
+        @toggle=${this.onTogglePreserveQuerystring}
+      ></urltracker-redirect-preserve-querystring>
+      <urltracker-redirect-force
+        .force=${this.redirect.force}
+        @toggle=${this.onToggleForce}
+      ></urltracker-redirect-force>
     `;
   }
 

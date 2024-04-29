@@ -116,7 +116,7 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
     this.editorService!.open(options);
   }
 
-  private openNewRedirectPanel(data?: ICreateRedirectSidbarData) {
+  private openNewRedirectPanel(data?: Partial<ICreateRedirectSidbarData>) {
     const options = {
       title: "New redirect", // FIXME: translate
       view: "/App_Plugins/UrlTracker/sidebar/redirect/simpleRedirect.html",
@@ -166,7 +166,9 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
   };
 
   private onAddRedirect = (e: any) => {
-    this.openNewRedirectPanel();
+    this.openNewRedirectPanel({
+        advancedView: true
+    });
   };
 
   private onEditRedirect = (e: CustomEvent<IRedirectResponse>) => {

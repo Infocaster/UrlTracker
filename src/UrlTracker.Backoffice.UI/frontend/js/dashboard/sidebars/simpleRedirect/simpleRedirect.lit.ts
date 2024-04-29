@@ -36,6 +36,12 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
     return this.scope.model.value.advancedView ?? false;
   }
 
+  @property({ attribute: false})
+  get redirect () {
+    ensureExists(this.$scope, "scope");
+    return this.scope.model.value ?? {} as IRedirectResponse;
+  }
+
   @state()
   private headerText = "";
 
@@ -57,8 +63,8 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
     
-    if(this.scope.model.value) {
-      // Editing existing redirect
+    if(this.redirect.id || this.redirect.source?.value) {
+      // Editing existing redirect, id will be available if redirect is already saved, source will exist if coming from a recommendation
       this.redirectData = this.scope.model.value;
       this.headerText = `Edit: ${this.scope.model.value.source.value}` ?? "Edit redirect";
     } else {
@@ -108,6 +114,7 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
     .main {
       flex: 1;
       padding: 16px 20px;
+      overflow-y: auto;
     }
 
     .footer {

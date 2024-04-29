@@ -27,7 +27,7 @@ export class UrlTrackerRedirectForce extends LitElement {
 
   private _localizeHeaderText = async () => {
     const text = await this._localizationService?.localize(
-      "urlTrackerNewRedirect_permanent"
+      "urlTrackerNewRedirect_force"
     );
 
     this._headerText = text ?? "fallback";
@@ -35,7 +35,7 @@ export class UrlTrackerRedirectForce extends LitElement {
 
   private _localizeInfoText = async () => {
     const text = await this._localizationService?.localize(
-      "urlTrackerNewRedirect_permanent-info"
+      "urlTrackerNewRedirect_force-info"
     );
 
     this._infoText = text ?? "fallback";
@@ -55,8 +55,8 @@ export class UrlTrackerRedirectForce extends LitElement {
 
   protected render(): unknown {
     return html`
-      <p><strong>${this._headerText}</strong></p>
-      <p>${this._infoText}</p>
+      <p><strong>Force</strong></p>
+      <p>Enabling this feature will apply this redirect on the incoming URL, even if content exists on the incoming URL.</p>
       <uui-toggle
         label=""
         .checked=${this.force}

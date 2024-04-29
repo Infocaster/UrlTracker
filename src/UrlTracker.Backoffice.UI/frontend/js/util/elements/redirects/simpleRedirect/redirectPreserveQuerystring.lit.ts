@@ -55,8 +55,8 @@ export class UrlTrackerRedirectPreserveQuerystring extends LitElement {
 
   protected render(): unknown {
     return html`
-      <p><strong>${this._headerText}</strong></p>
-      <p>${this._infoText}</p>
+      <p><strong>Preserve query string</strong></p>
+      <p>The query string is the part behind the ? in a URL and consists of so-called “key/value pairs”. Enabling this property will copy the query string from the incoming URL to the outgoing URL.</p>
       <uui-toggle
         label=""
         .checked=${this.preserve}
