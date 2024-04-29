@@ -1,8 +1,9 @@
 import { scopeContext } from "@/context/scope.context";
 import { IScope } from "@/models/scope.model";
+import { ensureExists } from "@/util/tools/existancecheck";
 import { consume } from "@lit/context";
 import { LitElement, css, html } from "lit";
-import { customElement } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 
 export const ContentElementTag = "urltracker-sidebar-inspect-recommendations";
 
@@ -20,6 +21,13 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
   @consume({ context: scopeContext })
   private $scope?: IScope;
 
+  @property({ attribute: false})
+  get scope() { 
+    ensureExists(this.$scope, "scope");
+    return this.$scope;
+  }
+
+  @state()
   private _headerText = "";
 
   async connectedCallback(): Promise<void> {
@@ -30,13 +38,13 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
   save(action: IRecommendationAction = RECCOMENDATION_ACTIONS.IGNORE) {
     const data = {
       action,
-      recommendation: this.$scope?.model.value,
+      recommendation: this.scope.model.value,
     };
-    this.$scope?.model.submit(data);
+    this.scope.model.submit(data);
   }
 
   close() {
-    this.$scope?.model.close();
+    this.scope.model.close();
   }
 
   protected render() {

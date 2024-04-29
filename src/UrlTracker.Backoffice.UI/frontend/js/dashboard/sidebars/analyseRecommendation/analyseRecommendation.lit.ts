@@ -1,48 +1,45 @@
 import {
-  IEditorService,
-  editorServiceContext,
-} from "@/context/editorservice.context";
-import {
   ILocalizationService,
   localizationServiceContext,
 } from "@/context/localizationservice.context";
 import { scopeContext } from "@/context/scope.context";
 import { IScope } from "@/models/scope.model";
-import { IRedirectResponse } from "@/services/redirect.service";
+import { IRecommendationResponse } from "@/services/recommendation.service";
+import { ensureExists } from "@/util/tools/existancecheck";
 import { consume } from "@lit/context";
 import { LitElement, css, html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 
 export const ContentElementTag = "urltracker-sidebar-analyse-recommendation";
 
 @customElement(ContentElementTag)
 export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
-  @consume({ context: editorServiceContext })
-  private editorService?: IEditorService<any>;
+  @consume({ context: localizationServiceContext })
+  private localizationService?: ILocalizationService;
 
   @consume({ context: scopeContext })
   private $scope?: IScope;
 
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
+  @property({ attribute: false})
+  get scope() { 
+    ensureExists(this.$scope, "scope");
+    return this.$scope;
+  }
 
   @state()
-  private data!: IRedirectResponse;
+  private data!: IRecommendationResponse;
 
+  @state()
   private _headerText = "";
 
   async connectedCallback(): Promise<void> {
       super.connectedCallback();
-      this.data = this.$scope?.model.value;
-      this._headerText = this.$scope?.model.title ?? "Recommendations";
-  }
-
-  save() {
-    this.editorService?.close();
+      this.data = this.scope.model.value;
+      this._headerText = this.scope.model.title ?? "Recommendations";
   }
 
   close() {
-    this.$scope?.model.close();
+    this.scope.model.close();
   }
 
   protected render() {
