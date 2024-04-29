@@ -1,5 +1,5 @@
-import { LitElement, html } from "lit";
 import { provide } from "@lit/context";
+import { LitElement, html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { simpleRedirectContext } from "../../../../context/simpleRedirect.context";
 
@@ -8,6 +8,7 @@ export interface ITypeButton {
   labelFallback: string;
   value: "content" | "media" | "url";
   placeholder: string;
+  disabled: boolean;
 }
 
 /*

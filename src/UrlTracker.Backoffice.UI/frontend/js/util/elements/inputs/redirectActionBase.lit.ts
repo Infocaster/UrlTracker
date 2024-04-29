@@ -1,9 +1,9 @@
-import { LitElement, css, html } from "lit";
-import { ILocalizationService } from "../../../umbraco/localization.service";
 import { consume } from "@lit/context";
-import { localizationServiceContext } from "../../../context/localizationservice.context";
-import { customElement, state } from "lit/decorators.js";
 import "@umbraco-ui/uui";
+import { LitElement, css, html } from "lit";
+import { customElement, state } from "lit/decorators.js";
+import { localizationServiceContext } from "../../../context/localizationservice.context";
+import { ILocalizationService } from "../../../umbraco/localization.service";
 
 @customElement("urltracker-redirect-action")
 export class UrlTrackerRedirectAction extends LitElement {
@@ -17,7 +17,8 @@ export class UrlTrackerRedirectAction extends LitElement {
     super.connectedCallback();
   }
 
-  protected _onAddClick = () => {
+  protected _onAddClick = (e: Event) => {
+    e.stopImmediatePropagation();
     this.dispatchEvent(
       new Event("click", {
         bubbles: true,

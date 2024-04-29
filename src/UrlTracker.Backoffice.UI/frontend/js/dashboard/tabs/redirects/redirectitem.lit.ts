@@ -1,15 +1,16 @@
+import { consume } from "@lit/context";
 import { css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { UrlTrackerSelectableResultListItem } from "../../../util/elements/selectableresultlistitem.lit";
-import { IRedirectResponse } from "../../../services/redirect.service";
-import { redirectContext } from "../../../context/redirectitem.context";
-import sourceStrategyResolver from "./source/source.strategy";
-import targetStrategyResolver from "./target/target.strategy";
-import { consume } from "@lit/context";
 import {
   ILocalizationService,
   localizationServiceContext,
 } from "../../../context/localizationservice.context";
+import { redirectContext } from "../../../context/redirectitem.context";
+import { IRedirectResponse } from "../../../services/redirect.service";
+import "../../../util/elements/buttonLink.lit";
+import { UrlTrackerSelectableResultListItem } from "../../../util/elements/selectableresultlistitem.lit";
+import sourceStrategyResolver from "./source/source.strategy";
+import targetStrategyResolver from "./target/target.strategy";
 
 const RedirectListItem =
   UrlTrackerSelectableResultListItem<IRedirectResponse>(redirectContext);
@@ -36,6 +37,21 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
     );
   }
 
+  private handleInspect(e: Event): void {
+    e.stopPropagation();
+    this.dispatchEvent(new CustomEvent("inspect", { detail: this.item }));
+  }
+
+  private handleEdit(e: Event): void {
+    e.stopPropagation();
+    this.dispatchEvent(new CustomEvent("edit", { detail: this.item }));
+  }
+
+  private handleDelete(e: Event): void {
+    e.stopPropagation();
+    this.dispatchEvent(new CustomEvent("delete", { detail: this.item }));
+  }
+
   private renderSource(): unknown {
     if (!this.item) return nothing;
     return this.sourceStrategy.getStrategy(this.item).getTemplate();
@@ -48,11 +64,16 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
 
   protected renderBody(): unknown {
     return html`
-      <div class="body">
+      <div class="body" @click=${this.handleInspect}>
         ${this.renderSource()}
         <div class="target">${this.redirectToText}: ${this.renderTarget()}</div>
         <div class="actions">
-          <uui-button>edit</uui-button><uui-button>Delete</uui-button>
+          <urltracker-button-link @click=${this.handleEdit} text="Edit">
+              <uui-icon name="edit"></uui-icon>
+          </urltracker-button-link>
+          <urltracker-button-link @click=${this.handleDelete} text="Delete">
+              <uui-icon name="delete"></uui-icon>
+          </urltracker-button-link>
         </div>
       </div>
     `;
@@ -69,6 +90,12 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
         line-height: 15px;
         font-size: 12px;
         margin-top: 8px;
+      }
+
+      .actions {
+        display: flex;
+        gap: 16px;
+        margin-top: 16px;
       }
     `,
   ];

@@ -1,18 +1,26 @@
-import { LitElement, PropertyValues, css, html, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
-import { consume } from "@lit/context";
-import { repeat } from "lit/directives/repeat.js";
-import "./simpleRedirectTypeProvider";
-import { ITypeButton } from "./simpleRedirectTypeProvider";
 import {
   ILocalizationService,
   localizationServiceContext,
 } from "@/context/localizationservice.context";
+import { ITargetStrategies } from "@/dashboard/tabs/redirects/target/target.constants";
+import { debounce } from "@/util/functions/debounce";
+import variableresourceService from "@/util/tools/variableresource.service";
+import { consume } from "@lit/context";
+import { UUIInputEvent } from "@umbraco-ui/uui";
+import { LitElement, css, html } from "lit";
+import { customElement, property, state } from "lit/decorators.js";
+import { Ref, createRef, ref } from "lit/directives/ref.js";
+import { repeat } from "lit/directives/repeat.js";
+import "./simpleRedirectTypeProvider";
+import { ITypeButton } from "./simpleRedirectTypeProvider";
 
 @customElement("urltracker-redirect-outgoing-url")
 export class UrlTrackerRedirectOutgoingUrl extends LitElement {
   @property({ type: String })
-  private _data: string = "";
+  private outgoingUrl: string = "";
+
+  @property({ type: String })
+  private outgoingStrategy: string = "url";
 
   @state()
   private _headerText: string = "";
@@ -23,27 +31,29 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
   @consume({ context: localizationServiceContext })
   private _localizationService?: ILocalizationService;
 
-  //   @consume({ context: simpleRedirectContext })
-  //   private _simpleRedirectContext!: ITypeButton[];
+  private inputRef: Ref<HTMLInputElement> = createRef();
 
   public _typeButtons = [
     {
       label: "urlTrackerNewRedirect_outgoing-url-content",
       labelFallback: "Content",
-      value: "content",
+      value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content,
       placeholder: "link to content placeholder",
+      disabled: true,
     },
     {
       label: "urlTrackerNewRedirect_outgoing-url-media",
       labelFallback: "Media",
-      value: "media",
+      value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').media,
       placeholder: "link to media placeholder",
+      disabled: true,
     },
     {
       label: "urlTrackerNewRedirect_outgoing-url-url",
       labelFallback: "URL",
-      value: "url",
+      value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url,
       placeholder: "https://example.com/",
+      disabled: false,
     },
   ] as ITypeButton[];
 
@@ -52,27 +62,23 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-
-    // if (!this._localizationService)
-    //   throw new Error(
-    //     "localization service is not defined, but is required by this element"
-    //   );
-
+    
     this._localizeHeaderText();
     this._localizeInfoText();
     this._localizeButtonLabels();
-  }
 
-  update = (changedProperties: PropertyValues<this>) => {
-    console.log("will update", changedProperties);
-  };
+    console.log(this._typeButtons)
+
+    //@TODO: Create Content and Media type redirect functionality. Only URL type is implemented.
+    this._selectedType = this._typeButtons.find(
+      (item) => item.value === this.outgoingStrategy
+    ) ?? this._typeButtons.find((item) => item.value === variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url)!;
+  }
 
   private _localizeHeaderText = async () => {
     const text = await this._localizationService?.localize(
       "urlTrackerNewRedirect_outgoing-url"
     );
-
-    console.log("localizeheadertext", text);
 
     this._headerText = text ?? "Outgoing URL fallback";
   };
@@ -96,11 +102,28 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     }));
   };
 
-  private _onInput = (e: any) => {
-    console.log(e);
+  private onInput = (e: UUIInputEvent) => {
+    this.dispatchEvent(
+      new CustomEvent("input", {
+        detail: this.inputRef.value?.shadowRoot?.querySelector('input')?.value ?? '',
+        bubbles: true,
+        composed: false,
+      })
+    );
   };
 
-  private _onTypeChange = (e: any) => {};
+  private _debouncedOnInput = debounce(this.onInput, 500);
+
+  private onTypeChange = (item: ITypeButton, e: Event) => {
+    this._selectedType = item;
+    this.dispatchEvent(
+      new CustomEvent("typechange", {
+        detail: item,
+        bubbles: true,
+        composed: false,
+      })
+    );
+  };
 
   protected render(): unknown {
     return html`
@@ -118,14 +141,16 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
               ? "primary"
               : "outline"}
             color="default"
-            @click=${() => (this._selectedType = item)}
+            .disabled=${item.disabled}
+            @click=${(e: Event) => this.onTypeChange(item, e)}
           ></uui-button>`
         )}
       </uui-button-group>
       <uui-input
-        .value=${this._data}
+        ${ref(this.inputRef)}
+        .value=${this.outgoingUrl}
         .placeholder=${this._selectedType.placeholder}
-        @input=${this._onInput}
+        @input=${this._debouncedOnInput}
       ></uui-input>
     `;
   }

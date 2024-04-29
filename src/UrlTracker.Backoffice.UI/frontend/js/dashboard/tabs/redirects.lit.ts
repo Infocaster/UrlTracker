@@ -1,33 +1,37 @@
-import { LitElement, css, html, nothing } from "lit";
-import { customElement, state } from "lit/decorators.js";
-import { UrlTrackerNotificationWrapper } from "../notifications/notifications.mixin";
+import { IEditorService, editorServiceContext } from "@/context/editorservice.context";
+import { REDIRECTTYPE_SORT_TYPE, RedirectSortType } from "@/enums/sortType";
+import { DropdownChangeEvent, IDropdownValue } from "@/util/elements/inputs/dropdown.lit";
 import { consume, provide } from "@lit/context";
-import {
-  IRedirectService,
-  redirectServiceContext,
-} from "../../context/redirectservice.context";
-import { IRedirectCollectionResponse } from "../../services/redirect.service";
+import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
+import { customElement, state } from "lit/decorators.js";
+import { ifDefined } from "lit/directives/if-defined.js";
+import { Ref, createRef, ref } from "lit/directives/ref.js";
+import { repeat } from "lit/directives/repeat.js";
 import {
   IChangeManager,
   changeManagerContext,
 } from "../../context/changemanager.context";
 import {
+  IRedirectService,
+  redirectServiceContext,
+} from "../../context/redirectservice.context";
+import redirectService, { IRedirectCollectionResponse, IRedirectResponse } from "../../services/redirect.service";
+import '../../util/elements/bulkActions.lit';
+import "../../util/elements/inputs/addRedirectAction.lit";
+import "../../util/elements/inputs/exportRedirectsAction.lit";
+import "../../util/elements/inputs/pagination.lit";
+import { UrlTrackerPagination } from "../../util/elements/inputs/pagination.lit";
+import "../../util/elements/inputs/redirectImport.lit";
+import "../../util/elements/redirectActions.lit";
+import "../../util/elements/resultlist.lit";
+import "../../util/elements/resultlistitem.lit";
+import {
   ensureExists,
   ensureServiceExists,
 } from "../../util/tools/existancecheck";
-import "../../util/elements/resultlist.lit";
-import "../../util/elements/resultlistitem.lit";
-import "../../util/elements/inputs/pagination.lit";
-import "../../util/elements/redirectActions.lit";
-import "../../util/elements/inputs/addRedirectAction.lit";
-import "../../util/elements/inputs/exportRedirectsAction.lit";
-import "../../util/elements/inputs/redirectImport.lit";
+import { UrlTrackerNotificationWrapper } from "../notifications/notifications.mixin";
 import "./redirects/redirectitem.lit";
-import { UrlTrackerPagination } from "../../util/elements/inputs/pagination.lit";
-import { Ref, createRef, ref } from "lit/directives/ref.js";
-import { repeat } from "lit/directives/repeat.js";
-import { PropertyValueMap } from "lit";
-import { ifDefined } from "lit/directives/if-defined.js";
+import "./redirects/redirectsSearch.lit";
 
 @customElement("urltracker-redirect-tab")
 export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
@@ -37,108 +41,281 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   @consume({ context: redirectServiceContext })
   private _redirectService?: IRedirectService;
 
+  @consume({ context: editorServiceContext })
+  private editorService?: IEditorService<any>;
+
   @provide({ context: changeManagerContext })
   public changeManager: IChangeManager = { element: this };
 
   @state()
-  private _redirectCollection?: IRedirectCollectionResponse;
+  private redirectCollection?: IRedirectCollectionResponse;
 
   @state()
-  private _loading: number = 0;
+  private loading: number = 0;
 
+  @state()
+  private selectedItems: number[] = [];
+  
+  private query = "";
+  private selectedType: RedirectSortType = REDIRECTTYPE_SORT_TYPE.ALL;
   private paginationRef: Ref<UrlTrackerPagination> = createRef();
-
-  private onFilterChange = (_: Event) => {
-    this.init();
-  };
+  private sortOptions: IDropdownValue[] = [
+    {
+      display: "Alle",
+      value: REDIRECTTYPE_SORT_TYPE.ALL,
+      key: REDIRECTTYPE_SORT_TYPE.ALL.toString()
+    },
+    {
+      display: "Permanent",
+      value: REDIRECTTYPE_SORT_TYPE.PERMANENT,
+      key: REDIRECTTYPE_SORT_TYPE.PERMANENT.toString()
+    },
+    {
+      display: "Tijdelijk",
+      value: REDIRECTTYPE_SORT_TYPE.TEMPORARY,
+      key: REDIRECTTYPE_SORT_TYPE.TEMPORARY.toString()
+    },
+  ];
 
   protected async firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
   ): Promise<void> {
     super.firstUpdated(_changedProperties);
-
     await this.init();
   }
 
   private async init() {
     ensureServiceExists(this._redirectService, "redirect service");
+    await this.search();
+  }
+
+  private async search() {
     ensureExists(this.paginationRef.value);
 
-    let page = this.paginationRef.value.value;
-    this._loading++;
+    const page = this.paginationRef.value.value;
+    const type = this.selectedType;
+    const query = this.query;
+
+    this.loading++;
     try {
-      this._redirectCollection = await this._redirectService?.list({ ...page });
+      this.redirectCollection = await this._redirectService?.list({ ...page, types: type, query});
     } finally {
-      this._loading--;
+      this.loading--;
     }
   }
 
+  private openInspectPanel(data: IRedirectResponse) {
+    const options = {
+      title: data.source.value,
+      view: "/App_Plugins/UrlTracker/sidebar/redirect/inspectRedirect.html",
+      size: "medium",
+      submit: this.closePanel,
+      close: this.closePanel,
+      value: data,
+    };
+    this.editorService!.open(options);
+  }
+
+  private openNewRedirectPanel(data?: IRedirectResponse) {
+    const options = {
+      title: "New redirect", // FIXME: translate
+      view: "/App_Plugins/UrlTracker/sidebar/redirect/simpleRedirect.html",
+      size: "medium",
+      submit: this.submitNewRedirectPanel,
+      close: this.closePanel,
+      value: data,
+    };
+
+    this.editorService!.open(options);
+  }
+
+  submitNewRedirectPanel = async (value: IRedirectResponse) => {
+    console.info("submit new or update redirect", value);
+    if(value.id) {
+      await this._redirectService?.update(value);
+    }
+    else {
+      await this._redirectService?.create(value);
+    }
+
+    this.closePanel();
+    this.search();
+  };
+
+  closePanel = () => {
+    this.editorService!.close();
+  };
+
+  private onSearch = ({ detail: { query } = {} }: CustomEvent) => {
+    this.query = query;
+    this.search();
+  };
+
+  private onTypeChange = ({ data }: DropdownChangeEvent) => {
+    this.selectedType = data.value as RedirectSortType;
+    this.search();
+  };
+
+  private onFilterChange = (_: Event) => {
+    this.selectedItems = [];
+    this.search();
+  };
+
+  private onInspect = (e: CustomEvent<IRedirectResponse>) => {
+    this.openInspectPanel(e.detail);
+  };
+
+  private onAddRedirect = (e: any) => {
+    this.openNewRedirectPanel();
+  };
+
+  private onEditRedirect = (e: CustomEvent<IRedirectResponse>) => {
+    this.openNewRedirectPanel(e.detail);
+  };
+
+  private onDeleteRedirect = async (e: CustomEvent<IRedirectResponse>) => {
+    await this._redirectService?.delete(e.detail.id);
+    this.search();
+  };
+
+  private onExportRedirects = async (e: any) => {
+    //@TODO: implement export
+    //await this._redirectService?.export();
+  };
+
+  private onImportRedirects = async (e: any) => {
+    //@TODO: implement import
+    //await this._redirectService?.import();
+  }
+
+  private onSelectItem = (e: any) => {
+    this.selectedItems.push(e.item.id);
+    this.requestUpdate();
+  }
+
+  private onDeselectItem = (e: any) => {
+    this.selectedItems = this.selectedItems.filter(i => i !== e.item.id);
+  }
+
+  private onSelectAll = (e: any) => {
+    if(this.selectedItems.length === this.redirectCollection?.total) {
+      this.selectedItems = [];
+    }
+    else {
+      this.selectedItems = this.redirectCollection?.results.map(r => r.id) || [];
+    }
+  }
+
+  private onClearSelection = (e: any) => {
+    this.selectedItems = [];
+  }
+
+  private onConvertSelection = async (e: any) => {
+    const selectedRedirects = this.redirectCollection?.results.filter(r => this.selectedItems.some(i => i === r.id)) || [];
+    const bulkToUpdate = selectedRedirects.map(r => ({...r, permanent: true}));
+    await redirectService.updateBulk(bulkToUpdate);
+    this.selectedItems = [];
+    this.search();
+  }
+
+  private onDeleteSelection = async (e: any) => {
+    const selectedRedirects = this.redirectCollection?.results.filter(r => this.selectedItems.some(i => i === r.id)) || [];
+    const bulkToDelete = selectedRedirects.map(r => r.id);
+    await redirectService.deleteBulk(bulkToDelete);
+    this.selectedItems = [];
+    this.search();
+  }
+
+  private renderBulkActions() {
+    if(!this.selectedItems.length) return nothing;
+    return html`
+      <urltracker-bulk-actions 
+        class="bulk"
+        .selectedCount=${this.selectedItems.length}
+        .total=${this.redirectCollection ? this.redirectCollection.total : 0}
+        @select-all=${this.onSelectAll}
+        @clear-selection=${this.onClearSelection}
+      >
+        <uui-button
+          look="secondary"
+          @click=${this.onConvertSelection}
+        >
+          <uui-icon name="lock"></uui-icon> Convert to permanent redirect
+        </uui-button>
+        <uui-button
+          look="secondary"
+          @click=${this.onDeleteSelection}
+        >
+          <uui-icon name="delete"></uui-icon>
+          Delete
+        </uui-button>
+      </urltracker-bulk-actions>
+    `;
+  }
+
   private renderRedirects(): unknown {
-    if (!this._redirectCollection?.results) return nothing;
+    if (!this.redirectCollection?.results) return nothing;
     return repeat(
-      this._redirectCollection.results,
+      this.redirectCollection.results,
       (redirect) => redirect.id,
       (r) =>
-        html`<urltracker-redirect-item .item=${r}></urltracker-redirect-item>`
+        html`<urltracker-redirect-item .item=${r} .isSelected=${this.selectedItems.some(i => i === r.id)} @selected=${this.onSelectItem} @deselected=${this.onDeselectItem} @inspect=${this.onInspect} @edit=${this.onEditRedirect} @delete=${this.onDeleteRedirect}></urltracker-redirect-item>`
     );
   }
 
-  private _onAddRedirect = (e: any) => {
-    // TODO: implement logic
-    console.info("add redirect");
-    console.info(e);
-  };
-
-  private _onExportRedirects = (e: any) => {
-    // TODO: implement logic
-    console.info("export redirects");
-    console.info(e);
-  };
-
   protected renderInternal(): unknown {
     return html`
-      <div class="redirect-container">
-        <div class="filters"></div>
-        <div class="main">
+      <div class="grid-root">
+        <div class="filters">
+          <urltracker-redirects-search
+            @search=${this.onSearch}
+          ></urltracker-redirects-search>
+          <urltracker-dropdown
+            label="Type"
+            .options=${this.sortOptions}
+            @change=${this.onTypeChange}
+          ></urltracker-dropdown>
+        </div>
+
+        ${this.renderBulkActions()}
+
+        <div class="results">
           <urltracker-result-list
-            class="results"
-            .loading=${!!this._loading}
+            .loading=${!!this.loading}
             .header=${`Results (${
-              this._redirectCollection ? this._redirectCollection.total : 0
+              this.redirectCollection ? this.redirectCollection.total : 0
             })`}
           >
             ${this.renderRedirects()}
           </urltracker-result-list>
-          <div class="functions">
-            <urltracker-redirect-actions>
-              <urltracker-add-redirect-action
-                @click=${this._onAddRedirect}
-              ></urltracker-add-redirect-action>
-              <urltracker-export-redirects-action
-                @click=${this._onExportRedirects}
-              ></urltracker-export-redirects-action>
-            </urltracker-redirect-actions>
-            <urltracker-redirect-import></urltracker-redirect-import>
-          </div>
+
+          <urltracker-pagination
+            ${ref(this.paginationRef)}
+            class="pagination"
+            total="${ifDefined(this.redirectCollection?.total)}"
+            @change=${this.onFilterChange}
+          ></urltracker-pagination>
         </div>
-        <urltracker-pagination
-          ${ref(this.paginationRef)}
-          class="pagination"
-          total="${ifDefined(this._redirectCollection?.total)}"
-          @change=${this.onFilterChange}
-        ></urltracker-pagination>
+
+        <div class="functions">
+          <urltracker-redirect-actions>
+            <urltracker-add-redirect-action
+              @click=${this.onAddRedirect}
+            ></urltracker-add-redirect-action>
+            <urltracker-export-redirects-action
+              @click=${this.onExportRedirects}
+            ></urltracker-export-redirects-action>
+          </urltracker-redirect-actions>
+          <urltracker-redirect-import></urltracker-redirect-import>
+        </div>
       </div>
     `;
   }
 
   static styles = css`
-    .redirect-container {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .filters {
-      margin-bottom: 2rem;
+    .grid-root {
+      display: grid;
+      gap: 1rem;
     }
 
     .main {
@@ -148,16 +325,31 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
       flex-wrap: wrap;
     }
 
-    urltracker-result-list {
-      flex: 1 1 32rem;
+    .filters {
+      grid-column: 1 / span 2;
+      grid-row: 1;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
     }
 
-    .filters {
-      background-color: blue;
-      height: 100px;
+    .filters urltracker-redirects-search {
+      flex: 0 1 30%;
+    }
+
+    .bulk {
+      grid-column: 1 / span 2;
+      grid-row: 2;
     }
 
     .results {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    urltracker-result-list {
+      flex: 1 1 32rem;
     }
 
     .functions {

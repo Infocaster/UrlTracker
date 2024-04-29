@@ -58,9 +58,10 @@ export class UrlTrackerPagination extends LitElement {
         const formData = new FormData(this.formRef.value);
         const page = formData.get("page")?.toString();
         const pageSizeKey = formData.get("pageSize")?.toString();
-        console.log(page, pageSizeKey);
         const pageSizeChoice = this.pageSizes.find(ps => ps.key === pageSizeKey);
+
         ensureExists(pageSizeChoice, "The page size must be one of the available options");
+        
         return {
             page: page ? parseInt(page) - 1 : 0,
             pageSize: pageSizeChoice.value as number
@@ -97,13 +98,14 @@ export class UrlTrackerPagination extends LitElement {
         `;
     }
     static styles = css`
-        :host {
+        form {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
             gap: 16px;
         }
+
         urltracker-pageselect {
             background-color: white;
         }

@@ -1,14 +1,14 @@
 import { ContextConsumer } from "@lit/context";
-import { LitElementConstructor } from "../../../../util/tools/litelementconstructor";
+import { css, html, nothing } from "lit";
 import {
   ILocalizationService,
   localizationServiceContext,
 } from "../../../../context/localizationservice.context";
-import { css, html, nothing } from "lit";
 import {
   IRedirectResponse,
   redirectContext,
 } from "../../../../context/redirectitem.context";
+import { LitElementConstructor } from "../../../../util/tools/litelementconstructor";
 
 export function UrlTrackerRedirectTarget<TBase extends LitElementConstructor>(
   Base: TBase,
@@ -60,7 +60,6 @@ export function UrlTrackerRedirectTarget<TBase extends LitElementConstructor>(
         :host {
           display: inline-flex;
           align-items: baseline;
-          margin-left: 16px;
           row-gap: 8px;
         }
 

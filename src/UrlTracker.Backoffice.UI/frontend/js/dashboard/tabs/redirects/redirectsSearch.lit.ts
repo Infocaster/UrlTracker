@@ -1,24 +1,29 @@
 import { ensureExists } from "@/util/tools/existancecheck";
 import { consume } from "@lit/context";
+import { UUIInputElement, UUIInputEvent } from "@umbraco-ui/uui";
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { Ref, createRef, ref } from "lit/directives/ref.js";
 import { localizationServiceContext } from "../../../context/localizationservice.context";
 import { ILocalizationService } from "../../../umbraco/localization.service";
 import { debounce } from "../../../util/functions/debounce";
 
-@customElement("urltracker-recommendation-search")
-export class UrlTrackerRecommendationSearch extends LitElement {
+@customElement("urltracker-redirects-search")
+export class UrlTrackerRedirectsSearch extends LitElement {
   @state()
   private _placeholderText = "localize this";
 
   @consume({ context: localizationServiceContext })
   private localizationService?: ILocalizationService;
 
+  private inputRef: Ref<UUIInputElement> = createRef();
+
   async connectedCallback() {
     super.connectedCallback();
-    
+
     ensureExists(this.localizationService);
     this.localizePlaceholderText();
+    this.addEventListener('input', this._debouncedOnSearchInput);
   }
 
   private async localizePlaceholderText(): Promise<void> {
@@ -29,9 +34,8 @@ export class UrlTrackerRecommendationSearch extends LitElement {
     this._placeholderText = actionsText ?? this._placeholderText;
   }
 
-  // uui docs dont specifiy what the event type is
-  private _onSearchInput = (e: any) => {
-    this._dispatchSearch(e.explicitOriginalTarget.value);
+  private _onSearchInput = (e: UUIInputEvent) => {
+    this._dispatchSearch(this.inputRef.value?.shadowRoot?.querySelector('input')?.value ?? '');
   };
 
   private _dispatchSearch = (searchQuery: string) => {
@@ -49,14 +53,17 @@ export class UrlTrackerRecommendationSearch extends LitElement {
   private _debouncedOnSearchInput = debounce(this._onSearchInput, 500);
 
   protected render(): unknown {
-    return html` <uui-input
-      .placeholder=${this._placeholderText}
-      @input=${this._debouncedOnSearchInput}
-    >
-      <div class="prepend" slot="prepend">
-          <uui-icon name="search"></uui-icon>
-      </div>
-    </uui-input>`;
+    return html`
+      <uui-input
+        ${ref(this.inputRef)}
+        .placeholder=${this._placeholderText}
+        @input=${this._debouncedOnSearchInput}
+      >
+        <div class="prepend" slot="prepend">
+            <uui-icon name="search"></uui-icon>
+        </div>
+      </uui-input>
+    `;
   }
 
   static styles = [

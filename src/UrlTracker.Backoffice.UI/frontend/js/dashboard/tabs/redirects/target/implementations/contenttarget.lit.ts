@@ -1,22 +1,22 @@
-import { LitElement, css, html } from "lit";
-import { UrlTrackerRedirectTarget } from "../targetbase.mixin";
+import { IRedirectResponse } from "@/services/redirect.service";
 import { consume } from "@lit/context";
+import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import {
-  ITargetService,
-  redirectTargetServiceContext,
-} from "../../../../../context/redirecttargetservice.context";
-import { IContentTargetResponse } from "../target.service";
+  IChangeManager,
+  changeManagerContext,
+} from "../../../../../context/changemanager.context";
 import {
   IEditorService,
   editorServiceContext,
 } from "../../../../../context/editorservice.context";
 import {
-  IChangeManager,
-  changeManagerContext,
-} from "../../../../../context/changemanager.context";
+  ITargetService,
+  redirectTargetServiceContext,
+} from "../../../../../context/redirecttargetservice.context";
 import { ensureServiceExists } from "../../../../../util/tools/existancecheck";
-import { IRedirectResponse } from "@/services/redirect.service";
+import { IContentTargetResponse } from "../target.service";
+import { UrlTrackerRedirectTarget } from "../targetbase.mixin";
 
 export class ContentUpdateEvent extends Event {
   static event = "content-update";
@@ -153,6 +153,7 @@ export class UrlTrackerContentRedirectTarget extends baseType {
     css`
       uui-icon {
         align-self: center;
+        margin-left: 4px;
       }
 
       .error {

@@ -1,12 +1,12 @@
+import { Axios } from "axios";
 import { axiosInstance } from "../util/tools/axios.service";
 import urlresource, {
   IControllerUrlResource,
   IUrlResource,
 } from "../util/tools/urlresource.service";
 import { IPagedCollectionResponseBase } from "./models/PagedCollectionResponseBase";
-import { Axios } from "axios";
-import { IQueryRequestBase } from "./models/queryrequestbase";
 import { IPaginationRequestBase } from "./models/paginationrequestbase";
+import { IQueryRequestBase } from "./models/queryrequestbase";
 
 interface IFlatRecommendationResponse {
   id: number;

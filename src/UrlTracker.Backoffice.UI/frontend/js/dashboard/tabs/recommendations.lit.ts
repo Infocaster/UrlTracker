@@ -3,6 +3,7 @@ import { customElement, state } from "lit/decorators.js";
 import { Ref, createRef, ref } from "lit/directives/ref.js";
 import {
   IRecommendationCollection,
+  IRecommendationResponse,
   IRecommendationsService,
 } from "../../services/recommendation.service";
 import { UrlTrackerPagination } from "../../util/elements/inputs/pagination.lit";
@@ -47,6 +48,9 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   @state()
   private _totalPages = 0;
 
+  @state()
+  private selectedItems: number[] = [];
+
   private paginationRef: Ref<UrlTrackerPagination> = createRef();
 
   private _sortOptions: IDropdownValue[] = [
@@ -72,9 +76,43 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     },
   ];
 
+  private onInspect = (e: CustomEvent<IRecommendationResponse>) => {
+    //this.openInspectPanel(e.detail);
+  };
+
   private onFilterChange = (_: Event) => {
     this.init();
   };
+
+  private onSelectItem = (e: any) => {
+    this.selectedItems.push(e.item.id);
+    this.requestUpdate();
+  }
+
+  private onDeselectItem = (e: any) => {
+    this.selectedItems = this.selectedItems.filter(i => i !== e.item.id);
+  }
+
+  private onSelectAll = (e: any) => {
+    if(this.selectedItems.length === this._recommendationCollection?.total) {
+      this.selectedItems = [];
+    }
+    else {
+      this.selectedItems = this._recommendationCollection?.results.map(r => r.id) || [];
+    }
+  }
+
+  private onClearSelection = (e: any) => {
+    this.selectedItems = [];
+  }
+
+  private onDeleteSelection = async (e: any) => {
+    const selectedRedirects = this._recommendationCollection?.results.filter(r => this.selectedItems.some(i => i === r.id)) || [];
+    const bulkToDelete = selectedRedirects.map(r => r.id);
+    //await redirectService.deleteBulk(bulkToDelete);
+    this.selectedItems = [];
+    //this.search();
+  }
 
   protected async firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
@@ -89,9 +127,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       this._recommendationsService,
       "recommendations service"
     );
-    // ensureExists(this.paginationRef.value);
 
-    // let page = this.paginationRef.value.value;
     this._loading++;
     try {
       this._recommendationCollection = await this._recommendationsService?.list(
@@ -109,8 +145,6 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
       if (page.page < 1) page.page = 1;
 
-      this._loading++;
-
       this._recommendationCollection = await this._recommendationsService?.list(
         { ...page }
       );
@@ -123,28 +157,6 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     }
   }
 
-  private renderRecommendations(): unknown {
-    if (!this._recommendationCollection?.results) return nothing;
-    return repeat(
-      this._recommendationCollection.results,
-      (recommendation) => recommendation.id,
-      (r) =>
-        html`<urltracker-recommendation-item
-          .item=${r}
-        ></urltracker-recommendation-item>`
-    );
-  }
-
-  private renderPagination(): unknown {
-    return html` ${this._totalPages}
-      <urltracker-pagination
-        ${ref(this.paginationRef)}
-        class="pagination"
-        .total=${this._totalPages}
-        .testpages=${this._totalPages}
-        @change=${this.onFilterChange}
-      ></urltracker-pagination>`;
-  }
   private _onSearch = ({ detail: { query } = {} }: CustomEvent) => {
     //TODO: implement search
     console.info("recommendations.lit.ts _onSearch not implemented");
@@ -156,6 +168,54 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     console.info("recommendations.lit.ts _onSortChange not implemented");
     console.info(data);
   };
+
+  private renderRecommendations(): unknown {
+    if (!this._recommendationCollection?.results) return nothing;
+    return repeat(
+      this._recommendationCollection.results,
+      (recommendation) => recommendation.id,
+      (r) =>
+        html`<urltracker-recommendation-item
+          .item=${r}
+          .isSelected=${this.selectedItems.some(i => i === r.id)} 
+          @selected=${this.onSelectItem} 
+          @deselected=${this.onDeselectItem} 
+          @inspect=${this.onInspect}
+        ></urltracker-recommendation-item>`
+    );
+  }
+
+  private renderPagination(): unknown {
+    return html`
+      <urltracker-pagination
+        ${ref(this.paginationRef)}
+        class="pagination"
+        .total=${this._totalPages}
+        .testpages=${this._totalPages}
+        @change=${this.onFilterChange}
+      ></urltracker-pagination>`;
+  }
+
+  private renderBulkActions(): unknown {
+    if(!this.selectedItems.length) return nothing;
+    return html`
+      <urltracker-bulk-actions
+        class="bulk"
+        .selectedCount=${this.selectedItems.length}
+        .total=${this._recommendationCollection ? this._recommendationCollection.total : 0}
+        @select-all=${this.onSelectAll}
+        @clear-selection=${this.onClearSelection}
+      >
+        <uui-button
+          look="secondary"
+          @click=${this.onDeleteSelection}
+        >
+          <uui-icon name="delete"></uui-icon>
+          Delete
+        </uui-button>
+      </urltracker-bulk-actions>
+    `;
+  }
 
   protected renderInternal(): unknown {
     if (this._error !== null) {
@@ -174,18 +234,23 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
             @change=${this._onSortChange}
           ></urltracker-dropdown>
         </div>
-        <urltracker-result-list
-          class="results"
-          .loading=${!!this._loading}
-          .header=${`Results (${
-            this._recommendationCollection
-              ? this._recommendationCollection.total
-              : 0
-          })`}
-        >
-          ${this.renderRecommendations()}
-        </urltracker-result-list>
-        ${this.renderPagination()}
+
+        ${this.renderBulkActions()}
+
+        <div class="results">
+          <urltracker-result-list
+            .loading=${!!this._loading}
+            .header=${`Results (${
+              this._recommendationCollection
+                ? this._recommendationCollection.total
+                : 0
+            })`}
+          >
+            ${this.renderRecommendations()}
+          </urltracker-result-list>
+
+          ${this.renderPagination()}
+        </div>
       </div>
     `;
   }
@@ -193,31 +258,31 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   static styles = css`
     .grid-root {
       display: grid;
-      grid-template-columns: 2;
-      grid-template-rows: 3;
-      gap: 16px;
+      gap: 1rem;
     }
 
     .filters {
       grid-column: 1 / span 2;
       grid-row: 1;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 1rem;
     }
 
     .filters urltracker-recommendation-search {
       flex: 0 1 30%;
     }
 
-    .results {
+    .bulk {
       grid-column: 1 / span 2;
       grid-row: 2;
     }
 
-    .pagination {
-      grid-column: 1;
-      grid-row: 3;
+    .results {
+      grid-column: 1 / span 2;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
   `;
 }

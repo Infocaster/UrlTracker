@@ -1,9 +1,10 @@
 import { Axios } from "axios";
-import urlresource, { IControllerUrlResource, IUrlResource } from "../util/tools/urlresource.service";
 import { axiosInstance } from "../util/tools/axios.service";
+import urlresource, { IControllerUrlResource, IUrlResource } from "../util/tools/urlresource.service";
 import { IPagedCollectionResponseBase } from "./models/PagedCollectionResponseBase";
 import { IPaginationRequestBase } from "./models/paginationrequestbase";
 import { IQueryRequestBase } from "./models/queryrequestbase";
+import { IRedirectFilterRequestBase } from "./models/redirectfilterrequestbase";
 
 export interface IRedirectResponseStrategy {
 
@@ -24,11 +25,15 @@ export interface IRedirectResponse {
 }
 
 export type IRedirectCollectionResponse = IPagedCollectionResponseBase<IRedirectResponse>;
-export type IListRedirectRequest = IPaginationRequestBase & IQueryRequestBase;
+export type IListRedirectRequest = IPaginationRequestBase & IRedirectFilterRequestBase & IQueryRequestBase;
 
 export interface IRedirectService {
-
     list: (request: IListRedirectRequest) => Promise<IRedirectCollectionResponse>;
+    create: (request: IRedirectResponse) => Promise<IRedirectResponse>;
+    update: (request: IRedirectResponse) => Promise<IRedirectResponse>;
+    delete: (id: number) => Promise<void>;
+    updateBulk: (request: IRedirectResponse[]) => Promise<IRedirectResponse[]>;
+    deleteBulk: (ids: number[]) => Promise<void>;
 }
 
 export class RedirectService implements IRedirectService {
@@ -43,9 +48,39 @@ export class RedirectService implements IRedirectService {
         let response = await this.axios.get<IRedirectCollectionResponse>(this.controller.getUrl('list'),
         {
             params: request
-        });
+        }).catch((error) => { console.log(error); throw error; });
 
         return response.data;
+    }
+
+    public async create(request: IRedirectResponse): Promise<IRedirectResponse> {
+        let response = await this.axios.post<IRedirectResponse>(this.controller.getUrl('create'), request);
+        return response.data;
+    }
+
+    public async update(request: IRedirectResponse): Promise<IRedirectResponse> {
+        let response = await this.axios.post<IRedirectResponse>(this.controller.getUrl('update') + `/${request.id}`, request);
+        return response.data;
+    }
+
+    public async delete(id: number): Promise<void> {
+        await this.axios.post(this.controller.getUrl('delete') + `/${id}`);
+    }
+
+    public async updateBulk(request: IRedirectResponse[]): Promise<IRedirectResponse[]> {
+        const payload = request.map((r) => ({
+            ...r,
+            redirect: {
+                source: r.source,
+                target: r.target
+            }
+        }));
+        let response = await this.axios.post<IRedirectResponse[]>(this.controller.getUrl('updateBulk'), payload);
+        return response.data;
+    }
+
+    public async deleteBulk(ids: number[]): Promise<void> {
+        await this.axios.post(this.controller.getUrl('deleteBulk'), ids);
     }
 }
 

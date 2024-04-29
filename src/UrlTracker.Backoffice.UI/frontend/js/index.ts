@@ -1,8 +1,9 @@
 import "@umbraco-ui/uui";
 import "./dashboard";
 import {
+  ngInspectRedirectSidebar,
+  ngSimpleRedirectSidebar,
   ngUrltrackerDashboard,
-  simpleRedirectSidebar,
 } from "./dashboard/directive";
 import "./dashboard/main.lit";
 import "./dashboard/notifications/notification.lit";
@@ -24,4 +25,5 @@ const module = angular.module("umbraco");
 
 // directives
 module.directive(ngUrltrackerDashboard.alias, ngUrltrackerDashboard);
-module.directive(simpleRedirectSidebar.alias, simpleRedirectSidebar);
+module.directive(ngSimpleRedirectSidebar.alias, ngSimpleRedirectSidebar);
+module.directive(ngInspectRedirectSidebar.alias, ngInspectRedirectSidebar);
