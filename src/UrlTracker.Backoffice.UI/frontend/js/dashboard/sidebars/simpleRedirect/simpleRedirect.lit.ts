@@ -7,21 +7,28 @@ import { ISourceStrategies } from "@/dashboard/tabs/redirects/source/source.cons
 import { ITargetStrategies } from "@/dashboard/tabs/redirects/target/target.constants";
 import { IScope } from "@/models/scope.model";
 import { IRedirectResponse } from "@/services/redirect.service";
+import { ensureExists } from "@/util/tools/existancecheck";
 import variableresourceService from "@/util/tools/variableresource.service";
 import { consume } from "@lit/context";
 import { LitElement, css, html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 
 export const ContentElementTag = "urltracker-sidebar-simple-redirect";
 
 @customElement(ContentElementTag)
 export class UrlTrackerSidebarSimpleRedirect extends LitElement {
 
+  @consume({ context: localizationServiceContext })
+  private _localizationService?: ILocalizationService;
+
   @consume({ context: scopeContext })
   private $scope?: IScope;
 
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
+  @property({ attribute: false})
+  get scope() { 
+    ensureExists(this.$scope, "scope");
+    return this.$scope;
+  }
 
   @state()
   private headerText = "";
@@ -44,10 +51,10 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    if(this.$scope!.model.value) {
+    if(this.scope.model.value) {
       // Editing existing redirect
-      this.redirectData = this.$scope?.model.value;
-      this.headerText = `Edit: ${this.$scope?.model.value.source.value}` ?? "Edit redirect";
+      this.redirectData = this.scope.model.value;
+      this.headerText = `Edit: ${this.scope.model.value.source.value}` ?? "Edit redirect";
     } else {
       // Creating new redirect
       this.headerText = "Create new redirect";
@@ -55,11 +62,11 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   }
 
   save() {
-    this.$scope!.model.submit(this.redirectData);
+    this.scope.model.submit(this.redirectData);
   }
 
   close() {
-    this.$scope!.model.close();
+    this.scope.model.close();
   }
 
   protected render() {
