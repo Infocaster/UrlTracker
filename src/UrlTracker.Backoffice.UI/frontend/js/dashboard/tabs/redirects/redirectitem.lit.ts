@@ -82,10 +82,6 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
   static styles = [
     ...RedirectListItem.styles,
     css`
-      .body {
-        margin-left: 16px;
-      }
-
       .target {
         line-height: 15px;
         font-size: 12px;

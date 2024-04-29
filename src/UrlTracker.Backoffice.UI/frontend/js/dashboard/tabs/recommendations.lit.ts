@@ -116,7 +116,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       "recommendations service"
     );
     ensureServiceExists(this._redirectService, "redirect service");
-    ensureExists(this._recommendationsService, "recommendations service");
+    ensureServiceExists(this._recommendationsService, "recommendations service");
     ensureServiceExists(this.editorService, "editor service");
 
     await this.search();

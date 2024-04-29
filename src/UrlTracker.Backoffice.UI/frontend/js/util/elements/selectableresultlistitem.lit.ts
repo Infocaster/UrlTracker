@@ -85,6 +85,7 @@ export function UrlTrackerSelectableResultListItem<T extends Record<string, any>
 
         uui-checkbox {
           position: relative;
+          margin-right: 8px;
         }
       `,
     ];

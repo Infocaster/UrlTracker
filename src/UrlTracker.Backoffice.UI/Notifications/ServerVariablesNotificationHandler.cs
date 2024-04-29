@@ -23,6 +23,12 @@ namespace UrlTracker.Web.Events
 
         public void Handle(ServerVariablesParsingNotification notification)
         {
+            Dictionary<string, string> landingspageVariables = new()
+            {
+                ["base"] = _linkGenerator.GetUmbracoApiServiceBaseUrl<LandingPageController>(controller => controller.GetNumericMetric())!,
+                ["numericMetric"] = nameof(LandingPageController.GetNumericMetric),
+            };
+
             Dictionary<string, string> recommendationVariables = new()
             {
                 ["base"] = _linkGenerator.GetUmbracoApiServiceBaseUrl<RecommendationsController>(controller => controller.List(default!))!,
@@ -79,6 +85,7 @@ namespace UrlTracker.Web.Events
 
             Dictionary<string, object> urlTrackerVariables = new()
             {
+                ["landingspage"] = landingspageVariables,
                 ["recommendations"] = recommendationVariables,
                 ["recommendationTypeStrategies"] = recommendationTypeStrategies,
                 ["notifications"] = notificationVariables,

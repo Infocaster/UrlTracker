@@ -1,6 +1,7 @@
 ﻿import { provide } from "@lit/context";
 import { html, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
+import { landingpageServiceContext } from "../context/landingspageservice.context";
 import { UrlTrackerMainContext } from "../context/maincontext.mixin";
 import { notificationServiceContext } from "../context/notificationservice.context";
 import { recommendationServiceContext } from "../context/recommendationservice.context";
@@ -13,6 +14,7 @@ import {
   redirectTargetServiceContext,
 } from "../context/redirecttargetservice.context";
 import { versionProviderContext } from "../context/versionprovider.context";
+import landingspageService, { ILandingspageService } from "../services/landingspage.service";
 import recommendationService, {
   IRecommendationsService,
 } from "../services/recommendation.service";
@@ -26,6 +28,7 @@ import notificationService, {
   INotificationService,
 } from "./notifications/notification.service";
 import targetService from "./tabs/redirects/target/target.service";
+
 
 //Sidebar imports
 import "@sidebar/analyseRecommendation-main.lit";
@@ -49,6 +52,9 @@ export class UrlTrackerDashboard extends UrlTrackerMainContext(LitElement) {
 
   @provide({ context: redirectTargetServiceContext })
   redirectTargetService: ITargetService = targetService;
+
+  @provide({ context: landingpageServiceContext })
+  landingspageService: ILandingspageService = landingspageService;
 
   protected render(): unknown {
     return html`

@@ -161,7 +161,6 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
     ...RecommendationListItem.styles,
     css`
       .body {
-        margin-left: 16px;
         width: 100%;
       }
 

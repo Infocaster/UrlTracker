@@ -1,10 +1,12 @@
 import { IEditorService, editorServiceContext } from "@/context/editorservice.context";
+import { landingpageServiceContext } from "@/context/landingspageservice.context";
 import { recommendationServiceContext } from "@/context/recommendationservice.context";
 import { redirectServiceContext } from "@/context/redirectservice.context";
 import { RECOMMENDATION_SORT_TYPE } from "@/enums/sortType";
+import { ILandingspageService } from "@/services/landingspage.service";
 import { IRecommendationCollection, IRecommendationResponse, IRecommendationsService } from "@/services/recommendation.service";
 import { IRedirectResponse, IRedirectService } from "@/services/redirect.service";
-import { ensureExists, ensureServiceExists } from "@/util/tools/existancecheck";
+import { ensureServiceExists } from "@/util/tools/existancecheck";
 import variableresourceService from "@/util/tools/variableresource.service";
 import { consume } from "@lit/context";
 import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
@@ -30,14 +32,17 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
   @consume({ context: editorServiceContext })
   private editorService?: IEditorService<any>;
 
+  @consume({ context: landingpageServiceContext })
+  private _landingspageService?: ILandingspageService;
+
   @state()
   private recommendationCollection?: IRecommendationCollection;
 
   @state()
-  private loading: number = 0;
+  private numericMetric: number = 0;
 
   @state()
-  private selectedItems: number[] = [];
+  private loading: number = 0;
 
   protected async firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
@@ -53,7 +58,8 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
       "recommendations service"
     );
     ensureServiceExists(this._redirectService, "redirect service");
-    ensureExists(this._recommendationsService, "recommendations service");
+    ensureServiceExists(this._recommendationsService, "recommendations service");
+    ensureServiceExists(this._landingspageService, "landingspage service")
     ensureServiceExists(this.editorService, "editor service");
 
     await this.search();
@@ -62,11 +68,12 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
   private async search() {
     this.loading++;
     try {
-      this.recommendationCollection = await this._recommendationsService?.list({
+      this.recommendationCollection = await this._recommendationsService!.list({
         page: 1,
         pageSize: 10,
         OrderBy: RECOMMENDATION_SORT_TYPE.IMPORTANCE
       });
+      this.numericMetric = await this._landingspageService?.numericMetric() ?? 0;
     } finally {
       this.loading--;
     }
@@ -233,11 +240,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
         <div class="results">
         <urltracker-result-list
             .loading=${!!this.loading}
-            .header=${`Results (${
-              this.recommendationCollection
-                ? this.recommendationCollection.total
-                : 0
-            })`}
+            header="Top 10 recommendations"
           >
             ${this.renderRecommendations()}
           </urltracker-result-list>
@@ -245,7 +248,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
 
         <uui-box>
           <div class="total">
-            <span>128</span>
+            <span>${this.numericMetric}</span>
             <p>Pages were not found last week</p>
           </div>
         </uui-box>
