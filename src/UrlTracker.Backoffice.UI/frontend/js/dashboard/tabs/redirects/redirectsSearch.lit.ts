@@ -1,6 +1,6 @@
 import { ensureExists } from "@/util/tools/existancecheck";
 import { consume } from "@lit/context";
-import { UUIInputEvent } from "@umbraco-ui/uui";
+import { UUIInputElement, UUIInputEvent } from "@umbraco-ui/uui";
 import { LitElement, css, html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { Ref, createRef, ref } from "lit/directives/ref.js";
@@ -16,7 +16,7 @@ export class UrlTrackerRedirectsSearch extends LitElement {
   @consume({ context: localizationServiceContext })
   private localizationService?: ILocalizationService;
 
-  private inputRef: Ref<HTMLInputElement> = createRef();
+  private inputRef: Ref<UUIInputElement> = createRef();
 
   async connectedCallback() {
     super.connectedCallback();
