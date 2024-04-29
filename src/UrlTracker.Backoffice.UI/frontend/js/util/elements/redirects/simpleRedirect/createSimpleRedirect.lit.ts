@@ -11,11 +11,8 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
   @property({ type: Object })
   public redirect!: IRedirectResponse
 
-  async connectedCallback(): Promise<void> {
-    super.connectedCallback();
-
-    this.redirect = this.redirect;
-  }
+  @property({ type: Boolean })
+  public advancedView = false;
 
   private onToggle = ({ detail }: { detail: boolean}) => {
     this.redirect.permanent = detail;

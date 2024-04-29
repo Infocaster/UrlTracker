@@ -33,6 +33,8 @@ import { UrlTrackerNotificationWrapper } from "../notifications/notifications.mi
 import "./redirects/redirectitem.lit";
 import "./redirects/redirectsSearch.lit";
 
+export type ICreateRedirectSidbarData = IRedirectResponse & { advancedView: boolean};
+
 @customElement("urltracker-advancedredirect-tab")
 export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper(LitElement, 'advancedredirects') {
   @consume({ context: redirectServiceContext })
@@ -114,7 +116,7 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
     this.editorService!.open(options);
   }
 
-  private openNewRedirectPanel(data?: IRedirectResponse) {
+  private openNewRedirectPanel(data?: ICreateRedirectSidbarData) {
     const options = {
       title: "New redirect", // FIXME: translate
       view: "/App_Plugins/UrlTracker/sidebar/redirect/simpleRedirect.html",
@@ -168,7 +170,10 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
   };
 
   private onEditRedirect = (e: CustomEvent<IRedirectResponse>) => {
-    this.openNewRedirectPanel(e.detail);
+    this.openNewRedirectPanel({
+        ...e.detail,
+        advancedView: true
+      });
   };
 
   private onDeleteRedirect = async (e: CustomEvent<IRedirectResponse>) => {

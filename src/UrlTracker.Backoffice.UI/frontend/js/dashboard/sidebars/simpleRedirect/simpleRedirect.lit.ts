@@ -30,6 +30,12 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
     return this.$scope;
   }
 
+  @property({ attribute: false})
+  get advancedView () {
+    ensureExists(this.$scope, "scope");
+    return this.scope.model.value.advancedView ?? false;
+  }
+
   @state()
   private headerText = "";
 
@@ -50,7 +56,7 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-
+    
     if(this.scope.model.value) {
       // Editing existing redirect
       this.redirectData = this.scope.model.value;
@@ -72,7 +78,7 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   protected render() {
     return html`<div class="header">${this.headerText}</div>
       <div class="main">
-        <urltracker-create-simple-redirect .redirect=${this.redirectData} @update=${({detail}: {detail: IRedirectResponse}) => this.redirectData = detail }></urltracker-create-simple-redirect>
+        <urltracker-create-simple-redirect .advancedView=${this.advancedView} .redirect=${this.redirectData} @update=${({detail}: {detail: IRedirectResponse}) => this.redirectData = detail }></urltracker-create-simple-redirect>
       </div>
       <div class="footer">
         <uui-button look="default" color="default" @click=${this.close}
