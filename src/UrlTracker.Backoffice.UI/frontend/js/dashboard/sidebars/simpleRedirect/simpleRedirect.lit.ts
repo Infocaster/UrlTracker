@@ -13,6 +13,8 @@ import { consume } from "@lit/context";
 import { LitElement, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
+import '../../../util/elements/redirects/simpleRedirect/createSimpleRedirect.lit';
+
 export const ContentElementTag = "urltracker-sidebar-simple-redirect";
 
 @customElement(ContentElementTag)
