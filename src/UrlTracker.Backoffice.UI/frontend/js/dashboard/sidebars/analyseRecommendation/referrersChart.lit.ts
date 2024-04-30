@@ -19,12 +19,25 @@ export class UrlTrackerReferrersChart extends LitElement {
   @property({ type: Array })
   private referrers!: IRecommendationReferrerResponse;
 
-  private chartRef: Ref<HTMLCanvasElement> = createRef(); 
+  private chartRef: Ref<HTMLCanvasElement> = createRef();
+  
+  private truncate = (str: string, n: number = 75) => {
+    return (str.length > n) ? str.slice(0, n-1) + '&hellip;' : str;
+  };
 
   private init() {
-    const data = this.referrers;
+    const data = [...this.referrers, {
+      ReferrerOccurances: 100,
+      ReferrerUrl: "testt"
+    }, {
+      ReferrerOccurances: 200,
+      ReferrerUrl: "testt"
+    }, {
+      ReferrerOccurances: 300,
+      ReferrerUrl: "testt"
+    }];
 
-    new Chart(
+    const chart = new Chart(
       this.chartRef.value!,
       {
         type: 'bar',
@@ -33,7 +46,8 @@ export class UrlTrackerReferrersChart extends LitElement {
           indexAxis: 'y',
           scales: {
             x: {
-              display: false
+              display: false,
+              reverse: true
             },
             y: {
               position: 'right',
@@ -42,7 +56,7 @@ export class UrlTrackerReferrersChart extends LitElement {
               },
               border: {
                 display: false
-              }
+              },
             }
           },
           plugins: {
@@ -55,18 +69,20 @@ export class UrlTrackerReferrersChart extends LitElement {
           }
         },
         data: {
-          labels: data.map(row => `${row.ReferrerOccurances}     ${row.ReferrerUrl}`),
+          labels: data.map(row => this.truncate(`${row.ReferrerOccurances} - ${row.ReferrerUrl}`)),
           datasets: [
             {
               label: 'Occurances per day',
               data: data.map(row => row.ReferrerOccurances),
               backgroundColor: '#1B264F',
-              maxBarThickness: 20
+              maxBarThickness: 25,
             }
           ]
         }
       }
     );
+
+    (chart.canvas.parentNode as HTMLDivElement).style.height = `${data.length * 20 + 20}px`;
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {

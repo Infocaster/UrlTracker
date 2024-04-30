@@ -55,7 +55,7 @@ export class UrlTrackerHistoryChart extends LitElement {
               label: 'Occurances per day',
               data: data.map(row => row.occurances),
               backgroundColor: '#1B264F',
-              maxBarThickness: 20
+              minBarLength: 0.5
             }
           ]
         }
