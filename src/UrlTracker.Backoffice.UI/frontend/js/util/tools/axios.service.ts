@@ -3,7 +3,13 @@ import { Axios } from "axios";
 export const axiosInstance = new Axios({
     transformResponse: [
         (data) => {
-            return JSON.parse(data.substring(6));
+            try {
+                const parsedData = JSON.parse(data.substring(6));
+                return parsedData;
+            } catch (e) {
+                console.warn('Could not parse response', e);
+                return data;
+            }
         }
     ],
     transformRequest: [

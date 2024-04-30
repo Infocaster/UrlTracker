@@ -190,8 +190,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   };
 
   private onExportRedirects = async (e: any) => {
-    //@TODO: implement export
-    //await this._redirectService?.export();
+    await this.redirectImportService?.export();
   };
 
   private onImportRedirects = async (e: CustomEvent<File>) => {
