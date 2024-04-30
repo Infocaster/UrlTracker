@@ -196,6 +196,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 
   private onImportRedirects = async (e: CustomEvent<File>) => {
     await this.redirectImportService!.import(e.detail);
+    this.search();
   }
 
   private onSelectItem = (e: any) => {
