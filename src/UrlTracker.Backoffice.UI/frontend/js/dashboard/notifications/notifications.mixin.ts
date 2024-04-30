@@ -99,12 +99,8 @@ export function UrlTrackerNotificationWrapper<
       if (!this.notifications?.notifications) return internalRender;
 
       return html`
-        <div>
-          <aside>
-            <header>${this.notifications.notifications[0].title}</header>
-          </aside>
-          <section>${internalRender}</section>
-        </div>
+        <urltracker-notification-collection .notifications=${this.notifications.notifications}></urltracker-notification-collection>
+        <section>${internalRender}</section>
       `;
     }
   };

@@ -234,14 +234,11 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
   protected renderInternal(): unknown {
     return html`
       <div class="grid-root">
-        <div class="notifications">
-
-        </div>
         <div class="results">
-        <urltracker-result-list
-            .loading=${!!this.loading}
-            header="Top 10 recommendations"
-          >
+          <urltracker-result-list
+              .loading=${!!this.loading}
+              header="Top 10 recommendations"
+            >
             ${this.renderRecommendations()}
           </urltracker-result-list>
         </div>
