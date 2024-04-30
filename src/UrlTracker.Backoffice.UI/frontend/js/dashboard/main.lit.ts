@@ -1,4 +1,6 @@
-﻿import { provide } from "@lit/context";
+﻿import { recommendationsAnalysisServiceContext } from "@/context/recommendationsanalysis.context";
+import recommendationsAnalysisService, { RecommendationsAnalysisService } from "@/services/recommendationanalysis.service";
+import { provide } from "@lit/context";
 import { html, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
 import { landingpageServiceContext } from "../context/landingspageservice.context";
@@ -29,7 +31,6 @@ import notificationService, {
 } from "./notifications/notification.service";
 import targetService from "./tabs/redirects/target/target.service";
 
-
 //Sidebar imports
 import "@sidebar/analyseRecommendation-main.lit";
 import "@sidebar/explainRecommendations-main.lit";
@@ -55,6 +56,9 @@ export class UrlTrackerDashboard extends UrlTrackerMainContext(LitElement) {
 
   @provide({ context: landingpageServiceContext })
   landingspageService: ILandingspageService = landingspageService;
+
+  @provide({ context: recommendationsAnalysisServiceContext })
+  recommendationsAnalysisService: RecommendationsAnalysisService = recommendationsAnalysisService;
 
   protected render(): unknown {
     return html`

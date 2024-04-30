@@ -47,6 +47,7 @@ export function UrlTrackerNotificationWrapper<
 
     private async onNotificationClosed() {
       console.log("Notification closed");
+      //@TODO: Implement notification closed logic
     }
 
     protected async updateNotifications(alias: string): Promise<void> {
