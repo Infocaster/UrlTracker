@@ -6,11 +6,15 @@ import { IRecommendationsAnalysisService, recommendationsAnalysisServiceContext 
 import { scopeContext } from "@/context/scope.context";
 import { IScope } from "@/models/scope.model";
 import { IRecommendationResponse } from "@/services/recommendation.service";
+import { IRecommendationHistoryResponse, IRecommendationReferrerResponse } from "@/services/recommendationanalysis.service";
 import { ensureExists, ensureServiceExists } from "@/util/tools/existancecheck";
 import { consume } from "@lit/context";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import recommendationTypeStrategyResolver from "../../tabs/recommendations/recommendationType/recommendation.strategy";
+
+import './historyChart.lit';
+import './referrersChart.lit';
 
 export const ContentElementTag = "urltracker-sidebar-analyse-recommendation";
 
@@ -39,6 +43,12 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
   @state()
   private _subText = "";
 
+  @state()
+  private referrers: IRecommendationReferrerResponse | null = null;
+
+  @state()
+  private history: IRecommendationHistoryResponse | null = null;
+
   private renderRecommendationType(): unknown {
     if (!this.data) return nothing;
     return this.recommendationTypeStrategy.getStrategy(this.data).getTemplate();
@@ -56,18 +66,36 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
       const referrersPromise = this.recommendationsAnalysisService.getReferrers(this.data);
       const historyPromise = this.recommendationsAnalysisService.getHistory(this.data);
 
-      const [referrers, history] = await Promise.all([referrersPromise, historyPromise]);
-      console.log(referrers, history);
+      const [referrers, history] = await Promise.all([referrersPromise, historyPromise]).catch((error) => {
+        throw new Error(`Failed to fetch referrers and history for recommendation ${this.data.id}: ${error}`);
+      });
+      
+      this.referrers = referrers;
+      this.history = history;
   }
 
   close() {
     this.scope.model.close();
   }
 
+  protected renderHistoryChart() {
+    if (!this.history) return nothing;
+    return html`
+     <urltracker-history-chart .history=${this.history}></urltracker-history-chart>
+    `;
+  }
+
+  protected renderReferrersChart() {
+    if (!this.referrers) return nothing;
+    return html`
+     <urltracker-referrers-chart .referrers=${this.referrers}></urltracker-referrers-chart>
+    `;
+  }
+
   protected render() {
     return html`
       <div class="header">
-        <h6>${this.renderRecommendationType()}</h6>
+        <h2>${this.renderRecommendationType()}</h2>
         <span>${this._subText}</span>
       </div>
       <div class="main">
@@ -80,6 +108,10 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
           you can check out the referrer overview below to see from which pages the image is requested.
           After manually repairing the images, you can mark this recommendation as resolved.
           </p>
+          <h6>History (last 20 days)</h6>
+          ${this.renderHistoryChart()}
+          <h6>Most common referrers</h6>
+          ${this.renderReferrersChart()}
         </uui-box>
       </div>
       <div class="footer">
@@ -101,24 +133,29 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
     padding: 10px 20px;
     background-color: white;
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
+  }
 
-    h6{
-      font-size: 16px;
-      font-weight: 700;
-      line-height: 20px;
-      text-align: left;
-      margin: 0;
-      display: block;
-    }
+  h2 {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 20px;
+    margin: 0;
+    display: block;
+  }
 
-    span {
-      font-size: 12px;
-      font-weight: 400;
-      line-height: 15px;
-      text-align: left;
-      color: #68676B;
-    }
+  h6 {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 20px;
+    margin: 0;
+    display: block;
+  }
 
+  span {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 15px;
+    color: #68676B;
   }
 
   .main {

@@ -18,8 +18,8 @@ export interface IRecommendationHistoryResponse {
 }
 
 export interface IRecommendationReferrer {
-  referrerOccurances: number;
-  referrerUrl: string;
+  ReferrerOccurances: number;
+  ReferrerUrl: string;
 }
 
 export type IRecommendationReferrerResponse = IRecommendationReferrer[];
