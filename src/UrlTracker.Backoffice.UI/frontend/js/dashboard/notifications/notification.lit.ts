@@ -1,5 +1,5 @@
 import { css, html, LitElement, nothing } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import { ITranslatedNotification } from "./notification";
 
 @customElement('urltracker-notification-collection')
@@ -7,11 +7,42 @@ export class UrlTrackerNotificationCollection extends LitElement {
     @property({ type: Array})
     public notifications: Array<ITranslatedNotification> = [];
 
-    private selectedNotification: ITranslatedNotification | null = this.notifications[0] || null;
+    @state()
+    private selectedNotification: ITranslatedNotification | null = null;
+
+    @state()
+    private notificationInterval: number | null = null;
+
+    private selectNextNotification() {
+        const currentIndex = this.notifications.findIndex(n => n.id === this.selectedNotification?.id);
+        const nextIndex = currentIndex + 1 >= this.notifications.length ? 0 : currentIndex + 1;
+        this.selectedNotification = this.notifications[nextIndex];
+    }
+
+    private handleClose() {
+        this.selectedNotification = null;
+        if(this.notificationInterval) {
+            clearInterval(this.notificationInterval);
+        }
+        this.dispatchEvent(new CustomEvent('notification-closed', { bubbles: true }));
+    }
 
     connectedCallback(): void {
         super.connectedCallback();
         this.selectedNotification = this.notifications[0] || null;
+
+        if (this.notifications.length > 1) {
+            this.notificationInterval = window.setInterval(() => {
+                this.selectNextNotification();
+            }, 5000);
+        }
+    }
+
+    disconnectedCallback(): void {
+        super.disconnectedCallback();
+        if (this.notificationInterval) {
+            clearInterval(this.notificationInterval);
+        }
     }
 
     render() {
@@ -22,7 +53,7 @@ export class UrlTrackerNotificationCollection extends LitElement {
         return html`
         <uui-box>
             <section class="notification">
-                <uui-icon name="remove"></uui-icon>
+                <uui-icon name="remove" @click=${this.handleClose}></uui-icon>
                 <h6>
                     <span>${this.selectedNotification.title}</span>
                     <span>${this.notifications.findIndex(n => n.id === this.selectedNotification?.id) + 1}/${this.notifications.length}</span> 

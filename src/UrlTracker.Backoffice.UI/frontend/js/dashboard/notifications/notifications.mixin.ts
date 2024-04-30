@@ -45,9 +45,8 @@ export function UrlTrackerNotificationWrapper<
       return this._localizationServiceConsumer.value;
     }
 
-    connectedCallback(): void {
-      super.connectedCallback();
-      this.updateNotifications(alias);
+    private async onNotificationClosed() {
+      console.log("Notification closed");
     }
 
     protected async updateNotifications(alias: string): Promise<void> {
@@ -90,6 +89,11 @@ export function UrlTrackerNotificationWrapper<
       };
     }
 
+    connectedCallback(): void {
+      super.connectedCallback();
+      this.updateNotifications(alias);
+    }
+
     protected renderInternal(): unknown {
       return nothing;
     }
@@ -99,7 +103,7 @@ export function UrlTrackerNotificationWrapper<
       if (!this.notifications?.notifications) return internalRender;
 
       return html`
-        <urltracker-notification-collection .notifications=${this.notifications.notifications}></urltracker-notification-collection>
+        <urltracker-notification-collection .notifications=${this.notifications.notifications} @notification-closed=${this.onNotificationClosed}></urltracker-notification-collection>
         <section>${internalRender}</section>
       `;
     }
