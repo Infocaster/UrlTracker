@@ -26,17 +26,8 @@ export class UrlTrackerReferrersChart extends LitElement {
   };
 
   private init() {
-    const data = [...this.referrers, {
-      ReferrerOccurances: 100,
-      ReferrerUrl: "testt"
-    }, {
-      ReferrerOccurances: 200,
-      ReferrerUrl: "testt"
-    }, {
-      ReferrerOccurances: 300,
-      ReferrerUrl: "testt"
-    }];
-
+    const data = this.referrers;
+    
     const chart = new Chart(
       this.chartRef.value!,
       {
