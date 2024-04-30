@@ -38,6 +38,13 @@ namespace UrlTracker.Web.Events
                 ["delete"] = nameof(RecommendationsController.Delete)
             };
 
+            Dictionary<string, string> recommendationAnalysisVariables = new()
+            {
+                ["base"] = "/Umbraco/Backoffice/UrlTracker/RecommendationAnalysis/",
+                ["getHistory"] = "GetHistory",
+                ["getReferrers"] = "GetReferrers"
+            };
+
             Dictionary<string, string> redirectVariables = new()
             {
                 ["base"] = _linkGenerator.GetUmbracoApiServiceBaseUrl<RedirectsController>(controller => controller.List(default!))!,
@@ -87,6 +94,7 @@ namespace UrlTracker.Web.Events
             {
                 ["landingspage"] = landingspageVariables,
                 ["recommendations"] = recommendationVariables,
+                ["recommendationAnalysis"] = recommendationAnalysisVariables,
                 ["recommendationTypeStrategies"] = recommendationTypeStrategies,
                 ["notifications"] = notificationVariables,
                 ["redirects"] = redirectVariables,

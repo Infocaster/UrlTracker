@@ -38,7 +38,7 @@ export class RecommendationsAnalysisService implements IRecommendationsAnalysisS
   constructor(private axios: Axios, private urlResource: IUrlResource) {}
 
   private get controller(): IControllerUrlResource {
-    return this.urlResource.getController("recommendations");
+    return this.urlResource.getController("recommendationAnalysis");
   }
 
   public async getHistory(
