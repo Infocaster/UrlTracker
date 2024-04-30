@@ -1,18 +1,19 @@
+import { ensureServiceExists } from "@/util/tools/existancecheck";
 import { ContextConsumer } from "@lit/context";
 import { html, nothing } from "lit";
-import {
-  INotificationService,
-  notificationServiceContext,
-} from "../../context/notificationservice.context";
 import {
   ILocalizationService,
   localizationServiceContext,
 } from "../../context/localizationservice.context";
 import {
+  INotificationService,
+  notificationServiceContext,
+} from "../../context/notificationservice.context";
+import { LitElementConstructor } from "../../util/tools/litelementconstructor";
+import {
   ITranslatedNotification,
   ITranslatedNotificationCollection,
 } from "./notification";
-import { LitElementConstructor } from "../../util/tools/litelementconstructor";
 
 export function UrlTrackerNotificationWrapper<
   TBase extends LitElementConstructor
@@ -53,43 +54,37 @@ export function UrlTrackerNotificationWrapper<
       const notificationService = this.notificationService;
       const localizationService = this.localizationService;
 
-      if (!notificationService)
-        throw new Error(
-          "notification service is required before calling this method"
-        );
-      if (!localizationService)
-        throw new Error(
-          "localization service is required before calling this method"
-        );
+      ensureServiceExists(notificationService, "notification service");
+      ensureServiceExists(localizationService, "localization service");
 
       let response = await notificationService.GetNotifications(alias);
-      if (!response?.Notifications) {
+      if (!response) {
         this.notifications = undefined;
         return;
       }
 
-      let notifications = response.Notifications;
+      let notifications = response;
 
       let translations = await Promise.all([
         // localize all titles and descriptions
         localizationService.localizeMany(
-          notifications.map((n) => n.TranslatableTitleComponent)
+          notifications.map((n) => n.translatableTitleComponent)
         ),
         localizationService.localizeMany(
-          notifications.map((n) => n.TranslatableBodyComponent)
+          notifications.map((n) => n.translatableBodyComponent)
         ),
       ]);
 
       this.notifications = {
         notifications: notifications.map<ITranslatedNotification>((n, i) => ({
-          id: n.Id,
+          id: n.id,
           title: localizationService.tokenReplace(
             translations[0][i],
-            n.TitleArguments
+            n.titleArguments
           ),
           body: localizationService.tokenReplace(
             translations[1][i],
-            n.BodyArguments
+            n.bodyArguments
           ),
         })),
       };
