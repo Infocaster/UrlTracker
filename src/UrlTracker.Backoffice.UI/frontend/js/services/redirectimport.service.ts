@@ -24,10 +24,12 @@ export class RedirectImportService implements IRedirectImportService {
     return response.data;
   }
 
-  public async import(request: File) {
+  public async import(file: File) {
+    const form = new FormData();
+    form.append("Redirects", file, file.name);
     let response = await this.axios.post<IRedirectResponse[]>(
       this.controller.getUrl("import"),
-      new FormData().append("file", request)
+      form
     );
 
     return response.data;

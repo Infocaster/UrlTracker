@@ -57,6 +57,13 @@ namespace UrlTracker.Web.Events
                 ["deleteBulk"] = nameof(RedirectsController.DeleteBulk)
             };
 
+            Dictionary<string, string> redirectImportVariables = new()
+            {
+                ["base"] = _linkGenerator.GetUmbracoApiServiceBaseUrl<RedirectImportController>(controller => controller.Content(default!))!,
+                ["import"] = "Import",
+                ["export"] = "Export"
+            };
+
             Dictionary<string, string> redirectTargetVariables = new()
             {
                 ["base"] = _linkGenerator.GetUmbracoApiServiceBaseUrl<RedirectTargetController>(controller => controller.Content(default!))!,
@@ -98,6 +105,7 @@ namespace UrlTracker.Web.Events
                 ["recommendationTypeStrategies"] = recommendationTypeStrategies,
                 ["notifications"] = notificationVariables,
                 ["redirects"] = redirectVariables,
+                ["redirectimport"] = redirectImportVariables,
                 ["redirectTarget"] = redirectTargetVariables,
                 ["redirectSourceStrategies"] = redirectSourceStrategies,
                 ["redirectTargetStrategies"] = redirectTargetStrategies,

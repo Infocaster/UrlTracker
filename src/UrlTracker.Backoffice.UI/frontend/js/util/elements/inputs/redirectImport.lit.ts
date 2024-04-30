@@ -1,8 +1,8 @@
+import { consume } from "@lit/context";
+import "@umbraco-ui/uui";
+import { UUIFileDropzoneEvent } from "@umbraco-ui/uui";
 import { LitElement, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import "@umbraco-ui/uui";
-import { UrlTrackerRedirectAction } from "./redirectActionBase.lit";
-import { consume } from "@lit/context";
 import { localizationServiceContext } from "../../../context/localizationservice.context";
 import { ILocalizationService } from "../../../umbraco/localization.service";
 
@@ -17,20 +17,11 @@ export class UrlTrackerRedirectImport extends LitElement {
   @state()
   private _headerText: string = "";
 
-  async connectedCallback(): Promise<void> {
-    super.connectedCallback();
-
-    this._localizeHeaderText();
-  }
-
   private _localizeHeaderText = async () => {
     let translatedText = await this._localizationService?.localize(
       "urlTrackerRedirectUpload_header"
     );
 
-    // If custom property provided
-    // Else if use translated header
-    // Else fallback
     if (this.header) {
       this._headerText = `${this.header}`;
     } else if (translatedText) {
@@ -40,9 +31,23 @@ export class UrlTrackerRedirectImport extends LitElement {
     }
   };
 
+  private handleChange = (e: UUIFileDropzoneEvent) => {
+    const files = e.detail.files;
+    this.dispatchEvent(
+      new CustomEvent("import", {
+        detail: files[0]
+      })
+    );
+  }
+  
+  async connectedCallback(): Promise<void> {
+    super.connectedCallback();
+    this._localizeHeaderText();
+  }
+
   private renderBody(): unknown {
     return html`<div class="body">
-      <uui-file-dropzone id="browse-dropzone" label="Drop files here">
+      <uui-file-dropzone id="browse-dropzone" label="Drop files here" accept="csv" @change=${this.handleChange}>
         Drop files here
       </uui-file-dropzone>
     </div>`;

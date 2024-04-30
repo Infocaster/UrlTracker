@@ -8,6 +8,9 @@ export const axiosInstance = new Axios({
     ],
     transformRequest: [
         (data) => {
+            if (data instanceof FormData) {
+                return data;
+            }
             return JSON.stringify(data);
         }
     ],

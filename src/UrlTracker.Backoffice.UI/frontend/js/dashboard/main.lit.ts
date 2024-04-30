@@ -21,6 +21,7 @@ import recommendationService, {
   IRecommendationsService,
 } from "../services/recommendation.service";
 import redirectService from "../services/redirect.service";
+import redirectImportService, { IRedirectImportService } from "../services/redirectimport.service";
 import "../util/elements/angulariconregistry.lit";
 import versionProvider, {
   IVersionProvider,
@@ -32,6 +33,7 @@ import notificationService, {
 import targetService from "./tabs/redirects/target/target.service";
 
 //Sidebar imports
+import { redirectImportServiceContext } from "@/context/redirectimportservice.context";
 import "@sidebar/analyseRecommendation-main.lit";
 import "@sidebar/explainRecommendations-main.lit";
 import "@sidebar/inspectRedirect-main.lit";
@@ -50,6 +52,9 @@ export class UrlTrackerDashboard extends UrlTrackerMainContext(LitElement) {
 
   @provide({ context: redirectServiceContext })
   redirectService: IRedirectService = redirectService;
+
+  @provide({ context: redirectImportServiceContext })
+  redirectImportService: IRedirectImportService = redirectImportService;
 
   @provide({ context: redirectTargetServiceContext })
   redirectTargetService: ITargetService = targetService;

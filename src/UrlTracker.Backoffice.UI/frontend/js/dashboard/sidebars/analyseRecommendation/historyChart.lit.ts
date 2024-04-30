@@ -29,7 +29,6 @@ export class UrlTrackerHistoryChart extends LitElement {
       {
         type: 'bar',
         options: {
-          animation: false,
           maintainAspectRatio: false,
           scales: {
             x: {

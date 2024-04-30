@@ -1,5 +1,7 @@
 import { IEditorService, editorServiceContext } from "@/context/editorservice.context";
+import { redirectImportServiceContext } from "@/context/redirectimportservice.context";
 import { REDIRECTTYPE_SORT_TYPE, RedirectSortType } from "@/enums/sortType";
+import { IRedirectImportService } from "@/services/redirectimport.service";
 import { DropdownChangeEvent, IDropdownValue } from "@/util/elements/inputs/dropdown.lit";
 import { consume, provide } from "@lit/context";
 import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
@@ -40,7 +42,10 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   "redirects"
 ) {
   @consume({ context: redirectServiceContext })
-  private _redirectService?: IRedirectService;
+  private redirectService?: IRedirectService;
+
+  @consume({ context: redirectImportServiceContext })
+  private redirectImportService?: IRedirectImportService;
 
   @consume({ context: editorServiceContext })
   private editorService?: IEditorService<any>;
@@ -86,7 +91,8 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   }
 
   private async init() {
-    ensureServiceExists(this._redirectService, "redirect service");
+    ensureServiceExists(this.redirectService, "redirect service");
+    ensureServiceExists(this.redirectImportService, "redirect import service");
     ensureServiceExists(this.editorService, "editor service");
     await this.search();
   }
@@ -100,7 +106,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 
     this.loading++;
     try {
-      this.redirectCollection = await this._redirectService?.list({ ...page, types: type, query});
+      this.redirectCollection = await this.redirectService?.list({ ...page, types: type, query});
     } finally {
       this.loading--;
     }
@@ -134,10 +140,10 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   submitNewRedirectPanel = async (value: IRedirectResponse) => {
     console.info("submit new or update redirect", value);
     if(value.id) {
-      await this._redirectService?.update(value);
+      await this.redirectService?.update(value);
     }
     else {
-      await this._redirectService?.create(value);
+      await this.redirectService?.create(value);
     }
 
     this.closePanel();
@@ -179,7 +185,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   };
 
   private onDeleteRedirect = async (e: CustomEvent<IRedirectResponse>) => {
-    await this._redirectService?.delete(e.detail.id);
+    await this.redirectService?.delete(e.detail.id);
     this.search();
   };
 
@@ -188,9 +194,8 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     //await this._redirectService?.export();
   };
 
-  private onImportRedirects = async (e: any) => {
-    //@TODO: implement import
-    //await this._redirectService?.import();
+  private onImportRedirects = async (e: CustomEvent<File>) => {
+    await this.redirectImportService!.import(e.detail);
   }
 
   private onSelectItem = (e: any) => {
@@ -311,7 +316,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
               @click=${this.onExportRedirects}
             ></urltracker-export-redirects-action>
           </urltracker-redirect-actions>
-          <urltracker-redirect-import></urltracker-redirect-import>
+          <urltracker-redirect-import @import=${this.onImportRedirects}></urltracker-redirect-import>
         </div>
       </div>
     `;
