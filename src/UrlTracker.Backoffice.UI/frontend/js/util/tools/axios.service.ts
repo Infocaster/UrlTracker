@@ -1,4 +1,5 @@
 import { Axios } from "axios";
+import Cookies from "js-cookie";
 
 export const axiosInstance = new Axios({
     transformResponse: [
@@ -21,6 +22,7 @@ export const axiosInstance = new Axios({
         }
     ],
     headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "X-UMB-XSRF-TOKEN": Cookies.get("UMB-XSRF-TOKEN")
     }
 });
