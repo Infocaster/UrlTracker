@@ -1,9 +1,10 @@
 import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { Ref, createRef, ref } from "lit/directives/ref.js";
-import {
+import recommendationService, {
   IRecommendationCollection,
   IRecommendationResponse,
+  IRecommendationUpdate,
   IRecommendationsService,
 } from "../../services/recommendation.service";
 import { UrlTrackerPagination } from "../../util/elements/inputs/pagination.lit";
@@ -314,15 +315,21 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     this.selectedItems = [];
   };
 
-  private onDeleteSelection = async (e: any) => {
-    const selectedRedirects =
+  private onIgnoreSelection = async (e: any) => {
+    const selectedRecommendations =
       this.recommendationCollection?.results.filter((r) =>
         this.selectedItems.some((i) => i === r.id)
       ) || [];
-    const bulkToDelete = selectedRedirects.map((r) => r.id);
-    //await redirectService.deleteBulk(bulkToDelete);
+    const bulkToUpdate: IRecommendationUpdate[] = selectedRecommendations.map((r) => {
+      return {
+        id: r.id,
+        recommendationStrategy: r.strategy,
+        ignore: true,
+      };
+    });
+    await recommendationService.updateBulk(bulkToUpdate);
     this.selectedItems = [];
-    //this.search();
+    this.search();
   };
 
   private renderRecommendations(): unknown {
@@ -366,9 +373,9 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
         @select-all=${this.onSelectAll}
         @clear-selection=${this.onClearSelection}
       >
-        <uui-button look="secondary" @click=${this.onDeleteSelection}>
+        <uui-button look="secondary" @click=${this.onIgnoreSelection}>
           <uui-icon name="delete"></uui-icon>
-          Delete
+          Igonre
         </uui-button>
       </urltracker-bulk-actions>
     `;
