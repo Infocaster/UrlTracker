@@ -375,16 +375,16 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       >
         <uui-button look="secondary" @click=${this.onIgnoreSelection}>
           <uui-icon name="delete"></uui-icon>
-          Igonre
+          Ignore
         </uui-button>
       </urltracker-bulk-actions>
     `;
   }
 
-  protected renderInternal(): unknown {
+  protected renderFilters(): unknown {
+    if(this.selectedItems.length > 0) return nothing;
     return html`
-      <div class="grid-root">
-        <div class="filters">
+      <div class="filters">
           <urltracker-recommendation-search
             @search=${this.onSearch}
           ></urltracker-recommendation-search>
@@ -393,7 +393,14 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
             .options=${this._sortOptions}
             @change=${this.onSortChange}
           ></urltracker-dropdown>
-        </div>
+      </div>
+    `;
+  }
+
+  protected renderInternal(): unknown {
+    return html`
+      <div class="grid-root">
+        ${this.renderFilters()}
 
         ${this.renderBulkActions()}
 
@@ -427,6 +434,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       display: flex;
       align-items: center;
       gap: 1rem;
+      padding: 1rem 0;
     }
 
     .filters urltracker-recommendation-search {
@@ -435,7 +443,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
     .bulk {
       grid-column: 1 / span 2;
-      grid-row: 2;
+      grid-row: 1;
     }
 
     .results {

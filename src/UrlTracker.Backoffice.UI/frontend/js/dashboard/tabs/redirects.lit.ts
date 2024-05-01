@@ -274,20 +274,26 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     );
   }
 
+  protected renderFilters() {
+    if(this.selectedItems.length) return nothing;
+    return html`
+      <div class="filters">
+        <urltracker-redirects-search
+          @search=${this.onSearch}
+        ></urltracker-redirects-search>
+        <urltracker-dropdown
+          label="Type"
+          .options=${this.sortOptions}
+          @change=${this.onTypeChange}
+        ></urltracker-dropdown>
+      </div>
+    `;
+  }
+
   protected renderInternal(): unknown {
     return html`
       <div class="grid-root">
-        <div class="filters">
-          <urltracker-redirects-search
-            @search=${this.onSearch}
-          ></urltracker-redirects-search>
-          <urltracker-dropdown
-            label="Type"
-            .options=${this.sortOptions}
-            @change=${this.onTypeChange}
-          ></urltracker-dropdown>
-        </div>
-
+        ${this.renderFilters()}
         ${this.renderBulkActions()}
 
         <div class="results">
@@ -342,6 +348,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
       display: flex;
       align-items: center;
       gap: 1rem;
+      padding: 1rem 0;
     }
 
     .filters urltracker-redirects-search {
@@ -350,7 +357,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 
     .bulk {
       grid-column: 1 / span 2;
-      grid-row: 2;
+      grid-row: 1;
     }
 
     .results {
