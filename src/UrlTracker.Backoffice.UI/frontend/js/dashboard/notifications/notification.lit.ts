@@ -53,7 +53,9 @@ export class UrlTrackerNotificationCollection extends LitElement {
         return html`
         <uui-box>
             <section class="notification">
-                <uui-icon name="remove" @click=${this.handleClose}></uui-icon>
+                <button aria-label="close notification" @click=${this.handleClose}>
+                    <uui-icon name="remove"></uui-icon>
+                </button>                
                 <h6>
                     <span>${this.selectedNotification.title}</span>
                     <span>${this.notifications.findIndex(n => n.id === this.selectedNotification?.id) + 1}/${this.notifications.length}</span> 
@@ -69,7 +71,11 @@ export class UrlTrackerNotificationCollection extends LitElement {
             margin-bottom: 1rem;
         }
 
-        uui-icon {
+        button {
+            background: none;
+            color: inherit;
+            border: none;
+            padding: 0;
             position: absolute;
             right: 0;
             top: 0;
