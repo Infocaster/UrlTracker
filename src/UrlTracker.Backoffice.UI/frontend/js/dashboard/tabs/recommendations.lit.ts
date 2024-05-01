@@ -266,7 +266,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     this.editorService!.open(options);
   }
 
-  private closePanel = () => {
+  closePanel = () => {
     this.editorService!.close();
   };
 
@@ -292,6 +292,39 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     this.search();
   };
 
+  private onSelectItem = (e: any) => {
+    this.selectedItems.push(e.item.id);
+    this.requestUpdate();
+  };
+
+  private onDeselectItem = (e: any) => {
+    this.selectedItems = this.selectedItems.filter((i) => i !== e.item.id);
+  };
+
+  private onSelectAll = (e: any) => {
+    if (this.selectedItems.length === this.recommendationCollection?.total) {
+      this.selectedItems = [];
+    } else {
+      this.selectedItems =
+        this.recommendationCollection?.results.map((r) => r.id) || [];
+    }
+  };
+
+  private onClearSelection = (e: any) => {
+    this.selectedItems = [];
+  };
+
+  private onDeleteSelection = async (e: any) => {
+    const selectedRedirects =
+      this.recommendationCollection?.results.filter((r) =>
+        this.selectedItems.some((i) => i === r.id)
+      ) || [];
+    const bulkToDelete = selectedRedirects.map((r) => r.id);
+    //await redirectService.deleteBulk(bulkToDelete);
+    this.selectedItems = [];
+    //this.search();
+  };
+
   private renderRecommendations(): unknown {
     if (!this.recommendationCollection?.results) return nothing;
     return repeat(
@@ -301,6 +334,8 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
         html`<urltracker-recommendation-item
           .item=${r}
           .isSelected=${this.selectedItems.some((i) => i === r.id)}
+          @selected=${this.onSelectItem}
+          @deselected=${this.onDeselectItem}
           @explain=${this.onExplain}
           @analyse=${this.onAnalyse}
           @createPermanent=${this.handleCreatePermanentRedirect}
@@ -319,6 +354,26 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     ></urltracker-pagination>`;
   }
 
+  private renderBulkActions(): unknown {
+    if (!this.selectedItems.length) return nothing;
+    return html`
+      <urltracker-bulk-actions
+        class="bulk"
+        .selectedCount=${this.selectedItems.length}
+        .total=${this.recommendationCollection
+          ? this.recommendationCollection.total
+          : 0}
+        @select-all=${this.onSelectAll}
+        @clear-selection=${this.onClearSelection}
+      >
+        <uui-button look="secondary" @click=${this.onDeleteSelection}>
+          <uui-icon name="delete"></uui-icon>
+          Delete
+        </uui-button>
+      </urltracker-bulk-actions>
+    `;
+  }
+
   protected renderInternal(): unknown {
     return html`
       <div class="grid-root">
@@ -332,6 +387,9 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
             @change=${this.onSortChange}
           ></urltracker-dropdown>
         </div>
+
+        ${this.renderBulkActions()}
+
         <div class="results">
           <urltracker-result-list
             .loading=${!!this.loading}
