@@ -96,6 +96,7 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
   }
 
   private async search() {
+    this.redirectCollection = undefined;
     ensureExists(this.paginationRef.value);
 
     const page = this.paginationRef.value.value;
@@ -107,6 +108,7 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
       this.redirectCollection = await this.redirectService?.list({ ...page, types: type, query});
     } finally {
       this.loading--;
+      this.requestUpdate();
     }
   }
 

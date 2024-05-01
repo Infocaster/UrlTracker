@@ -98,6 +98,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   }
 
   private async search() {
+    this.redirectCollection = undefined;
     ensureExists(this.paginationRef.value);
 
     const page = this.paginationRef.value.value;
