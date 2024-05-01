@@ -136,7 +136,7 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
     this.editorService!.open(options);
   }
 
-  submitNewRedirectPanel = async (value: IRedirectResponse) => {
+  private submitNewRedirectPanel = async (value: IRedirectResponse) => {
     console.info("submit new or update redirect", value);
     if(value.id) {
       await this.redirectService?.update(value);
@@ -149,7 +149,7 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
     this.search();
   };
 
-  closePanel = () => {
+  private closePanel = () => {
     this.editorService!.close();
   };
 
