@@ -3,6 +3,7 @@ import {
   localizationServiceContext,
 } from "@/context/localizationservice.context";
 import { IRecommendationHistoryResponse } from "@/services/recommendationanalysis.service";
+import { toReadableDate } from "@/util/functions/dateformatter";
 import { consume } from "@lit/context";
 import Chart from 'chart.js/auto';
 import { LitElement, PropertyValueMap, css, html } from "lit";
@@ -76,11 +77,11 @@ export class UrlTrackerHistoryChart extends LitElement {
         <div class="history-chart-legend">
           <div class="item">
             <dt>First occurrance</dt>
-            <dd>${new Intl.DateTimeFormat('nl-NL', { dateStyle: "medium", timeStyle: "medium" }).format(new Date(this.history.firstOccurance))}</dd>
+            <dd>${toReadableDate(new Date(this.history.firstOccurance))}</dd>
           </div>
           <div class="item">
             <dt>Last occurrance</dt>
-            <dd>${new Intl.DateTimeFormat('nl-NL', { dateStyle: "medium", timeStyle: "medium" }).format(new Date(this.history.lastOccurance))}</dd>
+            <dd>${toReadableDate(new Date(this.history.lastOccurance))}</dd>
           </div>
           <div class="item">
             <dt>Average per day</dt>

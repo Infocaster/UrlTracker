@@ -5,6 +5,7 @@ import {
 import { scopeContext } from "@/context/scope.context";
 import { IScope } from "@/models/scope.model";
 import { IRedirectResponse } from "@/services/redirect.service";
+import { toReadableDate } from "@/util/functions/dateformatter";
 import { ensureExists } from "@/util/tools/existancecheck";
 import { consume } from "@lit/context";
 import { LitElement, css, html } from "lit";
@@ -53,7 +54,7 @@ import { customElement, property, state } from "lit/decorators.js";
               </div>
               <div class="item">
                 <dt>Created at</dt>
-                <dd>${new Intl.DateTimeFormat('nl-NL', { dateStyle: "medium", timeStyle: "medium" }).format(new Date())}</dd>
+                <dd>${toReadableDate(new Date())}</dd>
               </div>
               <div class="item">
                 <dt>Last updated on</dt>
