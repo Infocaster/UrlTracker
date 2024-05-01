@@ -51,7 +51,7 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    if(this.scope.model.value?.id) {
+    if(this.scope.model.value) {
       // Editing existing redirect
       this.redirectData = this.scope.model.value;
       this.headerText = `Edit: ${this.scope.model.value.source.value}` ?? "Edit redirect";

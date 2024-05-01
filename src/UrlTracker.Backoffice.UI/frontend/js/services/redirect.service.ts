@@ -7,13 +7,11 @@ import { IQueryRequestBase } from "./models/queryrequestbase";
 import { IRedirectFilterRequestBase } from "./models/redirectfilterrequestbase";
 
 export interface IRedirectResponseStrategy {
-
     strategy: string;
     value: string;
 }
 
 export interface IRedirectResponse {
-
     id: number;
     createDate: string;
     source: IRedirectResponseStrategy;

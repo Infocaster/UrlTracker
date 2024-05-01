@@ -1,7 +1,11 @@
+import {
+  IEditorService,
+  editorServiceContext,
+} from "@/context/editorservice.context";
+import { ensureServiceExists } from "@/util/tools/existancecheck";
+import { ContextConsumer, consume } from "@lit/context";
 import { css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { UrlTrackerSelectableResultListItem } from "../../../util/elements/selectableresultlistitem.lit";
-import { ContextConsumer, consume } from "@lit/context";
 import {
   ILocalizationService,
   localizationServiceContext,
@@ -10,7 +14,7 @@ import {
   IRecommendationResponse,
   recommendationContext,
 } from "../../../context/recommendationitem.context";
-import recommendationTypeStrategyResolver from "./recommendationType/recommendation.strategy";
+import { UrlTrackerSelectableResultListItem } from "../../../util/elements/selectableresultlistitem.lit";
 import {
   RECCOMENDATION_TYPES,
   RecommendationTypes,
@@ -18,12 +22,8 @@ import {
   recommendationTagFactory,
 } from "./recommendationTag/recommendationTag";
 import "./recommendationTag/recommendationTag.lit";
+import recommendationTypeStrategyResolver from "./recommendationType/recommendation.strategy";
 import "./recommendationitemAction.lit";
-import {
-  IEditorService,
-  editorServiceContext,
-} from "@/context/editorservice.context";
-import { ensureServiceExists } from "@/util/tools/existancecheck";
 
 const RecommendationListItem =
   UrlTrackerSelectableResultListItem<IRecommendationResponse>(
@@ -58,8 +58,8 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-
     ensureServiceExists(this.localizationService, "localizationService");
+
     if (this.item) {
       this.recommendationType = calculateRecommendationType(this.item.score);
       this.tagText(this.recommendationType);
@@ -96,43 +96,36 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
     return recommendationTagFactory(this.recommendationType, text ?? "");
   }
 
-  private createTemporaryRedirect(): void {
-    console.log("createTemporaryRedirect");
+  private handleExplain(e: Event): void {
+    
+    this.dispatchEvent(new CustomEvent("explain", { detail: this.item }));
+    e.stopPropagation();
   }
 
-  private createPermanentRedirect(): void {
-    console.log("createPermanentRedirect");
+  private handleAnalyse(e: Event): void {
+    
+    this.dispatchEvent(new CustomEvent("analyse", { detail: this.item }));
+    e.stopPropagation();
   }
 
-  private ignoreRecommendation(): void {
-    console.log("ignoreRecommendation");
+  private handleCreateTemporaryRedirect(e: Event): void {
+    e.stopPropagation();
+    this.dispatchEvent(new CustomEvent("createTemporary", { detail: this.item }));
   }
 
-  private _openSidebar(_: Event) {
-    const options = {
-      title: "New redirect", // FIXME: translate
-      view: "/App_Plugins/UrlTracker/sidebar/recommendation/recommendations.html",
-      size: "small",
-      submit: this.submitPanel,
-      close: this.closePanel,
-      value: "",
-    };
-
-    this.editorService!.open(options);
+  private handleCreatePermanentRedirect(e: Event): void {
+    e.stopPropagation();
+    this.dispatchEvent(new CustomEvent("createPermanent", { detail: this.item }));
   }
 
-  submitPanel = (value: string) => {
-    //this.model = value;
-    this.closePanel();
-  };
-
-  closePanel = () => {
-    this.editorService!.close();
-  };
+  private handleIgnoreRecommendation(e: Event): void {
+    e.stopPropagation();
+    this.dispatchEvent(new CustomEvent("ignore", { detail: this.item }));
+  }
 
   protected renderBody(): unknown {
     return html`
-      <div class="body">
+      <div class="body" @click=${this.handleAnalyse}>
         <div class="type">
           ${this.renderRecommendationType()}
           ${this.renderTag(this.recommendationTagText)}
@@ -144,20 +137,20 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
             class="actions__help"
             label="Extra information"
             name="icon-help-alt"
-            @click=${this._openSidebar}
+            @click=${this.handleExplain}
           ></uui-icon>
 
           <urltracker-recommendation-item-action
             actionTextKey="temporary"
-            .action="${this.createTemporaryRedirect}"
+            .action="${(e: Event) => this.handleCreateTemporaryRedirect(e)}"
           ></urltracker-recommendation-item-action>
           <urltracker-recommendation-item-action
             actionTextKey="permanent"
-            .action="${this.createPermanentRedirect}"
+            .action="${(e: Event) => this.handleCreatePermanentRedirect(e)}"
           ></urltracker-recommendation-item-action>
           <urltracker-recommendation-item-action
             actionTextKey="ignore"
-            .action="${this.ignoreRecommendation}"
+            .action="${(e: Event) => this.handleIgnoreRecommendation(e)}"
           ></urltracker-recommendation-item-action>
         </div>
       </div>

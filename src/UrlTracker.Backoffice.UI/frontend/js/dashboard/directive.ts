@@ -15,6 +15,9 @@ import {
   localizationServiceKey,
 } from "../context/localizationservice.context";
 import { UrlTrackerDashboard } from "./main.lit";
+import { AnalyseRecommendationSidebar } from "./sidebars/analyseRecommendation-main.lit";
+import { InspectRecommendationsSidebar } from "./sidebars/explainRecommendations-main.lit";
+import { InspectRedirectSidebar } from "./sidebars/inspectRedirect-main.lit";
 import { SimpleRedirectSidebar } from "./sidebars/simpleRedirect-main.lit";
 
 ngUrltrackerDashboard.alias = "ngUrltrackerDashboard";
@@ -113,7 +116,91 @@ export function ngInspectRedirectSidebar(
     link: function (_scope, element) {
       let redirectSidebarElement = document.createElement(
         "urltracker-inspect-redirect-sidebar"
-      ) as SimpleRedirectSidebar;
+      ) as InspectRedirectSidebar;
+
+      redirectSidebarElement.SetContext(
+        localizationService,
+        localizationServiceContext,
+        localizationServiceKey
+      );
+
+      redirectSidebarElement.SetContext(
+        iconHelper,
+        iconHelperContext,
+        iconHelperKey
+      );
+      redirectSidebarElement.SetContext(
+        editorService,
+        editorServiceContext,
+        editorServiceKey
+      );
+      redirectSidebarElement.SetContext(_scope, scopeContext, scopeContextKey);
+
+      element[0].appendChild(redirectSidebarElement);
+    },
+  };
+}
+
+ngInspectRecommendationsSidebar.alias = "ngUrltrackerInspectRecommendationsSidebar";
+ngInspectRecommendationsSidebar.$inject = [
+  "localizationService",
+  "iconHelper",
+  "editorService",
+];
+
+export function ngInspectRecommendationsSidebar(
+  localizationService: ILocalizationService,
+  iconHelper: IIconHelper,
+  editorService: IEditorService<any>
+): angular.IDirective {
+  return {
+    restrict: "E",
+    link: function (_scope, element) {
+      let redirectSidebarElement = document.createElement(
+        "urltracker-inspect-recommendations-sidebar"
+      ) as InspectRecommendationsSidebar;
+
+      redirectSidebarElement.SetContext(
+        localizationService,
+        localizationServiceContext,
+        localizationServiceKey
+      );
+
+      redirectSidebarElement.SetContext(
+        iconHelper,
+        iconHelperContext,
+        iconHelperKey
+      );
+      redirectSidebarElement.SetContext(
+        editorService,
+        editorServiceContext,
+        editorServiceKey
+      );
+      redirectSidebarElement.SetContext(_scope, scopeContext, scopeContextKey);
+
+      element[0].appendChild(redirectSidebarElement);
+    },
+  };
+}
+
+ngAnalyseRecommendationSidebar.alias = "ngUrltrackerAnalyseRecommendationSidebar";
+ngAnalyseRecommendationSidebar.$inject = [
+  "localizationService",
+  "iconHelper",
+  "editorService",
+];
+
+export function ngAnalyseRecommendationSidebar(
+  localizationService: ILocalizationService,
+  iconHelper: IIconHelper,
+  editorService: IEditorService<any>
+): angular.IDirective {
+  return {
+    restrict: "E",
+    link: function (_scope, element) {
+      let redirectSidebarElement = document.createElement(
+        "urltracker-analyse-recommendation-sidebar"
+      ) as AnalyseRecommendationSidebar;
 
       redirectSidebarElement.SetContext(
         localizationService,

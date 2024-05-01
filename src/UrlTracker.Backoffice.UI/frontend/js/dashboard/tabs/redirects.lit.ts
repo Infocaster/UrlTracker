@@ -86,6 +86,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 
   private async init() {
     ensureServiceExists(this._redirectService, "redirect service");
+    ensureServiceExists(this.editorService, "editor service");
     await this.search();
   }
 

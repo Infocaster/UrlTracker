@@ -7,6 +7,7 @@ import urlresource, {
 import { IPagedCollectionResponseBase } from "./models/PagedCollectionResponseBase";
 import { IPaginationRequestBase } from "./models/paginationrequestbase";
 import { IQueryRequestBase } from "./models/queryrequestbase";
+import { IRecommendationFilterRequestBase } from "./models/recommendationfilterrequestbase";
 
 interface IFlatRecommendationResponse {
   id: number;
@@ -29,16 +30,34 @@ export interface IRecommendationResponse {
   updatedate: Date;
 }
 
+export interface IRecommendationUpdate {
+  id: number;
+  recommendationStrategy: string;
+  ignore: boolean;
+}
+
 export type IRecommendationCollection =
   IPagedCollectionResponseBase<IRecommendationResponse>;
 
 export type IListRecommendationRequest = IPaginationRequestBase &
-  IQueryRequestBase;
+  IQueryRequestBase & IRecommendationFilterRequestBase;
 
 export interface IRecommendationsService {
   list: (
     request: IListRecommendationRequest
   ) => Promise<IRecommendationCollection>;
+
+  update: (
+    request: IRecommendationUpdate
+  ) => Promise<IRecommendationResponse>;
+
+  delete: (
+    request: IRecommendationResponse
+  ) => Promise<IRecommendationResponse>;
+
+  updateBulk: (
+    request: IRecommendationUpdate[]
+  ) => Promise<IRecommendationResponse[]>;
 }
 
 export class RecommendationsService implements IRecommendationsService {
@@ -61,8 +80,39 @@ export class RecommendationsService implements IRecommendationsService {
     // normalize all dates into a date object so that we can use a consistent date api in the business logic
     return {
       ...response.data,
-      results: response.data.results.map((r) => {return {...r, updatedate: new Date(r.updatedate)}})
+      results: response.data.results.map((r) => ({...r, updatedate: new Date(r.updatedate)}))
     };
+  }
+
+  public async update(
+    request: IRecommendationUpdate
+  ): Promise<IRecommendationResponse> {
+    let response = await this.axios.post<IRecommendationResponse>(
+      this.controller.getUrl("update"),
+      request
+    );
+    return {...response.data, updatedate: new Date(response.data.updatedate)};
+  }
+
+  public async delete(
+    request: IRecommendationResponse
+  ): Promise<IRecommendationResponse> {
+    let response = await this.axios.post<IRecommendationResponse>(
+      this.controller.getUrl("delete"),
+      request
+    );
+    return {...response.data, updatedate: new Date(response.data.updatedate)};
+  }
+
+
+  public async updateBulk(
+    request: IRecommendationUpdate[]
+  ): Promise<IRecommendationResponse[]> {
+    let response = await this.axios.post<IRecommendationResponse[]>(
+      this.controller.getUrl("updatebulk"),
+      request
+    );
+    return response.data.map(r => ({...r, updatedate: new Date(r.updatedate)}));
   }
 }
 
