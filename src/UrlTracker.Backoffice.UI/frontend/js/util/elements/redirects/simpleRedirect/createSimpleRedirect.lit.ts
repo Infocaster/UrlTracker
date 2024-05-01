@@ -1,5 +1,5 @@
 import { IRedirectResponse } from "@/services/redirect.service";
-import { LitElement, css, html } from "lit";
+import { LitElement, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import "./redirectForce.lit";
 import "./redirectIncomingUrl.lit";
@@ -58,6 +58,31 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
       composed: true,
     })
   );
+
+  protected renderPreserveQuerystring(): unknown {
+    if(!this.advancedView) {
+      return nothing;
+    }
+    return html`
+      <urltracker-redirect-preserve-querystring
+        class="border-bottom"
+        .preserve=${this.redirect.retainQuery}
+        @toggle=${this.onTogglePreserveQuerystring}
+      ></urltracker-redirect-preserve-querystring>
+    `;
+  }
+
+  protected renderForce(): unknown {
+    if(!this.advancedView) {
+      return nothing;
+    }
+    return html`
+      <urltracker-redirect-force
+        .force=${this.redirect.force}
+        @toggle=${this.onToggleForce}
+      ></urltracker-redirect-force>
+    `;
+  }
   
   protected render(): unknown {
     return html`
@@ -81,15 +106,8 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
         @input=${this.onOutgoingUrlInput} 
         @typechange=${this.onOutgoingTypeChange}>
       </urltracker-redirect-outgoing-url>
-      <urltracker-redirect-preserve-querystring
-        class="border-bottom"
-        .preserve=${this.redirect.retainQuery}
-        @toggle=${this.onTogglePreserveQuerystring}
-      ></urltracker-redirect-preserve-querystring>
-      <urltracker-redirect-force
-        .force=${this.redirect.force}
-        @toggle=${this.onToggleForce}
-      ></urltracker-redirect-force>
+      ${this.renderPreserveQuerystring()}
+      ${this.renderForce()}
     `;
   }
 

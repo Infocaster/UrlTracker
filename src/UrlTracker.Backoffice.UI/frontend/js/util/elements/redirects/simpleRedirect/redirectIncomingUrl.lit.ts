@@ -3,7 +3,7 @@ import { debounce } from "@/util/functions/debounce";
 import variableresourceService from "@/util/tools/variableresource.service";
 import { consume } from "@lit/context";
 import { UUIInputElement, UUIInputEvent } from "@umbraco-ui/uui";
-import { LitElement, css, html } from "lit";
+import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { Ref, createRef, ref } from "lit/directives/ref.js";
 import { repeat } from "lit/directives/repeat.js";
@@ -41,13 +41,13 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
       placeholder: "https://example.com/",
       disabled: false,
     },
-    {
-      label: "urlTrackerNewRedirect_incoming-url-path",
-      labelFallback: "Media",
-      value: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').path,
-      placeholder: "lorem/ipsum",
-      disabled: false,
-    },
+    // {
+    //   label: "urlTrackerNewRedirect_incoming-url-path",
+    //   labelFallback: "Path",
+    //   value: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').path,
+    //   placeholder: "lorem/ipsum",
+    //   disabled: false,
+    // },
     {
       label: "urlTrackerNewRedirect_incoming-url-regex",
       labelFallback: "URL",
@@ -120,11 +120,12 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
     );
   };
 
-  protected render(): unknown {
+  protected renderIncomingStrategy(): unknown {
+    if(!this.advancedView) {
+      return nothing;
+    }
     return html`
-      <p><strong>${this._headerText}</strong></p>
-      <p>${this._infoText}</p>
-      <uui-button-group>
+     <uui-button-group>
         ${repeat(
           this._typeButtons,
           (item) => item.value,
@@ -139,6 +140,14 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
           ></uui-button>`
         )}
       </uui-button-group>
+    `;
+  }
+
+  protected render(): unknown {
+    return html`
+      <p><strong>${this._headerText}</strong></p>
+      <p>${this._infoText}</p>
+      ${this.renderIncomingStrategy()}
       <uui-input
         ${ref(this.inputRef)}
         .value=${this.incomingUrl}

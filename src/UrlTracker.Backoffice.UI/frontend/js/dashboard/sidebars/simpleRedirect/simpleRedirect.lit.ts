@@ -35,7 +35,7 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   @property({ attribute: false})
   get advancedView () {
     ensureExists(this.$scope, "scope");
-    return this.scope.model.value.advancedView ?? false;
+    return this.scope.model.value?.advancedView ?? false;
   }
 
   @property({ attribute: false})
