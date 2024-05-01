@@ -105,13 +105,21 @@ export class UrlTrackerDashboardContent extends LitElement {
   };
 
   private _openSidebar(_: Event) {
+    //@TODO: find a more dynamic way to open the correct sidebar based on the active tab
+    let value = {};
+    if(this.activeTab?.name === "Advanced redirects") {
+      value = {
+        advancedView: true,
+      }
+    }
+
     const options = {
       title: "New redirect", // FIXME: translate
       view: "/App_Plugins/UrlTracker/sidebar/redirect/simpleRedirect.html",
       size: "medium",
       submit: this.submitPanel,
       close: this.closePanel,
-      value: "",
+      value: value,
     };
 
     this.editorService!.open(options);

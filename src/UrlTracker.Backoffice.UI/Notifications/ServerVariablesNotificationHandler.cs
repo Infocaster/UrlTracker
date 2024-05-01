@@ -23,6 +23,12 @@ namespace UrlTracker.Web.Events
 
         public void Handle(ServerVariablesParsingNotification notification)
         {
+            Dictionary<string, string> landingspageVariables = new()
+            {
+                ["base"] = _linkGenerator.GetUmbracoApiServiceBaseUrl<LandingPageController>(controller => controller.GetNumericMetric())!,
+                ["numericMetric"] = nameof(LandingPageController.GetNumericMetric),
+            };
+
             Dictionary<string, string> recommendationVariables = new()
             {
                 ["base"] = _linkGenerator.GetUmbracoApiServiceBaseUrl<RecommendationsController>(controller => controller.List(default!))!,
@@ -30,6 +36,13 @@ namespace UrlTracker.Web.Events
                 ["update"] = nameof(RecommendationsController.Update),
                 ["updateBulk"] = nameof(RecommendationsController.UpdateBulk),
                 ["delete"] = nameof(RecommendationsController.Delete)
+            };
+
+            Dictionary<string, string> recommendationAnalysisVariables = new()
+            {
+                ["base"] = "/Umbraco/Backoffice/UrlTracker/RecommendationAnalysis/",
+                ["getHistory"] = "GetHistory",
+                ["getReferrers"] = "GetReferrers"
             };
 
             Dictionary<string, string> redirectVariables = new()
@@ -42,6 +55,13 @@ namespace UrlTracker.Web.Events
                 ["update"] = nameof(RedirectsController.Update),
                 ["updateBulk"] = nameof(RedirectsController.UpdateBulk),
                 ["deleteBulk"] = nameof(RedirectsController.DeleteBulk)
+            };
+
+            Dictionary<string, string> redirectImportVariables = new()
+            {
+                ["base"] = _linkGenerator.GetUmbracoApiServiceBaseUrl<RedirectImportController>(controller => controller.Content(default!))!,
+                ["import"] = "Import",
+                ["export"] = "Export"
             };
 
             Dictionary<string, string> redirectTargetVariables = new()
@@ -79,10 +99,13 @@ namespace UrlTracker.Web.Events
 
             Dictionary<string, object> urlTrackerVariables = new()
             {
+                ["landingspage"] = landingspageVariables,
                 ["recommendations"] = recommendationVariables,
+                ["recommendationAnalysis"] = recommendationAnalysisVariables,
                 ["recommendationTypeStrategies"] = recommendationTypeStrategies,
                 ["notifications"] = notificationVariables,
                 ["redirects"] = redirectVariables,
+                ["redirectimport"] = redirectImportVariables,
                 ["redirectTarget"] = redirectTargetVariables,
                 ["redirectSourceStrategies"] = redirectSourceStrategies,
                 ["redirectTargetStrategies"] = redirectTargetStrategies,

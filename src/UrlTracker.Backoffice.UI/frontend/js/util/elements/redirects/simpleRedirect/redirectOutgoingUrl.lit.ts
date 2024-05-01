@@ -41,13 +41,13 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
       placeholder: "link to content placeholder",
       disabled: true,
     },
-    {
-      label: "urlTrackerNewRedirect_outgoing-url-media",
-      labelFallback: "Media",
-      value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').media,
-      placeholder: "link to media placeholder",
-      disabled: true,
-    },
+    // {
+    //   label: "urlTrackerNewRedirect_outgoing-url-media",
+    //   labelFallback: "Media",
+    //   value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').media,
+    //   placeholder: "link to media placeholder",
+    //   disabled: true,
+    // },
     {
       label: "urlTrackerNewRedirect_outgoing-url-url",
       labelFallback: "URL",

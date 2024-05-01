@@ -1,9 +1,10 @@
 import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { Ref, createRef, ref } from "lit/directives/ref.js";
-import {
+import recommendationService, {
   IRecommendationCollection,
   IRecommendationResponse,
+  IRecommendationUpdate,
   IRecommendationsService,
 } from "../../services/recommendation.service";
 import { UrlTrackerPagination } from "../../util/elements/inputs/pagination.lit";
@@ -116,13 +117,14 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       "recommendations service"
     );
     ensureServiceExists(this._redirectService, "redirect service");
-    ensureExists(this._recommendationsService, "recommendations service");
+    ensureServiceExists(this._recommendationsService, "recommendations service");
     ensureServiceExists(this.editorService, "editor service");
 
     await this.search();
   }
 
   private async search() {
+    this.recommendationCollection = undefined;
     ensureExists(this.paginationRef.value);
 
     const page = {
@@ -211,7 +213,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     this.editorService!.open(options);
   }
 
-  submitNewRedirectPanel = async (value: IRedirectResponse) => {
+  private submitNewRedirectPanel = async (value: IRedirectResponse) => {
     console.info("submit new or update redirect", value);
     if (value.id) {
       await this._redirectService?.update(value);
@@ -313,15 +315,21 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     this.selectedItems = [];
   };
 
-  private onDeleteSelection = async (e: any) => {
-    const selectedRedirects =
+  private onIgnoreSelection = async (e: any) => {
+    const selectedRecommendations =
       this.recommendationCollection?.results.filter((r) =>
         this.selectedItems.some((i) => i === r.id)
       ) || [];
-    const bulkToDelete = selectedRedirects.map((r) => r.id);
-    //await redirectService.deleteBulk(bulkToDelete);
+    const bulkToUpdate: IRecommendationUpdate[] = selectedRecommendations.map((r) => {
+      return {
+        id: r.id,
+        recommendationStrategy: r.strategy,
+        ignore: true,
+      };
+    });
+    await recommendationService.updateBulk(bulkToUpdate);
     this.selectedItems = [];
-    //this.search();
+    this.search();
   };
 
   private renderRecommendations(): unknown {
@@ -365,18 +373,18 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
         @select-all=${this.onSelectAll}
         @clear-selection=${this.onClearSelection}
       >
-        <uui-button look="secondary" @click=${this.onDeleteSelection}>
+        <uui-button look="secondary" @click=${this.onIgnoreSelection}>
           <uui-icon name="delete"></uui-icon>
-          Delete
+          Ignore
         </uui-button>
       </urltracker-bulk-actions>
     `;
   }
 
-  protected renderInternal(): unknown {
+  protected renderFilters(): unknown {
+    if(this.selectedItems.length > 0) return nothing;
     return html`
-      <div class="grid-root">
-        <div class="filters">
+      <div class="filters">
           <urltracker-recommendation-search
             @search=${this.onSearch}
           ></urltracker-recommendation-search>
@@ -385,7 +393,14 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
             .options=${this._sortOptions}
             @change=${this.onSortChange}
           ></urltracker-dropdown>
-        </div>
+      </div>
+    `;
+  }
+
+  protected renderInternal(): unknown {
+    return html`
+      <div class="grid-root">
+        ${this.renderFilters()}
 
         ${this.renderBulkActions()}
 
@@ -419,6 +434,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       display: flex;
       align-items: center;
       gap: 1rem;
+      padding: 1rem 0;
     }
 
     .filters urltracker-recommendation-search {
@@ -427,7 +443,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
     .bulk {
       grid-column: 1 / span 2;
-      grid-row: 2;
+      grid-row: 1;
     }
 
     .results {

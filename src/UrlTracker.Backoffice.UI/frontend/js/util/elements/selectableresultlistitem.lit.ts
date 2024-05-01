@@ -1,6 +1,6 @@
 import { ContextProvider, createContext } from "@lit/context";
 import { UUIBooleanInputEvent } from "@umbraco-ui/uui";
-import { css, html } from "lit";
+import { css, html, nothing } from "lit";
 import { UrlTrackerResultListItem } from "./resultlistitem.lit";
 
 export function UrlTrackerSelectableResultListItem<T extends Record<string, any>>(
@@ -9,6 +9,7 @@ export function UrlTrackerSelectableResultListItem<T extends Record<string, any>
   return class SelectableResultListItem extends UrlTrackerResultListItem {
     private _item: T = {} as T;
     private _isSelected: boolean = false;
+    private _selectable: boolean = true;
     private _itemProvider = new ContextProvider(this, { context: context });
 
     public get item(): T {
@@ -30,13 +31,31 @@ export function UrlTrackerSelectableResultListItem<T extends Record<string, any>
       this.requestUpdate("isSelected");
     }
 
+    public get selectable(): boolean {
+      return this._selectable;
+    }
+
+    public set selectable(value: boolean) {
+      this._selectable = value;
+      this.requestUpdate("selectable");
+    }
+
     protected renderBody(): unknown {
       return html`<slot></slot>`;
     }
 
+    protected renderCheckbox(): unknown {
+      if (this._selectable) {
+        return html`<uui-checkbox
+          .checked=${this.isSelected}
+          @change=${this.onCheckboxPress}
+        ></uui-checkbox>`;
+      } else return nothing
+    }
+
     protected render(): unknown {
       return html`
-        <uui-checkbox .checked=${this.isSelected} @change=${this.onCheckboxPress}></uui-checkbox>
+        ${this.renderCheckbox()}
         ${this.renderBody()}
       `;
     }
@@ -66,6 +85,7 @@ export function UrlTrackerSelectableResultListItem<T extends Record<string, any>
 
         uui-checkbox {
           position: relative;
+          margin-right: 8px;
         }
       `,
     ];

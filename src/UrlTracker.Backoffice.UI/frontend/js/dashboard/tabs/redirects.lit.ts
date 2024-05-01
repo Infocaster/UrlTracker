@@ -1,5 +1,7 @@
 import { IEditorService, editorServiceContext } from "@/context/editorservice.context";
+import { redirectImportServiceContext } from "@/context/redirectimportservice.context";
 import { REDIRECTTYPE_SORT_TYPE, RedirectSortType } from "@/enums/sortType";
+import { IRedirectImportService } from "@/services/redirectimport.service";
 import { DropdownChangeEvent, IDropdownValue } from "@/util/elements/inputs/dropdown.lit";
 import { consume, provide } from "@lit/context";
 import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
@@ -30,6 +32,7 @@ import {
   ensureServiceExists,
 } from "../../util/tools/existancecheck";
 import { UrlTrackerNotificationWrapper } from "../notifications/notifications.mixin";
+import { ICreateRedirectSidbarData } from "./advancedredirects.lit";
 import "./redirects/redirectitem.lit";
 import "./redirects/redirectsSearch.lit";
 
@@ -39,7 +42,10 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   "redirects"
 ) {
   @consume({ context: redirectServiceContext })
-  private _redirectService?: IRedirectService;
+  private redirectService?: IRedirectService;
+
+  @consume({ context: redirectImportServiceContext })
+  private redirectImportService?: IRedirectImportService;
 
   @consume({ context: editorServiceContext })
   private editorService?: IEditorService<any>;
@@ -85,12 +91,14 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   }
 
   private async init() {
-    ensureServiceExists(this._redirectService, "redirect service");
+    ensureServiceExists(this.redirectService, "redirect service");
+    ensureServiceExists(this.redirectImportService, "redirect import service");
     ensureServiceExists(this.editorService, "editor service");
     await this.search();
   }
 
   private async search() {
+    this.redirectCollection = undefined;
     ensureExists(this.paginationRef.value);
 
     const page = this.paginationRef.value.value;
@@ -99,7 +107,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 
     this.loading++;
     try {
-      this.redirectCollection = await this._redirectService?.list({ ...page, types: type, query});
+      this.redirectCollection = await this.redirectService?.list({ ...page, types: type, query});
     } finally {
       this.loading--;
     }
@@ -117,7 +125,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     this.editorService!.open(options);
   }
 
-  private openNewRedirectPanel(data?: IRedirectResponse) {
+  private openNewRedirectPanel(data?: ICreateRedirectSidbarData) {
     const options = {
       title: "New redirect", // FIXME: translate
       view: "/App_Plugins/UrlTracker/sidebar/redirect/simpleRedirect.html",
@@ -130,20 +138,20 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     this.editorService!.open(options);
   }
 
-  submitNewRedirectPanel = async (value: IRedirectResponse) => {
+  private submitNewRedirectPanel = async (value: IRedirectResponse) => {
     console.info("submit new or update redirect", value);
     if(value.id) {
-      await this._redirectService?.update(value);
+      await this.redirectService?.update(value);
     }
     else {
-      await this._redirectService?.create(value);
+      await this.redirectService?.create(value);
     }
 
     this.closePanel();
     this.search();
   };
 
-  closePanel = () => {
+  private closePanel = () => {
     this.editorService!.close();
   };
 
@@ -171,22 +179,24 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   };
 
   private onEditRedirect = (e: CustomEvent<IRedirectResponse>) => {
-    this.openNewRedirectPanel(e.detail);
+    this.openNewRedirectPanel({
+      ...e.detail,
+      advancedView: false
+    });
   };
 
   private onDeleteRedirect = async (e: CustomEvent<IRedirectResponse>) => {
-    await this._redirectService?.delete(e.detail.id);
+    await this.redirectService?.delete(e.detail.id);
     this.search();
   };
 
   private onExportRedirects = async (e: any) => {
-    //@TODO: implement export
-    //await this._redirectService?.export();
+    await this.redirectImportService?.export();
   };
 
-  private onImportRedirects = async (e: any) => {
-    //@TODO: implement import
-    //await this._redirectService?.import();
+  private onImportRedirects = async (e: CustomEvent<File>) => {
+    await this.redirectImportService!.import(e.detail);
+    this.search();
   }
 
   private onSelectItem = (e: any) => {
@@ -264,20 +274,26 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     );
   }
 
+  protected renderFilters() {
+    if(this.selectedItems.length) return nothing;
+    return html`
+      <div class="filters">
+        <urltracker-redirects-search
+          @search=${this.onSearch}
+        ></urltracker-redirects-search>
+        <urltracker-dropdown
+          label="Type"
+          .options=${this.sortOptions}
+          @change=${this.onTypeChange}
+        ></urltracker-dropdown>
+      </div>
+    `;
+  }
+
   protected renderInternal(): unknown {
     return html`
       <div class="grid-root">
-        <div class="filters">
-          <urltracker-redirects-search
-            @search=${this.onSearch}
-          ></urltracker-redirects-search>
-          <urltracker-dropdown
-            label="Type"
-            .options=${this.sortOptions}
-            @change=${this.onTypeChange}
-          ></urltracker-dropdown>
-        </div>
-
+        ${this.renderFilters()}
         ${this.renderBulkActions()}
 
         <div class="results">
@@ -307,7 +323,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
               @click=${this.onExportRedirects}
             ></urltracker-export-redirects-action>
           </urltracker-redirect-actions>
-          <urltracker-redirect-import></urltracker-redirect-import>
+          <urltracker-redirect-import @import=${this.onImportRedirects}></urltracker-redirect-import>
         </div>
       </div>
     `;
@@ -332,6 +348,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
       display: flex;
       align-items: center;
       gap: 1rem;
+      padding: 1rem 0;
     }
 
     .filters urltracker-redirects-search {
@@ -340,7 +357,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 
     .bulk {
       grid-column: 1 / span 2;
-      grid-row: 2;
+      grid-row: 1;
     }
 
     .results {

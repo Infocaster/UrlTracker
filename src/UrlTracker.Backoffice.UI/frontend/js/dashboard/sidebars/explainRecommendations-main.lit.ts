@@ -7,8 +7,4 @@ import "./explainRecommendations/explainRecommendations.lit";
 export class InspectRecommendationsSidebar extends AngularBridgeMixin(
   LitElement,
   html`<urltracker-sidebar-inspect-recommendations></urltracker-sidebar-inspect-recommendations>`
-) {
-  async connectedCallback(): Promise<void> {
-    super.connectedCallback();
-  }
-}
+) {}

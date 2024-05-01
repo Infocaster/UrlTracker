@@ -13,6 +13,8 @@ import { consume } from "@lit/context";
 import { LitElement, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
+import '../../../util/elements/redirects/simpleRedirect/createSimpleRedirect.lit';
+
 export const ContentElementTag = "urltracker-sidebar-simple-redirect";
 
 @customElement(ContentElementTag)
@@ -28,6 +30,18 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   get scope() { 
     ensureExists(this.$scope, "scope");
     return this.$scope;
+  }
+
+  @property({ attribute: false})
+  get advancedView () {
+    ensureExists(this.$scope, "scope");
+    return this.scope.model.value?.advancedView ?? false;
+  }
+
+  @property({ attribute: false})
+  get redirect () {
+    ensureExists(this.$scope, "scope");
+    return this.scope.model.value ?? {} as IRedirectResponse;
   }
 
   @state()
@@ -50,9 +64,9 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-
-    if(this.scope.model.value) {
-      // Editing existing redirect
+    
+    if(this.redirect.id || this.redirect.source?.value) {
+      // Editing existing redirect, id will be available if redirect is already saved, source will exist if coming from a recommendation
       this.redirectData = this.scope.model.value;
       this.headerText = `Edit: ${this.scope.model.value.source.value}` ?? "Edit redirect";
     } else {
@@ -72,7 +86,7 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   protected render() {
     return html`<div class="header">${this.headerText}</div>
       <div class="main">
-        <urltracker-create-simple-redirect .redirect=${this.redirectData} @update=${({detail}: {detail: IRedirectResponse}) => this.redirectData = detail }></urltracker-create-simple-redirect>
+        <urltracker-create-simple-redirect .advancedView=${this.advancedView} .redirect=${this.redirectData} @update=${({detail}: {detail: IRedirectResponse}) => this.redirectData = detail }></urltracker-create-simple-redirect>
       </div>
       <div class="footer">
         <uui-button look="default" color="default" @click=${this.close}
@@ -102,6 +116,7 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
     .main {
       flex: 1;
       padding: 16px 20px;
+      overflow-y: auto;
     }
 
     .footer {

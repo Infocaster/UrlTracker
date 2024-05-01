@@ -20,14 +20,22 @@ export class RedirectImportService implements IRedirectImportService {
 
   public async export() {
     let response = await this.axios.get<Blob>(this.controller.getUrl("export"));
-
+    const blob = new Blob([response.data], {type: 'text/csv;charset=utf-8;'});
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'redirects.csv');
+    document.body.appendChild(link);
+    link.click();
     return response.data;
   }
 
-  public async import(request: File) {
+  public async import(file: File) {
+    const form = new FormData();
+    form.append("Redirects", file, file.name);
     let response = await this.axios.post<IRedirectResponse[]>(
       this.controller.getUrl("import"),
-      new FormData().append("file", request)
+      form
     );
 
     return response.data;
