@@ -53,9 +53,9 @@ stages:
         updateAssemblyInfo: true
 
     - task: NodeTool@0
-      displayName: 'Use node 16.x'
+      displayName: 'Use node 20.x'
       inputs:
-        versionSpec: '16.x'
+        versionSpec: '20.x'
 
     - task: Npm@1
       displayName: 'Install front end packages'
@@ -69,7 +69,7 @@ stages:
       inputs:
         command: 'custom'
         workingDir: $(NpmWorkingDirectory)
-        customCommand: 'run build:webpack-production'
+        customCommand: 'run build'
 
     - task: UseDotNet@2
       displayName: 'Use .NET 6'
