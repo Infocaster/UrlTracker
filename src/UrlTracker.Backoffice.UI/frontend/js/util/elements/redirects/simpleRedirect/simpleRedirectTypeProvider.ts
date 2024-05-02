@@ -23,17 +23,17 @@ export class SimpleRedirectTypeProvider extends LitElement {
   @provide({ context: simpleRedirectContext })
   public _typeButtons = [
     {
-      label: "urlTrackerNewRedirect_outgoing-url-content",
+      label: "urlTrackerRedirectTarget_content",
       value: "content",
       placeholder: "link to content placeholder",
     },
     {
-      label: "urlTrackerNewRedirect_outgoing-url-media",
+      label: "urlTrackerRedirectTarget_media",
       value: "media",
       placeholder: "link to media placeholder",
     },
     {
-      label: "urlTrackerNewRedirect_outgoing-url-url",
+      label: "urlTrackerRedirectTarget_url",
       value: "url",
       placeholder: "https://example.com/",
     },

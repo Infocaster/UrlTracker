@@ -21,13 +21,21 @@
   </area>
   <area alias="urlTrackerNotifications">
     <key alias="landingpagewelcometitle">Welkom bij de URL Tracker</key>
-    <key alias="landingpagewelcomebody">In dit overzicht staat een reeks van de meest belangrijke adviezen voor uw gemak. Verbeter de ervaring van uw bezoekers door deze problemen op te lossen.</key>
+    <key alias="landingpagewelcomebody">In dit overzicht staat een reeks van de meest belangrijke
+      adviezen voor uw gemak. Verbeter de ervaring van uw bezoekers door deze problemen op te
+      lossen.</key>
     <key alias="recommendationswelcometitle">Adviezen overzicht</key>
-    <key alias="recommendationswelcomebody">Hier kun je alle huidige adviezen terugvinden. Standaard worden de adviezen gesorteerd op urgentie. Gebruik de invulvelden om het overzicht te filteren en sorteren.</key>
+    <key alias="recommendationswelcomebody">Hier kun je alle huidige adviezen terugvinden. Standaard
+      worden de adviezen gesorteerd op urgentie. Gebruik de invulvelden om het overzicht te filteren
+      en sorteren.</key>
     <key alias="redirectswelcometitle">Redirects overzicht</key>
-    <key alias="redirectswelcomebody">Deze tab laat de redirects zien die op deze website zijn ingesteld. Gebruik de verschillende knoppen en velden om redirects aan te maken, te verwijderen en aan te passen. Deze pagina geeft alleen de standaard redirects weer. Bekijk het geavanceerde redirects overzicht om alle redirects te zien.</key>
+    <key alias="redirectswelcomebody">Deze tab laat de redirects zien die op deze website zijn
+      ingesteld. Gebruik de verschillende knoppen en velden om redirects aan te maken, te
+      verwijderen en aan te passen. Deze pagina geeft alleen de standaard redirects weer. Bekijk het
+      geavanceerde redirects overzicht om alle redirects te zien.</key>
     <key alias="advancedredirectswelcometitle">Geavanceerde redirects overzicht</key>
-    <key alias="advancedredirectswelcomebody">Bovenop de standaard redirects, laat deze pagina ook de redirects zien met geavanceerde instellingen.</key>
+    <key alias="advancedredirectswelcomebody">Bovenop de standaard redirects, laat deze pagina ook
+      de redirects zien met geavanceerde instellingen.</key>
   </area>
   <area alias="urlTrackerDashboardFooter">
     <key alias="featurelabel">Doe een suggestie</key>
@@ -43,6 +51,49 @@
     <key alias="unknown">Onbekende doelsoort</key>
     <key alias="url">URL</key>
     <key alias="content">Inhoud</key>
+    <key alias="media">Media</key>
     <key alias="contenterror">De gekozen inhoud bestaat niet of zit in de prullenbak</key>
+  </area>
+  <area alias="urlTrackerRedirectActions">
+    <key alias="header">Acties</key>
+    <key alias="new">Nieuwe redirect</key>
+    <key alias="export">Redirects exporteren</key>
+  </area>
+  <area alias="urlTrackerRedirectUpload">
+    <key alias="header">Importeren</key>
+    <key alias="info">Sleep een CSV bestand in het onderstaande veld om redirects te importeren.</key>
+    <key alias="help">Hier kun je een voorbeeld downloaden</key>
+  </area>
+  <area alias="urlTrackerRecommendationType">
+    <key alias="image">Afbeelding kan niet gevonden worden</key>
+    <key alias="file">Bestand kan niet gevonden worden</key>
+    <key alias="page">Pagina kan niet gevonden worden</key>
+    <key alias="technicalFile">Technisch bestand kan niet gevonden worden</key>
+    <key alias="unknown">Onbekend soort advies</key>
+  </area>
+  <area alias="urlTrackerRecommendationImportance">
+    <key alias="VERY_IMPORTANT">HEEL BELANGRIJK</key>
+    <key alias="IMPORTANT">BELANGRIJK</key>
+    <key alias="MODERATELY_IMPORTANT">GEMIDDELD BELANGRIJK</key>
+    <key alias="SLIGHTLY_IMPORTANT">BEETJE BELANGRIJK</key>
+    <key alias="NOT_IMPORTANT">NIET BELANGRIJK</key>
+  </area>
+  <area alias="urlTrackerRecommendationItem">
+    <key alias="actions">Adviezen</key>
+    <key alias="action-temporary">Creëer een tijdelijke redirect</key>
+    <key alias="action-permanent">Creëer een permanente redirect</key>
+    <key alias="action-ignore">Negeer dit</key>
+  </area>
+  <area alias="urlTrackerNewRedirect">
+    <key alias="permanent">Is de redirect permanent?</key>
+    <key alias="permanent-info">Een permanente redirect is better voor de performance van je website, maar kan niet achteraf worden aangepast.
+      Permanente redirects zijn een signaal naar google en andere zoekmachines om hun zoekresultaten aan te passen naar de doel URL die je invult. Het zorgt ervoor dat het internet je URL "vergeet" als het ware.</key>
+    <key alias="incoming-url">Ingaande URL</key>
+    <key alias="incoming-url-info">Vul de URL in waarvandaan geredirect moet worden</key>
+    <key alias="outgoing-url">Uitgaande URL</key>
+    <key alias="outgoing-url-info">Selecteer waar de URL naartoe geredirect moet worden</key>
+  </area>
+  <area alias="urlTrackerRecommendationFilter">
+    <key alias="search-placeholder">Typ om te zoeken...</key>
   </area>
 </language>

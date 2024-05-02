@@ -46,6 +46,7 @@
     <key alias="unknown">Unknown target type</key>
     <key alias="url">URL</key>
     <key alias="content">Content</key>
+    <key alias="media">Media</key>
     <key alias="contenterror">The selected content does not exist or is in the trashcan</key>
   </area>
   <area alias="urlTrackerRedirectActions">
@@ -85,9 +86,6 @@
 	<key alias="incoming-url-info">Enter the URL which should be redirected from</key>
 	<key alias="outgoing-url">Outgoing URL</key>
 	<key alias="outgoing-url-info">Select where the URL should redirect to</key>
-	<key alias="outgoing-url-content">Content</key>
-	<key alias="outgoing-url-media">Media</key>
-	<key alias="outgoing-url-url">URL</key>
   </area>
   <area alias="urlTrackerRecommendationFilter">
 	<key alias="search-placeholder">Type to search...</key>

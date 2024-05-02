@@ -35,7 +35,7 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
 
   public _typeButtons = [
     {
-      label: "urlTrackerNewRedirect_incoming-url-url",
+      label: "urlTrackerRedirectSource_url",
       labelFallback: "Content",
       value: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').url,
       placeholder: "https://example.com/",
@@ -49,10 +49,10 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
     //   disabled: false,
     // },
     {
-      label: "urlTrackerNewRedirect_incoming-url-regex",
+      label: "urlTrackerRedirectSource_regex",
       labelFallback: "URL",
       value: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').regex,
-      placeholder: "lorem/ipsum",
+      placeholder: "$[a-z]^",
       disabled: false,
     },
   ] as ITypeButton[];

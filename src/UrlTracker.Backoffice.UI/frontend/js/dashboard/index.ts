@@ -3,7 +3,7 @@ import tabStrategy, { createTabStrategy } from "./tab";
 
 tabStrategy.push(
   createTabStrategy(
-    "Dashboard",
+    "dashboard",
     html`<urltracker-landing-tab></urltracker-landing-tab>`
   )
 );

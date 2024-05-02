@@ -35,21 +35,21 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
 
   public _typeButtons = [
     {
-      label: "urlTrackerNewRedirect_outgoing-url-content",
+      label: "urlTrackerRedirectTarget_content",
       labelFallback: "Content",
       value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content,
       placeholder: "link to content placeholder",
       disabled: true,
     },
     // {
-    //   label: "urlTrackerNewRedirect_outgoing-url-media",
+    //   label: "urlTrackerRedirectTarget_media",
     //   labelFallback: "Media",
     //   value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').media,
     //   placeholder: "link to media placeholder",
     //   disabled: true,
     // },
     {
-      label: "urlTrackerNewRedirect_outgoing-url-url",
+      label: "urlTrackerRedirectTarget_url",
       labelFallback: "URL",
       value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url,
       placeholder: "https://example.com/",

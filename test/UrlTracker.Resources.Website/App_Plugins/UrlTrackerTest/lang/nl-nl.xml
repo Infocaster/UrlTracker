@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<language alias="nl" intName="Dutch (NL)" localName="Nederlands (NL)" lcid="" culture="nl-NL">
+    <area alias="dashboardTabs">
+        <key alias="UrlTrackerTest">[Test] Advies parameters</key>
+        <key alias="UrlTrackerRedirectGenerator">[Test] Redirect generator</key>
+    </area>
+</language>
