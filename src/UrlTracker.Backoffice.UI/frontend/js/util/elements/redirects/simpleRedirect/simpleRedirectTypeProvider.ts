@@ -39,15 +39,6 @@ export class SimpleRedirectTypeProvider extends LitElement {
     },
   ] as ITypeButton[];
 
-  //   constructor() {
-  // super();
-
-  // console.log("SimpleRedirectTypeProvider constructor");
-
-  // (window as any)["URL_TRACKER"]["simpleRedirectProvider"]["add"] =
-  //   this._addTypeButton;
-  //   }
-
   render() {
     return html`<slot></slot>`;
   }

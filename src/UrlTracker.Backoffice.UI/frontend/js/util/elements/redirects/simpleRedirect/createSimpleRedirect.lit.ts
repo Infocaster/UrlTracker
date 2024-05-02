@@ -91,6 +91,7 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
         .isPermanent=${this.redirect.permanent}
         @toggle=${this.onTogglePermanent}
       ></urltracker-redirect-permanent>
+
       <urltracker-redirect-incoming-url
         class="border-bottom"
         .advancedView=${this.advancedView}
@@ -99,6 +100,7 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
         @input=${this.onIncomingUrlInput}
         @typechange=${this.onIncomingTypeChange}
       ></urltracker-redirect-incoming-url>
+
       <urltracker-redirect-outgoing-url
         class="border-bottom"
         .outgoingStrategy=${this.redirect.target.strategy}
@@ -106,6 +108,7 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
         @input=${this.onOutgoingUrlInput} 
         @typechange=${this.onOutgoingTypeChange}>
       </urltracker-redirect-outgoing-url>
+      
       ${this.renderPreserveQuerystring()}
       ${this.renderForce()}
     `;

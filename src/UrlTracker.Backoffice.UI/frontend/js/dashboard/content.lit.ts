@@ -90,7 +90,6 @@ export class UrlTrackerDashboardContent extends LitElement {
   }
 
   submitPanel = (value: IRedirectResponse) => {
-    console.info("submit new or update redirect", value);
     if(value.id) {
       this._redirectService?.update(value);
     }

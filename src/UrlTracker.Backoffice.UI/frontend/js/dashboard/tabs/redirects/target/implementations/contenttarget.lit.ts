@@ -114,7 +114,8 @@ export class UrlTrackerContentRedirectTarget extends baseType {
     }
   }
 
-  private onClick = (_: Event) => {
+  private onClick = (e: Event) => {
+    e.stopImmediatePropagation();
     ensureServiceExists(this.editorService, "editor service");
 
     const onClose = async () => {

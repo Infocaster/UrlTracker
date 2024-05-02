@@ -1,8 +1,12 @@
+import { IEditorService, editorServiceContext } from "@/context/editorservice.context";
 import {
   ILocalizationService,
   localizationServiceContext,
 } from "@/context/localizationservice.context";
+import { ITargetService, redirectTargetServiceContext } from "@/context/redirecttargetservice.context";
 import { ITargetStrategies } from "@/dashboard/tabs/redirects/target/target.constants";
+import { IContentTargetResponse } from "@/dashboard/tabs/redirects/target/target.service";
+import { IContent } from "@/umbraco/editor.service";
 import { debounce } from "@/util/functions/debounce";
 import variableresourceService from "@/util/tools/variableresource.service";
 import { consume } from "@lit/context";
@@ -31,6 +35,12 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
   @consume({ context: localizationServiceContext })
   private _localizationService?: ILocalizationService;
 
+  @consume({ context: editorServiceContext })
+  private editorService?: IEditorService<any>;
+
+  @consume({ context: redirectTargetServiceContext })
+  private redirectTargetService?: ITargetService;
+
   private inputRef: Ref<HTMLInputElement> = createRef();
 
   public _typeButtons = [
@@ -39,7 +49,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
       labelFallback: "Content",
       value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content,
       placeholder: "link to content placeholder",
-      disabled: true,
+      disabled: false,
     },
     // {
     //   label: "urlTrackerRedirectTarget_media",
@@ -57,6 +67,9 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     },
   ] as ITypeButton[];
 
+  private contentItem: IContentTargetResponse & { id: number } | undefined = undefined;
+  private url: string = "";
+
   @state()
   private _selectedType: ITypeButton = this._typeButtons[0];
 
@@ -67,10 +80,29 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     this._localizeInfoText();
     this._localizeButtonLabels();
 
-    //@TODO: Create Content and Media type redirect functionality. Only URL type is implemented.
     this._selectedType = this._typeButtons.find(
       (item) => item.value === this.outgoingStrategy
     ) ?? this._typeButtons.find((item) => item.value === variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url)!;
+
+    switch(this.outgoingStrategy) {
+      case variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content:
+        let [id, culture] = this.outgoingUrl.split(";");
+        const content = await this.redirectTargetService!.Content({
+          id: Number.parseInt(id, 10),
+          culture: culture,
+        });
+
+        this.contentItem = {
+          ...content,
+          id: Number.parseInt(id, 10),
+        };
+
+        this.requestUpdate();
+        break;
+      case variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url:
+        this.url = this.outgoingUrl;
+        break;
+    }
   }
 
   private _localizeHeaderText = async () => {
@@ -100,7 +132,34 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     }));
   };
 
-  private onInput = (e: UUIInputEvent) => {
+  private openContentPicker = () => {
+    this.editorService?.contentPicker({
+      multiPicker: false,
+      submit: this.submitContentPicker,
+      close: () => this.editorService?.close()
+    });
+  }
+
+  private submitContentPicker = (model: { selection: IContent[] }) => {
+    if(model.selection.length === 0) return this.editorService?.close();
+    this.contentItem = model.selection[0];
+
+    this.editorService?.close();
+    this.onContentUpdate();
+    this.requestUpdate();
+  }
+
+  private onContentUpdate = () => {
+    this.dispatchEvent(
+      new CustomEvent("input", {
+        detail: this.contentItem?.id,
+        bubbles: true,
+        composed: false,
+      })
+    );
+  }
+
+  private onInput = (e?: UUIInputEvent) => {
     this.dispatchEvent(
       new CustomEvent("input", {
         detail: this.inputRef.value?.shadowRoot?.querySelector('input')?.value ?? '',
@@ -114,6 +173,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
 
   private onTypeChange = (item: ITypeButton, e: Event) => {
     this._selectedType = item;
+    
     this.dispatchEvent(
       new CustomEvent("typechange", {
         detail: item,
@@ -121,7 +181,62 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
         composed: false,
       })
     );
+
+    switch(item.value) {
+      case variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content:
+        this.onContentUpdate();
+        this.url = '';
+        break;
+      case variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url:
+        this.onInput();
+        this.contentItem = undefined;
+        break;
+    }
   };
+
+  private onDeleteContent = () => {
+    this.contentItem = undefined;
+    this.requestUpdate();
+  }
+
+  protected renderOutgoingStrategy(): unknown {
+    if (this._selectedType.value === variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content) {
+      if(this.contentItem) {
+        return html`
+          <div class="content-item">
+            <div class="content-item-icon">
+              <uui-icon .name=${this.contentItem?.icon}></uui-icon> 
+              ${this.contentItem?.name}
+            </div>
+            <uui-button
+              look="outline"
+              label="Verwijderen"
+              @click=${this.onDeleteContent}
+            ></uui-button>
+          </div>
+        `;
+      } 
+
+      return html`
+        <uui-button 
+          class="w-100"
+          look="placeholder" 
+          label="Toevoegen"
+          @click=${this.openContentPicker}>
+          Toevoegen
+        </uui-button>
+      `;
+    }
+
+    return html`
+      <uui-input
+        ${ref(this.inputRef)}
+        .value=${this.url}
+        .placeholder=${this._selectedType.placeholder}
+        @input=${this._debouncedOnInput}
+      ></uui-input>
+    `;
+  }
 
   protected render(): unknown {
     return html`
@@ -144,12 +259,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
           ></uui-button>`
         )}
       </uui-button-group>
-      <uui-input
-        ${ref(this.inputRef)}
-        .value=${this.outgoingUrl}
-        .placeholder=${this._selectedType.placeholder}
-        @input=${this._debouncedOnInput}
-      ></uui-input>
+      ${this.renderOutgoingStrategy()}
     `;
   }
 
@@ -166,6 +276,16 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
       }
 
       uui-input {
+        width: 100%;
+      }
+
+      .content-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .w-100 {
         width: 100%;
       }
 
