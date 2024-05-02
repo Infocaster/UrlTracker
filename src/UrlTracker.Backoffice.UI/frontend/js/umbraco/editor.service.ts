@@ -9,6 +9,30 @@ export interface IEditorService<T extends any> {
   getEditors: () => IEditor[];
   open: (editor: ICustomEditor<T>) => void;
   submit: (value: T) => void;
+  contentPicker: (editor: IContentPicker) => void;
+}
+
+export interface IContentPicker {
+  multiPicker: boolean;
+  submit: (model: { selection: IContent[] }) => void;
+  close: () => void;
+}
+
+export interface IContent {
+  name: string;
+  id: number;
+  udi: string;
+  icon: string;
+  trashed: boolean;
+  key: string;
+  parentId: number;
+  alias: string;
+  path: string;
+  metaData: {
+    ContentTypeAlias: string;
+    IsPublished: boolean;
+    IsContainer: boolean;
+  };
 }
 
 export interface IContentEditor {
