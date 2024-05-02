@@ -13,13 +13,13 @@ export type RecommendationTypes =
   (typeof RECCOMENDATION_TYPES)[keyof typeof RECCOMENDATION_TYPES];
 
 export const calculateRecommendationType = (score: number) => {
-  if (score >= 1200) {
+  if (score >= 100) {
     return RECCOMENDATION_TYPES.VERY_IMPORTANT;
-  } else if (score >= 900) {
+  } else if (score >= 20) {
     return RECCOMENDATION_TYPES.IMPORTANT;
-  } else if (score >= 600) {
+  } else if (score >= 1) {
     return RECCOMENDATION_TYPES.MODERATELY_IMPORTANT;
-  } else if (score >= 300) {
+  } else if (score >= 0.05) {
     return RECCOMENDATION_TYPES.SLIGHTLY_IMPORTANT;
   } else {
     return RECCOMENDATION_TYPES.NOT_IMPORTANT;

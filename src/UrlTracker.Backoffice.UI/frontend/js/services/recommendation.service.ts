@@ -8,6 +8,7 @@ import { IPagedCollectionResponseBase } from "./models/PagedCollectionResponseBa
 import { IPaginationRequestBase } from "./models/paginationrequestbase";
 import { IQueryRequestBase } from "./models/queryrequestbase";
 import { IRecommendationFilterRequestBase } from "./models/recommendationfilterrequestbase";
+import { ScoringService } from "./scoring.service";
 
 interface IFlatRecommendationResponse {
   id: number;
@@ -61,7 +62,7 @@ export interface IRecommendationsService {
 }
 
 export class RecommendationsService implements IRecommendationsService {
-  constructor(private axios: Axios, private urlResource: IUrlResource) {}
+  constructor(private axios: Axios, private urlResource: IUrlResource, private scoringService: ScoringService) {}
 
   private get controller(): IControllerUrlResource {
     return this.urlResource.getController("recommendations");
@@ -78,9 +79,15 @@ export class RecommendationsService implements IRecommendationsService {
     );
 
     // normalize all dates into a date object so that we can use a consistent date api in the business logic
+    const results = await Promise.all(response.data.results.map(async (r) => {
+      const normalized = { ...r, updatedate: new Date(r.updatedate) }
+      const score = await this.scoringService.getScore(normalized)
+      return {...normalized, score}
+    }))
+    
     return {
       ...response.data,
-      results: response.data.results.map((r) => ({...r, updatedate: new Date(r.updatedate)}))
+      results: results
     };
   }
 
@@ -116,4 +123,4 @@ export class RecommendationsService implements IRecommendationsService {
   }
 }
 
-export default new RecommendationsService(axiosInstance, urlresource);
+export default new RecommendationsService(axiosInstance, urlresource, new ScoringService(axiosInstance, urlresource));

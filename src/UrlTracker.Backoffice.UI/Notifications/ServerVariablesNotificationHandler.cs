@@ -40,7 +40,7 @@ namespace UrlTracker.Web.Events
 
             Dictionary<string, string> recommendationAnalysisVariables = new()
             {
-                ["base"] = "/Umbraco/Backoffice/UrlTracker/RecommendationAnalysis/",
+                ["base"] = _linkGenerator.GetUmbracoApiServiceBaseUrl<RecommendationAnalysisController>(controller => controller.GetHistoryAsync(default, default))!,
                 ["getHistory"] = "GetHistory",
                 ["getReferrers"] = "GetReferrers"
             };
@@ -76,6 +76,13 @@ namespace UrlTracker.Web.Events
                 ["get"] = nameof(NotificationsController.Get)
             };
 
+            Dictionary<string, string> scoringVariables = new()
+            {
+                ["base"] = _linkGenerator.GetUmbracoApiServiceBaseUrl<ScoringController>(controller => controller.RedactionScores())!,
+                ["redactionScores"] = nameof(ScoringController.RedactionScores),
+                ["scoreParameters"] = nameof(ScoringController.ScoreParameters)
+            };
+
             Dictionary<string, string> redirectSourceStrategies = new()
             {
                 ["url"] = Core.Defaults.DatabaseSchema.RedirectSourceStrategies.Url.ToString(),
@@ -104,6 +111,7 @@ namespace UrlTracker.Web.Events
                 ["recommendationAnalysis"] = recommendationAnalysisVariables,
                 ["recommendationTypeStrategies"] = recommendationTypeStrategies,
                 ["notifications"] = notificationVariables,
+                ["scoring"] = scoringVariables,
                 ["redirects"] = redirectVariables,
                 ["redirectimport"] = redirectImportVariables,
                 ["redirectTarget"] = redirectTargetVariables,
