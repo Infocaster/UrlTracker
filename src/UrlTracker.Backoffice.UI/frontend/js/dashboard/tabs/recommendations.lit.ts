@@ -214,7 +214,6 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   }
 
   private submitNewRedirectPanel = async (value: IRedirectResponse) => {
-    console.info("submit new or update redirect", value);
     if (value.id) {
       await this._redirectService?.update(value);
     } else {

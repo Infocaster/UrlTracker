@@ -67,7 +67,8 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     },
   ] as ITypeButton[];
 
-  private contentItem: IContentTargetResponse | undefined = undefined;
+  private contentItem: IContentTargetResponse & { id: number } | undefined = undefined;
+  private url: string = "";
 
   @state()
   private _selectedType: ITypeButton = this._typeButtons[0];
@@ -83,15 +84,24 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
       (item) => item.value === this.outgoingStrategy
     ) ?? this._typeButtons.find((item) => item.value === variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url)!;
 
-    if(this.outgoingStrategy === variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content) {
-      let [id, culture] = this.outgoingUrl.split(";");
+    switch(this.outgoingStrategy) {
+      case variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content:
+        let [id, culture] = this.outgoingUrl.split(";");
+        const content = await this.redirectTargetService!.Content({
+          id: Number.parseInt(id, 10),
+          culture: culture,
+        });
 
-      this.contentItem = await this.redirectTargetService!.Content({
-        id: Number.parseInt(id),
-        culture: culture,
-      });
+        this.contentItem = {
+          ...content,
+          id: Number.parseInt(id, 10),
+        };
 
-      console.log(this.contentItem);
+        this.requestUpdate();
+        break;
+      case variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url:
+        this.url = this.outgoingUrl;
+        break;
     }
   }
 
@@ -132,12 +142,24 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
 
   private submitContentPicker = (model: { selection: IContent[] }) => {
     if(model.selection.length === 0) return this.editorService?.close();
-    this.contentItem = model.selection[0];;
-    this.requestUpdate();
+    this.contentItem = model.selection[0];
+
     this.editorService?.close();
+    this.onContentUpdate();
+    this.requestUpdate();
   }
 
-  private onInput = (e: UUIInputEvent) => {
+  private onContentUpdate = () => {
+    this.dispatchEvent(
+      new CustomEvent("input", {
+        detail: this.contentItem?.id,
+        bubbles: true,
+        composed: false,
+      })
+    );
+  }
+
+  private onInput = (e?: UUIInputEvent) => {
     this.dispatchEvent(
       new CustomEvent("input", {
         detail: this.inputRef.value?.shadowRoot?.querySelector('input')?.value ?? '',
@@ -151,6 +173,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
 
   private onTypeChange = (item: ITypeButton, e: Event) => {
     this._selectedType = item;
+    
     this.dispatchEvent(
       new CustomEvent("typechange", {
         detail: item,
@@ -158,19 +181,37 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
         composed: false,
       })
     );
+
+    switch(item.value) {
+      case variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content:
+        this.onContentUpdate();
+        this.url = '';
+        break;
+      case variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url:
+        this.onInput();
+        this.contentItem = undefined;
+        break;
+    }
   };
+
+  private onDeleteContent = () => {
+    this.contentItem = undefined;
+    this.requestUpdate();
+  }
 
   protected renderOutgoingStrategy(): unknown {
     if (this._selectedType.value === variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content) {
       if(this.contentItem) {
         return html`
           <div class="content-item">
-            <img src="${this.contentItem.icon}" alt="${this.contentItem.name}" />
-            <span>${this.contentItem.name}</span>
+            <div class="content-item-icon">
+              <uui-icon .name=${this.contentItem?.icon}></uui-icon> 
+              ${this.contentItem?.name}
+            </div>
             <uui-button
               look="outline"
               label="Verwijderen"
-              @click=${() => this.contentItem = undefined}
+              @click=${this.onDeleteContent}
             ></uui-button>
           </div>
         `;
@@ -190,7 +231,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     return html`
       <uui-input
         ${ref(this.inputRef)}
-        .value=${this.outgoingUrl}
+        .value=${this.url}
         .placeholder=${this._selectedType.placeholder}
         @input=${this._debouncedOnInput}
       ></uui-input>
@@ -236,6 +277,12 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
 
       uui-input {
         width: 100%;
+      }
+
+      .content-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
 
       .w-100 {
