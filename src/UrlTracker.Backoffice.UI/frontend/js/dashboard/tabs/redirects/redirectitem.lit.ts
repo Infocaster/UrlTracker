@@ -82,6 +82,15 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
   static styles = [
     ...RedirectListItem.styles,
     css`
+      :host {
+        transition: background-color 0.25s;
+      }
+
+      :host(:hover) {
+        background-color: var(--uui-color-surface-alt);
+        cursor: pointer;
+      }
+
       .target {
         line-height: 15px;
         font-size: 12px;

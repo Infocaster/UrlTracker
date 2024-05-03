@@ -178,6 +178,36 @@ export class UrlTrackerDashboardContent extends LitElement {
   }
 
   static styles = css`
+    [popover] {
+      position: fixed;
+      z-index: 2147483647;
+      inset: 0;
+      padding: 0.25em;
+      width: fit-content;
+      height: fit-content;
+      border: solid;
+      background: canvas;
+      color: canvastext;
+      overflow: auto;
+      margin: auto;
+    }
+    @supports not selector([popover]:open) {
+      [popover]:not(.\:popover-open, dialog[open]) {
+        display: none;
+      }
+      [anchor].\:popover-open {
+        inset: auto;
+      }
+    }
+    @supports not selector([popover]:popover-open) {
+      [popover]:not(.\:popover-open, dialog[open]) {
+        display: none;
+      }
+      [anchor].\:popover-open {
+        inset: auto;
+      }
+    }
+
     .dashboard {
       position: absolute;
       left: 0;

@@ -45,9 +45,16 @@ export function UrlTrackerNotificationWrapper<
       return this._localizationServiceConsumer.value;
     }
 
-    private async onNotificationClosed() {
-      console.log("Notification closed");
-      //@TODO: Implement notification closed logic
+    private async onNotificationClosed(event: CustomEvent<ITranslatedNotification>) {
+      const seenNotifications = localStorage.getItem("seenNotifications");
+      if (seenNotifications) {
+        const json = JSON.parse(seenNotifications);
+        json[event.detail.id] = true;
+        localStorage.setItem("seenNotifications", JSON.stringify(json));
+      } else {
+        const json = { [event.detail.id]: true };
+        localStorage.setItem("seenNotifications", JSON.stringify(json));
+      }
     }
 
     protected async updateNotifications(alias: string): Promise<void> {
@@ -75,7 +82,7 @@ export function UrlTrackerNotificationWrapper<
         ),
       ]);
 
-      this.notifications = {
+      const normalizedNotifications = {
         notifications: notifications.map<ITranslatedNotification>((n, i) => ({
           id: n.id,
           title: localizationService.tokenReplace(
@@ -88,6 +95,17 @@ export function UrlTrackerNotificationWrapper<
           ),
         })),
       };
+
+      const seenNotifications = localStorage.getItem("seenNotifications");
+
+      if (seenNotifications) {
+        const json = JSON.parse(seenNotifications);
+        normalizedNotifications.notifications = normalizedNotifications.notifications.filter(
+          (n) => !json[n.id]
+        );
+      }
+
+      this.notifications = normalizedNotifications;
     }
 
     connectedCallback(): void {

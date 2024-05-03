@@ -20,11 +20,11 @@ export class UrlTrackerNotificationCollection extends LitElement {
     }
 
     private handleClose() {
-        this.selectedNotification = null;
         if(this.notificationInterval) {
             clearInterval(this.notificationInterval);
         }
-        this.dispatchEvent(new CustomEvent('notification-closed', { bubbles: true }));
+        this.dispatchEvent(new CustomEvent('notification-closed', { bubbles: true, detail: this.selectedNotification }));
+        this.selectedNotification = null;
     }
 
     connectedCallback(): void {

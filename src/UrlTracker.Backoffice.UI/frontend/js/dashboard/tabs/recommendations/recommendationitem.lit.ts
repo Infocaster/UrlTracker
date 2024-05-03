@@ -160,6 +160,15 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   static styles = [
     ...RecommendationListItem.styles,
     css`
+      :host {
+        transition: background-color 0.25s;
+      }
+
+      :host(:hover) {
+        background-color: var(--uui-color-surface-alt);
+        cursor: pointer;
+      }
+
       .body {
         width: 100%;
       }
