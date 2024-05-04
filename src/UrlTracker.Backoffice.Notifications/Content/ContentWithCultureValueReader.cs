@@ -4,7 +4,7 @@ using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Extensions;
 using UrlTracker.Core;
 
-namespace UrlTracker.Backoffice.Notifications
+namespace UrlTracker.Backoffice.Notifications.Content
 {
     /// <summary>
     /// An implementation of <see cref="IContentValueReader"/> that reads content values based on a given culture

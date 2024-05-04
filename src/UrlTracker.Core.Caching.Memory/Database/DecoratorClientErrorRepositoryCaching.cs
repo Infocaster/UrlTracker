@@ -29,6 +29,11 @@ namespace UrlTracker.Core.Caching.Memory.Database
             _options = options;
         }
 
+        public Task CleanupAsync(DateTime upperDate)
+        {
+            return _decoratee.CleanupAsync(upperDate);
+        }
+
         public int Count(IQuery<IClientError> query)
         {
             return _decoratee.Count(query);

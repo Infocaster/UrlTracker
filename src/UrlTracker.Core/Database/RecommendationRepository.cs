@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NPoco;
 using Umbraco.Cms.Core.Cache;
@@ -108,13 +109,11 @@ namespace UrlTracker.Core.Database
             entity.ResetDirtyProperties();
         }
 
-        public RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationScoreParameters parameters, RecommendationOrderingOptions orderingOptions, RecommendationFilterOptions filterOptions)
+        private Sql<ISqlContext> SelectScore(Sql<ISqlContext> sql, RecommendationScoreParameters parameters, string? tableAlias, string? recommendationTableAlias)
         {
-            var sql = Sql()
-                .Select<RecommendationDto>("r")
-                .Append($", (@vf * {SqlSyntax.GetFieldName<RecommendationDto>(e => e.VariableScore, "r")}" +
+            return sql.Append($", (@vf * {SqlSyntax.GetFieldName<RecommendationDto>(e => e.VariableScore, tableAlias)}" +
                 $" + @rf * {SqlSyntax.GetFieldName<RedactionScoreDto>(e => e.Score, "s")})" +
-                $" * ({SqlSyntax.TimeFactorFunction(SqlSyntax.DaysDifference<RecommendationDto>(e => e.UpdateDate, "r"), "@tf")})" +
+                $" * ({SqlSyntax.TimeFactorFunction(SqlSyntax.DaysDifference<RecommendationDto>(e => e.UpdateDate, tableAlias), "@tf")})" +
                 $" AS orderscore"
                 , new
                 {
@@ -122,8 +121,24 @@ namespace UrlTracker.Core.Database
                     tf = parameters.TimeFactor,
                     rf = parameters.RedactionFactor
                 });
+        }
+
+        public RecommendationEntityCollection Get(uint page, uint pageSize, RecommendationScoreParameters parameters, RecommendationOrderingOptions orderingOptions, RecommendationFilterOptions filterOptions)
+        {
+            var sql = Sql()
+                .Select<RecommendationDto>("r");
+
+            if (orderingOptions.OrderBy == RecommendationOrderBy.Importance)
+            {
+                sql = SelectScore(sql, parameters, "r", "s");
+            }
+
             sql.From<RecommendationDto>("r");
-            sql.LeftJoin<RedactionScoreDto>("s").On<RecommendationDto, RedactionScoreDto>((le, re) => le.RecommendationStrategy == re.Id, "r", "s");
+
+            if (filterOptions.Types?.Any() is true || orderingOptions.OrderBy == RecommendationOrderBy.Importance)
+            {
+                sql.LeftJoin<RedactionScoreDto>("s").On<RecommendationDto, RedactionScoreDto>((le, re) => le.RecommendationStrategy == re.Id, "r", "s");
+            }
 
             if (filterOptions.Types?.Any() is true)
             {
@@ -153,6 +168,27 @@ namespace UrlTracker.Core.Database
         public void Clear()
         {
             Database.DeleteMany<RecommendationDto>().Execute();
+        }
+
+        public Task CleanupAsync(double upperScore, RecommendationScoreParameters parameters)
+        {
+            var selectQuery = Sql().Select<RecommendationDto>("t", e => e.Id).From("t", s =>
+            {
+                s.Select<RecommendationDto>("r", e => e.Id);
+
+                s = SelectScore(s, parameters, "r", "s");
+                s
+                    .From<RecommendationDto>("r")
+                    .LeftJoin<RedactionScoreDto>("s")
+                    .On<RecommendationDto, RedactionScoreDto>((le, re) => le.RecommendationStrategy == re.Id, "r", "s")
+                    .Where<RecommendationDto>(e => e.Ignore == false, "r");
+            })
+                .Where("[t].[orderscore] < @upperScore", new { upperScore });
+
+            var deleteQuery = Sql().Delete<RecommendationDto>()
+                .WhereIn<RecommendationDto>(e => e.Id, selectQuery);
+
+            return Database.ExecuteAsync(deleteQuery);
         }
     }
 }

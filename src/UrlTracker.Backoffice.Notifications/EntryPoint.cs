@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
+using UrlTracker.Backoffice.Notifications.Cleanup;
+using UrlTracker.Backoffice.Notifications.Content;
 using UrlTracker.Backoffice.Notifications.Options;
 
 namespace UrlTracker.Backoffice.Notifications
@@ -22,14 +24,31 @@ namespace UrlTracker.Backoffice.Notifications
         /// <returns>The umbraco dependency collection builder after all services are added</returns>
         public static IUmbracoBuilder ComposeUrlTrackerBackofficeNotifications(this IUmbracoBuilder builder)
         {
+            builder.ComposeContentHandling();
+            builder.ComposeCleanupHandling();
+            builder.ComposeConfigurations();
+
+            return builder;
+        }
+
+        private static IUmbracoBuilder ComposeCleanupHandling(this IUmbracoBuilder builder)
+        {
+            builder.Services.AddSingleton<CleanupQueue>();
+            builder.Services.AddSingleton<ICleanupProcessor, CleanupProcessor>();
+            builder.Services.AddHostedService<CleanupWorker>();
+            builder.Services.AddHostedService<CleanupScheduler>();
+
+            return builder;
+        }
+
+        private static IUmbracoBuilder ComposeContentHandling(this IUmbracoBuilder builder)
+        {
             builder.Services.AddSingleton<IContentValueReaderFactory, ContentValueReaderFactory>();
 
             builder.AddNotificationAsyncHandler<ContentMovingNotification, ContentChangeNotificationHandler>();
             builder.AddNotificationAsyncHandler<ContentMovedNotification, ContentChangeNotificationHandler>();
             builder.AddNotificationAsyncHandler<ContentPublishingNotification, ContentChangeNotificationHandler>();
             builder.AddNotificationAsyncHandler<ContentPublishedNotification, ContentChangeNotificationHandler>();
-
-            builder.ComposeConfigurations();
 
             return builder;
         }

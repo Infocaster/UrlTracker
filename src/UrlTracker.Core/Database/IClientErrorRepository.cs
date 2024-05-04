@@ -20,5 +20,6 @@ namespace UrlTracker.Core.Database
         Task<IEnumerable<ReferrerResponse>> GetReferrersByClientIdAsync(int id);
         Task<IEnumerable<DailyClientErrorResponse>> GetDailyClientErrorInRangeAsync(int clientError, DateTime start, DateTime end);
         Task<IReadOnlyCollection<IClientErrorMetaData>> GetMetaDataAsync(params int[] clientErrors);
+        Task CleanupAsync(DateTime upperDate);
     }
 }

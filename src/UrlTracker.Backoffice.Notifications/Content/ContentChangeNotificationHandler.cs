@@ -19,7 +19,7 @@ using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Models;
 
-namespace UrlTracker.Backoffice.Notifications
+namespace UrlTracker.Backoffice.Notifications.Content
 {
     // ToDo: Make this logic testable
     /// <summary>

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Umbraco.Cms.Core.Models;
 
-namespace UrlTracker.Backoffice.Notifications
+namespace UrlTracker.Backoffice.Notifications.Content
 {
     /// <summary>
     /// When implemented, this type produces instances of <see cref="IContentValueReader"/> to help read relevant values from content

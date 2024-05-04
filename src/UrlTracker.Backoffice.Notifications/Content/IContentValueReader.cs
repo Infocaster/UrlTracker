@@ -1,6 +1,6 @@
 ﻿using Umbraco.Cms.Core.Models.PublishedContent;
 
-namespace UrlTracker.Backoffice.Notifications
+namespace UrlTracker.Backoffice.Notifications.Content
 {
     /// <summary>
     /// When implemented, this type provides helper methods to read content values from content objects

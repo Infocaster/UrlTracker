@@ -4,7 +4,7 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Extensions;
 
-namespace UrlTracker.Backoffice.Notifications
+namespace UrlTracker.Backoffice.Notifications.Content
 {
     /// <summary>
     /// An implementation of <see cref="IContentValueReaderFactory" /> that produces content value readers based on content culture properties

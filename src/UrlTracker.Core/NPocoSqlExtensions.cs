@@ -14,7 +14,7 @@ namespace UrlTracker.Core
     [ExcludeFromCodeCoverage]
     public static class NPocoSqlExtensions
     {
-        public static string DaysDifference<TDto>(this ISqlSyntaxProvider syntaxProvider, Expression<Func<TDto, object?>> field, string tableAlias = null)
+        public static string DaysDifference<TDto>(this ISqlSyntaxProvider syntaxProvider, Expression<Func<TDto, object?>> field, string? tableAlias = null)
         {
             var fieldName = syntaxProvider.GetFieldName(field, tableAlias);
             string template = syntaxProvider.ProviderName switch

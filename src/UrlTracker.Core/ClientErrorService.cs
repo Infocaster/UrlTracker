@@ -26,6 +26,7 @@ namespace UrlTracker.Core
         Task ReportAsync(string url, DateTime moment, string? referrer);
         Task<IEnumerable<ReferrerResponse>> GetClientErrorReferrersAsync(int id);
         Task<IEnumerable<DailyClientErrorResponse>> GetInRangeAsync(int id, DateTime start, DateTime end);
+        Task CleanupAsync(DateTime upperDate);
     }
 
     public class ClientErrorService
@@ -190,6 +191,15 @@ namespace UrlTracker.Core
 
             var referrers = await _clientErrorRepository.GetReferrersByClientIdAsync(id);
             return referrers;
+        }
+
+        public async Task CleanupAsync(DateTime upperDate)
+        {
+            using var scope = _scopeProvider.CreateScope();
+
+            await _clientErrorRepository.CleanupAsync(upperDate);
+
+            scope.Complete();
         }
     }
 }

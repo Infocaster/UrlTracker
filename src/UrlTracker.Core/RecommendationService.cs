@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
@@ -9,6 +10,7 @@ namespace UrlTracker.Core
 {
     public interface IRecommendationService
     {
+        Task CleanupAsync(double upperScore);
         void Clear();
         int Count(DateTime? startDate, DateTime? endDate, Guid[]? recommendationTypes);
         IRecommendation Create(string url, IRedactionScore score);
@@ -119,7 +121,18 @@ namespace UrlTracker.Core
 
         public void Delete(IRecommendation recommendation)
         {
+            using var scope = _scopeProvider.CreateScope();
             _recommendationRepository.Delete(recommendation);
+
+            scope.Complete();
+        }
+
+        public async Task CleanupAsync(double upperScore)
+        {
+            using var scope = _scopeProvider.CreateScope();
+            await _recommendationRepository.CleanupAsync(upperScore, Defaults.Parameters.ScoreParameters);
+
+            scope.Complete();
         }
     }
 }

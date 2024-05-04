@@ -275,5 +275,33 @@ namespace UrlTracker.Core.Database
 
             return dtos.Select(ClientErrorFactory.BuildEntity).ToList();
         }
+
+        public async Task CleanupAsync(DateTime upperDate)
+        {
+            // Delete old registrations
+            await Database.DeleteManyAsync<ClientError2ReferrerDto>()
+                .Where(e => e.CreateDate < upperDate)
+                .Execute();
+
+            // Delete unused referrers
+            var deleteReferrersQuery = Sql()
+                .Delete<ReferrerDto>()
+                .WhereNotIn<ReferrerDto>(e => e.Id,
+                    Sql()
+                    .Select<ClientError2ReferrerDto>(e => e.Referrer)
+                    .From<ClientError2ReferrerDto>());
+
+            await Database.ExecuteAsync(deleteReferrersQuery);
+
+            // Delete unreferred client errors
+            var deleteClientErrorsQuery = Sql()
+                .Delete<ClientErrorDto>()
+                .WhereNotIn<ClientErrorDto>(e => e.Id,
+                    Sql()
+                    .Select<ClientError2ReferrerDto>(e => e.ClientError)
+                    .From<ClientError2ReferrerDto>());
+
+            await Database.ExecuteAsync(deleteClientErrorsQuery);
+        }
     }
 }
