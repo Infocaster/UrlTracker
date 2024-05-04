@@ -9,6 +9,7 @@ using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Models;
 using UrlTracker.Core.Validation;
+using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Resources.Testing.Objects;
 
@@ -26,7 +27,7 @@ namespace UrlTracker.Core.Tests
         public void SetUp()
         {
             _redirectRepositoryMock = new Mock<IRedirectRepository>();
-            _mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<ICoreScopeProvider>());
+            _mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<ICoreScopeProvider>(), new VoidLogger<UmbracoMapper>());
             _validationHelperMock = new Mock<IValidationHelper>();
             _scopeProviderMock = new ScopeProviderMock();
             _testSubject = new RedirectService(_redirectRepositoryMock.Object,
@@ -40,7 +41,7 @@ namespace UrlTracker.Core.Tests
             return new IMapDefinition[]
             {
                 TestMapDefinition.CreateTestMap<Core.Database.Entities.RedirectEntityCollection, RedirectCollection>(RedirectCollection.Create(Enumerable.Empty<Redirect>())),
-                TestMapDefinition.CreateTestMap<Redirect, IRedirect>(new RedirectEntity(default, default, default, default, default)),
+                TestMapDefinition.CreateTestMap<Redirect, IRedirect>(new RedirectEntity(default, default, default, default!, default!)),
                 TestMapDefinition.CreateTestMap<IRedirect, Redirect>(new Redirect())
             };
         }

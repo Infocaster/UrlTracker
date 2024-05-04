@@ -7,6 +7,7 @@ using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Models;
 using UrlTracker.Core.Validation;
+using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Resources.Testing.Objects;
 
@@ -27,7 +28,7 @@ namespace UrlTracker.Core.Tests
             _clientErrorRepositoryMock = new Mock<IClientErrorRepository>();
             _referrerRepositoryMock = new Mock<IReferrerRepository>();
             _validationHelperMock = new Mock<IValidationHelper>();
-            _mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<ICoreScopeProvider>());
+            _mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<ICoreScopeProvider>(), new VoidLogger<UmbracoMapper>());
             _scopeProviderMock = new ScopeProviderMock();
             _testSubject = new ClientErrorService(_clientErrorRepositoryMock.Object, _referrerRepositoryMock.Object, _validationHelperMock.Object, _mapper, _scopeProviderMock.Provider);
         }

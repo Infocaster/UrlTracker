@@ -8,6 +8,7 @@ using Umbraco.Cms.Core.Scoping;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Map;
 using UrlTracker.Core.Models;
+using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Resources.Testing.Objects;
 
@@ -35,7 +36,7 @@ namespace UrlTracker.Core.Tests.Map
             _strategyMapCollectionMock.Setup(obj => obj.Map<ITargetStrategy>(It.IsAny<EntityStrategy>())).Returns(new ContentPageTargetStrategy(TestPublishedContent.Create(1234), "en-US"));
             _umbracoContextFactoryAbstractionMock = new UmbracoContextFactoryAbstractionMock();
             _umbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => TestPublishedContent.Create(id));
-            _mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<ICoreScopeProvider>());
+            _mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<ICoreScopeProvider>(), new VoidLogger<UmbracoMapper>());
         }
 
         [TestCase(TestName = "Map IRedirect to Redirect")]

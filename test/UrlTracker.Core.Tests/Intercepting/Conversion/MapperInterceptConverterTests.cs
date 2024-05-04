@@ -6,6 +6,7 @@ using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Core.Scoping;
 using UrlTracker.Core.Intercepting.Conversion;
 using UrlTracker.Core.Intercepting.Models;
+using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Resources.Testing.Objects;
 
 namespace UrlTracker.Core.Tests.Intercepting.Conversion
@@ -27,7 +28,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Conversion
         [SetUp]
         public void SetUp()
         {
-            _mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<ICoreScopeProvider>());
+            _mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<ICoreScopeProvider>(), new VoidLogger<UmbracoMapper>());
             _testSubject = new MapperInterceptConverter<TestResponseIntercept1, TestResponseIntercept2>(_mapper);
         }
 
