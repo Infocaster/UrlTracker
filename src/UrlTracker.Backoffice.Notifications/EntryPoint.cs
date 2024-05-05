@@ -5,6 +5,7 @@ using Umbraco.Cms.Core.Notifications;
 using UrlTracker.Backoffice.Notifications.Cleanup;
 using UrlTracker.Backoffice.Notifications.Content;
 using UrlTracker.Backoffice.Notifications.Options;
+using UrlTracker.Modules.Options;
 
 namespace UrlTracker.Backoffice.Notifications
 {
@@ -27,6 +28,8 @@ namespace UrlTracker.Backoffice.Notifications
             builder.ComposeContentHandling();
             builder.ComposeCleanupHandling();
             builder.ComposeConfigurations();
+
+            builder.Services.AddUrlTrackerModule("Backoffice notifications");
 
             return builder;
         }
@@ -59,7 +62,6 @@ namespace UrlTracker.Backoffice.Notifications
                             .Bind(builder.Config.GetSection(Defaults.Options.Section))
                             .ValidateDataAnnotations();
 
-            builder.Services.ConfigureOptions<LegacyOptionsConfiguration>();
             return builder;
         }
     }

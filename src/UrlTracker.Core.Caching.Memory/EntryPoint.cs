@@ -14,6 +14,7 @@ using UrlTracker.Core.Caching.Memory.Options;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Domain;
 using UrlTracker.Core.Intercepting;
+using UrlTracker.Modules.Options;
 
 namespace UrlTracker.Core.Caching.Memory
 {
@@ -59,6 +60,8 @@ namespace UrlTracker.Core.Caching.Memory
 
             builder.ComposeNotificationHandlers()
                 .ComposeConfigurations();
+
+            builder.Services.AddUrlTrackerModule("Core in-memory cache");
 
             return builder;
         }

@@ -7,6 +7,7 @@ using UrlTracker.Backoffice.UI.Controllers;
 using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
 using UrlTracker.Backoffice.UI.Map;
 using UrlTracker.Backoffice.UI.UserNotifications;
+using UrlTracker.Modules.Options;
 using UrlTracker.Web.Events;
 
 namespace UrlTracker.Backoffice.UI
@@ -58,6 +59,8 @@ namespace UrlTracker.Backoffice.UI
                     manager.FeatureProviders.Add(new UrlTrackerControllerFeatureProvider());
                 });
             });
+
+            builder.Services.AddUrlTrackerModule("Backoffice user interface");
 
             return builder;
         }

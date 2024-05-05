@@ -4,6 +4,7 @@ using Umbraco.Cms.Core.DependencyInjection;
 using UrlTracker.Middleware.Background;
 using UrlTracker.Middleware.Options;
 using UrlTracker.Middleware.Processing;
+using UrlTracker.Modules.Options;
 using UrlTracker.Web;
 using UrlTracker.Web.Processing;
 
@@ -38,6 +39,8 @@ namespace UrlTracker.Middleware
             builder.Services.AddSingleton<IClientErrorProcessorQueue, ClientErrorProcessorQueue>();
             builder.Services.AddHostedService<ClientErrorProcessor>();
 
+            builder.Services.AddUrlTrackerModule("Middleware");
+
             return builder;
         }
 
@@ -47,7 +50,6 @@ namespace UrlTracker.Middleware
                             .Bind(builder.Config.GetSection(Defaults.Options.Section))
                             .ValidateDataAnnotations();
 
-            builder.Services.ConfigureOptions<LegacyOptionsConfiguration>();
             return builder;
         }
     }

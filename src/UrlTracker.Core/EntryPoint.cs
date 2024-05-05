@@ -18,6 +18,7 @@ using UrlTracker.Core.Logging;
 using UrlTracker.Core.Map;
 using UrlTracker.Core.Models;
 using UrlTracker.Core.Validation;
+using UrlTracker.Modules.Options;
 
 namespace UrlTracker.Core
 {
@@ -66,6 +67,8 @@ namespace UrlTracker.Core
             builder.Services.AddSingleton<IInterceptorCollection>(factory => factory.GetRequiredService<InterceptorCollection>());
             builder.Services.AddSingleton<IInterceptConverterCollection>(factory => factory.GetRequiredService<InterceptConverterCollection>());
             builder.Services.AddSingleton<IUrlClassifierStrategyCollection>(factory => factory.GetRequiredService<UrlClassifierStrategyCollection>());
+
+            builder.Services.AddUrlTrackerModule("Core services");
 
             return builder;
         }
@@ -140,7 +143,6 @@ namespace UrlTracker.Core
                             .Bind(builder.Config.GetSection(Defaults.Options.UrlTrackerSection))
                             .ValidateDataAnnotations();
 
-            builder.Services.ConfigureOptions<LegacyOptionsConfiguration>();
             return builder;
         }
 

@@ -29,9 +29,6 @@ export class DashboardFooter extends LitElement {
       margin-right: 1rem;
     }
 
-    .url-tracker__footer__version {
-    }
-
     .url-tracker__footer__links {
       flex: 1;
       margin-right: 2rem;

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.DependencyInjection;
+using UrlTracker.Modules.Options;
 using UrlTracker.Web.Abstraction;
 using UrlTracker.Web.Configuration;
 using UrlTracker.Web.Processing;
@@ -34,6 +35,8 @@ namespace UrlTracker.Web
             builder.Services.AddSingleton<IRequestInterceptFilterCollection>(factory => factory.GetRequiredService<RequestInterceptFilterCollection>());
             builder.Services.AddSingleton<IClientErrorFilterCollection>(factory => factory.GetRequiredService<ClientErrorFilterCollection>());
             builder.Services.AddSingleton<IReservedPathSettingsProvider, ReservedPathSettingsProvider>();
+
+            builder.Services.AddUrlTrackerModule("Http services");
 
             return builder;
         }
