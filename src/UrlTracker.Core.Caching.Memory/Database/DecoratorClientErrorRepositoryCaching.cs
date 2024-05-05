@@ -69,9 +69,9 @@ namespace UrlTracker.Core.Caching.Memory.Database
             return _decoratee.GetAsync(skip, take, query, order, descending);
         }
 
-        public Task<IReadOnlyCollection<IClientError>> GetAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
+        public Task<IReadOnlyCollection<IClientError>> GetAsync(IEnumerable<string> urlsAndPaths)
         {
-            return _decoratee.GetAsync(urlsAndPaths, rootNodeId, culture);
+            return _decoratee.GetAsync(urlsAndPaths);
         }
 
         public Task<IEnumerable<DailyClientErrorResponse>> GetDailyClientErrorInRangeAsync(int clientError, DateTime start, DateTime end)
@@ -89,11 +89,11 @@ namespace UrlTracker.Core.Caching.Memory.Database
             return _decoratee.GetMetaDataAsync(clientErrors);
         }
 
-        public Task<IReadOnlyCollection<IClientError>> GetNoLongerExistsAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
+        public Task<IReadOnlyCollection<IClientError>> GetNoLongerExistsAsync(IEnumerable<string> urlsAndPaths)
         {
             return _options.Value.EnableActiveCache
                 ? Task.FromResult(_cacheAccessor.GetNoLongerExists(urlsAndPaths))
-                : _decoratee.GetNoLongerExistsAsync(urlsAndPaths, rootNodeId, culture);
+                : _decoratee.GetNoLongerExistsAsync(urlsAndPaths);
         }
 
         public Task<IEnumerable<ReferrerResponse>> GetReferrersByClientIdAsync(int id)

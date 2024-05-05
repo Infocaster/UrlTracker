@@ -37,14 +37,14 @@ namespace UrlTracker.Core.Database
         { }
 
         #region Old implementation
-        public Task<IReadOnlyCollection<IClientError>> GetAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
+        public Task<IReadOnlyCollection<IClientError>> GetAsync(IEnumerable<string> urlsAndPaths)
         {
             IQuery<IClientError> query = SqlContext.Query<IClientError>().Where(e => urlsAndPaths.Contains(e.Url));
             var results = Get(query);
             return Task.FromResult<IReadOnlyCollection<IClientError>>(results.ToList());
         }
 
-        public Task<IReadOnlyCollection<IClientError>> GetNoLongerExistsAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
+        public Task<IReadOnlyCollection<IClientError>> GetNoLongerExistsAsync(IEnumerable<string> urlsAndPaths)
         {
             IQuery<IClientError> query = SqlContext.Query<IClientError>()
                 .Where(e => e.Strategy == Defaults.DatabaseSchema.ClientErrorStrategies.NoLongerExists)

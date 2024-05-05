@@ -14,7 +14,7 @@ namespace UrlTracker.Core.Tests
         {
             // arrange
             const string inputUrl = "https://urltracker.ic/";
-            _clientErrorRepositoryMock.Setup(obj => obj.GetAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<string?>()))
+            _clientErrorRepositoryMock.Setup(obj => obj.GetAsync(It.IsAny<IEnumerable<string>>()))
                                      .ReturnsAsync(Array.Empty<IClientError>());
             _clientErrorRepositoryMock.Setup(obj => obj.Save(It.Is<IClientError>(e => e.Url == inputUrl)))
                                      .Verifiable();
@@ -31,7 +31,7 @@ namespace UrlTracker.Core.Tests
         {
             // arrange
             const string inputUrl = "https://urltracker.ic/";
-            _clientErrorRepositoryMock.Setup(obj => obj.GetAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<string?>()))
+            _clientErrorRepositoryMock.Setup(obj => obj.GetAsync(It.IsAny<IEnumerable<string>>()))
                                      .ReturnsAsync(new[] { new ClientErrorEntity(inputUrl, true, Defaults.DatabaseSchema.ClientErrorStrategies.NotFound) });
 
             // act
@@ -47,7 +47,7 @@ namespace UrlTracker.Core.Tests
             // arrange
             const string inputUrl = "https://urltracker.ic/";
             const string inputReferrer = "https://urltracker.ic/lorem";
-            _clientErrorRepositoryMock.Setup(obj => obj.GetAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<string?>()))
+            _clientErrorRepositoryMock.Setup(obj => obj.GetAsync(It.IsAny<IEnumerable<string>>()))
                                      .ReturnsAsync(new[] { new ClientErrorEntity(inputUrl, false, Defaults.DatabaseSchema.ClientErrorStrategies.NotFound) });
             _referrerRepositoryMock.Setup(obj => obj.Get(inputReferrer)).Returns((string _) => null);
             _referrerRepositoryMock.Setup(obj => obj.Save(It.IsAny<IReferrer>())).Verifiable();
@@ -65,7 +65,7 @@ namespace UrlTracker.Core.Tests
             // arrange
             const string inputUrl = "https://urltracker.ic/";
             const string inputReferrer = "https://urltracker.ic/lorem";
-            _clientErrorRepositoryMock.Setup(obj => obj.GetAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<string?>()))
+            _clientErrorRepositoryMock.Setup(obj => obj.GetAsync(It.IsAny<IEnumerable<string>>()))
                                      .ReturnsAsync(new[] { new ClientErrorEntity(inputUrl, false, Defaults.DatabaseSchema.ClientErrorStrategies.NotFound) });
             _referrerRepositoryMock.Setup(obj => obj.Get(inputReferrer))
                                   .Returns(new ReferrerEntity(inputReferrer));

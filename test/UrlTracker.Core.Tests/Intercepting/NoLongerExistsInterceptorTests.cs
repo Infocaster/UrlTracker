@@ -40,7 +40,7 @@ namespace UrlTracker.Core.Tests.Intercepting
         public async Task InterceptAsync_NormalFlow_ReturnsResult(IClientError[] output, IClientError expected)
         {
             // arrange
-            _clientErrorRepositoryMock!.Setup(obj => obj.GetNoLongerExistsAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<int?>(), It.IsAny<string?>()))
+            _clientErrorRepositoryMock!.Setup(obj => obj.GetNoLongerExistsAsync(It.IsAny<IEnumerable<string>>()))
                                      .ReturnsAsync(output);
 
             // act
