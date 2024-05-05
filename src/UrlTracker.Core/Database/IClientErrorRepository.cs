@@ -12,8 +12,6 @@ namespace UrlTracker.Core.Database
     public interface IClientErrorRepository
         : IReadWriteQueryRepository<int, IClientError>
     {
-        Task<int> CountAsync(DateTime start, DateTime end);
-        Task<ClientErrorEntityCollection> GetAsync(uint skip, uint take, string? query, OrderBy order, bool descending);
         Task<IReadOnlyCollection<IClientError>> GetAsync(IEnumerable<string> urlsAndPaths);
         Task<IReadOnlyCollection<IClientError>> GetNoLongerExistsAsync(IEnumerable<string> urlsAndPaths);
         void Report(IClientError clientError, DateTime moment, IReferrer? referrer);

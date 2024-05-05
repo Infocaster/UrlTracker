@@ -39,11 +39,6 @@ namespace UrlTracker.Core.Caching.Memory.Database
             return _decoratee.Count(query);
         }
 
-        public Task<int> CountAsync(DateTime start, DateTime end)
-        {
-            return _decoratee.CountAsync(start, end);
-        }
-
         public void Delete(IClientError entity)
         {
             _decoratee.Delete(entity);
@@ -62,11 +57,6 @@ namespace UrlTracker.Core.Caching.Memory.Database
         public IEnumerable<IClientError> Get(IQuery<IClientError> query)
         {
             return _decoratee.Get(query);
-        }
-
-        public Task<ClientErrorEntityCollection> GetAsync(uint skip, uint take, string? query, OrderBy order, bool descending)
-        {
-            return _decoratee.GetAsync(skip, take, query, order, descending);
         }
 
         public Task<IReadOnlyCollection<IClientError>> GetAsync(IEnumerable<string> urlsAndPaths)

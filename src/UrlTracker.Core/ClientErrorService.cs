@@ -17,12 +17,7 @@ namespace UrlTracker.Core
     public interface IClientErrorService
     {
         Task<ClientError> AddAsync(ClientError ClientError);
-        Task<int> CountAsync(DateTime? start, DateTime? end);
-        Task DeleteAsync(ClientError ClientError);
-        Task<Models.ClientErrorCollection> GetAsync(uint skip, uint take, string? query, OrderBy orderBy, bool descending);
-        Task<ClientError?> GetAsync(int id);
         Task<ClientError?> GetAsync(string url);
-        Task UpdateAsync(ClientError ClientError);
         Task ReportAsync(string url, DateTime moment, string? referrer);
         Task<IEnumerable<ReferrerResponse>> GetClientErrorReferrersAsync(int id);
         Task<IEnumerable<DailyClientErrorResponse>> GetInRangeAsync(int id, DateTime start, DateTime end);
@@ -51,13 +46,6 @@ namespace UrlTracker.Core
             _scopeProvider = scopeProvider;
         }
 
-        [ExcludeFromCodeCoverage]
-        public Task<int> CountAsync(DateTime? start, DateTime? end)
-        {
-            using var scope = _scopeProvider.CreateScope(autoComplete: true);
-            return _clientErrorRepository.CountAsync(start ?? Defaults.Parameters.StartDate, end ?? Defaults.Parameters.EndDate);
-        }
-
         public Task<ClientError> AddAsync(ClientError clientError)
         {
             if (clientError is null) throw new ArgumentNullException(nameof(clientError));
@@ -76,63 +64,6 @@ namespace UrlTracker.Core
         }
 
         [ExcludeFromCodeCoverage]
-        public async Task<Models.ClientErrorCollection> GetAsync(uint skip, uint take, string? query, OrderBy orderBy, bool descending)
-        {
-            using var scope = _scopeProvider.CreateScope(autoComplete: true);
-
-            var urlTrackerClientErrors = await _clientErrorRepository.GetAsync(skip, take, query, orderBy, descending);
-            IReadOnlyCollection<IClientErrorMetaData>? metadata = null;
-            if (urlTrackerClientErrors.Elements.Count > 0)
-            {
-                metadata = await _clientErrorRepository.GetMetaDataAsync(urlTrackerClientErrors.Elements.Select(e => e.Id).ToArray());
-            }
-
-            Models.ClientErrorCollection result = CreateCollection(urlTrackerClientErrors, metadata);
-            return result;
-        }
-
-        private static ClientErrorCollection CreateCollection(ClientErrorEntityCollection urlTrackerClientErrors, IReadOnlyCollection<IClientErrorMetaData>? metadata)
-        {
-            return ClientErrorCollection.Create(urlTrackerClientErrors.Select(e => new ClientError(e, metadata?.FirstOrDefault(md => md.ClientError == e.Id))), urlTrackerClientErrors.Total);
-        }
-
-        [ExcludeFromCodeCoverage]
-        public Task DeleteAsync(ClientError ClientError)
-        {
-            var entity = _mapper.Map<IClientError>(ClientError)!;
-
-            using var scope = _scopeProvider.CreateScope();
-            _clientErrorRepository.Delete(entity);
-
-            scope.Complete();
-            return Task.CompletedTask;
-        }
-
-        [ExcludeFromCodeCoverage]
-        public async Task<ClientError?> GetAsync(int id)
-        {
-            using var scope = _scopeProvider.CreateScope(autoComplete: true);
-            var result = _clientErrorRepository.Get(id);
-            if (result is null) return null;
-
-            var metaData = await _clientErrorRepository.GetMetaDataAsync(result.Id);
-
-            return new ClientError(result, metaData.FirstOrDefault(md => md.ClientError == result.Id));
-        }
-
-        [ExcludeFromCodeCoverage]
-        public Task UpdateAsync(ClientError clientError)
-        {
-            var entry = _mapper.Map<IClientError>(clientError)!;
-
-            using var scope = _scopeProvider.CreateScope();
-            _clientErrorRepository.Save(entry);
-
-            scope.Complete();
-            return Task.CompletedTask;
-        }
-
-        [ExcludeFromCodeCoverage]
         public async Task<ClientError?> GetAsync(string url)
         {
             using var scope = _scopeProvider.CreateScope(autoComplete: true);
@@ -145,7 +76,6 @@ namespace UrlTracker.Core
             var metaData = await _clientErrorRepository.GetMetaDataAsync(entity.Id);
             return new ClientError(entity, metaData.FirstOrDefault(md => md.ClientError == entity.Id));
         }
-
 
         public Task<IEnumerable<DailyClientErrorResponse>> GetInRangeAsync(int id, DateTime start, DateTime end)
         {

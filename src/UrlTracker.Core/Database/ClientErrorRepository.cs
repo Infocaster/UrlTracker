@@ -52,59 +52,6 @@ namespace UrlTracker.Core.Database
             var results = Get(query);
             return Task.FromResult<IReadOnlyCollection<IClientError>>(results.ToList());
         }
-
-        public Task<int> CountAsync(DateTime start, DateTime end)
-        {
-            var query = Sql().SelectCount()
-                             .From<ClientError2ReferrerDto>()
-                             .Where<ClientError2ReferrerDto>(e => e.CreateDate >= start && e.CreateDate <= end);
-
-            return Database.ExecuteScalarAsync<int>(query);
-        }
-
-        public async Task<ClientErrorEntityCollection> GetAsync(uint skip, uint take, string? query, OrderBy order, bool descending)
-        {
-            var countQuery = Sql()
-                .SelectCount()
-                .From<ClientErrorDto>()
-                .Where<ClientErrorDto>(e => e.Ignored == false);
-
-            if (query is not null)
-            {
-                countQuery.Where<ClientErrorDto>(e => e.Url.Contains(query));
-            }
-
-            Task<int> totalRecordsTask = Database.ExecuteScalarAsync<int>(countQuery);
-
-            var aggregateQuery = Sql()
-                .Select<ClientError2ReferrerDto>(e => e.ClientError)
-                .AndSelectCount(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences)
-                .AndSelectMax<ClientError2ReferrerDto>(Defaults.DatabaseSchema.AggregateColumns.MostRecentOccurrence, null, e => e.CreateDate)
-                .From<ClientError2ReferrerDto>()
-                .GroupBy<ClientError2ReferrerDto>(e => e.ClientError)
-                ;
-
-            var selectQuery = Sql()
-                .Select<ClientErrorDto>("c")
-                .From<ClientErrorDto>("c")
-                .LeftJoin(aggregateQuery, "cr").On<ClientError2ReferrerDto, ClientErrorDto>((l, r) => l.ClientError == r.Id, "cr", "c")
-                .Where<ClientErrorDto>(e => e.Ignored == false, "c");
-            if (query is not null)
-            {
-                selectQuery.Where<ClientErrorDto>(e => e.Url.Contains(query), "c");
-            }
-            string orderParameter = order switch
-            {
-                OrderBy.LastOccurrence or
-                OrderBy.Created => SqlSyntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.MostRecentOccurrence),
-                OrderBy.Occurrences => SqlSyntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences),
-                _ => throw new ArgumentOutOfRangeException(nameof(order)),
-            };
-            selectQuery = selectQuery.GenericOrderBy(descending, orderParameter);
-            var dtos = await Database.SkipTakeAsync<ClientErrorDto>(skip, take, selectQuery).ConfigureAwait(false);
-
-            return ClientErrorEntityCollection.Create(dtos.Select(ClientErrorFactory.BuildEntity), await totalRecordsTask);
-        }
         #endregion
 
         public override void Delete(IClientError entity)
