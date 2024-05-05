@@ -22,12 +22,16 @@ export interface IRedirectResponse {
     key: string;
 }
 
+export interface ISolvedRecommendationRequest {
+    solvedRecommendation?: number
+}
+
 export type IRedirectCollectionResponse = IPagedCollectionResponseBase<IRedirectResponse>;
 export type IListRedirectRequest = IPaginationRequestBase & IRedirectFilterRequestBase & IQueryRequestBase;
 
 export interface IRedirectService {
     list: (request: IListRedirectRequest) => Promise<IRedirectCollectionResponse>;
-    create: (request: IRedirectResponse) => Promise<IRedirectResponse>;
+    create: (request: IRedirectResponse & ISolvedRecommendationRequest) => Promise<IRedirectResponse>;
     update: (request: IRedirectResponse) => Promise<IRedirectResponse>;
     delete: (id: number) => Promise<void>;
     updateBulk: (request: IRedirectResponse[]) => Promise<IRedirectResponse[]>;
@@ -51,7 +55,7 @@ export class RedirectService implements IRedirectService {
         return response.data;
     }
 
-    public async create(request: IRedirectResponse): Promise<IRedirectResponse> {
+    public async create(request: IRedirectResponse & ISolvedRecommendationRequest): Promise<IRedirectResponse> {
         let response = await this.axios.post<IRedirectResponse>(this.controller.getUrl('create'), request);
         return response.data;
     }

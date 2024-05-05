@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Backoffice.UI.Controllers.Models.Redirects;
+using UrlTracker.Core;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
 
@@ -11,7 +12,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
 {
     internal interface IRedirectRequestHandler
     {
-        RedirectResponse Create(RedirectRequest request);
+        RedirectResponse? Create(CreateRedirectRequest request);
         RedirectResponse? Delete(int id);
         void DeleteBulk(int[] ids);
         RedirectResponse? GetById(int id);
@@ -24,12 +25,18 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
     internal class RedirectRequestHandler : IRedirectRequestHandler
     {
         private readonly IRedirectRepository _redirectRepository;
+        private readonly IRecommendationService _recommendationService;
         private readonly IScopeProvider _scopeProvider;
         private readonly IUmbracoMapper _mapper;
 
-        public RedirectRequestHandler(IRedirectRepository redirectRepository, IScopeProvider scopeProvider, IUmbracoMapper mapper)
+        public RedirectRequestHandler(
+            IRedirectRepository redirectRepository,
+            IRecommendationService recommendationService,
+            IScopeProvider scopeProvider,
+            IUmbracoMapper mapper)
         {
             _redirectRepository = redirectRepository;
+            _recommendationService = recommendationService;
             _scopeProvider = scopeProvider;
             _mapper = mapper;
         }
@@ -59,12 +66,20 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             return _mapper.Map<RedirectResponse>(entity);
         }
 
-        public RedirectResponse Create(RedirectRequest request)
+        public RedirectResponse? Create(CreateRedirectRequest request)
         {
             using var scope = _scopeProvider.CreateScope();
 
             var entity = _mapper.Map<IRedirect>(request)!;
             _redirectRepository.Save(entity);
+
+            if (request.SolvedRecommendation.HasValue)
+            {
+                var recommendation = _recommendationService.Get(request.SolvedRecommendation.Value);
+                if (recommendation is null) return null;
+
+                _recommendationService.Delete(recommendation);
+            }
 
             scope.Complete();
             return _mapper.Map<RedirectResponse>(entity)!;

@@ -59,9 +59,10 @@ namespace UrlTracker.Backoffice.UI.Controllers
         /// <exception cref="NotImplementedException"></exception>
         [HttpPost]
         [Produces(typeof(RedirectResponse))]
-        public IActionResult Create([FromBody] RedirectRequest request)
+        public IActionResult Create([FromBody] CreateRedirectRequest request)
         {
             var model = _redirectRequestHandler.Create(request);
+            if (model is null) return NotFound();
 
             return Ok(model);
         }

@@ -5,7 +5,7 @@ import { redirectServiceContext } from "@/context/redirectservice.context";
 import { RECOMMENDATION_SORT_TYPE } from "@/enums/sortType";
 import { ILandingspageService } from "@/services/landingspage.service";
 import { IRecommendationCollection, IRecommendationResponse, IRecommendationsService } from "@/services/recommendation.service";
-import { IRedirectResponse, IRedirectService } from "@/services/redirect.service";
+import { IRedirectResponse, IRedirectService, ISolvedRecommendationRequest } from "@/services/redirect.service";
 import { ensureServiceExists } from "@/util/tools/existancecheck";
 import variableresourceService from "@/util/tools/variableresource.service";
 import { consume } from "@lit/context";
@@ -92,7 +92,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
       target: {
         strategy: variableresourceService.get<ITargetStrategies>(
           "redirectTargetStrategies"
-        ).url,
+        ).content,
         value: "",
       },
       permanent: true,
@@ -100,7 +100,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
       force: false,
     } as IRedirectResponse;
 
-    this.openNewRedirectPanel(redirect);
+    this.openNewRedirectPanel(redirect, event.detail.id);
   };
 
   private handleCreateTemporaryRedirect = async (
@@ -116,7 +116,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
       target: {
         strategy: variableresourceService.get<ITargetStrategies>(
           "redirectTargetStrategies"
-        ).url,
+        ).content,
         value: "",
       },
       permanent: false,
@@ -124,7 +124,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
       force: false,
     } as IRedirectResponse;
 
-    this.openNewRedirectPanel(redirect);
+    this.openNewRedirectPanel(redirect, event.detail.id);
   };
 
   private handleIgnore = async (event: CustomEvent<IRecommendationResponse>) => {
@@ -135,12 +135,12 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
     });
   };
 
-  private openNewRedirectPanel(data?: IRedirectResponse) {
+  private openNewRedirectPanel(data?: IRedirectResponse, solvedRecommendation?: number) {
     const options = {
       title: "New redirect",
       view: "/App_Plugins/UrlTracker/sidebar/redirect/simpleRedirect.html",
       size: "medium",
-      submit: this.submitNewRedirectPanel,
+      submit: (val: IRedirectResponse) => this.submitNewRedirectPanel({...val, solvedRecommendation}),
       close: this.closePanel,
       value: data,
     };
@@ -148,7 +148,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
     this.editorService!.open(options);
   }
 
-  submitNewRedirectPanel = async (value: IRedirectResponse) => {
+  submitNewRedirectPanel = async (value: IRedirectResponse & ISolvedRecommendationRequest) => {
     if (value.id) {
       await this._redirectService?.update(value);
     } else {
@@ -156,6 +156,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
     }
 
     this.closePanel();
+    this.search();
   };
 
   private openExplanationPanel(data: IRecommendationResponse) {

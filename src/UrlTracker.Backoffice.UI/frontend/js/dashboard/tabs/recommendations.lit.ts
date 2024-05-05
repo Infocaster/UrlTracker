@@ -22,6 +22,7 @@ import { redirectServiceContext } from "@/context/redirectservice.context";
 import {
   IRedirectResponse,
   IRedirectService,
+  ISolvedRecommendationRequest,
 } from "@/services/redirect.service";
 import variableresourceService from "@/util/tools/variableresource.service";
 import { consume, provide } from "@lit/context";
@@ -155,7 +156,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       target: {
         strategy: variableresourceService.get<ITargetStrategies>(
           "redirectTargetStrategies"
-        ).url,
+        ).content,
         value: "",
       },
       permanent: true,
@@ -163,7 +164,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       force: false,
     } as IRedirectResponse;
 
-    this.openNewRedirectPanel(redirect);
+    this.openNewRedirectPanel(redirect, event.detail.id);
   };
 
   private handleCreateTemporaryRedirect = async (
@@ -179,7 +180,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       target: {
         strategy: variableresourceService.get<ITargetStrategies>(
           "redirectTargetStrategies"
-        ).url,
+        ).content,
         value: "",
       },
       permanent: false,
@@ -187,7 +188,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       force: false,
     } as IRedirectResponse;
 
-    this.openNewRedirectPanel(redirect);
+    this.openNewRedirectPanel(redirect, event.detail.id);
   };
 
   private handleIgnore = async (event: CustomEvent<IRecommendationResponse>) => {
@@ -200,20 +201,20 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     this.search();
   };
 
-  private openNewRedirectPanel(data?: IRedirectResponse) {
+  private openNewRedirectPanel(data?: IRedirectResponse, solvedRecommendation?: number) {
     const options = {
       title: "New redirect",
       view: "/App_Plugins/UrlTracker/sidebar/redirect/simpleRedirect.html",
       size: "medium",
-      submit: this.submitNewRedirectPanel,
+      submit: (val: IRedirectResponse) => this.submitNewRedirectPanel({...val, solvedRecommendation}),
       close: this.closePanel,
-      value: data,
+      value: data
     };
 
     this.editorService!.open(options);
   }
 
-  private submitNewRedirectPanel = async (value: IRedirectResponse) => {
+  private submitNewRedirectPanel = async (value: IRedirectResponse & ISolvedRecommendationRequest) => {
     if (value.id) {
       await this._redirectService?.update(value);
     } else {
