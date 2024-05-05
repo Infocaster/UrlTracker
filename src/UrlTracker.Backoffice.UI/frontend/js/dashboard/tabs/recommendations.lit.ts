@@ -78,29 +78,24 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
   private query = "";
   private selectedType: RecommendationSortType =
-    RECOMMENDATION_SORT_TYPE.LAST_OCCURRENCE;
+    RECOMMENDATION_SORT_TYPE.IMPORTANCE;
   private paginationRef: Ref<UrlTrackerPagination> = createRef();
 
   private _sortOptions: IDropdownValue[] = [
-    {
-      display: "Last occurrance descending",
-      value: RECOMMENDATION_SORT_TYPE.LAST_OCCURRENCE,
-      key: RECOMMENDATION_SORT_TYPE.LAST_OCCURRENCE.toString(),
-    },
     {
       display: "Importance",
       value: RECOMMENDATION_SORT_TYPE.IMPORTANCE,
       key: RECOMMENDATION_SORT_TYPE.IMPORTANCE.toString(),
     },
     {
+      display: "Most recently updated",
+      value: RECOMMENDATION_SORT_TYPE.MOST_RECENTLY_UPDATED,
+      key: RECOMMENDATION_SORT_TYPE.MOST_RECENTLY_UPDATED.toString(),
+    },
+    {
       display: "Url",
       value: RECOMMENDATION_SORT_TYPE.URL,
       key: RECOMMENDATION_SORT_TYPE.URL.toString(),
-    },
-    {
-      display: "Amount of occurrences",
-      value: RECOMMENDATION_SORT_TYPE.OCCURRENCES,
-      key: RECOMMENDATION_SORT_TYPE.OCCURRENCES.toString(),
     },
   ];
 

@@ -65,7 +65,7 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
   private paginationRef: Ref<UrlTrackerPagination> = createRef();
   private sortOptions: IDropdownValue[] = [
     {
-      display: "Alle",
+      display: "All",
       value: REDIRECTTYPE_SORT_TYPE.ALL,
       key: REDIRECTTYPE_SORT_TYPE.ALL.toString()
     },
@@ -75,7 +75,7 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
       key: REDIRECTTYPE_SORT_TYPE.PERMANENT.toString()
     },
     {
-      display: "Tijdelijk",
+      display: "Temporary",
       value: REDIRECTTYPE_SORT_TYPE.TEMPORARY,
       key: REDIRECTTYPE_SORT_TYPE.TEMPORARY.toString()
     },

@@ -19,9 +19,8 @@ public class RecommendationFilterOptions
 public enum RecommendationOrderBy
 {
     Importance,
-    LastOccurrence,
-    Url,
-    Occurrences
+    MostRecentlyUpdated,
+    Url
 }
 public static class EnumExtensions
 {
@@ -29,7 +28,7 @@ public static class EnumExtensions
     {
         return orderBy switch
         {
-            RecommendationOrderBy.LastOccurrence => "[updateDate]",
+            RecommendationOrderBy.MostRecentlyUpdated => "[updateDate]",
             RecommendationOrderBy.Url => "[url]",
             _ => "orderscore",
         };

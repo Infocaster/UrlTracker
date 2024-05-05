@@ -54,7 +54,7 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
           value: ""
       },
       target: {
-          strategy: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url,
+          strategy: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content,
           value: ""
       },
       permanent: false,
