@@ -7,7 +7,7 @@ namespace UrlTracker.Core.Intercepting
     public class NullInterceptor
         : ILastChanceInterceptor
     {
-        public ValueTask<ICachableIntercept> InterceptAsync(Url url, IReadOnlyInterceptContext context)
+        public ValueTask<ICachableIntercept> InterceptAsync(Url url, IInterceptContext context)
         {
             return new ValueTask<ICachableIntercept>(CachableInterceptBase.NullIntercept);
         }

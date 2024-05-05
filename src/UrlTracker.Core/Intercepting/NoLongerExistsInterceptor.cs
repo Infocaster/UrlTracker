@@ -25,14 +25,9 @@ namespace UrlTracker.Core.Intercepting
             _logger = logger;
         }
 
-        public async ValueTask<ICachableIntercept?> InterceptAsync(Url url, IReadOnlyInterceptContext context)
+        public async ValueTask<ICachableIntercept?> InterceptAsync(Url url, IInterceptContext context)
         {
             var urls = _staticUrlProviders.GetUrls(url);
-
-            var rootNodeId = context.GetRootNode();
-            var culture = context.GetCulture();
-
-            _logger.LogParameters(culture, rootNodeId, urls.ToList());
 
             var results = await _clientErrorRepository.GetNoLongerExistsAsync(urls);
             _logger.LogResults<NoLongerExistsInterceptor>(results.Count);

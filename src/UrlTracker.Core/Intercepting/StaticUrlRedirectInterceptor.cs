@@ -25,7 +25,7 @@ namespace UrlTracker.Core.Intercepting
             _logger = logger;
         }
 
-        public async ValueTask<ICachableIntercept?> InterceptAsync(Url url, IReadOnlyInterceptContext context)
+        public async ValueTask<ICachableIntercept?> InterceptAsync(Url url, IInterceptContext context)
         {
             var interceptStrings = _urlProviderCollection.GetUrls(url);
 

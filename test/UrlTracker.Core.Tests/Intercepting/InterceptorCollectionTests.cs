@@ -34,7 +34,7 @@ namespace UrlTracker.Core.Tests.Intercepting
         public async Task InterceptAsync_NormalFlow_ReturnsExpectedResult(ICachableIntercept input, ICachableIntercept expected)
         {
             // arrange
-            _interceptorMock!.Setup(obj => obj.InterceptAsync(It.IsAny<Url>(), It.IsAny<IReadOnlyInterceptContext>()))
+            _interceptorMock!.Setup(obj => obj.InterceptAsync(It.IsAny<Url>(), It.IsAny<IInterceptContext>()))
                            .ReturnsAsync(input);
 
             // act

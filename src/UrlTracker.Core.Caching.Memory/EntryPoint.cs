@@ -8,7 +8,6 @@ using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
 using UrlTracker.Core.Caching.Memory.Active;
 using UrlTracker.Core.Caching.Memory.Database;
-using UrlTracker.Core.Caching.Memory.Domain;
 using UrlTracker.Core.Caching.Memory.Intercepting;
 using UrlTracker.Core.Caching.Memory.Notifications;
 using UrlTracker.Core.Caching.Memory.Options;
@@ -35,7 +34,6 @@ namespace UrlTracker.Core.Caching.Memory
         public static IUmbracoBuilder ComposeUrlTrackerMemoryCache(this IUmbracoBuilder builder)
         {
             var settings = builder.Config.GetOptions();
-            builder.Services.Decorate<IDomainProvider>((decoratee, factory) => new DecoratorDomainProviderCaching(decoratee, factory.GetRequiredService<AppCaches>().RuntimeCache));
             if (settings.EnableInterceptCaching)
             {
                 builder.Services.Decorate<IIntermediateInterceptService>((decoratee, factory) => new DecoratorIntermediateInterceptServiceCaching(decoratee, factory.GetRequiredService<IInterceptCache>(), factory.GetRequiredService<IOptions<UrlTrackerMemoryCacheOptions>>()));

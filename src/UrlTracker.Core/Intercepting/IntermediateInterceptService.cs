@@ -11,24 +11,24 @@ namespace UrlTracker.Core.Intercepting
     public class IntermediateInterceptService
         : IIntermediateInterceptService
     {
-        private readonly IInterceptPreprocessorCollection _preprocessors;
         private readonly IInterceptorCollection _interceptors;
         private readonly IScopeProvider _scopeProvider;
+        private readonly IDefaultInterceptContextFactory _defaultInterceptContextFactory;
 
-        public IntermediateInterceptService(IInterceptPreprocessorCollection preprocessors,
-                                            IInterceptorCollection interceptors,
-                                            IScopeProvider scopeProvider)
+        public IntermediateInterceptService(IInterceptorCollection interceptors,
+                                            IScopeProvider scopeProvider,
+                                            IDefaultInterceptContextFactory defaultInterceptContextFactory)
         {
-            _preprocessors = preprocessors;
             _interceptors = interceptors;
             _scopeProvider = scopeProvider;
+            _defaultInterceptContextFactory = defaultInterceptContextFactory;
         }
 
         public async Task<ICachableIntercept> GetAsync(Url url, IInterceptContext? context = null)
         {
             using var scope = _scopeProvider.CreateCoreScope(autoComplete: true);
 
-            context = await _preprocessors.PreprocessUrlAsync(url, context);
+            context ??= _defaultInterceptContextFactory.Create();
             return await _interceptors.InterceptAsync(url, context);
         }
     }

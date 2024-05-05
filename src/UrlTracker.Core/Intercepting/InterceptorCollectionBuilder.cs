@@ -26,7 +26,7 @@ namespace UrlTracker.Core.Intercepting
             _lastChance = lastChance;
         }
 
-        public async ValueTask<ICachableIntercept> InterceptAsync(Url url, IReadOnlyInterceptContext context)
+        public async ValueTask<ICachableIntercept> InterceptAsync(Url url, IInterceptContext context)
         {
             foreach (var interceptor in this)
             {

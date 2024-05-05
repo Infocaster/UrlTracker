@@ -39,12 +39,9 @@ namespace UrlTracker.Core
                    .ComposeUrlTrackerCoreMaps()
                    .ComposeUrlTrackerCoreAbstractions()
                    .ComposeDefaultInterceptors()
-                   .ComposeDefaultInterceptPreprocessors()
                    .ComposeDefaultInterceptConverters()
                    .ComposeDefaultUrlClassifiers()
                    .ComposeDefaultStrategyMaps();
-
-            builder.Services.AddSingleton<IDomainProvider, DomainProvider>();
 
             builder.Services.AddSingleton<IDefaultInterceptContextFactory, DefaultInterceptContextFactory>();
             builder.Services.AddSingleton<IIntermediateInterceptService, IntermediateInterceptService>();
@@ -66,7 +63,6 @@ namespace UrlTracker.Core
 
             builder.Services.AddSingleton<IStrategyMapCollection>(factory => factory.GetRequiredService<StrategyMapCollection>());
             builder.Services.AddSingleton<IStaticUrlProviderCollection>(factory => factory.GetRequiredService<StaticUrlProviderCollection>());
-            builder.Services.AddSingleton<IInterceptPreprocessorCollection>(factory => factory.GetRequiredService<InterceptPreprocessorCollection>());
             builder.Services.AddSingleton<IInterceptorCollection>(factory => factory.GetRequiredService<InterceptorCollection>());
             builder.Services.AddSingleton<IInterceptConverterCollection>(factory => factory.GetRequiredService<InterceptConverterCollection>());
             builder.Services.AddSingleton<IUrlClassifierStrategyCollection>(factory => factory.GetRequiredService<UrlClassifierStrategyCollection>());
@@ -76,9 +72,6 @@ namespace UrlTracker.Core
 
         public static InterceptorCollectionBuilder? Interceptors(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<InterceptorCollectionBuilder>();
-
-        public static InterceptPreprocessorCollectionBuilder? InterceptPreprocessors(this IUmbracoBuilder builder)
-            => builder.WithCollectionBuilder<InterceptPreprocessorCollectionBuilder>();
 
         public static StaticUrlProviderCollectionBuilder? StaticUrlProviders(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<StaticUrlProviderCollectionBuilder>();
@@ -125,13 +118,6 @@ namespace UrlTracker.Core
 
             builder.Services.AddSingleton<IFallbackUrlClassifier, FallbackUrlClassifier>();
 
-            return builder;
-        }
-
-        public static IUmbracoBuilder ComposeDefaultInterceptPreprocessors(this IUmbracoBuilder builder)
-        {
-            builder.InterceptPreprocessors()!
-                .Append<DomainUrlPreprocessor>();
             return builder;
         }
 

@@ -21,14 +21,12 @@ namespace UrlTracker.Core.Intercepting
             _logger = logger;
         }
 
-        public async ValueTask<ICachableIntercept?> InterceptAsync(Url url, IReadOnlyInterceptContext context)
+        public async ValueTask<ICachableIntercept?> InterceptAsync(Url url, IInterceptContext context)
         {
             var regexRedirects = await _redirectRepository.GetWithRegexAsync();
 
             // There may be multiple regexes for which the given url has an intercept. There is no way to tell which intercept is the best,
             //    so we just take the first intercept that we can find.
-            int? rootNodeId = context.GetRootNode();
-
             string interceptString = url.Path!.Trim('/');
             if (url.Query is not null) interceptString += "?" + url.Query;
 
