@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using Moq;
 using NUnit.Framework;
-using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Models;
 using UrlTracker.Middleware.Options;
 using UrlTracker.Middleware.Processing;
 

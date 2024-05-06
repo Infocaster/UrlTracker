@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
-using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Models;
 using UrlTracker.Middleware.Options;
 using UrlTracker.Web.Processing;
 

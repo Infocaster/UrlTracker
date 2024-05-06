@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Logging;
+using UrlTracker.Core.Models;
 using UrlTracker.Web.Configuration;
 
 namespace UrlTracker.Web.Processing

@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting;
 using UrlTracker.Core.Intercepting.Models;
+using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Tests.Intercepting
 {

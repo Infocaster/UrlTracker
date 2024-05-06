@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace UrlTracker.Core.Domain.Models
+namespace UrlTracker.Core.Models
 {
     /*
      * This simple url model is introduced to fix the shortcomings of the standard System.Uri object.
@@ -137,9 +137,9 @@ namespace UrlTracker.Core.Domain.Models
             var result = new Url
             {
                 Path = '/' + uri.AbsolutePath.Trim('/'),
-                Protocol = Enum.TryParse(uri.Scheme, true, out Protocol protocolValue) ? (Protocol?)protocolValue : null,
+                Protocol = Enum.TryParse(uri.Scheme, true, out Protocol protocolValue) ? protocolValue : null,
                 Host = uri.Host,
-                Port = uri.Port != -1 && !uri.IsDefaultPort ? (int?)uri.Port : null,
+                Port = uri.Port != -1 && !uri.IsDefaultPort ? uri.Port : null,
                 Query = uri.Query
             };
 
@@ -213,7 +213,7 @@ namespace UrlTracker.Core.Domain.Models
         [ExcludeFromCodeCoverage]
         public override int GetHashCode()
         {
-            return System.HashCode.Combine(Protocol, Host, Port, Path, Query);
+            return HashCode.Combine(Protocol, Host, Port, Path, Query);
         }
 
         [ExcludeFromCodeCoverage]

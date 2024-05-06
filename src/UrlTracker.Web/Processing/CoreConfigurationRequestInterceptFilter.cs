@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using UrlTracker.Core.Configuration.Models;
-using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Models;
 
 namespace UrlTracker.Web.Processing
 {

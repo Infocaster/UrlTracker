@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Web.Configuration;
 using UrlTracker.Web.Processing;

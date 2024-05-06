@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Umbraco.Cms.Infrastructure.Scoping;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Core.Intercepting.Preprocessing;
+using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Intercepting
 {

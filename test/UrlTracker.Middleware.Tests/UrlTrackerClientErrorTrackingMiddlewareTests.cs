@@ -7,7 +7,7 @@ using NUnit.Framework;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Services;
-using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Models;
 using UrlTracker.Middleware.Background;
 using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Resources.Testing.Mocks;

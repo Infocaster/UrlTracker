@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Configuration.Models;
 using UrlTracker.Core.Abstractions;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Logging;
 using UrlTracker.Core.Models;
 using UrlTracker.Web.Abstraction;

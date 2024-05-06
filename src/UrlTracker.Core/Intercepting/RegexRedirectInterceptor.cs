@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
+using UrlTracker.Core.Models;
 using ILogger = UrlTracker.Core.Logging.ILogger<UrlTracker.Core.Intercepting.RegexRedirectInterceptor>;
 
 namespace UrlTracker.Core.Intercepting

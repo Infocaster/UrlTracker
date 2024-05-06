@@ -4,9 +4,9 @@ using Moq;
 using NUnit.Framework;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting;
 using UrlTracker.Core.Intercepting.Models;
+using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing.Logging;
 
 namespace UrlTracker.Core.Tests.Intercepting

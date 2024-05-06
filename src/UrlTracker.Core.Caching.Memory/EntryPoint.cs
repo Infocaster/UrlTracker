@@ -12,7 +12,6 @@ using UrlTracker.Core.Caching.Memory.Intercepting;
 using UrlTracker.Core.Caching.Memory.Notifications;
 using UrlTracker.Core.Caching.Memory.Options;
 using UrlTracker.Core.Database;
-using UrlTracker.Core.Domain;
 using UrlTracker.Core.Intercepting;
 using UrlTracker.Modules.Options;
 

@@ -10,7 +10,7 @@ using UrlTracker.Core;
 using UrlTracker.Core.Classification;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Models;
-using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Models;
 using UrlTracker.Resources.Website.Models;
 
 namespace UrlTracker.Resources.Website.Controllers
@@ -119,7 +119,7 @@ namespace UrlTracker.Resources.Website.Controllers
         [HttpPost]
         public IActionResult SetRecommendation([FromBody] SetRecommendationRequest request)
         {
-            var url = UrlTracker.Core.Domain.Models.Url.Parse(request.Url);
+            var url = Core.Models.Url.Parse(request.Url);
 
             IRedactionScore strategy = _urlClassifier.Classify(url);
 
