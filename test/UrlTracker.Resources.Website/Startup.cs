@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using UrlTracker.Resources.Website.Middleware;
+using UrlTracker.Resources.Website.SystemFeatures;
 
 namespace UrlTracker.Resources.Website
 {
@@ -37,6 +38,8 @@ namespace UrlTracker.Resources.Website
         /// </remarks>
         public void ConfigureServices(IServiceCollection services)
         {
+            services.ConfigureForwardedHeaders(_config);
+
             services.AddSwaggerGen();
 
             services.AddUmbraco(_env, _config)
@@ -53,6 +56,8 @@ namespace UrlTracker.Resources.Website
         /// <param name="env">The web hosting environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseForwardedHeaders();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
