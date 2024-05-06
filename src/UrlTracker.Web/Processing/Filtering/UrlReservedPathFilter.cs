@@ -5,7 +5,7 @@ using UrlTracker.Core.Logging;
 using UrlTracker.Core.Models;
 using UrlTracker.Web.Configuration;
 
-namespace UrlTracker.Web.Processing
+namespace UrlTracker.Web.Processing.Filtering
 {
     public class UrlReservedPathFilter
         : IRequestInterceptFilter

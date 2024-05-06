@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using UrlTracker.Core.Configuration.Models;
 
-namespace UrlTracker.Web.Processing
+namespace UrlTracker.Web.Processing.Filtering
 {
     /// <summary>
     /// An implementation of <see cref="IClientErrorFilter" /> that ensures client error tracking only when it is enabled by configuration

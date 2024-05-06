@@ -6,7 +6,7 @@ using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Web.Abstraction;
-using UrlTracker.Web.Processing;
+using UrlTracker.Web.Processing.Handling;
 
 namespace UrlTracker.Web.Tests.Processing
 {

@@ -5,7 +5,7 @@ using NUnit.Framework;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Web.Configuration;
-using UrlTracker.Web.Processing;
+using UrlTracker.Web.Processing.Filtering;
 
 namespace UrlTracker.Web.Tests.Processing
 {

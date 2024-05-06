@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using UrlTracker.Core.Intercepting.Models;
 using UrlTracker.Core.Logging;
 
-namespace UrlTracker.Web.Processing
+namespace UrlTracker.Web.Processing.Handling
 {
     [ExcludeFromCodeCoverage]
     public class LastChanceResponseInterceptHandler

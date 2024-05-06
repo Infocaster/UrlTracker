@@ -4,7 +4,7 @@ using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Web.Abstraction;
 
-namespace UrlTracker.Web.Processing
+namespace UrlTracker.Web.Processing.Handling
 {
     public class NoLongerExistsResponseInterceptHandler
         : ResponseInterceptHandlerBase<IClientError>

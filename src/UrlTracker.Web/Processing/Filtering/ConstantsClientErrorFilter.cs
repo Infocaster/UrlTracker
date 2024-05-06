@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using UrlTracker.Core;
 
-namespace UrlTracker.Web.Processing
+namespace UrlTracker.Web.Processing.Filtering
 {
     /// <summary>
     /// An implementation of <see cref="IClientErrorFilter" /> that prevents registration of client errors on urls with predefined paths

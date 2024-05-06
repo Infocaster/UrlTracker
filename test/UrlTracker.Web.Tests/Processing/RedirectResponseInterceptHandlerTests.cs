@@ -15,7 +15,7 @@ using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Resources.Testing.Mocks;
 using UrlTracker.Resources.Testing.Objects;
 using UrlTracker.Web.Abstraction;
-using UrlTracker.Web.Processing;
+using UrlTracker.Web.Processing.Handling;
 
 namespace UrlTracker.Web.Tests.Processing
 {

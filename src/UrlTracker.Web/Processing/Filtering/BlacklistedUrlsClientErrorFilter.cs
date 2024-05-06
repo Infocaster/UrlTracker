@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using UrlTracker.Core.Configuration.Models;
 
-namespace UrlTracker.Web.Processing
+namespace UrlTracker.Web.Processing.Filtering
 {
     public class BlacklistedUrlsClientErrorFilter : IClientErrorFilter
     {

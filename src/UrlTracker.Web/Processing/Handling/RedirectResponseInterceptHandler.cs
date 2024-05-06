@@ -8,7 +8,7 @@ using UrlTracker.Core.Logging;
 using UrlTracker.Core.Models;
 using UrlTracker.Web.Abstraction;
 
-namespace UrlTracker.Web.Processing
+namespace UrlTracker.Web.Processing.Handling
 {
     public abstract class RedirectResponseInterceptHandler<TStrategy>
         : ResponseInterceptHandlerBase<Redirect>

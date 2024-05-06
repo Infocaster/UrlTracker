@@ -6,7 +6,7 @@ using UrlTracker.Middleware.Options;
 using UrlTracker.Middleware.Processing;
 using UrlTracker.Modules.Options;
 using UrlTracker.Web;
-using UrlTracker.Web.Processing;
+using UrlTracker.Web.Processing.Filtering;
 
 namespace UrlTracker.Middleware
 {

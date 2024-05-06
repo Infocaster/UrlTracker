@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using UrlTracker.Core.Intercepting.Models;
 
-namespace UrlTracker.Web.Processing
+namespace UrlTracker.Web.Processing.Handling
 {
     [ExcludeFromCodeCoverage]
     public abstract class ResponseInterceptHandlerBase<TInput>

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using UAParser;
 using UrlTracker.Core.Configuration.Models;
 
-namespace UrlTracker.Web.Processing
+namespace UrlTracker.Web.Processing.Filtering
 {
     public class UserAgentClientErrorFilter : IClientErrorFilter
     {
@@ -30,7 +30,7 @@ namespace UrlTracker.Web.Processing
             var userAgent = context.Request.Headers["User-Agent"].ToString();
             var clientInfo = _uaParser.ParseUserAgent(userAgent);
 
-            foreach(var value in optionsValue.AllowedUserAgents)
+            foreach (var value in optionsValue.AllowedUserAgents)
             {
                 //check if the options include the user agent from the request.
                 if (value.Contains(clientInfo.Family, StringComparison.InvariantCultureIgnoreCase)) return true;

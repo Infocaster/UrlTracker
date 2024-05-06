@@ -4,7 +4,7 @@ using Moq;
 using NUnit.Framework;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Resources.Testing.Mocks;
-using UrlTracker.Web.Processing;
+using UrlTracker.Web.Processing.Filtering;
 
 namespace UrlTracker.Web.Tests.Processing
 {
