@@ -26,7 +26,7 @@ namespace UrlTracker.Web.Processing
 
         public bool EvaluateCandidate(Url url)
         {
-            _logger.LogStart<UrlReservedPathFilter>();
+            _logger.LogStart(typeof(UrlReservedPathFilter));
 
             // unify path for easy comparison
             var path = url.Path!.Trim('/') + '/';

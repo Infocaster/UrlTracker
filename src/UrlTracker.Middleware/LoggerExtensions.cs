@@ -3,21 +3,21 @@ using Microsoft.Extensions.Logging;
 
 namespace UrlTracker.Middleware
 {
-    internal static class LoggerExtensions
+    internal static partial class LoggerExtensions
     {
-        public static void LogRequestDetected(this ILogger logger, string url)
-            => logger.LogDebug(new EventId(3000), "Incoming url detected: '{url}'", url);
+        [LoggerMessage(3000, LogLevel.Debug, "Incoming url detected: '{url}'")]
+        public static partial void LogRequestDetected(this ILogger logger, string url);
 
-        public static void LogAbortHandling(this ILogger logger, string reason)
-            => logger.LogDebug(new EventId(3001), "Handling aborted: {reason}", reason);
+        [LoggerMessage(3001, LogLevel.Debug, "Handling aborted: {reason}")]
+        public static partial void LogAbortHandling(this ILogger logger, string reason);
 
-        public static void LogInterceptFound(this ILogger logger, Type interceptType)
-            => logger.LogDebug(new EventId(3002), "Found an intercept of type '{interceptType}'", interceptType);
+        [LoggerMessage(3002, LogLevel.Debug, "Found an intercept of type '{interceptType}'")]
+        public static partial void LogInterceptFound(this ILogger logger, Type interceptType);
 
-        public static void LogAbortClientErrorHandling(this ILogger logger, string reason)
-            => logger.LogDebug(new EventId(3004), "Client error handling aborted: {reason}", reason);
+        [LoggerMessage(3004, LogLevel.Debug, "Client error handling aborted: {reason}")]
+        public static partial void LogAbortClientErrorHandling(this ILogger logger, string reason);
 
-        public static void LogBackgroundProcessingFailure(this ILogger logger, Exception exception)
-            => logger.LogError(new EventId(3005), exception, "An error occurred while processing a client error in the background");
+        [LoggerMessage(3005, LogLevel.Error, "An error occurred while processing a client error in the background")]
+        public static partial void LogBackgroundProcessingFailure(this ILogger logger, Exception exception);
     }
 }

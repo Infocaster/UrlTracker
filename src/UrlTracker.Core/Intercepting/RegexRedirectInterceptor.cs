@@ -34,12 +34,12 @@ namespace UrlTracker.Core.Intercepting
             {
                 if (IsRegexMatch(interceptString, redirect.Source.Value))
                 {
-                    _logger.LogResults<RegexRedirectInterceptor>(1);
+                    _logger.LogResults(typeof(RegexRedirectInterceptor), 1);
                     return new CachableInterceptBase<IRedirect>(redirect);
                 }
             }
 
-            _logger.LogResults<RegexRedirectInterceptor>(0);
+            _logger.LogResults(typeof(RegexRedirectInterceptor), 0);
             return null;
         }
 

@@ -30,7 +30,7 @@ namespace UrlTracker.Core.Intercepting
             var urls = _staticUrlProviders.GetUrls(url);
 
             var results = await _clientErrorRepository.GetNoLongerExistsAsync(urls);
-            _logger.LogResults<NoLongerExistsInterceptor>(results.Count);
+            _logger.LogResults(typeof(NoLongerExistsInterceptor), results.Count);
 
             return GetBestResult(results);
         }

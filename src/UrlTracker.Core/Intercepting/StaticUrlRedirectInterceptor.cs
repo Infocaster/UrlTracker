@@ -30,7 +30,7 @@ namespace UrlTracker.Core.Intercepting
             var interceptStrings = _urlProviderCollection.GetUrls(url);
 
             var results = await _redirectRepository.GetAsync(interceptStrings);
-            _logger.LogResults<StaticUrlRedirectInterceptor>(results.Count);
+            _logger.LogResults(typeof(StaticUrlRedirectInterceptor), results.Count);
 
             return GetBestIntercept(results, url, context);
         }

@@ -23,7 +23,6 @@ namespace UrlTracker.Core.Tests.Intercepting
             _redirectRepositoryMock = new Mock<IRedirectRepository>();
             _defaultInterceptContext = new DefaultInterceptContext();
             _testSubject = new RegexRedirectInterceptor(_redirectRepositoryMock.Object, new VoidLogger<RegexRedirectInterceptor>());
-            _defaultInterceptContext.SetRootNode(9999);
         }
 
         public static IEnumerable<TestCaseData> NormalFlowTestCases()
