@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.Serialization;
 using UrlTracker.Backoffice.UI.Controllers.Models.Base;
+using UrlTracker.Core.Database.Entities;
 
 namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
 {
@@ -13,6 +14,19 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
 
         [DataMember(Name = "createDate")]
         public DateTime CreateDate { get; set; }
+
+        public static RedirectResponse FromEntity(IRedirect entity)
+            => new()
+            {
+                CreateDate = entity.CreateDate,
+                Force = entity.Force,
+                Id = entity.Id,
+                Key = entity.Key,
+                Permanent = entity.Permanent,
+                RetainQuery = entity.RetainQuery,
+                Source = StrategyViewModel.FromEntity(entity.Source),
+                Target = StrategyViewModel.FromEntity(entity.Target)
+            };
 
         public bool Equals(RedirectResponse? other)
         {

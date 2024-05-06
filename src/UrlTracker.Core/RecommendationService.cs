@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Umbraco.Cms.Infrastructure.Scoping;
@@ -20,6 +21,7 @@ namespace UrlTracker.Core
         IRecommendation? Get(string url, IRedactionScore score);
         IRecommendation? Get(string url, Guid scoreKey);
         IRecommendation? Get(int id);
+        IEnumerable<IRecommendation> GetMany(int[] ids);
         void Save(IRecommendation recommendation);
     }
 
@@ -133,6 +135,12 @@ namespace UrlTracker.Core
             await _recommendationRepository.CleanupAsync(upperScore, Defaults.Parameters.ScoreParameters);
 
             scope.Complete();
+        }
+
+        public IEnumerable<IRecommendation> GetMany(int[] ids)
+        {
+            using var scope = _scopeProvider.CreateScope(autoComplete: true);
+            return _recommendationRepository.GetMany(ids);
         }
     }
 }

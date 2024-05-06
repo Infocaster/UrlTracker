@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Backoffice.UI.Controllers.Models.Recommendations;
@@ -14,7 +15,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         RecommendationCollectionResponse Get(ListRecommendationRequest request);
         RecommendationResponse? Update(UpdateRequest request);
         RecommendationResponse? Delete(DeleteRequest request);
-        IEnumerable<RecommendationResponse?> Update(IEnumerable<UpdateRequest> request);
+        IEnumerable<RecommendationResponse>? Update(IEnumerable<UpdateRequest> request);
     }
 
     internal class RecommendationRequestHandler : IRecommendationRequestHandler
@@ -41,7 +42,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             _recommendationService.Delete(recommendation);
             scope.Complete();
 
-            return _mapper.Map<RecommendationResponse>(recommendation)!;
+            return RecommendationResponse.FromEntity(recommendation);
         }
 
         /// <returns> Returns a collection of recommendations based on the provided request model values. </returns>
@@ -62,7 +63,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
                     Types = request.Types
                 });
 
-            return _mapper.Map<RecommendationCollectionResponse>(result)!;
+            return RecommendationCollectionResponse.FromEntityCollection(result);
         }
 
         /// <returns> Returns the recommendation that was updated or null if the recommendation was not found</returns>
@@ -70,39 +71,49 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         {
             using var scope = _scopeProvider.CreateScope();
 
-            var recommendation = HandleUpdate(request);
+            var entity = _recommendationService.Get(request.Id);
+            if (entity is null) return null;
+
+            HandleUpdate(entity, request);
+
+            _recommendationService.Save(entity);
 
             scope.Complete();
-            return _mapper.Map<RecommendationResponse>(recommendation)!;
+            return RecommendationResponse.FromEntity(entity);
         }
 
         /// <returns> Returns a list of recommendation or null values that were updated. a null value is returned if the recommendation was not found</returns>
-        public IEnumerable<RecommendationResponse?> Update(IEnumerable<UpdateRequest> request)
+        public IEnumerable<RecommendationResponse>? Update(IEnumerable<UpdateRequest> request)
         {
             using var scope = _scopeProvider.CreateScope();
 
-            var response = new List<RecommendationResponse?>();
+            var entities = _recommendationService.GetMany(request.Select(r => r.Id).ToArray());
+
             foreach (var item in request)
             {
-                response.Add(_mapper.Map<RecommendationResponse>(HandleUpdate(item))!);
+                var entity = entities.FirstOrDefault(e => e.Id == item.Id);
+                if (entity is null) return null;
+
+                HandleUpdate(entity, item);
             }
 
+            foreach (var entity in entities)
+            {
+                _recommendationService.Save(entity);
+            }
             scope.Complete();
-            return response;
+
+            return request
+                .Select(r => entities.First(e => e.Id == r.Id))
+                .Select(RecommendationResponse.FromEntity);
         }
 
-        private IRecommendation? HandleUpdate(UpdateRequest request)
+        private void HandleUpdate(IRecommendation entity, UpdateRequest request)
         {
-            var recommendation = _recommendationService.Get(request.Id);
-            if (recommendation == null) return null;
-
             if (request.Ignore.HasValue)
             {
-                recommendation.Ignore = request.Ignore.Value;
+                entity.Ignore = request.Ignore.Value;
             }
-
-            _recommendationService.Save(recommendation);
-            return recommendation;
         }
     }
 }

@@ -5,7 +5,6 @@ using Umbraco.Cms.Core.Notifications;
 using Umbraco.Extensions;
 using UrlTracker.Backoffice.UI.Controllers;
 using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
-using UrlTracker.Backoffice.UI.Map;
 using UrlTracker.Backoffice.UI.UserNotifications;
 using UrlTracker.Modules.Options;
 using UrlTracker.Web.Events;
@@ -35,11 +34,6 @@ namespace UrlTracker.Backoffice.UI
                 .Append<UrlTrackerManifestFilter>();
             builder.BackOfficeAssets()
                 .Append<UrlTrackerScript>();
-
-            builder.MapDefinitions()
-                .Add<CsvMap>()
-                .Add<RedirectMap>()
-                .Add<RecommendationMap>();
 
             builder.AddNotificationHandler<ServerVariablesParsingNotification, ServerVariablesNotificationHandler>();
 

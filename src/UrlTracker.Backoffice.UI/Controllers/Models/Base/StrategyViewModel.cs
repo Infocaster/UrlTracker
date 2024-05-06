@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
+using UrlTracker.Core.Database.Entities;
 
 namespace UrlTracker.Backoffice.UI.Controllers.Models.Base
 {
@@ -16,6 +17,9 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Base
         [Required]
         [DataMember(Name = "value")]
         public string Value { get; set; } = null!;
+
+        public static StrategyViewModel FromEntity(EntityStrategy entity)
+            => new () { Strategy = entity.Strategy, Value = entity.Value };
 
         public bool Equals(StrategyViewModel? other)
         {
