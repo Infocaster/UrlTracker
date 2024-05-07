@@ -70,7 +70,9 @@ namespace UrlTracker.Resources.Website
                 {
                     u.UseBackOffice();
                     u.UseWebsite();
+#if DEBUG
                     u.AppBuilder.UseAutomatedBackOfficeAuthentication();
+#endif
                 })
                 .WithEndpoints(u =>
                 {
