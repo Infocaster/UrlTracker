@@ -21,7 +21,7 @@ namespace UrlTracker.IntegrationTests.RecommendationTracking
 
             // assert
             var recommendationService = ServiceProvider.GetRequiredService<IRecommendationService>();
-            var recommendation = recommendationService.Get("http://urltracker.ic/image.jpeg/", Defaults.DatabaseSchema.RedactionScores.Media);
+            var recommendation = recommendationService.Get("http://localhost/image.jpeg/", Defaults.DatabaseSchema.RedactionScores.Media);
             
             Assert.Multiple(() =>
             {
@@ -43,7 +43,7 @@ namespace UrlTracker.IntegrationTests.RecommendationTracking
 
             // assert
             var recommendationService = ServiceProvider.GetRequiredService<IRecommendationService>();
-            var recommendation = recommendationService.Get("http://urltracker.ic/image.jpeg/", Defaults.DatabaseSchema.RedactionScores.Media);
+            var recommendation = recommendationService.Get("http://localhost/image.jpeg/", Defaults.DatabaseSchema.RedactionScores.Media);
 
             Assert.Multiple(() =>
             {

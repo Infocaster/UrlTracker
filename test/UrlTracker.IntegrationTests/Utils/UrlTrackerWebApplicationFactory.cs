@@ -63,7 +63,7 @@ namespace UrlTracker.IntegrationTests.Utils
             HttpClient client = CreateClient(new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = false,
-                BaseAddress = new Uri("http://urltracker.ic"),
+                BaseAddress = new Uri("http://localhost"),
             });
 
             client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Chrome", "123.0.0.0"));

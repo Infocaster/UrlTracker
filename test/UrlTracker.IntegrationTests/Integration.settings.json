@@ -40,11 +40,6 @@
         }
     }
   },
-  "uSync": {
-    "Settings": {
-      "ImportOnFirstBoot": true
-    }
-  },
   "UrlTracker": {
     "HasDomainOnChildNode": false,
     "AppendPortNumber": false,

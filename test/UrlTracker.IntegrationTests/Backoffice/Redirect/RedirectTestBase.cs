@@ -29,7 +29,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
             base.TearDown();
         }
 
-        protected IPublishedContent GetDefaultRootNode() => UmbracoContext.Content!.GetById(Guid.Parse("59726a7c-f363-466d-b452-edc0473a4f23"))!;
+        protected IPublishedContent GetDefaultRootNode() => UmbracoContext.Content!.GetAtRoot().First();
         protected IRedirectService GetRedirectService() => ServiceProvider.GetRequiredService<IRedirectService>();
 
 
