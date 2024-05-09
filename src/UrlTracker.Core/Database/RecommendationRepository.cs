@@ -140,6 +140,7 @@ namespace UrlTracker.Core.Database
                 sql.LeftJoin<RedactionScoreDto>("s").On<RecommendationDto, RedactionScoreDto>((le, re) => le.RecommendationStrategy == re.Id, "r", "s");
             }
 
+            sql.Where<RecommendationDto>(e => e.Ignore == false, "r");
             if (filterOptions.Types?.Any() is true)
             {
                 sql.Where<RedactionScoreDto>(e => filterOptions.Types.Contains(e.RecommendationStrategy), "s");
