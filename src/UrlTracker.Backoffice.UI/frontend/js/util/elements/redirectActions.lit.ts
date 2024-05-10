@@ -75,26 +75,17 @@ export class UrlTrackerRedirectActions extends LitElement {
       border-radius: var(--uui-border-radius) var(--uui-border-radius) 0 0;
     }
 
-    :host {
-    }
-
     .action-container {
       background-color: white;
-      padding: 16px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      justify-content: center;
+      display: block;
+      padding-bottom: var(--uui-border-radius);
+      padding-top: var(--uui-border-radius);
       box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
     }
 
-    ::slotted(:not(:first-child)) {
-      margin-top: 8px;
-    }
-
-    ::slotted(:first-child) {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
+    ::slotted(:last-child), .action-container {
+      border-bottom-left-radius: var(--uui-border-radius);
+      border-bottom-right-radius: var(--uui-border-radius);
     }
   `;
 }

@@ -19,8 +19,6 @@ import {
 } from "../../context/redirectservice.context";
 import redirectService, { IRedirectCollectionResponse, IRedirectResponse } from "../../services/redirect.service";
 import '../../util/elements/bulkActions.lit';
-import "../../util/elements/inputs/addRedirectAction.lit";
-import "../../util/elements/inputs/exportRedirectsAction.lit";
 import "../../util/elements/inputs/pagination.lit";
 import { UrlTrackerPagination } from "../../util/elements/inputs/pagination.lit";
 import "../../util/elements/inputs/redirectImport.lit";
@@ -315,12 +313,12 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
 
         <div class="functions">
           <urltracker-redirect-actions>
-            <urltracker-add-redirect-action
-              @click=${this.onAddRedirect}
-            ></urltracker-add-redirect-action>
-            <urltracker-export-redirects-action
-              @click=${this.onExportRedirects}
-            ></urltracker-export-redirects-action>
+            <uui-menu-item label="New redirect" @click-label=${this.onAddRedirect}>
+              <uui-icon slot="icon" name="add"></uui-icon>
+            </uui-menu-item>
+            <uui-menu-item label="Export redirects" @click-label=${this.onExportRedirects}>
+              <uui-icon slot="icon" name="download"></uui-icon>
+            </uui-menu-item>
           </urltracker-redirect-actions>
           <urltracker-redirect-import @import=${this.onImportRedirects}></urltracker-redirect-import>
         </div>
