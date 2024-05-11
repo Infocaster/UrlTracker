@@ -1,30 +1,22 @@
-import { html } from "lit";
 import { IVariableResource } from "../../../../util/tools/variableresource.service";
-import { IRecommendationResponse } from "../../../../services/recommendation.service";
 import {
   IRecommendationTypeStrategy,
   IRecommendationTypeStrategyFactory,
+  IRecommendationTypeStrategyFactoryParameters,
 } from "./recommendation.strategy";
 import { IRecommendationTypeStrategies } from "./recommendationType.constant";
-import "./technicalFileRecommendation.lit";
+import { UrlTrackerRecommendationType } from "./recommendationTypeBase.mixin";
 
 export class TechnicalFileRecommendationTypeStrategyFactory
   implements IRecommendationTypeStrategyFactory
 {
   constructor(private variableResource: IVariableResource) {}
 
-  getStrategy(
-    recommendation: IRecommendationResponse
-  ): IRecommendationTypeStrategy | undefined {
-    const key = this.variableResource.get<IRecommendationTypeStrategies>(
-      "recommendationTypeStrategies"
-    ).technicalFile;
-    if (recommendation.strategy === key) {
-      return {
-        getTemplate() {
-          return html`<urltracker-recommendation-type-technical-file></urltracker-recommendation-type-technical-file>`;
-        },
-      };
+  getStrategy(parameters: IRecommendationTypeStrategyFactoryParameters): IRecommendationTypeStrategy | undefined {
+    const key = this.variableResource.get<IRecommendationTypeStrategies>("recommendationTypeStrategies").technicalFile;
+    
+    if (parameters.recommendation.strategy === key) {
+      return new UrlTrackerRecommendationType(parameters.element, "urlTrackerRecommendationType_technicalFile");
     }
   }
 }

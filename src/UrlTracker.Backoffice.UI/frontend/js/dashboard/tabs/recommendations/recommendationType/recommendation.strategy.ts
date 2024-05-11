@@ -1,22 +1,25 @@
+import { LitElement } from "lit";
 import { IRecommendationResponse } from "../../../../services/recommendation.service";
-import { StrategyResolver } from "../../../../util/tools/strategy/strategyresolver";
-import { UnknownRecommendationTypeFactory } from "./fallbackRecommendationType";
+import { UnsafeStrategyResolver } from "../../../../util/tools/strategy/strategyresolver";
 
 export interface IRecommendationTypeStrategy {
-  getTemplate(): unknown;
+  getTitle(): Promise<string>
+}
+
+export interface IRecommendationTypeStrategyFactoryParameters {
+  recommendation: IRecommendationResponse,
+  element: LitElement
 }
 
 export interface IRecommendationTypeStrategyFactory {
   getStrategy(
-    recommendation: IRecommendationResponse
+    parameters: IRecommendationTypeStrategyFactoryParameters
   ): IRecommendationTypeStrategy | undefined;
 }
 
-export const RecommendationTypeStrategyResolver = StrategyResolver<
-  IRecommendationResponse,
+export const RecommendationTypeStrategyResolver = UnsafeStrategyResolver<
+  IRecommendationTypeStrategyFactoryParameters,
   IRecommendationTypeStrategy
 >;
 
-export default new RecommendationTypeStrategyResolver(
-  new UnknownRecommendationTypeFactory()
-);
+export default new RecommendationTypeStrategyResolver();

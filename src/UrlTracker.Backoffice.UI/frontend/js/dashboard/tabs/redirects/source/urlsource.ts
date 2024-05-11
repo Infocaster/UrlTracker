@@ -1,7 +1,7 @@
 import { IVariableResource } from "../../../../util/tools/variableresource.service";
 import { ISourceStrategies } from "./source.constants";
 import { IRedirectSourceStrategyFactory, IRedirectSourceStrategy, IRedirectSourceStrategyFactoryParameters } from "./source.strategy";
-import { UrlTrackerRedirectSource } from "./sourcebase.mixin";
+import { UrlTrackerRedirectSource } from "./sourcebase";
 
 export class UrlSourceStrategyFactory implements IRedirectSourceStrategyFactory {
 

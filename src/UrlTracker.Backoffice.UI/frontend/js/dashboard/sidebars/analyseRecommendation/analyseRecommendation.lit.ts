@@ -15,6 +15,8 @@ import recommendationTypeStrategyResolver from "../../tabs/recommendations/recom
 
 import './historyChart.lit';
 import './referrersChart.lit';
+import { ifDefined } from "lit/directives/if-defined.js";
+import { cardWithClickableHeader } from "@/dashboard/tabs/styles";
 
 export const ContentElementTag = "urltracker-sidebar-analyse-recommendation";
 
@@ -49,9 +51,23 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
   @state()
   private history: IRecommendationHistoryResponse | null = null;
 
+  @state()
+  private recommendationTypeText?: string;
+
+  @state()
+  private recommendationTypeIsError: boolean = false;
+
   private renderRecommendationType(): unknown {
-    if (!this.data) return nothing;
-    return this.recommendationTypeStrategy.getStrategy(this.data).getTemplate();
+    if (!this.recommendationTypeText) return nothing;
+    let errorClass: string | undefined;
+
+    if (this.recommendationTypeIsError) {
+      errorClass = 'error';
+    }
+
+    return html`
+      <h3 class="${ifDefined(errorClass)}">${this.recommendationTypeText}</h3>
+    `;
   }
 
   async connectedCallback(): Promise<void> {
@@ -72,6 +88,19 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
       
       this.referrers = referrers;
       this.history = history;
+
+      const sourceStrategy = recommendationTypeStrategyResolver.getStrategy({recommendation: this.data, element: this});
+      if (sourceStrategy) {
+        this.recommendationTypeText = await sourceStrategy.getTitle();
+        this.recommendationTypeIsError = false;
+      }
+      else {
+  
+        this.recommendationTypeText = await this.localizationService.localize(
+          "urlTrackerRecommendationType_unknown"
+        );
+        this.recommendationTypeIsError = true;
+      }
   }
 
   close() {
@@ -122,7 +151,9 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
     `;
   }
 
-  static styles = css`
+  static styles = [
+    cardWithClickableHeader,
+    css`
   :host {
     display: flex;
     flex-direction: column;
@@ -186,5 +217,5 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
     padding: 10px 20px;
     box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
   }
-`;
+`];
 }

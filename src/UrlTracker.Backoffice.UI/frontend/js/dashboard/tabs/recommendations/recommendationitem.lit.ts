@@ -1,9 +1,5 @@
-import {
-  IEditorService,
-  editorServiceContext,
-} from "@/context/editorservice.context";
 import { ensureServiceExists } from "@/util/tools/existancecheck";
-import { ContextConsumer, consume } from "@lit/context";
+import { ContextConsumer } from "@lit/context";
 import { css, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import {
@@ -23,7 +19,8 @@ import {
 } from "./recommendationTag/recommendationTag";
 import "./recommendationTag/recommendationTag.lit";
 import recommendationTypeStrategyResolver from "./recommendationType/recommendation.strategy";
-import "./recommendationitemAction.lit";
+import { ifDefined } from "lit/directives/if-defined.js";
+import { actionButton, cardWithClickableHeader, errorStyle } from "../styles";
 
 const RecommendationListItem =
   UrlTrackerSelectableResultListItem<IRecommendationResponse>(
@@ -32,10 +29,6 @@ const RecommendationListItem =
 
 @customElement("urltracker-recommendation-item")
 export class UrlTrackerRecommendationItem extends RecommendationListItem {
-  private recommendationTypeStrategy = recommendationTypeStrategyResolver;
-
-  @consume({ context: editorServiceContext })
-  private editorService?: IEditorService<any>;
 
   @state()
   private recommendationTagText = "";
@@ -46,6 +39,12 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   @state()
   private recommendationType: RecommendationTypes =
     RECCOMENDATION_TYPES.NOT_IMPORTANT;
+
+  @state()
+  private recommendationTypeText?: string;
+
+  @state()
+  private recommendationTypeIsError: boolean = false;
 
   //   @consume({ context: localizationServiceContext })
   //   private localizationService?: ILocalizationService;
@@ -65,11 +64,32 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
       this.tagText(this.recommendationType);
     }
     this.localizeActionsText();
+
+    const sourceStrategy = recommendationTypeStrategyResolver.getStrategy({recommendation: this.item, element: this});
+    if (sourceStrategy) {
+      this.recommendationTypeText = await sourceStrategy.getTitle();
+      this.recommendationTypeIsError = false;
+    }
+    else {
+
+      this.recommendationTypeText = await this.localizationService.localize(
+        "urlTrackerRecommendationType_unknown"
+      );
+      this.recommendationTypeIsError = true;
+    }
   }
 
   private renderRecommendationType(): unknown {
-    if (!this.item) return nothing;
-    return this.recommendationTypeStrategy.getStrategy(this.item).getTemplate();
+    if (!this.recommendationTypeText) return nothing;
+    let errorClass: string | undefined;
+
+    if (this.recommendationTypeIsError) {
+      errorClass = 'error';
+    }
+
+    return html`
+      <h3 class="${ifDefined(errorClass)}"><button class="inspect-button" @click=${this.handleAnalyse}>${this.recommendationTypeText}</button></h3>
+    `;
   }
 
   private renderTarget(): unknown {
@@ -125,33 +145,25 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
 
   protected renderBody(): unknown {
     return html`
-      <div class="body" @click=${this.handleAnalyse}>
+      <div class="body">
         <div class="type">
           ${this.renderRecommendationType()}
           ${this.renderTag(this.recommendationTagText)}
         </div>
         <div class="target">${this.renderTarget()}</div>
         <div class="actions">
-          <span class="actions__label">${this.actionsText}</span>
-          <uui-icon
-            class="actions__help"
-            label="Extra information"
-            name="icon-help-alt"
-            @click=${this.handleExplain}
-          ></uui-icon>
-
-          <urltracker-recommendation-item-action
-            actionTextKey="temporary"
-            .action="${(e: Event) => this.handleCreateTemporaryRedirect(e)}"
-          ></urltracker-recommendation-item-action>
-          <urltracker-recommendation-item-action
-            actionTextKey="permanent"
-            .action="${(e: Event) => this.handleCreatePermanentRedirect(e)}"
-          ></urltracker-recommendation-item-action>
-          <urltracker-recommendation-item-action
-            actionTextKey="ignore"
-            .action="${(e: Event) => this.handleIgnoreRecommendation(e)}"
-          ></urltracker-recommendation-item-action>
+          <button class="action-button help-button" @click=${this.handleExplain}>
+            ${this.actionsText}<uui-icon name="icon-help-alt" class="icon-after"></uui-icon>
+          </button>
+          <button class="action-button" @click=${this.handleCreateTemporaryRedirect}>
+            <uui-icon name="icon-navigation-right" class="icon-before"></uui-icon>Create temporary redirect
+          </button>
+          <button class="action-button" @click=${this.handleCreatePermanentRedirect}>
+            <uui-icon name="icon-navigation-right" class="icon-before"></uui-icon>Create permanent redirect
+          </button>
+          <button class="action-button" @click=${this.handleIgnoreRecommendation}>
+            <uui-icon name="icon-navigation-right" class="icon-before"></uui-icon>Ignore this
+          </button>
         </div>
       </div>
     `;
@@ -159,15 +171,10 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
 
   static styles = [
     ...RecommendationListItem.styles,
+    errorStyle,
+    cardWithClickableHeader,
+    actionButton,
     css`
-      :host {
-        transition: background-color 0.25s;
-      }
-
-      :host(:hover) {
-        background-color: var(--uui-color-surface-alt);
-        cursor: pointer;
-      }
 
       .body {
         width: 100%;
@@ -184,22 +191,12 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
         align-items: center;
       }
 
-      .actions__label {
-        margin-right: 4px;
+      .action-button.help-button {
+        text-decoration: none;
       }
 
-      .actions__help {
-        height: 1em;
-        width: 1em;
-        margin-right: 12px;
-      }
-
-      .actions__help:hover {
-        cursor: pointer;
-      }
-
-      urltracker-recommendation-item-action {
-        margin-right: 1rem;
+      .action-button.help-button:hover {
+        text-decoration: underline;
       }
 
       .target {
