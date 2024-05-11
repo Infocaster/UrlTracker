@@ -1,61 +1,34 @@
 import { ContextConsumer } from "@lit/context";
-import { LitElementConstructor } from "../../../../util/tools/litelementconstructor";
 import {
   ILocalizationService,
   localizationServiceContext,
 } from "../../../../context/localizationservice.context";
-import { css, html, nothing } from "lit";
+import { ReactiveControllerHost } from "lit";
 import {
   IRedirectResponse,
-  redirectContext,
 } from "../../../../context/redirectitem.context";
+import { IRedirectSourceStrategy } from "./source.strategy";
 
-export function UrlTrackerRedirectSource<TBase extends LitElementConstructor>(
-  Base: TBase,
-  typeKey: string
-) {
-  return class RedirectSource extends Base {
-    private _typeString?: string;
-    private get typeString(): string | undefined {
-      return this._typeString;
-    }
-    private set typeString(value: string | undefined) {
-      this._typeString = value;
-      this.requestUpdate("typeString");
-    }
+type HostElement = ReactiveControllerHost & HTMLElement
 
-    private _localizationServiceConsumer = new ContextConsumer(this, {
+export class UrlTrackerRedirectSource implements IRedirectSourceStrategy {
+
+  private _localizationServiceConsumer;
+
+  constructor (base: HostElement, private _typeKey: string, private _redirect: IRedirectResponse) {
+    
+    this._localizationServiceConsumer = new ContextConsumer(base, {
       context: localizationServiceContext,
     });
-    protected get localizationService(): ILocalizationService | undefined {
-      return this._localizationServiceConsumer.value;
-    }
+  }
 
-    private _redirectConsumer = new ContextConsumer(this, {
-      context: redirectContext,
-    });
-    protected get redirect(): IRedirectResponse | undefined {
-      return this._redirectConsumer.value;
-    }
-
-    async connectedCallback(): Promise<void> {
-      super.connectedCallback();
-
-      this.typeString = await this.localizationService?.localize(typeKey);
-    }
-
-    protected render(): unknown {
-      if (!this.typeString) return nothing;
-
-      return html`${this.typeString}: ${this.redirect?.source.value}`;
-    }
-
-    static styles = [
-      css`
-        :host {
-          line-height: 20px;
-        }
-      `,
-    ];
-  };
+  async getTitle(): Promise<string> {
+    
+    const typeString = await this.localizationService?.localize(this._typeKey);
+    return `${typeString ?? this._typeKey}: ${this._redirect.source.value}`;
+  }
+  
+  protected get localizationService(): ILocalizationService | undefined {
+    return this._localizationServiceConsumer.value;
+  }
 }

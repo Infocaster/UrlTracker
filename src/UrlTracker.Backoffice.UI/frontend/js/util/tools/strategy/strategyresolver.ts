@@ -1,21 +1,40 @@
-export class StrategyResolver<TItem, TStrategy, TFactory extends {getStrategy(item: TItem): TStrategy | undefined}> {
+type StrategyFactory<TItem, TStrategy> = { getStrategy(item: TItem): TStrategy | undefined}
 
-    private _factoryCollection: Array<TFactory> = [];
+export class StrategyResolver<TItem, TStrategy> {
 
-    constructor(private _fallback: TFactory) { }
+    private _unsafeResolver: UnsafeStrategyResolver<TItem, TStrategy> = new UnsafeStrategyResolver<TItem, TStrategy>();
 
-    public registerFactory(factory: TFactory) {
+    constructor(private _fallback: StrategyFactory<TItem, TStrategy>) { }
+
+    public registerFactory(factory: StrategyFactory<TItem, TStrategy>) {
+
+        this._unsafeResolver.registerFactory(factory);
+    }
+
+    public getStrategy(item: TItem) : TStrategy {
+
+        const strategy = this._unsafeResolver.getStrategy(item);
+
+        if (strategy) return strategy;
+        return this._fallback.getStrategy(item)!;
+    }
+}
+
+export class UnsafeStrategyResolver<TItem, TStrategy> {
+
+    private _factoryCollection: Array<StrategyFactory<TItem, TStrategy>> = [];
+
+    public registerFactory(factory: StrategyFactory<TItem, TStrategy>) {
 
         this._factoryCollection.push(factory);
     }
 
-    public getStrategy(redirect: TItem) : TStrategy {
+    public getStrategy(item: TItem) : TStrategy | undefined {
 
         const strategy = this._factoryCollection
-            .map((item) => item.getStrategy(redirect))
-            .find((item) => !!item);
+            .map((i) => i.getStrategy(item))
+            .find((i) => !!i);
 
-        if (strategy) return strategy;
-        return this._fallback.getStrategy(redirect)!;
+        return strategy;
     }
 }

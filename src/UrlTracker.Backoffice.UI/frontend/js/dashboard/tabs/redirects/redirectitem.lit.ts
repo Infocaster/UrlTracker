@@ -7,18 +7,17 @@ import {
 } from "../../../context/localizationservice.context";
 import { redirectContext } from "../../../context/redirectitem.context";
 import { IRedirectResponse } from "../../../services/redirect.service";
-import "../../../util/elements/buttonLink.lit";
 import { UrlTrackerSelectableResultListItem } from "../../../util/elements/selectableresultlistitem.lit";
 import sourceStrategyResolver from "./source/source.strategy";
 import targetStrategyResolver from "./target/target.strategy";
+import { ensureExists, ensureServiceExists } from "@/util/tools/existancecheck";
+import { ifDefined } from "lit/directives/if-defined.js";
 
 const RedirectListItem =
   UrlTrackerSelectableResultListItem<IRedirectResponse>(redirectContext);
 
 @customElement("urltracker-redirect-item")
 export class UrlTrackerRedirectItem extends RedirectListItem {
-  private sourceStrategy = sourceStrategyResolver;
-  private targetStrategy = targetStrategyResolver;
 
   @consume({ context: localizationServiceContext })
   private localizationService?: ILocalizationService;
@@ -26,15 +25,34 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
   @state()
   private redirectToText?: string;
 
+  @state()
+  private redirectSourceText?: string;
+
+  @state()
+  private sourceIsError: boolean = false;
+
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    if (!this.localizationService)
-      throw new Error("This element requires the localization service");
+    ensureServiceExists(this.localizationService, 'localizationService');
+    ensureExists(this.item, 'A redirect is required to use this element, but no redirect was provided');
 
     this.redirectToText = await this.localizationService.localize(
       "urlTrackerRedirectTarget_redirectto"
     );
+
+    const sourceStrategy = sourceStrategyResolver.getStrategy({redirect: this.item, element: this});
+    if (sourceStrategy) {
+      this.redirectSourceText = await sourceStrategy.getTitle();
+      this.sourceIsError = false;
+    }
+    else {
+
+      this.redirectSourceText = await this.localizationService.localize(
+        "urlTrackerRedirectSource_unknown"
+      );
+      this.sourceIsError = true;
+    }
   }
 
   private handleInspect(e: Event): void {
@@ -53,28 +71,36 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
   }
 
   private renderSource(): unknown {
-    if (!this.item) return nothing;
-    return this.sourceStrategy.getStrategy(this.item).getTemplate();
+    if (!this.redirectSourceText) return nothing;
+    let errorClass: string | undefined;
+
+    if (this.sourceIsError) {
+      errorClass = 'error';
+    }
+
+    return html`
+      <h3 class="${ifDefined(errorClass)}"><button class="inspect-button" @click=${this.handleInspect}>${this.redirectSourceText}</button></h3>
+    `;
   }
 
   private renderTarget(): unknown {
     if (!this.item) return nothing;
-    return this.targetStrategy.getStrategy(this.item).getTemplate();
+    return targetStrategyResolver.getStrategy(this.item).getTemplate();
   }
 
   protected renderBody(): unknown {
     return html`
-      <div class="body" @click=${this.handleInspect}>
+      <div>
         ${this.renderSource()}
         <div class="target">${this.redirectToText}: ${this.renderTarget()}</div>
-        <div class="actions">
-          <urltracker-button-link @click=${this.handleEdit} text="Edit">
-              <uui-icon name="edit"></uui-icon>
-          </urltracker-button-link>
-          <urltracker-button-link @click=${this.handleDelete} text="Delete">
-              <uui-icon name="delete"></uui-icon>
-          </urltracker-button-link>
-        </div>
+        <uui-button-group class="actions">
+          <button class="action-button" @click=${this.handleEdit}>
+            <uui-icon name="edit"></uui-icon>Edit
+          </button>
+          <button class="action-button" @click=${this.handleDelete}>
+            <uui-icon name="delete"></uui-icon>Delete
+          </button>
+        </uui-button-group>
       </div>
     `;
   }
@@ -83,12 +109,37 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
     ...RedirectListItem.styles,
     css`
       :host {
-        transition: background-color 0.25s;
+        position: relative;
       }
 
-      :host(:hover) {
-        background-color: var(--uui-color-surface-alt);
+      h3 {
+        margin: 0;
+      }
+      
+      .inspect-button {
+        line-height: 20px;
+        padding: 0;
+        font-size: 15px;
+        font-weight: 400;
+        border-radius: 0;
+        border: none;
+        background-color: transparent;
+        font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
         cursor: pointer;
+      }
+
+      .inspect-button:hover {
+        text-decoration: underline;
+      }
+
+      .inspect-button::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 999;
       }
 
       .target {
@@ -98,9 +149,37 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
       }
 
       .actions {
-        display: flex;
         gap: 16px;
-        margin-top: 16px;
+        margin-top: 8px;
+        height: 24px;
+      }
+      
+      button.action-button {
+        z-index: 1000;
+        font-size: 12px;
+        line-height: 12px;
+        padding-left: 0;
+        padding-right: 0;
+        border-radius: 0;
+        border: none;
+        background-color: transparent;
+        font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        text-align: center;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+
+      button.action-button:hover {
+        text-decoration: none;
+      }
+
+      button.action-button uui-icon {
+        margin-right: 4px;
+      }
+
+      .error {
+        font-style: italic;
+        color: var(--uui-color-danger);
       }
     `,
   ];

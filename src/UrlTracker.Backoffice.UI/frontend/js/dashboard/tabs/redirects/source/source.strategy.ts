@@ -1,17 +1,22 @@
+import { LitElement } from "lit";
 import { IRedirectResponse } from "../../../../services/redirect.service";
-import { StrategyResolver } from "../../../../util/tools/strategy/strategyresolver";
-import { UnknownSourceStrategyFactory } from "./fallbacksource";
+import { UnsafeStrategyResolver } from "../../../../util/tools/strategy/strategyresolver";
+
+export interface IRedirectSourceStrategyFactoryParameters {
+    redirect: IRedirectResponse,
+    element: LitElement
+}
 
 export interface IRedirectSourceStrategy {
 
-    getTemplate(): unknown;
+    getTitle(): Promise<string>;
 }
 
 export interface IRedirectSourceStrategyFactory {
 
-    getStrategy(redirect: IRedirectResponse): IRedirectSourceStrategy | undefined;
+    getStrategy(parameters: IRedirectSourceStrategyFactoryParameters): IRedirectSourceStrategy | undefined;
 }
 
-export const RedirectSourceStrategyResolver = StrategyResolver<IRedirectResponse, IRedirectSourceStrategy, IRedirectSourceStrategyFactory>;
+export const RedirectSourceStrategyResolver = UnsafeStrategyResolver<IRedirectSourceStrategyFactoryParameters, IRedirectSourceStrategy>;
 
-export default new RedirectSourceStrategyResolver(new UnknownSourceStrategyFactory());
+export default new RedirectSourceStrategyResolver();

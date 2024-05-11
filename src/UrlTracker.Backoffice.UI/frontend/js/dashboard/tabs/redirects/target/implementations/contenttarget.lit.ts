@@ -143,9 +143,9 @@ export class UrlTrackerContentRedirectTarget extends baseType {
     if (this.errorText)
       return html`<span class="error">${this.errorText}</span>`;
     return html`
-      <uui-icon .name=${this.contentItem?.icon}></uui-icon> ${this.contentItem
-        ?.name}
-      <button @click="${this.onClick}"></button>
+      <button @click="${this.onClick}">
+        <uui-icon .name=${this.contentItem?.icon}></uui-icon> ${this.contentItem?.name}  
+      </button>
     `;
   }
 
@@ -167,14 +167,27 @@ export class UrlTrackerContentRedirectTarget extends baseType {
       }
 
       button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 12px;
+        line-height: 15px;
+        padding: 0;
+      }
+
+      button:hover {
+        text-decoration: underline;
+      }
+      
+      button::before {
+        content: '';
         position: absolute;
         top: 0;
         left: 0;
         bottom: 0;
         right: 0;
-        background: none;
-        border: none;
-        cursor: pointer;
+        z-index: 1000;
       }
     `,
   ];

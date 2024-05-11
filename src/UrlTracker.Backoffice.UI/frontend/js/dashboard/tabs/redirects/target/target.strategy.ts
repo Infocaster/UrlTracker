@@ -12,6 +12,6 @@ export interface IRedirectTargetStrategyFactory {
     getStrategy(redirect: IRedirectResponse): IRedirectTargetStrategy | undefined;
 }
 
-export const RedirectTargetStrategyResolver = StrategyResolver<IRedirectResponse, IRedirectTargetStrategy, IRedirectTargetStrategyFactory>;
+export const RedirectTargetStrategyResolver = StrategyResolver<IRedirectResponse, IRedirectTargetStrategy>;
 
 export default new RedirectTargetStrategyResolver(new UnknownTargetStrategyFactory());

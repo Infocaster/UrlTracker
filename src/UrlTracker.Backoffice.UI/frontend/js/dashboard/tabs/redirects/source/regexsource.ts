@@ -1,24 +1,18 @@
-import { html } from "lit";
-import { IRedirectResponse } from "../../../../services/redirect.service";
 import { IVariableResource } from "../../../../util/tools/variableresource.service";
 import { ISourceStrategies } from "./source.constants";
-import { IRedirectSourceStrategyFactory, IRedirectSourceStrategy } from "./source.strategy";
-import './regexsource.lit'
+import { IRedirectSourceStrategyFactory, IRedirectSourceStrategy, IRedirectSourceStrategyFactoryParameters } from "./source.strategy";
+import { UrlTrackerRedirectSource } from "./sourcebase.mixin";
 
 export class RegexSourceStrategyFactory implements IRedirectSourceStrategyFactory {
 
     constructor(private variableResource: IVariableResource) { }
 
-    getStrategy(redirect: IRedirectResponse): IRedirectSourceStrategy | undefined {
+    getStrategy(parameters: IRedirectSourceStrategyFactoryParameters): IRedirectSourceStrategy | undefined {
     
         const key = this.variableResource.get<ISourceStrategies>('redirectSourceStrategies').regex;
-        if (redirect.source.strategy === key) {
+        if (parameters.redirect.source.strategy === key) {
 
-            return {
-                getTemplate() {
-                    return html`<urltracker-redirect-source-regex></urltracker-redirect-source-regex>`;
-                },
-            }
+            return new UrlTrackerRedirectSource(parameters.element, "urlTrackerRedirectSource_regex", parameters.redirect);
         }
     }
 }

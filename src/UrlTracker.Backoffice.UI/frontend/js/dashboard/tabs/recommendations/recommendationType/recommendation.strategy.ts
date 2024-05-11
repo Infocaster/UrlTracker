@@ -14,8 +14,7 @@ export interface IRecommendationTypeStrategyFactory {
 
 export const RecommendationTypeStrategyResolver = StrategyResolver<
   IRecommendationResponse,
-  IRecommendationTypeStrategy,
-  IRecommendationTypeStrategyFactory
+  IRecommendationTypeStrategy
 >;
 
 export default new RecommendationTypeStrategyResolver(
