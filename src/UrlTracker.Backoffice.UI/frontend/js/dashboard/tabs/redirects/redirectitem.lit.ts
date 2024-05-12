@@ -91,7 +91,7 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
 
   protected renderBody(): unknown {
     return html`
-      <div>
+      <div class="body">
         ${this.renderSource()}
         <div class="target">${this.redirectToText}: ${this.renderTarget()}</div>
         <uui-button-group class="actions">
@@ -112,6 +112,10 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
     cardWithClickableHeader,
     actionButton,
     css`
+      .body {
+        min-width: 0;
+      }
+
       .target {
         line-height: 15px;
         font-size: 12px;

@@ -18,9 +18,13 @@ export const cardWithClickableHeader = css`
       
       h3, .inspect-button {
 
-          line-height: 20px;
-          font-size: 15px;
-          font-weight: 400;
+        line-height: 20px;
+        font-size: 15px;
+        font-weight: 400;
+        text-align: start;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .inspect-button {
@@ -30,6 +34,7 @@ export const cardWithClickableHeader = css`
         background-color: transparent;
         font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
         cursor: pointer;
+        max-width: 100%;
       }
 
       .inspect-button:hover {

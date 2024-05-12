@@ -256,7 +256,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
   static styles = css`
     .grid-root {
       display: grid;
-      grid-template-columns: 3fr 1fr;
+      grid-template-columns: 1fr 360px;
       gap: 1rem;
     }
 
@@ -265,6 +265,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
       display: flex;
       flex-direction: column;
       gap: 1rem;
+      min-width: 0;
     }
 
     urltracker-result-list {

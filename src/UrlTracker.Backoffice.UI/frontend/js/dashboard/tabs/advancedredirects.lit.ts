@@ -330,6 +330,7 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
     .grid-root {
       display: grid;
       gap: 1rem;
+      grid-template-columns: 1fr 360px;
     }
 
     .main {
@@ -361,6 +362,7 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
       display: flex;
       flex-direction: column;
       gap: 1rem;
+      min-width: 0;
     }
 
     urltracker-result-list {
