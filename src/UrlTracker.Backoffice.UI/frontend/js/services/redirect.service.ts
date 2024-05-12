@@ -20,6 +20,7 @@ export interface IRedirectResponse {
     retainQuery: boolean;
     force: boolean;
     key: string;
+    additionalData: Record<string, unknown>;
 }
 
 export interface ISolvedRecommendationRequest {

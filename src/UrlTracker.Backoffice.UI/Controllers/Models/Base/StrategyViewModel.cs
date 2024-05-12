@@ -7,7 +7,7 @@ using UrlTracker.Core.Database.Entities;
 namespace UrlTracker.Backoffice.UI.Controllers.Models.Base
 {
     [DataContract]
-    internal class StrategyViewModel
+    public class StrategyViewModel
         : IEquatable<StrategyViewModel>
     {
         [Required]

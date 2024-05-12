@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using UrlTracker.Backoffice.UI.Controllers.Models.Base;
 using UrlTracker.Core.Database.Entities;
@@ -6,7 +7,7 @@ using UrlTracker.Core.Database.Entities;
 namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
 {
     [DataContract]
-    internal class RedirectResponse
+    public class RedirectResponse
         : RedirectViewModelBase, IEquatable<RedirectResponse>
     {
         [DataMember(Name = "id")]
@@ -14,6 +15,9 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
 
         [DataMember(Name = "createDate")]
         public DateTime CreateDate { get; set; }
+
+        [DataMember(Name = "additionalData")]
+        public IDictionary<string, object?> AdditionalData { get; } = new Dictionary<string, object?>();
 
         public static RedirectResponse FromEntity(IRedirect entity)
             => new()

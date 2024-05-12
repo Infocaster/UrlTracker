@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Infrastructure.Scoping;
+using Umbraco.Extensions;
 using UrlTracker.Backoffice.UI.Controllers.Models.Base;
 using UrlTracker.Backoffice.UI.Controllers.Models.Redirects;
+using UrlTracker.Backoffice.UI.Notifications;
 using UrlTracker.Core;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
@@ -29,15 +30,18 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         private readonly IRedirectRepository _redirectRepository;
         private readonly IRecommendationService _recommendationService;
         private readonly IScopeProvider _scopeProvider;
+        private readonly IEventAggregator _eventAggregator;
 
         public RedirectRequestHandler(
             IRedirectRepository redirectRepository,
             IRecommendationService recommendationService,
-            IScopeProvider scopeProvider)
+            IScopeProvider scopeProvider,
+            IEventAggregator eventAggregator)
         {
             _redirectRepository = redirectRepository;
             _recommendationService = recommendationService;
             _scopeProvider = scopeProvider;
+            _eventAggregator = eventAggregator;
         }
 
         public async Task<RedirectCollectionResponse> GetAsync(ListRedirectRequest request)
@@ -47,7 +51,10 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             var combinedType = request.Types?.Aggregate((l, r) => l | r) ?? RedirectType.All;
             
             var entities = await _redirectRepository.GetAsync(request.Page * request.PageSize, request.PageSize, request.Query, combinedType, true);
-            return RedirectCollectionResponse.FromEntityCollection(entities);
+            
+            var result = RedirectCollectionResponse.FromEntityCollection(entities);
+            Notify(result.Results);
+            return result;
         }
 
         public IEnumerable<IRedirect> Get(int[] ids)
@@ -63,7 +70,9 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             var entity = _redirectRepository.Get(id);
             if (entity is null) return null;
 
-            return RedirectResponse.FromEntity(entity);
+            var result = RedirectResponse.FromEntity(entity);
+            Notify(result);
+            return result;
         }
 
         public RedirectResponse? Create(CreateRedirectRequest request)
@@ -82,7 +91,10 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             }
 
             scope.Complete();
-            return RedirectResponse.FromEntity(entity);
+
+            var result = RedirectResponse.FromEntity(entity);
+            Notify(result);
+            return result;
         }
 
         public RedirectResponse? Update(int id, RedirectRequest request)
@@ -96,7 +108,10 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             _redirectRepository.Save(entity);
 
             scope.Complete();
-            return RedirectResponse.FromEntity(entity);
+
+            var result = RedirectResponse.FromEntity(entity);
+            Notify(result);
+            return result;
         }
 
         public IEnumerable<RedirectResponse>? UpdateBulk(IEnumerable<RedirectBulkRequest> bulkRequest)
@@ -119,9 +134,13 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             }
 
             scope.Complete();
-            return bulkRequest
+
+            var result = bulkRequest
                 .Select(br => entities.First(e => e.Id == br.Id))
-                .Select(RedirectResponse.FromEntity);
+                .Select(RedirectResponse.FromEntity)
+                .ToList();
+            Notify(result);
+            return result;
         }
 
         public RedirectResponse? Delete(int id)
@@ -133,7 +152,9 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             _redirectRepository.Delete(entity);
             scope.Complete();
 
-            return RedirectResponse.FromEntity(entity);
+            var result = RedirectResponse.FromEntity(entity);
+            Notify(result);
+            return result;
         }
 
         public void DeleteBulk(int[] ids)
@@ -169,5 +190,10 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         private static EntityStrategy CreateEntity(StrategyViewModel viewModel)
             => new(viewModel.Strategy, viewModel.Value);
 
+        private void Notify(RedirectResponse redirect)
+            => Notify(redirect.AsEnumerableOfOne());
+
+        private void Notify(IEnumerable<RedirectResponse> redirects)
+            => _eventAggregator.Publish(new ServingRedirectsNotification(redirects));
     }
 }

@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace UrlTracker.Backoffice.UI.Controllers.Models.Base
 {
     [DataContract]
-    internal abstract class RedirectViewModelBase
+    public abstract class RedirectViewModelBase
     {
         [Required]
         [DataMember(Name = "source")]

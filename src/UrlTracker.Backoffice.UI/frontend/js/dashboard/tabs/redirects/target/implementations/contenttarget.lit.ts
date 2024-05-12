@@ -71,7 +71,22 @@ export class UrlTrackerContentRedirectTarget extends baseType {
       this.onContentUpdate
     );
 
-    await this.init();
+    if (this.redirect && 'content' in this.redirect.additionalData) {
+
+      this.errorText = undefined;
+      this.contentItem = this.redirect.additionalData.content as IContentTargetResponse;
+      if (!this.contentItem) {
+        this.errorText = await this.localizationService?.localize(
+          "urlTrackerRedirectTarget_contenterror"
+        );
+      }
+      let [id, culture] = this.redirect.target.value.split(";");
+      this.contentId = id;
+    }
+    else {
+
+      await this.init();
+    }
   }
 
   disconnectedCallback(): void {
