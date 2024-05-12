@@ -133,6 +133,8 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
       recommendationStrategy: event.detail.strategy,
       ignore: true,
     });
+
+    await this.search();
   };
 
   private openNewRedirectPanel(data?: IRedirectResponse, solvedRecommendation?: number) {
