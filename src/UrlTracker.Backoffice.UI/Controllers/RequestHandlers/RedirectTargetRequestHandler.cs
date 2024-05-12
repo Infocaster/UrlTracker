@@ -27,7 +27,10 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             var content = _contentService.GetById(request.Id!.Value);
             if (content is null || content.Trashed) return null;
 
-            return new ContentTargetResponse(content.ContentType.Icon!, content.GetCultureName(request.Culture) ?? content.Name!);
+            var iconComponents = content.ContentType.Icon!.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+            var iconColor = iconComponents.Length > 1 ? iconComponents[1] : null;
+
+            return new ContentTargetResponse(iconComponents[0], iconColor, content.GetCultureName(request.Culture) ?? content.Name!);
         }
     }
 }

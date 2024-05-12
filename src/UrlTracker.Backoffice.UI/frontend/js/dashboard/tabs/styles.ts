@@ -94,3 +94,82 @@ export const actionButton = css`
         margin-left: 4px;
       }
 `;
+
+export const colors = css`
+
+  .color-black {
+    --uui-icon-color: #000;
+  }
+
+  .color-blue-grey {
+    --uui-icon-color: #607d8b;
+  }
+
+  .color-grey {
+    --uui-icon-color: #9e9e9e;
+  }
+
+  .color-brown {
+    --uui-icon-color: #795548;
+  }
+
+  .color-blue {
+    --uui-icon-color: #2196f3;
+  }
+
+  .color-light-blue {
+    --uui-icon-color: #03a9f4;
+  }
+
+  .color-indigo {
+    --uui-icon-color: #3f51b5;
+  }
+
+  .color-purple {
+    --uui-icon-color: #9c27b0;
+  }
+
+  .color-deep-purple {
+    --uui-icon-color: #673ab7;
+  }
+
+  .color-cyan {
+    --uui-icon-color: #00bcd4;
+  }
+
+  .color-green {
+    --uui-icon-color: #4caf50;
+  }
+
+  .color-light-green {
+    --uui-icon-color: #8bc34a;
+  }
+
+  .color-lime {
+    --uui-icon-color: #cddc39;
+  }
+
+  .color-yellow {
+    --uui-icon-color: #ffeb3b;
+  }
+
+  .color-amber {
+    --uui-icon-color: #ffc107;
+  }
+
+  .color-orange {
+    --uui-icon-color: #ff9800;
+  }
+
+  .color-deep-orange {
+    --uui-icon-color: #ff5722;
+  }
+
+  .color-red {
+    --uui-icon-color: #f44336;
+  }
+
+  .color-pink {
+    --uui-icon-color: #e91e63;
+  }
+`;

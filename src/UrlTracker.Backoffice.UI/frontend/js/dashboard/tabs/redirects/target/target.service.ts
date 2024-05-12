@@ -4,6 +4,7 @@ import urlResource, { IControllerUrlResource, IUrlResource } from "../../../../u
 
 export interface IContentTargetResponse {
     icon: string;
+    iconColor?: string;
     name: string;
 }
 

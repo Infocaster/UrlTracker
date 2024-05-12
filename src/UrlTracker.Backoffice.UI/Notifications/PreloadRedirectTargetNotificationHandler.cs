@@ -47,7 +47,10 @@ internal class PreloadRedirectTargetNotificationHandler
         var contentItem = content.FirstOrDefault(c => c.Id == mapItem.ContentId);
         if (contentItem is null) return null;
 
-        return new ContentTargetResponse(contentItem.ContentType.Icon!, contentItem.GetCultureName(mapItem.Culture)!);
+        var iconComponents = contentItem.ContentType.Icon!.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        var iconColor = iconComponents.Length > 1 ? iconComponents[1] : null;
+
+        return new ContentTargetResponse(iconComponents[0], iconColor, contentItem.GetCultureName(mapItem.Culture)!);
     }
 
     private static List<ContentMapItem> GetContentMap(List<RedirectResponse> relevantRedirects)

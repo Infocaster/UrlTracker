@@ -17,6 +17,8 @@ import {
 import { ensureServiceExists } from "../../../../../util/tools/existancecheck";
 import { IContentTargetResponse } from "../target.service";
 import { UrlTrackerRedirectTarget } from "../targetbase.mixin";
+import { ifDefined } from "lit/directives/if-defined.js";
+import { colors } from "@/dashboard/tabs/styles";
 
 export class ContentUpdateEvent extends Event {
   static event = "content-update";
@@ -159,13 +161,14 @@ export class UrlTrackerContentRedirectTarget extends baseType {
       return html`<span class="error">${this.errorText}</span>`;
     return html`
       <button @click="${this.onClick}">
-        <uui-icon .name=${this.contentItem?.icon}></uui-icon> ${this.contentItem?.name}  
+        <uui-icon class=${ifDefined(this.contentItem?.iconColor)} name=${ifDefined(this.contentItem?.icon)}></uui-icon>${this.contentItem?.name}  
       </button>
     `;
   }
 
   static styles = [
     ...baseType.styles,
+    colors,
     css`
       uui-icon {
         align-self: center;
@@ -187,7 +190,7 @@ export class UrlTrackerContentRedirectTarget extends baseType {
         cursor: pointer;
         font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
         font-size: 12px;
-        line-height: 15px;
+        line-height: 12px;
         padding: 0;
       }
 
@@ -203,6 +206,10 @@ export class UrlTrackerContentRedirectTarget extends baseType {
         bottom: 0;
         right: 0;
         z-index: 1000;
+      }
+
+      button uui-icon {
+        margin-right: 4px;
       }
     `,
   ];
