@@ -196,6 +196,10 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
     this.search();
   }
 
+  private onDownloadImportTemplate = async () => {
+    await this.redirectImportService!.exportTemplate();
+  }
+
   private onSelectItem = (e: any) => {
     this.selectedItems.push(e.item.id);
     this.requestUpdate();
@@ -320,7 +324,7 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
               <uui-icon slot="icon" name="download"></uui-icon>
             </uui-menu-item>
           </urltracker-redirect-actions>
-          <urltracker-redirect-import @import=${this.onImportRedirects}></urltracker-redirect-import>
+          <urltracker-redirect-import @import=${this.onImportRedirects} @download-template=${this.onDownloadImportTemplate}></urltracker-redirect-import>
         </div>
       </div>
     `;

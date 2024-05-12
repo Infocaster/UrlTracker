@@ -61,7 +61,8 @@ namespace UrlTracker.Web.Events
             {
                 ["base"] = _linkGenerator.GetUmbracoApiServiceBaseUrl<RedirectImportController>(controller => controller.Content(default!))!,
                 ["import"] = "Import",
-                ["export"] = "Export"
+                ["export"] = "Export",
+                ["exportTemplate"] = "ExportExample"
             };
 
             Dictionary<string, string> redirectTargetVariables = new()

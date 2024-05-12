@@ -1,4 +1,4 @@
-import { Axios } from "axios";
+import { Axios, AxiosResponse } from "axios";
 import { axiosInstance } from "../util/tools/axios.service";
 import urlresource, {
   IControllerUrlResource,
@@ -8,6 +8,7 @@ import { IRedirectResponse } from "./redirect.service";
 
 export interface IRedirectImportService {
   export: () => Promise<Blob>;
+  exportTemplate: () => Promise<Blob>;
   import: (request: File) => Promise<IRedirectResponse[]>;
 }
 
@@ -18,16 +19,27 @@ export class RedirectImportService implements IRedirectImportService {
     return this.urlResource.getController("redirectimport");
   }
 
+  public async exportTemplate() {
+    let response = await this.axios.get<Blob>(this.controller.getUrl("exportTemplate"));
+    this.downloadBlob(response, 'redirect-template');
+    return response.data;
+  }
+
   public async export() {
     let response = await this.axios.get<Blob>(this.controller.getUrl("export"));
+    this.downloadBlob(response, 'redirects');
+    return response.data;
+  }
+
+  private downloadBlob(response: AxiosResponse<Blob, any>, fileName: string): void {
+
     const blob = new Blob([response.data], {type: 'text/csv;charset=utf-8;'});
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', 'redirects.csv');
+    link.setAttribute('download', fileName + '.csv');
     document.body.appendChild(link);
     link.click();
-    return response.data;
   }
 
   public async import(file: File) {

@@ -39,6 +39,10 @@ export class UrlTrackerRedirectImport extends LitElement {
       })
     );
   }
+
+  private handleDownloadTemplate = () => {
+    this.dispatchEvent(new CustomEvent("download-template"));
+  }
   
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
@@ -47,8 +51,12 @@ export class UrlTrackerRedirectImport extends LitElement {
 
   private renderBody(): unknown {
     return html`<div class="body">
-      <uui-file-dropzone id="browse-dropzone" label="Drop files here" accept="csv" @change=${this.handleChange}>
-        Drop files here
+      <p>
+        Drop a csv file in the box below to import redirects.
+        <a @click=${this.handleDownloadTemplate}>You can download a template here <uui-icon name="icon-help-alt"></uui-icon></a>
+      </p>
+      <uui-file-dropzone id="browse-dropzone" label="Drag / drop a file here" accept="csv" @change=${this.handleChange}>
+        Drag / drop a file here
       </uui-file-dropzone>
     </div>`;
   }
@@ -61,8 +69,26 @@ export class UrlTrackerRedirectImport extends LitElement {
   }
 
   static styles = css`
-    div:hover {
+
+    uui-file-dropzone {
+      
+      --uui-color-default: var(--uui-color-background);
+    }
+
+    p {
+      margin-top: 0;
+    }
+
+    a,
+    a:visited,
+    a:active {
+      color: black;
+      text-decoration: none;
       cursor: pointer;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
 
     header {
