@@ -55,17 +55,24 @@ export const cardWithClickableHeader = css`
 export const actionButton = css`
 
       .actions {
-        gap: 16px;
         margin-top: 8px;
         height: 24px;
+      }
+
+      button.action-button:first-child {
+        padding-left: 0;
+      }
+
+      button.action-button:last-child {
+        padding-right: 0;
       }
       
       button.action-button {
         z-index: 1000;
         font-size: 12px;
         line-height: 12px;
-        padding-left: 0;
-        padding-right: 0;
+        padding-left: 8;
+        padding-right: 8;
         border-radius: 0;
         border: none;
         background-color: transparent;
