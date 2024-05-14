@@ -43,7 +43,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             if (recommendation == null) return null;
 
             var clientError = await _clientErrorService.GetAsync(recommendation.Url);
-            if (clientError == null || clientError.Ignored) return new RecommendationHistory(default, default, default, Enumerable.Empty<DailyOccurance>());
+            if (clientError == null || clientError.Ignored) return new RecommendationHistory(recommendation.CreateDate, recommendation.UpdateDate, default, Enumerable.Empty<DailyOccurance>());
 
             var dailyClientErrors = await _clientErrorService.GetInRangeAsync(clientError.Id, DateTime.Now.AddDays(-request.PastDays), DateTime.Now);
             var inPastDays = FillEmptyDays(dailyClientErrors, request.PastDays);
