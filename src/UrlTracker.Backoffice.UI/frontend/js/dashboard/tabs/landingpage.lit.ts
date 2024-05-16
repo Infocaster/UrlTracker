@@ -17,6 +17,7 @@ import { IRecommendationAction, RECCOMENDATION_ACTIONS } from "../sidebars/expla
 import "./redirects/redirectitem.lit";
 import { ISourceStrategies } from "./redirects/source/source.constants";
 import { ITargetStrategies } from "./redirects/target/target.constants";
+import { IUmbracoNotificationsService, umbracoNotificationsServiceContext } from "@/context/notificationsservice.context";
 
 @customElement("urltracker-landing-tab")
 export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
@@ -34,6 +35,16 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
 
   @consume({ context: landingpageServiceContext })
   private _landingspageService?: ILandingspageService;
+
+  @consume({ context: umbracoNotificationsServiceContext })
+  private _notificationsService?: IUmbracoNotificationsService | undefined;
+  public get notificationsService(): IUmbracoNotificationsService {
+    ensureServiceExists(this._notificationsService, 'notificationsService');
+    return this._notificationsService;
+  }
+  public set notificationsService(value: IUmbracoNotificationsService | undefined) {
+    this._notificationsService = value;
+  }
 
   @state()
   private recommendationCollection?: IRecommendationCollection;
@@ -133,6 +144,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
       recommendationStrategy: event.detail.strategy,
       ignore: true,
     });
+    this.notificationsService.success("Recommendation ignored", "The recommendation has been removed from the overview");
 
     await this.search();
   };
@@ -153,8 +165,10 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
   submitNewRedirectPanel = async (value: IRedirectResponse & ISolvedRecommendationRequest) => {
     if (value.id) {
       await this._redirectService?.update(value);
+      this.notificationsService.success("Redirect updated", "The redirect was successfully updated");
     } else {
       await this._redirectService?.create(value);
+      this.notificationsService.success("Redirect created", "The redirect was successfully created");
     }
 
     this.closePanel();

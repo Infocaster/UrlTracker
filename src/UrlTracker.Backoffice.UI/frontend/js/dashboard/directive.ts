@@ -19,17 +19,23 @@ import { AnalyseRecommendationSidebar } from "./sidebars/analyseRecommendation-m
 import { InspectRecommendationsSidebar } from "./sidebars/explainRecommendations-main.lit";
 import { InspectRedirectSidebar } from "./sidebars/inspectRedirect-main.lit";
 import { SimpleRedirectSidebar } from "./sidebars/simpleRedirect-main.lit";
+import { IOverlayService, overlayServiceContext, overlayServiceContextKey } from "@/context/overlayservice.context";
+import { IUmbracoNotificationsService, umbracoNotificationsServiceContext, umbracoNotificationsServiceContextKey } from "@/context/notificationsservice.context";
 
 ngUrltrackerDashboard.alias = "ngUrltrackerDashboard";
 ngUrltrackerDashboard.$inject = [
   "localizationService",
   "iconHelper",
   "editorService",
+  "overlayService",
+  "notificationsService"
 ];
 export function ngUrltrackerDashboard(
   localizationService: ILocalizationService,
   iconHelper: IIconHelper,
-  editorService: IEditorService<any>
+  editorService: IEditorService<any>,
+  overlayService: IOverlayService,
+  notificationsService: IUmbracoNotificationsService
 ): angular.IDirective {
   return {
     restrict: "E",
@@ -51,6 +57,8 @@ export function ngUrltrackerDashboard(
         editorServiceKey
       );
       dashboardElement.SetContext(_scope, scopeContext, scopeContextKey);
+      dashboardElement.SetContext(overlayService, overlayServiceContext, overlayServiceContextKey);
+      dashboardElement.SetContext(notificationsService, umbracoNotificationsServiceContext, umbracoNotificationsServiceContextKey)
 
       element[0].appendChild(dashboardElement);
     },

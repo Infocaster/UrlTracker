@@ -13,6 +13,7 @@ import { tabContext } from "../context/tabcontext.context";
 import { ILocalizationService } from "../umbraco/localization.service";
 import "./footer/footer.lit";
 import tabStrategy, { ITab, TabStrategyCollection } from "./tab";
+import { IUmbracoNotificationsService, umbracoNotificationsServiceContext } from "@/context/notificationsservice.context";
 
 @customElement("urltracker-dashboard-content")
 export class UrlTrackerDashboardContent extends LitElement {
@@ -24,6 +25,16 @@ export class UrlTrackerDashboardContent extends LitElement {
 
   @consume({ context: redirectServiceContext })
   private _redirectService?: IRedirectService;
+
+  @consume({ context: umbracoNotificationsServiceContext })
+  private _notificationsService?: IUmbracoNotificationsService | undefined;
+  public get notificationsService(): IUmbracoNotificationsService {
+    ensureServiceExists(this._notificationsService, 'notificationsService');
+    return this._notificationsService;
+  }
+  public set notificationsService(value: IUmbracoNotificationsService | undefined) {
+    this._notificationsService = value;
+  }
 
   @state()
   set tabs(tabs: Array<ITab> | undefined) {
@@ -89,12 +100,14 @@ export class UrlTrackerDashboardContent extends LitElement {
     }
   }
 
-  submitPanel = (value: IRedirectResponse) => {
+  submitPanel = async (value: IRedirectResponse) => {
     if(value.id) {
-      this._redirectService?.update(value);
+      await this._redirectService?.update(value);
+      this.notificationsService.success("Redirect updated", "The redirect has been successfully updated");
     }
     else {
-      this._redirectService?.create(value);
+      await this._redirectService?.create(value);
+      this.notificationsService.success("Redirect created", "The redirect has been successfully created");
     }
     this.closePanel();
   };

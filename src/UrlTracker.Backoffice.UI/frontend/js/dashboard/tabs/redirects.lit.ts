@@ -33,6 +33,7 @@ import { UrlTrackerNotificationWrapper } from "../notifications/notifications.mi
 import { ICreateRedirectSidbarData } from "./advancedredirects.lit";
 import "./redirects/redirectitem.lit";
 import "./redirects/redirectsSearch.lit";
+import { IUmbracoNotificationsService, umbracoNotificationsServiceContext } from "@/context/notificationsservice.context";
 
 @customElement("urltracker-redirect-tab")
 export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
@@ -47,6 +48,16 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 
   @consume({ context: editorServiceContext })
   private editorService?: IEditorService<any>;
+
+  @consume({ context: umbracoNotificationsServiceContext })
+  private _notificationsService?: IUmbracoNotificationsService | undefined;
+  public get notificationsService(): IUmbracoNotificationsService {
+    ensureServiceExists(this._notificationsService, 'notificationsService');
+    return this._notificationsService;
+  }
+  public set notificationsService(value: IUmbracoNotificationsService | undefined) {
+    this._notificationsService = value;
+  }
 
   @provide({ context: changeManagerContext })
   public changeManager: IChangeManager = { element: this };
@@ -139,9 +150,11 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   private submitNewRedirectPanel = async (value: IRedirectResponse) => {
     if(value.id) {
       await this.redirectService?.update(value);
+      this.notificationsService.success("Redirect updated", "The redirect has been successfully updated");
     }
     else {
       await this.redirectService?.create(value);
+      this.notificationsService.success("Redirect created", "The redirect has been successfully created");
     }
 
     this.closePanel();
@@ -184,20 +197,24 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 
   private onDeleteRedirect = async (e: CustomEvent<IRedirectResponse>) => {
     await this.redirectService?.delete(e.detail.id);
+    this.notificationsService.success("Redirect deleted", "The redirect has been successfully deleted");
     this.search();
   };
 
   private onExportRedirects = async (_: any) => {
     await this.redirectImportService?.export();
+    this.notificationsService.success("Redirects exported", "Check your downloads to find the exported redirects");
   };
 
   private onImportRedirects = async (e: CustomEvent<File>) => {
     await this.redirectImportService!.import(e.detail);
+    this.notificationsService.success("Redirects imported", "The redirects have been successfully imported");
     this.search();
   }
 
   private onDownloadImportTemplate = async () => {
     await this.redirectImportService!.exportTemplate();
+    this.notificationsService.success("Template downloaded", "Check your downloads to find the template");
   }
 
   private onSelectItem = (e: any) => {
@@ -226,6 +243,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     const selectedRedirects = this.redirectCollection?.results.filter(r => this.selectedItems.some(i => i === r.id)) || [];
     const bulkToUpdate = selectedRedirects.map(r => ({...r, permanent: true}));
     await redirectService.updateBulk(bulkToUpdate);
+    this.notificationsService.success("Redirects converted to permanent", "The selected redirects have been successfully converted to permanent");
     this.selectedItems = [];
     this.search();
   }
@@ -234,6 +252,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
     const selectedRedirects = this.redirectCollection?.results.filter(r => this.selectedItems.some(i => i === r.id)) || [];
     const bulkToDelete = selectedRedirects.map(r => r.id);
     await redirectService.deleteBulk(bulkToDelete);
+    this.notificationsService.success("Redirects deleted", "The selected redirects have been successfully deleted");
     this.selectedItems = [];
     this.search();
   }

@@ -49,6 +49,7 @@ import "./recommendations/recommendationSearch.lit";
 import "./recommendations/recommendationitem.lit";
 import { ISourceStrategies } from "./redirects/source/source.constants";
 import { ITargetStrategies } from "./redirects/target/target.constants";
+import { IUmbracoNotificationsService, umbracoNotificationsServiceContext } from "@/context/notificationsservice.context";
 
 @customElement("urltracker-recommendations-tab")
 export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
@@ -63,6 +64,16 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
   @consume({ context: editorServiceContext })
   private editorService?: IEditorService<any>;
+
+  @consume({ context: umbracoNotificationsServiceContext })
+  private _notificationsService?: IUmbracoNotificationsService | undefined;
+  public get notificationsService(): IUmbracoNotificationsService {
+    ensureServiceExists(this._notificationsService, 'notificationsService');
+    return this._notificationsService;
+  }
+  public set notificationsService(value: IUmbracoNotificationsService | undefined) {
+    this._notificationsService = value;
+  }
 
   @provide({ context: changeManagerContext })
   public changeManager: IChangeManager = { element: this };
@@ -193,6 +204,8 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       ignore: true,
     });
 
+    this.notificationsService.success("Recommendation ignored", "The recommendation has been removed from the overview");
+
     this.search();
   };
 
@@ -212,8 +225,10 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   private submitNewRedirectPanel = async (value: IRedirectResponse & ISolvedRecommendationRequest) => {
     if (value.id) {
       await this._redirectService?.update(value);
+      this.notificationsService.success("Redirect updated", "The redirect has successfully been updated");
     } else {
       await this._redirectService?.create(value);
+      this.notificationsService.success("Redirect created", "The redirect has successfully been created");
     }
 
     this.closePanel();
@@ -323,6 +338,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       };
     });
     await recommendationService.updateBulk(bulkToUpdate);
+    this.notificationsService.success("Recommendations ignored", "All selected recommendations have been removed from the overview");
     this.selectedItems = [];
     this.search();
   };
