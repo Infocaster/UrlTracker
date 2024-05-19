@@ -13,6 +13,8 @@ parameters:
   type: string
 - name: deploymentPath
   type: string
+- name: variableGroup
+  type: string
 
 jobs:
 - deployment: 'prepare${{ parameters.environment }}'
@@ -21,6 +23,7 @@ jobs:
     name: ${{ parameters.environment }}
     resourceType: VirtualMachine
   variables:
+  - group: ${{ parameters.variableGroup }}
   - name: physicalPath
     value: '${{ parameters.deploymentPath }}\${{ parameters.websiteName }}'
   strategy:

@@ -228,3 +228,4 @@ stages:
         stageName: 'Testing'
         deploymentPath: $(TestPhysicalPath)
         dropName: 'drop-website'
+        variableGroup: 'urltracker-testing'
