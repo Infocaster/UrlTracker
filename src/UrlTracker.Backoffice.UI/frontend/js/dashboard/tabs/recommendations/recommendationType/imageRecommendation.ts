@@ -16,7 +16,7 @@ export class ImageRecommendationTypeStrategyFactory
     const key = this.variableResource.get<IRecommendationTypeStrategies>("recommendationTypeStrategies").image;
 
     if (parameters.recommendation.strategy === key) {
-      return new UrlTrackerRecommendationType(parameters.element, "urlTrackerRecommendationType_image");
+      return new UrlTrackerRecommendationType(parameters.element, "urlTrackerRecommendationType_image", "urlTrackerRecommendationType_imagedescription");
     }
   }
 }

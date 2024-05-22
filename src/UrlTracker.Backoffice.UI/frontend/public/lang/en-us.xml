@@ -61,9 +61,33 @@
   </area>
   <area alias="urlTrackerRecommendationType">
     <key alias="image">Image was not found</key>
+    <key alias="imagedescription">
+      This entry indicates that an image could not be found. As a consequence, 
+      certain pages may not be displayed correctly and visitors might lack visual context to the content on particular pages. 
+      Check out the referrer information to see on which pages the image is requested.
+      Redirect this url to an existing image to restore the user experience. Alternatively, 
+      you can check out the referrer overview below to see from which pages the image is requested.
+      After manually repairing the images, this recommendation will eventually disappear.
+    </key>
     <key alias="file">File was not found</key>
+    <key alias="filedescription">
+      This entry indicates that a file could not be found. As a consequence,
+      certain pages may contain broken links to downloadable content. Visitors may not be able to download the files on those pages.
+      Check the referrer information to see on which pages the downloadable content is referenced.
+      Repair the downloads on those pages and this recommendation will eventually disappear.
+      Alternatively, you can create a redirect to redirect all urls to a new file at once.
+    </key>
     <key alias="page">Page was not found</key>
+    <key alias="pagedescription">
+      This entry indicates that a page could not be found. This means that visitors are trying to visit pages that don't exist.
+      Create a redirect to redirect users to a new content page.
+    </key>
     <key alias="technicalFile">Technical file was not found</key>
+    <key alias="technicalFiledescription">
+      This entry indicates that a technical file could not be found. The consequences of this depend on the nature of the file.
+      You should contact your administrator to get instructions on what to do with this.
+      If you really know what you're doing, you may create a redirect for this file, but you likely shouldn't.
+    </key>
     <key alias="unknown">Unknown recommendation type</key>
   </area>  
   <area alias="urlTrackerRecommendationImportance">

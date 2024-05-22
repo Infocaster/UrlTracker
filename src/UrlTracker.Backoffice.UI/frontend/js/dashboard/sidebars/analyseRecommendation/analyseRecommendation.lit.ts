@@ -57,6 +57,9 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
   @state()
   private recommendationTypeIsError: boolean = false;
 
+  @state()
+  private recommendationTypeDescription?: string;
+
   private renderRecommendationType(): unknown {
     if (!this.recommendationTypeText) return nothing;
     let errorClass: string | undefined;
@@ -92,6 +95,7 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
       const sourceStrategy = recommendationTypeStrategyResolver.getStrategy({recommendation: this.data, element: this});
       if (sourceStrategy) {
         this.recommendationTypeText = await sourceStrategy.getTitle();
+        this.recommendationTypeDescription = await sourceStrategy.getDescription();
         this.recommendationTypeIsError = false;
       }
       else {
@@ -108,14 +112,14 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
   }
 
   protected renderHistoryChart() {
-    if (!this.history) return nothing;
+    if (!this.history?.dailyOccurances?.length) return html`<i>No data available</i>`;
     return html`
      <urltracker-history-chart .history=${this.history}></urltracker-history-chart>
     `;
   }
 
   protected renderReferrersChart() {
-    if (!this.referrers) return nothing;
+    if (!this.referrers?.length) return html`<i>No data available</i>`;
     return html`
      <urltracker-referrers-chart .referrers=${this.referrers}></urltracker-referrers-chart>
     `;
@@ -130,12 +134,7 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
       <div class="main">
         <uui-box>
           <p>
-          This entry indicates that an image could not be found. As a consequence, 
-          certain pages may not be displayed correctly and visitors might lack visual context to the content on particular pages. 
-          Check out the referrer information to see on which pages the image is requested.
-          Redirect this url to an existing image to restore the user experience. Alternatively, 
-          you can check out the referrer overview below to see from which pages the image is requested.
-          After manually repairing the images, you can mark this recommendation as resolved.
+          ${this.recommendationTypeDescription}
           </p>
           <h6>History (last 20 days)</h6>
           ${this.renderHistoryChart()}

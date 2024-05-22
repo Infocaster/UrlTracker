@@ -4,6 +4,7 @@ import { UnsafeStrategyResolver } from "../../../../util/tools/strategy/strategy
 
 export interface IRecommendationTypeStrategy {
   getTitle(): Promise<string>
+  getDescription(): Promise<string>
 }
 
 export interface IRecommendationTypeStrategyFactoryParameters {

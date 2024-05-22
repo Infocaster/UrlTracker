@@ -16,7 +16,7 @@ export class PageRecommendationTypeStrategyFactory
     const key = this.variableResource.get<IRecommendationTypeStrategies>("recommendationTypeStrategies").page;
 
     if (parameters.recommendation.strategy === key) {
-      return new UrlTrackerRecommendationType(parameters.element, "urlTrackerRecommendationType_page");
+      return new UrlTrackerRecommendationType(parameters.element, "urlTrackerRecommendationType_page", "urlTrackerRecommendationType_pagedescription");
     }
   }
 }

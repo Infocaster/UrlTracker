@@ -16,7 +16,7 @@ export class TechnicalFileRecommendationTypeStrategyFactory
     const key = this.variableResource.get<IRecommendationTypeStrategies>("recommendationTypeStrategies").technicalFile;
     
     if (parameters.recommendation.strategy === key) {
-      return new UrlTrackerRecommendationType(parameters.element, "urlTrackerRecommendationType_technicalFile");
+      return new UrlTrackerRecommendationType(parameters.element, "urlTrackerRecommendationType_technicalFile", "urlTrackerRecommendationType_technicalFiledescription");
     }
   }
 }

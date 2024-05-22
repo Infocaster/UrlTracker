@@ -12,7 +12,7 @@ export class UrlTrackerRecommendationType implements IRecommendationTypeStrategy
   
   private _localizationServiceConsumer;
 
-  constructor (base: HostElement, private _typeKey: string) {
+  constructor (base: HostElement, private _typeKey: string, private _typeDescriptionKey: string) {
     
     this._localizationServiceConsumer = new ContextConsumer(base, {
       context: localizationServiceContext,
@@ -23,6 +23,12 @@ export class UrlTrackerRecommendationType implements IRecommendationTypeStrategy
     
     const typeString = await this.localizationService?.localize(this._typeKey);
     return typeString ?? this._typeKey;
+  }
+
+  async getDescription(): Promise<string> {
+      
+    const result = await this.localizationService?.localize(this._typeDescriptionKey);
+    return result ?? this._typeDescriptionKey;
   }
   
   protected get localizationService(): ILocalizationService | undefined {
