@@ -16,6 +16,9 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
         [DataMember(Name = "createDate")]
         public DateTime CreateDate { get; set; }
 
+        [DataMember(Name = "updateDate")]
+        public DateTime UpdateDate { get; set; }
+
         [DataMember(Name = "additionalData")]
         public IDictionary<string, object?> AdditionalData { get; } = new Dictionary<string, object?>();
 
@@ -23,6 +26,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
             => new()
             {
                 CreateDate = entity.CreateDate,
+                UpdateDate = entity.UpdateDate == default ? entity.CreateDate : entity.UpdateDate,
                 Force = entity.Force,
                 Id = entity.Id,
                 Key = entity.Key,

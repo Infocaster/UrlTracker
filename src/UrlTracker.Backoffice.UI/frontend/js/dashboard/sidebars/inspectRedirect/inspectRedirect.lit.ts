@@ -54,12 +54,13 @@ import { customElement, property, state } from "lit/decorators.js";
               </div>
               <div class="item">
                 <dt>Created at</dt>
-                <dd>${toReadableDate(new Date())}</dd>
+                <dd>${toReadableDate(this.data.createDate)}</dd>
               </div>
-              <div class="item">
+              <!-- updateDate is not persisted yet in the database -->
+              <!-- <div class="item">
                 <dt>Last updated on</dt>
-                <dd>last update property nog toevoegen!</dd>
-              </div>
+                <dd>${toReadableDate(this.data.updateDate)}</dd>
+              </div> -->
             </uui-box>
         </div>
         <div class="footer">

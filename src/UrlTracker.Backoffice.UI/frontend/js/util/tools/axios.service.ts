@@ -5,7 +5,7 @@ export const axiosInstance = new Axios({
     transformResponse: [
         (data) => {
             try {
-                const parsedData = JSON.parse(data.substring(6));
+                const parsedData = JSON.parse(data.substring(6), dateStringToDateReviver);
                 return parsedData;
             } catch (e) {
                 console.warn('Could not parse response', e);
@@ -26,3 +26,15 @@ export const axiosInstance = new Axios({
         "X-UMB-XSRF-TOKEN": Cookies.get("UMB-XSRF-TOKEN")
     }
 });
+
+function dateStringToDateReviver(_: string, value: any) {
+
+    if (typeof value !== 'string' && !(value instanceof String)) return value;
+
+    const valueToString = value.toString();
+    const matchesExpectedPattern = /^\d{4}-\d{2}-\d{2}.*/.test(valueToString);
+    const valueAsDate = Date.parse(valueToString);
+    if (!matchesExpectedPattern || isNaN(valueAsDate)) return value;
+
+    return new Date(valueAsDate);
+}

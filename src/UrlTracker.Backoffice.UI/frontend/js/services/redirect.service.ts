@@ -14,7 +14,8 @@ export interface IRedirectResponseStrategy {
 
 export interface IRedirectResponse {
     id: number;
-    createDate: string;
+    createDate: Date;
+    updateDate: Date;
     source: IRedirectResponseStrategy;
     target: IRedirectResponseStrategy;
     permanent: boolean;
