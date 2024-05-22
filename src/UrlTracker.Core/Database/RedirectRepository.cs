@@ -29,7 +29,7 @@ namespace UrlTracker.Core.Database
 
         #region Old Implementation
 
-        public async Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, RedirectType types, bool descending)
+        public async Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, RedirectFilters filters, bool descending)
         {
             var countQuery = Sql().SelectCount();
             countQuery = PopulateRedirectQuery(countQuery);
@@ -63,17 +63,22 @@ namespace UrlTracker.Core.Database
                  *    Should more options become available, this code needs to be updated.
                  */
 
-                if (types.HasFlag(RedirectType.Temporary) != types.HasFlag(RedirectType.Permanent))
+                if (filters.Types.HasFlag(RedirectType.Temporary) != filters.Types.HasFlag(RedirectType.Permanent))
                 {
-                    if (types.HasFlag(RedirectType.Temporary))
+                    if (filters.Types.HasFlag(RedirectType.Temporary))
                     {
                         q = q.Where<RedirectDto>(e => e.Permanent == false);
                     }
 
-                    if (types.HasFlag(RedirectType.Permanent))
+                    if (filters.Types.HasFlag(RedirectType.Permanent))
                     {
                         q = q.Where<RedirectDto>(e => e.Permanent == true);
                     }
+                }
+
+                if (filters.SourceTypes?.Any() is true)
+                {
+                    q = q.WhereIn<RedirectDto>(e => e.SourceStrategy, filters.SourceTypes);
                 }
 
                 return q;

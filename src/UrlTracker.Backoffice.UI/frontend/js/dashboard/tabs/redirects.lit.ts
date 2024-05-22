@@ -25,6 +25,7 @@ import "../../util/elements/inputs/redirectImport.lit";
 import "../../util/elements/redirectActions.lit";
 import "../../util/elements/resultlist.lit";
 import "../../util/elements/resultlistitem.lit";
+import variableResource from '../../util/tools/variableresource.service'
 import {
   ensureExists,
   ensureServiceExists,
@@ -34,6 +35,8 @@ import { ICreateRedirectSidbarData } from "./advancedredirects.lit";
 import "./redirects/redirectitem.lit";
 import "./redirects/redirectsSearch.lit";
 import { IUmbracoNotificationsService, umbracoNotificationsServiceContext } from "@/context/notificationsservice.context";
+import { IRedirectViewContext, redirectViewContext } from "./redirects/redirectview.context";
+import { ISourceStrategies } from "./redirects/source/source.constants";
 
 @customElement("urltracker-redirect-tab")
 export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
@@ -62,6 +65,9 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
   @provide({ context: changeManagerContext })
   public changeManager: IChangeManager = { element: this };
 
+  @provide({ context: redirectViewContext })
+  public viewContext: IRedirectViewContext = { advanced: false }
+
   @state()
   private redirectCollection?: IRedirectCollectionResponse;
 
@@ -70,6 +76,12 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 
   @state()
   private selectedItems: number[] = [];
+
+  private get redirectTypes(): string[] | undefined {
+
+    const urlStrategy = variableResource.get<ISourceStrategies>('redirectSourceStrategies').url
+    return [urlStrategy];
+  }
   
   private query = "";
   private selectedType: RedirectSortType = REDIRECTTYPE_SORT_TYPE.ALL;
@@ -116,7 +128,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(
 
     this.loading++;
     try {
-      this.redirectCollection = await this.redirectService?.list({ ...page, types: type, query});
+      this.redirectCollection = await this.redirectService?.list({ ...page, types: type, query, sourceTypes: this.redirectTypes});
     } finally {
       this.loading--;
     }

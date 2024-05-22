@@ -5,6 +5,7 @@ import { IPagedCollectionResponseBase } from "./models/PagedCollectionResponseBa
 import { IPaginationRequestBase } from "./models/paginationrequestbase";
 import { IQueryRequestBase } from "./models/queryrequestbase";
 import { IRedirectFilterRequestBase } from "./models/redirectfilterrequestbase";
+import qs from "qs";
 
 export interface IRedirectResponseStrategy {
     strategy: string;
@@ -50,7 +51,10 @@ export class RedirectService implements IRedirectService {
 
         let response = await this.axios.get<IRedirectCollectionResponse>(this.controller.getUrl('list'),
         {
-            params: request
+            params: request,
+            paramsSerializer: (params) => {
+                return qs.stringify(params, { arrayFormat: "repeat" })
+            }
         }).catch((error) => { console.log(error); throw error; });
 
         return response.data;

@@ -48,9 +48,11 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         {
             using var scope = _scopeProvider.CreateScope();
 
-            var combinedType = request.Types?.Aggregate((l, r) => l | r) ?? RedirectType.All;
+            var filters = new RedirectFilters(
+                request.Types?.Aggregate((l, r) => l | r) ?? RedirectType.All,
+                request.SourceTypes);
             
-            var entities = await _redirectRepository.GetAsync(request.Page * request.PageSize, request.PageSize, request.Query, combinedType, true);
+            var entities = await _redirectRepository.GetAsync(request.Page * request.PageSize, request.PageSize, request.Query, filters, true);
             
             var result = RedirectCollectionResponse.FromEntityCollection(entities);
             Notify(result.Results);

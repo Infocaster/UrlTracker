@@ -33,6 +33,7 @@ import { UrlTrackerNotificationWrapper } from "../notifications/notifications.mi
 import "./redirects/redirectitem.lit";
 import "./redirects/redirectsSearch.lit";
 import { IUmbracoNotificationsService, umbracoNotificationsServiceContext } from "@/context/notificationsservice.context";
+import { IRedirectViewContext, redirectViewContext } from "./redirects/redirectview.context";
 
 export type ICreateRedirectSidbarData = IRedirectResponse & { advancedView: boolean};
 
@@ -59,6 +60,9 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
 
   @provide({ context: changeManagerContext })
   public changeManager: IChangeManager = { element: this };
+
+  @provide({ context: redirectViewContext })
+  public viewContext: IRedirectViewContext = { advanced: true }
 
   @state()
   private redirectCollection?: IRedirectCollectionResponse;
@@ -114,7 +118,7 @@ export class UrlTrackerAdvancedRedirectTab extends UrlTrackerNotificationWrapper
 
     this.loading++;
     try {
-      this.redirectCollection = await this.redirectService?.list({ ...page, types: type, query});
+      this.redirectCollection = await this.redirectService?.list({ ...page, types: type, query, sourceTypes: undefined});
     } finally {
       this.loading--;
     }

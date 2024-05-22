@@ -11,7 +11,7 @@ namespace UrlTracker.Core.Database
     {
         void DeleteBulk(int[] ids);
         Task<IReadOnlyCollection<IRedirect>> GetAsync(IEnumerable<string> urlsAndPaths);
-        Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, RedirectType types, bool descending);
+        Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, RedirectFilters filters, bool descending);
         Task<IReadOnlyCollection<IRedirect>> GetWithRegexAsync();
     }
 
