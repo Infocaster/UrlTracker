@@ -69,7 +69,7 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
             <uui-button look="primary" @click=${() => this.save(RECCOMENDATION_ACTIONS.MAKE_PERMANENT)}>Apply this recommendation</uui-button>
           </uui-box>
           <uui-box headline="Ignore this">
-            <p>A temporary redirect will redirect users to a different page, but will also tell google and other search engines that the content on this URL will be back later. Use this option if content is only temporarily moved to a different URL.</p>
+            <p>Sometimes a url might pop up in here that you simply cannot do anything with. In that case, you can ignore the recommendation and it will be permanently removed from the overview.</p>
             <uui-button look="primary" @click=${() => this.save(RECCOMENDATION_ACTIONS.IGNORE)}>Apply this recommendation</uui-button>
           </uui-box>
       </div>
