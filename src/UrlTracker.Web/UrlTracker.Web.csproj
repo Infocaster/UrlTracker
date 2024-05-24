@@ -5,11 +5,15 @@
     <Title>URL Tracker Web</Title>
     <Description>This package contains the web services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>1 new feature, 1 bugfix, 1 other change
+    <PackageReleaseNotes>4 new features, 3 other changes
 
-- Fix stale caches on load balanced environments
-- (Experimental) Add active cache
-- Optimise database query performance</PackageReleaseNotes>
+- Add recommendation analytics
+- Add classification mechanics
+- Add scoring mechanics
+- Add cleanup routines
+- Improve user experience
+- Improve dashboard performance
+- New design that is more umbraco-like</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->
