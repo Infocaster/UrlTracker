@@ -224,7 +224,6 @@ stages:
         websiteName: 'urltracker'
         dropFolder: '$(pipeline.workspace)/drop-website/UrlTracker.Resources.Website.zip'
         environment: 'Testing'
-        hostName: $(HostName)
         stageName: 'Testing'
         deploymentPath: $(TestPhysicalPath)
         dropName: 'drop-website'

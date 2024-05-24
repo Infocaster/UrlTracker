@@ -7,8 +7,6 @@ parameters:
   type: string
 - name: environment
   type: string
-- name: hostName
-  type: string
 - name: stageName
   type: string
 - name: deploymentPath
@@ -60,7 +58,7 @@ jobs:
                         {
                             "protocol":"http",
                             "ipAddress":"",
-                            "hostname":"${{ parameters.hostName }}",
+                            "hostname":"$(HostName)",
                             "port":"80",
                             "sslThumbprint":"",
                             "sniFlag":false
