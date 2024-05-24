@@ -5,15 +5,9 @@
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>4 new features, 3 other changes
+    <PackageReleaseNotes>1 bugfix
 
-- Add recommendation analytics
-- Add classification mechanics
-- Add scoring mechanics
-- Add cleanup routines
-- Improve user experience
-- Improve dashboard performance
-- New design that is more umbraco-like</PackageReleaseNotes>
+- Tabs are now displayed as intended</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">
