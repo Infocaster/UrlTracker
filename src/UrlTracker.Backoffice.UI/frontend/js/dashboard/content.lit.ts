@@ -147,28 +147,31 @@ export class UrlTrackerDashboardContent extends LitElement {
     } else {
       let tabsOrNothing;
       if (this.tabs && this.tabs?.length > 1) {
-        tabsOrNothing = html` <uui-tab-group>
-          ${this.tabs?.map(
-            (item) =>
-              html`<uui-tab
-                label="${item.label ? item.label : item.name}"
-                ?active="${item === this.activeTab}"
-                @click="${() => (this.activeTab = item)}"
-                >${item.name}</uui-tab
-              >`
-          )}
-          <uui-button
-            class="new-redirect"
-            style=""
-            look="primary"
-            color="positive"
-            label="Basic"
-            @click="${this._openSidebar}"
-          >
-              <uui-icon name="add"></uui-icon>
-            New redirect
-          </uui-button>
-        </uui-tab-group>`;
+        tabsOrNothing = html`
+        <div class="tabs-wrapper">
+          <uui-tab-group>
+            ${this.tabs?.map(
+              (item) =>
+                html`<uui-tab
+                  label="${item.label ? item.label : item.name}"
+                  ?active="${item === this.activeTab}"
+                  @click="${() => (this.activeTab = item)}"
+                  >${item.name}</uui-tab
+                >`
+            )}
+          </uui-tab-group>
+            <uui-button
+              class="new-redirect"
+              style=""
+              look="primary"
+              color="positive"
+              label="Basic"
+              @click="${this._openSidebar}"
+            >
+                <uui-icon name="add"></uui-icon>
+              New redirect
+            </uui-button>
+        </div>`;
       } else {
         tabsOrNothing = nothing;
       }
@@ -237,11 +240,17 @@ export class UrlTrackerDashboardContent extends LitElement {
       flex-direction: column;
       pointer-events: all;
     }
-    uui-tab-group {
-      --uui-tab-background: white;
+    .tabs-wrapper {
+      background-color: white;
       border-bottom: 1px solid #e9e9eb;
       box-sizing: border-box;
       height: 70px;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-left: 1rem;
+      padding-right: 1rem;
     }
     .dashboard-body {
       flex: 1;
