@@ -24,7 +24,7 @@
             <ul class="slider-container">
                 @foreach (var item in row.Images)
                 {
-                    <li><img src="@item.Url()" loading="lazy" alt="@item.Content.GetAltText()"></li>
+                    <li><img src="@item.GetCropUrl()" loading="lazy" alt="@item.Content.GetAltText()"></li>
                 }
             </ul>
 

@@ -56,6 +56,13 @@ namespace UrlTracker.IntegrationTests.Utils
 
             obj.RemoveAll(s => s.ServiceType == typeof(IClientErrorProcessorQueue));
             obj.AddSingleton<IClientErrorProcessorQueue, QueuelessClientErrorHandler>();
+
+
+            var settings = new Umbraco.Cms.Infrastructure.PublishedCache.PublishedSnapshotServiceOptions
+            {
+                IgnoreLocalDb = true
+            };
+            obj.AddSingleton(settings);
         }
 
         public HttpClient CreateStandardClient()

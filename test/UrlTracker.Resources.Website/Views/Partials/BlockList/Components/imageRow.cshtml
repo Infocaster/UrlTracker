@@ -16,7 +16,7 @@
 
 <div class="row clearfix @(spacingClasses)">
     <div class="col-md-12 column">
-        <img src="@row.Image.Url()" alt="@row.Image.Content.GetAltText()" class="img-fluid">
+        <img src="@(row?.Image?.GetCropUrl())" alt="@row.Image.Content.GetAltText()" class="img-fluid">
         @if (!string.IsNullOrWhiteSpace(row.Caption))
         {
             <p class="caption">@row.Caption</p>
