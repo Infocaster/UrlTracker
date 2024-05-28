@@ -8,7 +8,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
 {
     public class CreateRedirectTests : RedirectTestBase
     {
-        private const string _endpoint = _endpointBase + "/create";
+        private const string _endpoint = _endpointBase;
 
         [TestCase(TestName = "Create creates a new redirect")]
         public async Task Create_DefaultFlow_CreatesRedirect()

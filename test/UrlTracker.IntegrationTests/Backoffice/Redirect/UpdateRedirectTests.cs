@@ -7,7 +7,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
 {
     public class UpdateRedirectTests : RedirectTestBase
     {
-        private const string _endpoint = _endpointBase + "/update";
+        private const string _endpoint = _endpointBase;
 
         [TestCase(TestName = "Update updates redirects")]
         public async Task Update_NormalFlow_UpdatesRedirect()
@@ -17,7 +17,6 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
             var request = new RedirectRequest
             {
                 Force = true,
-                Key = model.Key,
                 Permanent = false,
                 RetainQuery = false,
                 Source = new StrategyViewModel
@@ -45,14 +44,12 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
             Assert.Multiple(() =>
             {
                 Assert.That(redirect.Force, Is.EqualTo(request.Force));
-                Assert.That(redirect.Key, Is.EqualTo(request.Key));
                 Assert.That(redirect.Permanent, Is.EqualTo(request.Permanent));
                 Assert.That(redirect.RetainQuery, Is.EqualTo(request.RetainQuery));
                 Assert.That(redirect.Source, Is.InstanceOf<RegexSourceStrategy>());
                 Assert.That(redirect.Target, Is.InstanceOf<UrlTargetStrategy>());
 
                 Assert.That(responseModel.Force, Is.EqualTo(request.Force));
-                Assert.That(responseModel.Key, Is.EqualTo(request.Key));
                 Assert.That(responseModel.Permanent, Is.EqualTo(request.Permanent));
                 Assert.That(responseModel.RetainQuery, Is.EqualTo(request.RetainQuery));
                 Assert.That(responseModel.Source, Is.EqualTo(request.Source));

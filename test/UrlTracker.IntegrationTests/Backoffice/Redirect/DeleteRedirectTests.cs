@@ -2,7 +2,7 @@
 {
     public class DeleteRedirectTests : RedirectTestBase
     {
-        private const string _endpoint = _endpointBase + "/delete";
+        private const string _endpoint = _endpointBase;
 
         [TestCase(TestName = "Delete deletes the redirect if exists")]
         public async Task Delete_NormalFlow_DeletesRedirects()
@@ -11,7 +11,7 @@
             var model = await CreateStandardRedirectAsync();
 
             // act
-            var response = await WebsiteFactory.CreateStandardClient().PostAsync(_endpoint + "/" + model.Id, null);
+            var response = await WebsiteFactory.CreateStandardClient().PostAsync(_endpoint + "/" + model.Id + "/delete", null);
             response.EnsureSuccessStatusCode();
             var redirect = await GetRedirectService().GetAsync(model.Id!.Value);
 

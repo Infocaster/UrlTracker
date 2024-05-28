@@ -11,7 +11,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Recommendation
 {
     public class ListRecommendationsTests : RecommendationTestBase
     {
-        private const string _endpoint = _endpointBase + "/list";
+        private const string _endpoint = _endpointBase;
 
         [TestCase(TestName = "List returns a list of recommendations in the correct order")]
         public async Task List_NormalFlow_ReturnsCorrectResult()

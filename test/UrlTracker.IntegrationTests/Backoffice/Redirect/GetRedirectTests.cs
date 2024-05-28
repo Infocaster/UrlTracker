@@ -14,7 +14,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
                 CreateDate = model.Inserted,
                 Id = model.Id!.Value,
                 Force = false,
-                Key = model.Key,
+                Key = model.Key!.Value,
                 Permanent = true,
                 RetainQuery = true,
                 Source = new StrategyViewModel
@@ -45,7 +45,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
             var model = await CreateStandardRedirectAsync();
 
             // act
-            var response = await WebsiteFactory.CreateStandardClient().GetAsync(_endpointList + "?page=0&pagesize=10");
+            var response = await WebsiteFactory.CreateStandardClient().GetAsync(_endpointList + "?page=1&pagesize=10");
             response.EnsureSuccessStatusCode();
             var responseModel = await DeserializeResponseAsync<RedirectCollectionResponse>(response);
 
@@ -58,7 +58,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
             });
         }
 
-        private const string _endpointGet = _endpointBase + "/get";
-        private const string _endpointList = _endpointBase + "/list";
+        private const string _endpointGet = _endpointBase;
+        private const string _endpointList = _endpointBase;
     }
 }
