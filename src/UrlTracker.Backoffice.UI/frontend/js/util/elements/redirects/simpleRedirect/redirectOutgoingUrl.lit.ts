@@ -147,11 +147,22 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     });
   }
 
-  private submitContentPicker = (model: { selection: IContent[] }) => {
-    if(model.selection.length === 0) return this.editorService?.close();
-    this.contentItem = model.selection[0];
-
+  private submitContentPicker = async (model: { selection: IContent[] }) => {
     this.editorService?.close();
+    
+    if(model.selection.length === 0) return;
+
+    const selectedItem = model.selection[0];
+    const newTarget = await this.redirectTargetService?.Content({id: selectedItem.id});
+    if (!newTarget) {
+      this.contentItem = undefined;
+      return;
+    }
+
+    this.contentItem = {
+      id: selectedItem.id,
+      ...newTarget
+    };
     this.onContentUpdate();
     this.requestUpdate();
   }
@@ -213,6 +224,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
           <uui-ref-node-document-type
             standalone
             .name=${this.contentItem.name}
+            .detail=${this.contentItem.url ?? ''}
             class="w-100">
             <uui-icon slot="icon" .name=${this.contentItem.icon} class=${ifDefined(this.contentItem.iconColor)}></uui-icon>
             <uui-action-bar slot="actions">

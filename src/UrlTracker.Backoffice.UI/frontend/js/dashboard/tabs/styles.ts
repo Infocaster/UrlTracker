@@ -97,6 +97,10 @@ export const actionButton = css`
 
 export const colors = css`
 
+  uui-icon {
+    fill: var(--uui-icon-color);
+  }
+
   .color-black {
     --uui-icon-color: #000;
   }

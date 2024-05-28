@@ -4,6 +4,7 @@ using System.Linq;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Core.Web;
 using Umbraco.Extensions;
 using UrlTracker.Backoffice.UI.Controllers.Models.Redirects;
 using UrlTracker.Backoffice.UI.Controllers.Models.RedirectTarget;
@@ -14,11 +15,14 @@ internal class PreloadRedirectTargetNotificationHandler
     : INotificationHandler<ServingRedirectsNotification>
 {
     private readonly IContentService _contentService;
+    private readonly IUmbracoContextFactory _umbracoContextFactory;
 
     public PreloadRedirectTargetNotificationHandler(
-        IContentService contentService)
+        IContentService contentService,
+        IUmbracoContextFactory umbracoContextFactory)
     {
         _contentService = contentService;
+        _umbracoContextFactory = umbracoContextFactory;
     }
 
     public void Handle(ServingRedirectsNotification notification)
@@ -39,7 +43,7 @@ internal class PreloadRedirectTargetNotificationHandler
         }
     }
 
-    private static ContentTargetResponse? TryGetTarget(RedirectResponse redirect, List<ContentMapItem> contentMap, List<IContent> content)
+    private ContentTargetResponse? TryGetTarget(RedirectResponse redirect, List<ContentMapItem> contentMap, List<IContent> content)
     {
         var mapItem = contentMap.FirstOrDefault(c => c.RedirectId == redirect.Id);
         if (mapItem == default) return null;
@@ -50,13 +54,25 @@ internal class PreloadRedirectTargetNotificationHandler
         var iconComponents = contentItem.ContentType.Icon!.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         var iconColor = iconComponents.Length > 1 ? iconComponents[1] : null;
 
-        return new ContentTargetResponse(iconComponents[0], iconColor, contentItem.GetCultureName(mapItem.Culture)!);
+        var url = TryGetUrl(contentItem.Id);
+
+        return new ContentTargetResponse(iconComponents[0], iconColor, contentItem.GetCultureName(mapItem.Culture)!, url);
+    }
+
+    private string? TryGetUrl(int contentId)
+    {
+        using var cref = _umbracoContextFactory.EnsureUmbracoContext();
+        var publishedContent = cref.UmbracoContext.Content!.GetById(contentId);
+
+        if (publishedContent is null) return null;
+
+        return publishedContent.Url();
     }
 
     private static List<ContentMapItem> GetContentMap(List<RedirectResponse> relevantRedirects)
     {
         var result = new List<ContentMapItem>(relevantRedirects.Count);
-        foreach(var redirect in relevantRedirects)
+        foreach (var redirect in relevantRedirects)
         {
             var components = redirect.Target.Value.Split(';', StringSplitOptions.RemoveEmptyEntries);
             if (!int.TryParse(components[0], out var id))
@@ -67,7 +83,7 @@ internal class PreloadRedirectTargetNotificationHandler
             string? culture = components.Length > 1 ? components[1] : null;
             result.Add(new ContentMapItem(redirect.Id, id, culture));
         }
-        
+
         return result;
     }
 

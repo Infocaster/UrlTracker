@@ -6,6 +6,7 @@ export interface IContentTargetResponse {
     icon: string;
     iconColor?: string;
     name: string;
+    url?: string;
 }
 
 export interface IContentTargetRequest {
