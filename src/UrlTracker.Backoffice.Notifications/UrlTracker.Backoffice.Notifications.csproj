@@ -6,9 +6,11 @@
     <Title>URL Tracker Backoffice Notifications</Title>
     <Description>This package contains notification handlers for the URL Tracker to handle Umbraco content notifications</Description>
     <RootNamespace>UrlTracker.Backoffice.Notifications</RootNamespace>
-    <PackageReleaseNotes>1 bugfix
+    <PackageReleaseNotes>3 changes
 
-- Tabs are now displayed as intended</PackageReleaseNotes>
+- Replace custom content picker element with UUI
+- Add URL to content preview in redirect edit panel
+- Technical improvements</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />

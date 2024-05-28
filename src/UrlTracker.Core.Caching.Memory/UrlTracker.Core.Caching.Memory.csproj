@@ -4,9 +4,11 @@
     <Title>URL Tracker Core Memory Cache</Title>
     <Description>This package contains an in-memory cache layer for the core services of the URL Tracker</Description>
     <RootNamespace>UrlTracker.Core.Caching.Memory</RootNamespace>
-    <PackageReleaseNotes>1 bugfix
+    <PackageReleaseNotes>3 changes
 
-- Tabs are now displayed as intended</PackageReleaseNotes>
+- Replace custom content picker element with UUI
+- Add URL to content preview in redirect edit panel
+- Technical improvements</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="10.6.1" />

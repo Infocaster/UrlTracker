@@ -5,9 +5,11 @@
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>1 bugfix
+    <PackageReleaseNotes>3 changes
 
-- Tabs are now displayed as intended</PackageReleaseNotes>
+- Replace custom content picker element with UUI
+- Add URL to content preview in redirect edit panel
+- Technical improvements</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">
