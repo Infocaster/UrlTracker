@@ -9,8 +9,6 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
     { }
 
     internal class RedirectBulkRequest
-    {
-        public int Id { get; set; }
-        public RedirectRequest Redirect { get; set; }
-    }
+        : EntityWithIdRequest<RedirectRequest>
+    { }
 }

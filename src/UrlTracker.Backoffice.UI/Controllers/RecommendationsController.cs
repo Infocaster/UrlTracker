@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Web.BackOffice.Controllers;
 using Umbraco.Cms.Web.Common.Attributes;
+using UrlTracker.Backoffice.UI.Controllers.Models.Base;
 using UrlTracker.Backoffice.UI.Controllers.Models.Recommendations;
 using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
 
@@ -32,32 +33,32 @@ namespace UrlTracker.Backoffice.UI.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("{recommendationId}")]
         [Produces(typeof(RecommendationResponse))]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-        public IActionResult Update([FromBody] UpdateRequest request)
+        public IActionResult Update([FromRoute] int recommendationId, [FromBody] UpdateRecommendationRequest request)
+        {
+            var result = _requestHandler.Update(recommendationId, request);
+            if (result == null) return NotFound();
+            return Ok(result);
+        }
+
+        [HttpPost("updatebulk")]
+        [Produces(typeof(RecommendationResponse))]
+        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+        public IActionResult UpdateBulk(IEnumerable<EntityWithIdRequest<UpdateRecommendationRequest>> request)
         {
             var result = _requestHandler.Update(request);
             if (result == null) return NotFound();
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("{recommendationId}/delete")]
         [Produces(typeof(RecommendationResponse))]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-        public IActionResult UpdateBulk(IEnumerable<UpdateRequest> request)
+        public IActionResult Delete([FromRoute] int recommendationId)
         {
-            var result = _requestHandler.Update(request);
-            if (result == null) return NotFound();
-            return Ok(result);
-        }
-
-        [HttpPost]
-        [Produces(typeof(RecommendationResponse))]
-        [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-        public IActionResult Delete([FromBody] DeleteRequest request)
-        {
-            var result = _requestHandler.Delete(request);
+            var result = _requestHandler.Delete(recommendationId);
             if (result == null) return NotFound();
             return Ok(result);
         }

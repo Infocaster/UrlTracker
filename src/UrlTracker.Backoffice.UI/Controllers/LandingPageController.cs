@@ -19,7 +19,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
             _recommendationService = recommendationService;
         }
 
-        [HttpGet]
+        [HttpGet("metric")]
         [Produces(typeof(NumericMetricResponse))]
         public IActionResult GetNumericMetric()
         {

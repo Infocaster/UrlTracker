@@ -26,8 +26,5 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Base
         [Required]
         [DataMember(Name = "force")]
         public bool Force { get; set; }
-
-        [DataMember(Name = "key")]
-        public Guid? Key { get; set; }
     }
 }

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
 {
@@ -11,6 +7,9 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
     internal class CreateRedirectRequest
         : RedirectRequest
     {
+        [DataMember(Name = "key")]
+        public Guid? Key { get; set; }
+
         [DataMember(Name = "solvedRecommendation")]
         public int? SolvedRecommendation { get; set; }
     }

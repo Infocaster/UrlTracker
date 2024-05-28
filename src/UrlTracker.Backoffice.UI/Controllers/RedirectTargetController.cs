@@ -19,7 +19,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
             _requestHandler = requestHandler;
         }
 
-        [HttpGet]
+        [HttpGet("content")]
         [Produces(typeof(ContentTargetResponse))]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult Content([FromQuery] GetContentTargetRequest request)

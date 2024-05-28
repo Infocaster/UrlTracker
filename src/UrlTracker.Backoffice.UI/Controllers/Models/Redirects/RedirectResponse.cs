@@ -13,6 +13,9 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
         [DataMember(Name = "id")]
         public int Id { get; set; }
 
+        [DataMember(Name = "key")]
+        public Guid Key { get; set; }
+
         [DataMember(Name = "createDate")]
         public DateTime CreateDate { get; set; }
 

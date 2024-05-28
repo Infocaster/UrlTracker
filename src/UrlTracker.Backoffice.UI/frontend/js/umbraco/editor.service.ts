@@ -7,7 +7,7 @@ export interface IEditorService<T extends any> {
   embed: (editor: IEditor) => void;
   focus: () => void;
   getEditors: () => IEditor[];
-  open: (editor: ICustomEditor<T>) => void;
+  open: (editor: ICustomEditor) => void;
   submit: (value: T) => void;
   contentPicker: (editor: IContentPicker) => void;
 }
@@ -57,11 +57,20 @@ interface IEditor {
   allowPublishAndClose: boolean;
 }
 
-export interface ICustomEditor<T> {
-  title: string;
+type EditorSize = 'medium' | 'small'
+
+export interface ICustomEditor {
   view: string;
-  size: string;
+  size?: EditorSize;
+  [key: string]: unknown;
+}
+
+export interface ICancelSubmitEditor<T> extends ICloseEditor {
+  
   submit: (value: T) => void;
+}
+
+export interface ICloseEditor {
+  
   close: () => void;
-  value: T;
 }

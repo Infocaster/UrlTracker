@@ -17,6 +17,7 @@ import './historyChart.lit';
 import './referrersChart.lit';
 import { ifDefined } from "lit/directives/if-defined.js";
 import { cardWithClickableHeader } from "@/dashboard/tabs/styles";
+import { AnalyseRecommendationScope } from "./scope";
 
 export const ContentElementTag = "urltracker-sidebar-analyse-recommendation";
 
@@ -31,7 +32,7 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
   private localizationService?: ILocalizationService;
 
   @consume({ context: scopeContext })
-  private $scope?: IScope;
+  private $scope?: AnalyseRecommendationScope;
 
   @property({ attribute: false})
   get scope() { 
@@ -79,11 +80,11 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
       ensureServiceExists(this.recommendationsAnalysisService, "recommendationsAnalysisService");
       ensureServiceExists(this.localizationService, "localizationService");
 
-      this.data = this.scope.model.value;
-      this._subText = this.scope.model.value.url ?? "";
+      this.data = this.scope.model.recommendation;
+      this._subText = this.scope.model.recommendation.url ?? "";
 
-      const referrersPromise = this.recommendationsAnalysisService.getReferrers(this.data);
-      const historyPromise = this.recommendationsAnalysisService.getHistory(this.data);
+      const referrersPromise = this.recommendationsAnalysisService.getReferrers(this.data.id);
+      const historyPromise = this.recommendationsAnalysisService.getHistory(this.data.id, {});
 
       const [referrers, history] = await Promise.all([referrersPromise, historyPromise]).catch((error) => {
         throw new Error(`Failed to fetch referrers and history for recommendation ${this.data.id}: ${error}`);

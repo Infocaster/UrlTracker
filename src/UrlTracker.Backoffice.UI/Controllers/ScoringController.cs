@@ -20,7 +20,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
             _requestHandler = requestHandler;
         }
 
-        [HttpGet]
+        [HttpGet("redactionscores")]
         [Produces(typeof(IEnumerable<RedactionScoreResponse>))]
         public IActionResult RedactionScores()
         {
@@ -28,7 +28,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet("scoreparameters")]
         [Produces(typeof(ScoreParametersResponse))]
         public IActionResult ScoreParameters()
         {

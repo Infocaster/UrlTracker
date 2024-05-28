@@ -2,6 +2,7 @@
 using System.Linq;
 using Umbraco.Cms.Core.Mapping;
 using Umbraco.Cms.Infrastructure.Scoping;
+using UrlTracker.Backoffice.UI.Controllers.Models.Base;
 using UrlTracker.Backoffice.UI.Controllers.Models.Recommendations;
 using UrlTracker.Core;
 using UrlTracker.Core.Database.Entities;
@@ -13,9 +14,9 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
     internal interface IRecommendationRequestHandler
     {
         RecommendationCollectionResponse Get(ListRecommendationRequest request);
-        RecommendationResponse? Update(UpdateRequest request);
-        RecommendationResponse? Delete(DeleteRequest request);
-        IEnumerable<RecommendationResponse>? Update(IEnumerable<UpdateRequest> request);
+        RecommendationResponse? Update(int id, UpdateRecommendationRequest request);
+        RecommendationResponse? Delete(int id);
+        IEnumerable<RecommendationResponse>? Update(IEnumerable<EntityWithIdRequest<UpdateRecommendationRequest>> request);
     }
 
     internal class RecommendationRequestHandler : IRecommendationRequestHandler
@@ -32,11 +33,11 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         }
 
         /// <returns> Returns the recommendation that was deleted or null if the recommendation was not found</returns>
-        public RecommendationResponse? Delete(DeleteRequest request)
+        public RecommendationResponse? Delete(int id)
         {
             using var scope = _scopeProvider.CreateScope();
 
-            var recommendation = _recommendationService.Get(request.Id);
+            var recommendation = _recommendationService.Get(id);
             if (recommendation == null) return null;
 
             _recommendationService.Delete(recommendation);
@@ -67,11 +68,11 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         }
 
         /// <returns> Returns the recommendation that was updated or null if the recommendation was not found</returns>
-        public RecommendationResponse? Update(UpdateRequest request)
+        public RecommendationResponse? Update(int id, UpdateRecommendationRequest request)
         {
             using var scope = _scopeProvider.CreateScope();
 
-            var entity = _recommendationService.Get(request.Id);
+            var entity = _recommendationService.Get(id);
             if (entity is null) return null;
 
             HandleUpdate(entity, request);
@@ -83,7 +84,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         }
 
         /// <returns> Returns a list of recommendation or null values that were updated. a null value is returned if the recommendation was not found</returns>
-        public IEnumerable<RecommendationResponse>? Update(IEnumerable<UpdateRequest> request)
+        public IEnumerable<RecommendationResponse>? Update(IEnumerable<EntityWithIdRequest<UpdateRecommendationRequest>> request)
         {
             using var scope = _scopeProvider.CreateScope();
 
@@ -94,7 +95,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
                 var entity = entities.FirstOrDefault(e => e.Id == item.Id);
                 if (entity is null) return null;
 
-                HandleUpdate(entity, item);
+                HandleUpdate(entity, item.Data);
             }
 
             foreach (var entity in entities)
@@ -108,7 +109,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
                 .Select(RecommendationResponse.FromEntity);
         }
 
-        private void HandleUpdate(IRecommendation entity, UpdateRequest request)
+        private void HandleUpdate(IRecommendation entity, UpdateRecommendationRequest request)
         {
             if (request.Ignore.HasValue)
             {

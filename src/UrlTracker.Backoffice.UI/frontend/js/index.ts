@@ -10,7 +10,6 @@ import {
 } from "./dashboard/directive";
 import "./dashboard/main.lit";
 import "./dashboard/notifications/notification.lit";
-import "./dashboard/tabs/advancedredirects.lit";
 import "./dashboard/tabs/landingpage.lit";
 import "./dashboard/tabs/recommendations.lit";
 import "./dashboard/tabs/recommendations/recommendationType";

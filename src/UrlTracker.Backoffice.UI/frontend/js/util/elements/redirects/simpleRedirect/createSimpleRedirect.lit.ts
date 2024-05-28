@@ -1,4 +1,4 @@
-import { IRedirectResponse } from "@/services/redirect.service";
+import { IRedirectData } from "@/services/redirect.service";
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import "./redirectForce.lit";
@@ -11,7 +11,7 @@ import { ITypeButton } from "./simpleRedirectTypeProvider";
 @customElement("urltracker-create-simple-redirect")
 export class UrlTrackerCreateSimpleRedirect extends LitElement {
   @property({ type: Object })
-  public redirect!: IRedirectResponse
+  public redirect!: IRedirectData
 
   @property({ type: Boolean })
   public advancedView = false;

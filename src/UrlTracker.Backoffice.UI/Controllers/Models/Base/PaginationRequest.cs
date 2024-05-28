@@ -4,10 +4,10 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Base
 {
     internal class PaginationRequest
     {
-        [Required]
+        [Required, Range(1, uint.MaxValue)]
         public uint Page { get; set; }
 
-        [Required]
+        [Required, Range(1, uint.MaxValue)]
         public uint PageSize { get; set; }
     }
 }

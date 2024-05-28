@@ -28,7 +28,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
 
         [HttpGet]
         [Produces(typeof(RedirectCollectionResponse))]
-        public async Task<IActionResult> List([FromQuery] ListRedirectRequest request)
+        public async Task<IActionResult> ListAsync([FromQuery] ListRedirectRequest request)
         {
             var model = await _redirectRequestHandler.GetAsync(request);
 
@@ -38,14 +38,14 @@ namespace UrlTracker.Backoffice.UI.Controllers
         /// <summary>
         /// Get the redirect with this specific ID
         /// </summary>
-        /// <param name="id">The unique identifier of the requested redirect</param>
+        /// <param name="redirectId">The unique identifier of the requested redirect</param>
         /// <returns>A 200 OK result with a redirect or 404 NOT FOUND if no redirect with given id exists</returns>
-        [HttpGet("{id}")]
+        [HttpGet("{redirectId}")]
         [Produces(typeof(RedirectResponse))]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-        public IActionResult Get([FromRoute] int id)
+        public IActionResult Get([FromRoute] int redirectId)
         {
-            var model = _redirectRequestHandler.GetById(id);
+            var model = _redirectRequestHandler.GetById(redirectId);
             if (model is null) return NotFound();
 
             return Ok(model);
@@ -70,22 +70,22 @@ namespace UrlTracker.Backoffice.UI.Controllers
         /// <summary>
         /// Change the redirect with this specific ID
         /// </summary>
-        /// <param name="id">The unique identifier of the requested redirect</param>
+        /// <param name="redirectId">The unique identifier of the requested redirect</param>
         /// <param name="request">The new properties of the redirect</param>
         /// <returns>200 OK with the new redirect as body if the update was successful, 404 NOT FOUND if no redirect with given id exists or 400 BAD REQUEST if the request was invalid</returns>
         [HttpPost]
-        [Route("{id}")]
+        [Route("{redirectId}")]
         [Produces(typeof(RedirectResponse))]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-        public IActionResult Update([FromRoute] int id, [FromBody] RedirectRequest request)
+        public IActionResult Update([FromRoute] int redirectId, [FromBody] RedirectRequest request)
         {
-            var model = _redirectRequestHandler.Update(id, request);
+            var model = _redirectRequestHandler.Update(redirectId, request);
             if (model is null) return NotFound();
 
             return Ok(model);
         }
 
-        [HttpPost]
+        [HttpPost("updatebulk")]
         [Produces(typeof(IEnumerable<RedirectResponse>))]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult UpdateBulk([FromBody] RedirectBulkRequest[] request)
@@ -99,22 +99,21 @@ namespace UrlTracker.Backoffice.UI.Controllers
         /// <summary>
         /// Delete the redirect with this specific ID
         /// </summary>
-        /// <param name="id">The unique identifier of the requested redirect</param>
+        /// <param name="redirectId">The unique identifier of the requested redirect</param>
         /// <returns>204 NO CONTENT if the redirect was deleted successfully or 404 NOT FOUND if no redirect with given id exists</returns>
-        /// <exception cref="NotImplementedException"></exception>
         [HttpPost]
-        [Route("{id}")]
+        [Route("{redirectId}/delete")]
         [Produces(typeof(RedirectResponse))]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-        public IActionResult Delete([FromRoute] int id)
+        public IActionResult Delete([FromRoute] int redirectId)
         {
-            var model = _redirectRequestHandler.Delete(id);
+            var model = _redirectRequestHandler.Delete(redirectId);
             if (model is null) return NotFound();
 
             return Ok(model);
         }
 
-        [HttpPost]
+        [HttpPost("deletebulk")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult DeleteBulk([FromBody] int[] ids)

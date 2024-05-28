@@ -21,7 +21,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
             _requestHandler = requestHandler;
         }
 
-        [HttpPost]
+        [HttpPost("import")]
         [Produces(typeof(int))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ImportAsync([FromForm] ImportRedirectRequest request)
@@ -39,7 +39,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("export")]
         [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK)]
         public async Task<IActionResult> ExportAsync()
         {
@@ -53,7 +53,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
             return File(fileStream, "text/csv", filename);
         }
 
-        [HttpGet]
+        [HttpGet("exportexample")]
         [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK)]
         public async Task<IActionResult> ExportExampleAsync()
         {

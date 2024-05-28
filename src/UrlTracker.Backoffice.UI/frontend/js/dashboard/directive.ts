@@ -58,7 +58,7 @@ export function ngUrltrackerDashboard(
       );
       dashboardElement.SetContext(_scope, scopeContext, scopeContextKey);
       dashboardElement.SetContext(overlayService, overlayServiceContext, overlayServiceContextKey);
-      dashboardElement.SetContext(notificationsService, umbracoNotificationsServiceContext, umbracoNotificationsServiceContextKey)
+      dashboardElement.SetContext(notificationsService, umbracoNotificationsServiceContext, umbracoNotificationsServiceContextKey);
 
       element[0].appendChild(dashboardElement);
     },
@@ -70,12 +70,14 @@ ngSimpleRedirectSidebar.$inject = [
   "localizationService",
   "iconHelper",
   "editorService",
+  "notificationsService"
 ];
 
 export function ngSimpleRedirectSidebar(
   localizationService: ILocalizationService,
   iconHelper: IIconHelper,
-  editorService: IEditorService<any>
+  editorService: IEditorService<any>,
+  notificationsService: IUmbracoNotificationsService
 ): angular.IDirective {
   return {
     restrict: "E",
@@ -101,6 +103,7 @@ export function ngSimpleRedirectSidebar(
         editorServiceKey
       );
       redirectSidebarElement.SetContext(_scope, scopeContext, scopeContextKey);
+      redirectSidebarElement.SetContext(notificationsService, umbracoNotificationsServiceContext, umbracoNotificationsServiceContextKey);
 
       element[0].appendChild(redirectSidebarElement);
     },

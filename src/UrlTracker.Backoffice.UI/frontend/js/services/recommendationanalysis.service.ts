@@ -22,15 +22,20 @@ export interface IRecommendationReferrer {
   ReferrerUrl: string;
 }
 
+export interface IGetHistoryRequest {
+  pastDays?: number
+}
+
 export type IRecommendationReferrerResponse = IRecommendationReferrer[];
 
 export interface IRecommendationsAnalysisService {
   getHistory: (
-    request: IRecommendationResponse
+    id: number,
+    request: IGetHistoryRequest
   ) => Promise<IRecommendationHistoryResponse>;
 
   getReferrers: (
-    request: IRecommendationResponse
+    id: number
   ) => Promise<IRecommendationReferrerResponse>;
 }
 
@@ -38,14 +43,15 @@ export class RecommendationsAnalysisService implements IRecommendationsAnalysisS
   constructor(private axios: Axios, private urlResource: IUrlResource) {}
 
   private get controller(): IControllerUrlResource {
-    return this.urlResource.getController("recommendationAnalysis");
+    return this.urlResource.getController("RecommendationAnalysis");
   }
 
   public async getHistory(
-    request: IRecommendationResponse
+    id: number,
+    request: IGetHistoryRequest
   ) {
     const response = await this.axios.get<IRecommendationHistoryResponse>(
-      this.controller.getUrl("getHistory") + `/${request.id}`,
+      this.controller.getUrl("GetHistory", {recommendationId: id}),
       {
         params: request,
       }
@@ -55,13 +61,10 @@ export class RecommendationsAnalysisService implements IRecommendationsAnalysisS
   }
 
   public async getReferrers(
-    request: IRecommendationResponse
+    id: number
   ) {
     const response = await this.axios.get<IRecommendationReferrerResponse>(
-      this.controller.getUrl("getReferrers") + `/${request.id}`,
-      {
-        params: request,
-      }
+      this.controller.getUrl("GetReferrers", {recommendationId: id})
     );
 
     return response.data;

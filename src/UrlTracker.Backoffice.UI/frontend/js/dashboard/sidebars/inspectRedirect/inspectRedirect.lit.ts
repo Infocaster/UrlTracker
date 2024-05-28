@@ -3,13 +3,14 @@ import {
   localizationServiceContext,
 } from "@/context/localizationservice.context";
 import { scopeContext } from "@/context/scope.context";
-import { IScope } from "@/models/scope.model";
 import { IRedirectResponse } from "@/services/redirect.service";
 import { toReadableDate } from "@/util/functions/dateformatter";
 import { ensureExists } from "@/util/tools/existancecheck";
 import { consume } from "@lit/context";
 import { LitElement, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import { InspectRedirectScope } from "./scope";
+import sourceStrategyResolver from "../../tabs/redirects/source/source.strategy";
   
   export const ContentElementTag = "urltracker-sidebar-inspect-redirect";
 
@@ -20,7 +21,7 @@ import { customElement, property, state } from "lit/decorators.js";
     private _localizationService?: ILocalizationService;
 
     @consume({ context: scopeContext })
-    private $scope?: IScope;
+    private $scope?: InspectRedirectScope;
 
     @property({ attribute: false})
     get scope() { 
@@ -35,9 +36,12 @@ import { customElement, property, state } from "lit/decorators.js";
     private _headerText = "Inspect Redirect";
   
     async connectedCallback(): Promise<void> {
-        super.connectedCallback();
-        this.data = this.scope.model.value;
-        this._headerText = this.scope.model.title ?? "Inspect Redirect";
+      super.connectedCallback();
+      this.data = this.scope.model.redirect;
+      
+      const sourceStrategy = sourceStrategyResolver.getStrategy({redirect: this.data, element: this});
+
+      if (sourceStrategy) this._headerText = await sourceStrategy.getTitle();
     }
   
     close() {

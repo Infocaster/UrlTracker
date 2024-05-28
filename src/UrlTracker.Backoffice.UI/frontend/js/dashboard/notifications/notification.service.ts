@@ -14,16 +14,12 @@ export class NotificationService implements INotificationService {
 
     private get controller(): IControllerUrlResource {
 
-        return this.urlResource.getController("notifications");
+        return this.urlResource.getController("Notifications");
     }
 
     public async GetNotifications(alias: string): Promise<INotificationCollection> {
 
-        let response = await this.axios.get<INotificationCollection>(this.controller.getUrl('get'), {
-            params: {
-                alias: alias
-            }
-        });
+        let response = await this.axios.get<INotificationCollection>(this.controller.getUrl('Get', {alias: alias}));
         return response.data;
     }
 }

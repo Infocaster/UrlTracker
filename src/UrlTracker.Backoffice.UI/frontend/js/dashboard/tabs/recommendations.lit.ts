@@ -5,6 +5,7 @@ import recommendationService, {
   IRecommendationCollection,
   IRecommendationResponse,
   IRecommendationUpdate,
+  IRecommendationUpdateBulkRequest,
   IRecommendationsService,
 } from "../../services/recommendation.service";
 import { UrlTrackerPagination } from "../../util/elements/inputs/pagination.lit";
@@ -20,6 +21,7 @@ import {
 } from "@/context/editorservice.context";
 import { redirectServiceContext } from "@/context/redirectservice.context";
 import {
+  IRedirectData,
   IRedirectResponse,
   IRedirectService,
   ISolvedRecommendationRequest,
@@ -50,6 +52,9 @@ import "./recommendations/recommendationitem.lit";
 import { ISourceStrategies } from "./redirects/source/source.constants";
 import { ITargetStrategies } from "./redirects/target/target.constants";
 import { IUmbracoNotificationsService, umbracoNotificationsServiceContext } from "@/context/notificationsservice.context";
+import { createNewRedirectOptions } from "../sidebars/simpleRedirect/manageredirect";
+import { createAnalyseRecommendationEditor } from "../sidebars/analyseRecommendation/analyserecommendation";
+import { createExplainRecommendationsEditor } from "../sidebars/explainRecommendations/explainrecommendations";
 
 @customElement("urltracker-recommendations-tab")
 export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
@@ -168,7 +173,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       permanent: true,
       retainQuery: true,
       force: false,
-    } as IRedirectResponse;
+    };
 
     this.openNewRedirectPanel(redirect, event.detail.id);
   };
@@ -192,14 +197,13 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       permanent: false,
       retainQuery: true,
       force: false,
-    } as IRedirectResponse;
+    };
 
     this.openNewRedirectPanel(redirect, event.detail.id);
   };
 
   private handleIgnore = async (event: CustomEvent<IRecommendationResponse>) => {
-    await this._recommendationsService!.update({
-      id: event.detail.id,
+    await this._recommendationsService!.update(event.detail.id, {
       recommendationStrategy: event.detail.strategy,
       ignore: true,
     });
@@ -209,71 +213,60 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     this.search();
   };
 
-  private openNewRedirectPanel(data?: IRedirectResponse, solvedRecommendation?: number) {
-    const options = {
+  private openNewRedirectPanel(data: IRedirectData, solvedRecommendation?: number) {
+    const options = createNewRedirectOptions({
+
       title: "New redirect",
-      view: "/App_Plugins/UrlTracker/sidebar/redirect/simpleRedirect.html",
-      size: "medium",
-      submit: (val: IRedirectResponse) => this.submitNewRedirectPanel({...val, solvedRecommendation}),
+      submit: this.submitNewRedirectPanel,
       close: this.closePanel,
-      value: data
-    };
+      data: data,
+      advanced: false,
+      solvedRecommendation: solvedRecommendation
+    });
 
     this.editorService!.open(options);
   }
 
-  private submitNewRedirectPanel = async (value: IRedirectResponse & ISolvedRecommendationRequest) => {
-    if (value.id) {
-      await this._redirectService?.update(value);
-      this.notificationsService.success("Redirect updated", "The redirect has successfully been updated");
-    } else {
-      await this._redirectService?.create(value);
-      this.notificationsService.success("Redirect created", "The redirect has successfully been created");
-    }
+  private submitNewRedirectPanel = (_: IRedirectResponse) => {
 
     this.closePanel();
     this.search();
   };
 
   private openExplanationPanel(data: IRecommendationResponse) {
-    const options = {
-      title: `Recommendations for: ${data.url}`,
-      view: "/App_Plugins/UrlTracker/sidebar/recommendations/inspectRecommendations.html",
-      size: "medium",
-      submit: this.submitExplanationPanel,
+    const options = createExplainRecommendationsEditor({
+      recommendation: data,
+      submit: (action) => this.submitExplanationPanel(data, action),
       close: this.closePanel,
-      value: data,
-    };
+    });
+
     this.editorService!.open(options);
   }
 
-  private submitExplanationPanel = (payload: {
-    recommendation: IRecommendationResponse;
-    action: IRecommendationAction;
-  }) => {
+  private submitExplanationPanel = (
+    recommendation: IRecommendationResponse,
+    action: IRecommendationAction
+  ) => {
     this.editorService!.close();
-    switch (payload.action) {
+    switch (action) {
       case RECCOMENDATION_ACTIONS.MAKE_PERMANENT:
-        this.handleCreatePermanentRedirect(new CustomEvent("", { detail: payload.recommendation }));
+        this.handleCreatePermanentRedirect(new CustomEvent("", { detail: recommendation }));
         break;
       case RECCOMENDATION_ACTIONS.MAKE_TEMPORARY:
-        this.handleCreateTemporaryRedirect(new CustomEvent("", { detail: payload.recommendation }));
+        this.handleCreateTemporaryRedirect(new CustomEvent("", { detail: recommendation }));
         break;
       case RECCOMENDATION_ACTIONS.IGNORE:
-        this.handleIgnore(new CustomEvent("", { detail: payload.recommendation }));
+        this.handleIgnore(new CustomEvent("", { detail: recommendation }));
         break;
     }
   };
 
   private openAnalysePanel(data: IRecommendationResponse) {
-    const options = {
-      title: `Recommendations for: ${data.url}`,
-      view: "/App_Plugins/UrlTracker/sidebar/recommendations/analyseRecommendation.html",
-      size: "medium",
-      submit: this.closePanel,
+    const options = createAnalyseRecommendationEditor({
+
       close: this.closePanel,
-      value: data,
-    };
+      recommendation: data
+    });
     this.editorService!.open(options);
   }
 
@@ -330,11 +323,13 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       this.recommendationCollection?.results.filter((r) =>
         this.selectedItems.some((i) => i === r.id)
       ) || [];
-    const bulkToUpdate: IRecommendationUpdate[] = selectedRecommendations.map((r) => {
+    const bulkToUpdate: IRecommendationUpdateBulkRequest = selectedRecommendations.map((r) => {
       return {
         id: r.id,
-        recommendationStrategy: r.strategy,
-        ignore: true,
+        data: {
+          recommendationStrategy: r.strategy,
+          ignore: true,
+        }
       };
     });
     await recommendationService.updateBulk(bulkToUpdate);

@@ -16,17 +16,17 @@ export class RedirectImportService implements IRedirectImportService {
   constructor(private axios: Axios, private urlResource: IUrlResource) {}
 
   private get controller(): IControllerUrlResource {
-    return this.urlResource.getController("redirectimport");
+    return this.urlResource.getController("RedirectImport");
   }
 
   public async exportTemplate() {
-    let response = await this.axios.get<Blob>(this.controller.getUrl("exportTemplate"));
+    let response = await this.axios.get<Blob>(this.controller.getUrl("ExportExample"));
     this.downloadBlob(response, 'redirect-template');
     return response.data;
   }
 
   public async export() {
-    let response = await this.axios.get<Blob>(this.controller.getUrl("export"));
+    let response = await this.axios.get<Blob>(this.controller.getUrl("Export"));
     this.downloadBlob(response, 'redirects');
     return response.data;
   }
@@ -46,7 +46,7 @@ export class RedirectImportService implements IRedirectImportService {
     const form = new FormData();
     form.append("Redirects", file, file.name);
     let response = await this.axios.post<IRedirectResponse[]>(
-      this.controller.getUrl("import"),
+      this.controller.getUrl("Import"),
       form
     );
 

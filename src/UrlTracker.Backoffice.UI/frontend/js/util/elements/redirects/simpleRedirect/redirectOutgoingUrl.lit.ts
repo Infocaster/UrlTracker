@@ -17,6 +17,8 @@ import { Ref, createRef, ref } from "lit/directives/ref.js";
 import { repeat } from "lit/directives/repeat.js";
 import "./simpleRedirectTypeProvider";
 import { ITypeButton } from "./simpleRedirectTypeProvider";
+import { ifDefined } from "lit/directives/if-defined.js";
+import { colors } from "@/dashboard/tabs/styles";
 
 @customElement("urltracker-redirect-outgoing-url")
 export class UrlTrackerRedirectOutgoingUrl extends LitElement {
@@ -87,15 +89,20 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     switch(this.outgoingStrategy) {
       case variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content:
         let [id, culture] = this.outgoingUrl.split(";");
-        const content = await this.redirectTargetService!.Content({
-          id: Number.parseInt(id, 10),
-          culture: culture,
-        });
+        let intId = Number.parseInt(id, 10);
 
-        this.contentItem = {
-          ...content,
-          id: Number.parseInt(id, 10),
-        };
+        if (!isNaN(intId)) {
+
+          const content = await this.redirectTargetService!.Content({
+            id: Number.parseInt(id, 10),
+            culture: culture,
+          });
+  
+          this.contentItem = {
+            ...content,
+            id: Number.parseInt(id, 10),
+          };
+        }
 
         this.requestUpdate();
         break;
@@ -203,17 +210,19 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     if (this._selectedType.value === variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content) {
       if(this.contentItem) {
         return html`
-          <div class="content-item">
-            <div class="content-item-icon">
-              <uui-icon .name=${this.contentItem?.icon}></uui-icon> 
-              ${this.contentItem?.name}
-            </div>
-            <uui-button
-              look="outline"
-              label="Verwijderen"
-              @click=${this.onDeleteContent}
-            ></uui-button>
-          </div>
+          <uui-ref-node-document-type
+            standalone
+            .name=${this.contentItem.name}
+            class="w-100">
+            <uui-icon slot="icon" .name=${this.contentItem.icon} class=${ifDefined(this.contentItem.iconColor)}></uui-icon>
+            <uui-action-bar slot="actions">
+              <uui-button
+                label="Remove"
+                @click=${this.onDeleteContent}>
+                Remove
+              </uui-button>
+            </uui-action-bar>
+          </uui-ref-node-document-type>
         `;
       } 
 
@@ -264,6 +273,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
   }
 
   static styles = [
+    colors,
     css`
       :host {
         display: block;
@@ -277,12 +287,6 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
 
       uui-input {
         width: 100%;
-      }
-
-      .content-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
       }
 
       .w-100 {

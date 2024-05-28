@@ -22,6 +22,6 @@ tabStrategy.push(
 tabStrategy.push(
   createTabStrategy(
     "advancedRedirects",
-    html`<urltracker-advancedredirect-tab></urltracker-advancedredirect-tab>`
+    html`<urltracker-redirect-tab advanced></urltracker-redirect-tab>`
   )
 );

@@ -13,13 +13,13 @@ export class LandingspageService implements ILandingspageService {
   constructor(private axios: Axios, private urlResource: IUrlResource) {}
 
   private get controller(): IControllerUrlResource {
-    return this.urlResource.getController("landingspage");
+    return this.urlResource.getController("LandingPage");
   }
 
   public async numericMetric() {
     let response = await this.axios.get<{
       value: number;
-    }>(this.controller.getUrl("numericMetric"));
+    }>(this.controller.getUrl("GetNumericMetric"));
     return response.data.value;
   }
 }

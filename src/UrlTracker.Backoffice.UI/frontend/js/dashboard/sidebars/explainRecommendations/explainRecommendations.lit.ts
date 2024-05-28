@@ -4,6 +4,7 @@ import { ensureExists } from "@/util/tools/existancecheck";
 import { consume } from "@lit/context";
 import { LitElement, css, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import { ExplainRecommendationsScope } from "./scope";
 
 export const ContentElementTag = "urltracker-sidebar-inspect-recommendations";
 
@@ -19,7 +20,7 @@ export type IRecommendationAction =
 @customElement(ContentElementTag)
 export class UrlTrackerSidebarRecommendations extends LitElement {
   @consume({ context: scopeContext })
-  private $scope?: IScope;
+  private $scope?: ExplainRecommendationsScope;
 
   @property({ attribute: false})
   get scope() { 
@@ -32,15 +33,11 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
 
   async connectedCallback(): Promise<void> {
       super.connectedCallback();
-      this._headerText = this.$scope?.model.title ?? "Recommendations";
+      this._headerText = "Recommendations for: " + this.$scope?.model.recommendation.url;
   }
 
   save(action: IRecommendationAction = RECCOMENDATION_ACTIONS.IGNORE) {
-    const data = {
-      action,
-      recommendation: this.scope.model.value,
-    };
-    this.scope.model.submit(data);
+    this.scope.model.submit(action);
   }
 
   close() {

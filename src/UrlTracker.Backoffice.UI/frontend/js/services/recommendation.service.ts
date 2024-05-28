@@ -9,21 +9,13 @@ import { IPaginationRequestBase } from "./models/paginationrequestbase";
 import { IQueryRequestBase } from "./models/queryrequestbase";
 import { IRecommendationFilterRequestBase } from "./models/recommendationfilterrequestbase";
 import { ScoringService } from "./scoring.service";
+import { IDataWithId } from "./models/datawithid";
+import { IEntityResponseId } from "./models/entityresponseid";
 
-interface IFlatRecommendationResponse {
-  id: number;
-  ignore: boolean;
-  url: string;
-  strategy: string;
-  score: number;
-  updatedate: string;
-}
+export type IRecommendationResponse = IEntityResponseId & IRecommendationResponseData;
 
-type IFlatRecommendationCollection =
-  IPagedCollectionResponseBase<IFlatRecommendationResponse>;
-
-export interface IRecommendationResponse {
-  id: number;
+export interface IRecommendationResponseData {
+  
   ignore: boolean;
   url: string;
   strategy: string;
@@ -31,8 +23,9 @@ export interface IRecommendationResponse {
   updatedate: Date;
 }
 
+export type IRecommendationUpdateBulkRequest = IDataWithId<IRecommendationUpdate>[]
+
 export interface IRecommendationUpdate {
-  id: number;
   recommendationStrategy: string;
   ignore: boolean;
 }
@@ -49,15 +42,12 @@ export interface IRecommendationsService {
   ) => Promise<IRecommendationCollection>;
 
   update: (
+    id: number,
     request: IRecommendationUpdate
   ) => Promise<IRecommendationResponse>;
 
-  delete: (
-    request: IRecommendationResponse
-  ) => Promise<IRecommendationResponse>;
-
   updateBulk: (
-    request: IRecommendationUpdate[]
+    request: IRecommendationUpdateBulkRequest
   ) => Promise<IRecommendationResponse[]>;
 }
 
@@ -65,22 +55,21 @@ export class RecommendationsService implements IRecommendationsService {
   constructor(private axios: Axios, private urlResource: IUrlResource, private scoringService: ScoringService) {}
 
   private get controller(): IControllerUrlResource {
-    return this.urlResource.getController("recommendations");
+    return this.urlResource.getController("Recommendations");
   }
 
   public async list(
     request: IListRecommendationRequest
   ): Promise<IRecommendationCollection> {
-    let response = await this.axios.get<IFlatRecommendationCollection>(
-      this.controller.getUrl("list"),
+    let response = await this.axios.get<IRecommendationCollection>(
+      this.controller.getUrl("List"),
       {
         params: request,
       }
     );
 
-    // normalize all dates into a date object so that we can use a consistent date api in the business logic
     const results = await Promise.all(response.data.results.map(async (r) => {
-      const normalized = { ...r, updatedate: new Date(r.updatedate) }
+      const normalized = r;
       const score = await this.scoringService.getScore(normalized)
       return {...normalized, score}
     }))
@@ -92,34 +81,24 @@ export class RecommendationsService implements IRecommendationsService {
   }
 
   public async update(
+    id: number,
     request: IRecommendationUpdate
   ): Promise<IRecommendationResponse> {
     let response = await this.axios.post<IRecommendationResponse>(
-      this.controller.getUrl("update"),
+      this.controller.getUrl("Update", {recommendationId: id}),
       request
     );
-    return {...response.data, updatedate: new Date(response.data.updatedate)};
+    return response.data;
   }
-
-  public async delete(
-    request: IRecommendationResponse
-  ): Promise<IRecommendationResponse> {
-    let response = await this.axios.post<IRecommendationResponse>(
-      this.controller.getUrl("delete"),
-      request
-    );
-    return {...response.data, updatedate: new Date(response.data.updatedate)};
-  }
-
 
   public async updateBulk(
-    request: IRecommendationUpdate[]
+    request: IRecommendationUpdateBulkRequest
   ): Promise<IRecommendationResponse[]> {
     let response = await this.axios.post<IRecommendationResponse[]>(
-      this.controller.getUrl("updatebulk"),
+      this.controller.getUrl("UpdateBulk"),
       request
     );
-    return response.data.map(r => ({...r, updatedate: new Date(r.updatedate)}));
+    return response.data;
   }
 }
 

@@ -11,7 +11,7 @@ export class ScoringService {
     constructor(private axios: Axios, private urlResource: IUrlResource) {}
 
     private get controller(): IControllerUrlResource {
-        return this.urlResource.getController('scoring');
+        return this.urlResource.getController("Scoring");
     }
 
     public async getScore(recommendation: IRecommendationResponse): Promise<number> {
@@ -59,14 +59,14 @@ export class ScoringService {
 
     private getRedactionScores(): Promise<IRedactionScoreResponse[]> {
 
-        const url = this.controller.getUrl('redactionScores');
+        const url = this.controller.getUrl('RedactionScores');
         return this.axios.get<IRedactionScoreResponse[]>(url)
             .then(response => response.data);
     }
 
     private getParameters(): Promise<IScoreParametersResponse> {
 
-        const url = this.controller.getUrl('scoreParameters');
+        const url = this.controller.getUrl('ScoreParameters');
         return this.axios.get<IScoreParametersResponse>(url)
             .then(response => response.data);
     }

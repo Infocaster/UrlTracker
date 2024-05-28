@@ -6,22 +6,28 @@ import { IPaginationRequestBase } from "./models/paginationrequestbase";
 import { IQueryRequestBase } from "./models/queryrequestbase";
 import { IRedirectFilterRequestBase } from "./models/redirectfilterrequestbase";
 import qs from "qs";
+import { IEntityResponseId } from "./models/entityresponseid";
+import { IDataWithId } from "./models/datawithid";
 
-export interface IRedirectResponseStrategy {
+// Base models
+export interface IRedirectStrategy {
     strategy: string;
     value: string;
 }
 
-export interface IRedirectResponse {
-    id: number;
-    createDate: Date;
-    updateDate: Date;
-    source: IRedirectResponseStrategy;
-    target: IRedirectResponseStrategy;
+export interface IRedirectData {
+
+    source: IRedirectStrategy;
+    target: IRedirectStrategy;
     permanent: boolean;
     retainQuery: boolean;
     force: boolean;
-    key: string;
+}
+
+export interface IRedirectMetaData {
+    
+    createDate: Date;
+    updateDate: Date;
     additionalData: Record<string, unknown>;
 }
 
@@ -29,15 +35,22 @@ export interface ISolvedRecommendationRequest {
     solvedRecommendation?: number
 }
 
-export type IRedirectCollectionResponse = IPagedCollectionResponseBase<IRedirectResponse>;
+// Request models
 export type IListRedirectRequest = IPaginationRequestBase & IRedirectFilterRequestBase & IQueryRequestBase;
+export type ICreateRedirectRequest = IRedirectData & ISolvedRecommendationRequest;
+export type IUpdateRedirectRequest = IRedirectData;
+export type IUpdateRedirectBulkRequest = IDataWithId<IRedirectData>[];
+
+// Response models
+export type IRedirectResponse = IEntityResponseId & IRedirectData & IRedirectMetaData
+export type IRedirectCollectionResponse = IPagedCollectionResponseBase<IRedirectResponse>;
 
 export interface IRedirectService {
     list: (request: IListRedirectRequest) => Promise<IRedirectCollectionResponse>;
-    create: (request: IRedirectResponse & ISolvedRecommendationRequest) => Promise<IRedirectResponse>;
-    update: (request: IRedirectResponse) => Promise<IRedirectResponse>;
+    create: (request: ICreateRedirectRequest) => Promise<IRedirectResponse>;
+    update: (id: number, request: IUpdateRedirectRequest) => Promise<IRedirectResponse>;
     delete: (id: number) => Promise<void>;
-    updateBulk: (request: IRedirectResponse[]) => Promise<IRedirectResponse[]>;
+    updateBulk: (request: IUpdateRedirectBulkRequest) => Promise<IRedirectResponse[]>;
     deleteBulk: (ids: number[]) => Promise<void>;
 }
 
@@ -45,12 +58,12 @@ export class RedirectService implements IRedirectService {
     constructor(private axios: Axios, private urlResource: IUrlResource) { }
 
     private get controller(): IControllerUrlResource{
-        return this.urlResource.getController("redirects");
+        return this.urlResource.getController("Redirects");
     }
 
     public async list(request: IListRedirectRequest): Promise<IRedirectCollectionResponse> {
 
-        let response = await this.axios.get<IRedirectCollectionResponse>(this.controller.getUrl('list'),
+        let response = await this.axios.get<IRedirectCollectionResponse>(this.controller.getUrl('List'),
         {
             params: request,
             paramsSerializer: (params) => {
@@ -61,34 +74,27 @@ export class RedirectService implements IRedirectService {
         return response.data;
     }
 
-    public async create(request: IRedirectResponse & ISolvedRecommendationRequest): Promise<IRedirectResponse> {
-        let response = await this.axios.post<IRedirectResponse>(this.controller.getUrl('create'), request);
+    public async create(request: ICreateRedirectRequest): Promise<IRedirectResponse> {
+        let response = await this.axios.post<IRedirectResponse>(this.controller.getUrl('Create'), request);
         return response.data;
     }
 
-    public async update(request: IRedirectResponse): Promise<IRedirectResponse> {
-        let response = await this.axios.post<IRedirectResponse>(this.controller.getUrl('update') + `/${request.id}`, request);
+    public async update(id: number, request: IUpdateRedirectRequest): Promise<IRedirectResponse> {
+        let response = await this.axios.post<IRedirectResponse>(this.controller.getUrl('Update', {redirectId: id}), request);
         return response.data;
     }
 
     public async delete(id: number): Promise<void> {
-        await this.axios.post(this.controller.getUrl('delete') + `/${id}`);
+        await this.axios.post(this.controller.getUrl('Delete', {redirectId: id}));
     }
 
-    public async updateBulk(request: IRedirectResponse[]): Promise<IRedirectResponse[]> {
-        const payload = request.map((r) => ({
-            ...r,
-            redirect: {
-                source: r.source,
-                target: r.target
-            }
-        }));
-        let response = await this.axios.post<IRedirectResponse[]>(this.controller.getUrl('updateBulk'), payload);
+    public async updateBulk(request: IUpdateRedirectBulkRequest): Promise<IRedirectResponse[]> {
+        let response = await this.axios.post<IRedirectResponse[]>(this.controller.getUrl('UpdateBulk'), request);
         return response.data;
     }
 
     public async deleteBulk(ids: number[]): Promise<void> {
-        await this.axios.post(this.controller.getUrl('deleteBulk'), ids);
+        await this.axios.post(this.controller.getUrl('DeleteBulk'), ids);
     }
 }
 

@@ -19,9 +19,9 @@ namespace UrlTracker.Backoffice.UI.Controllers
             _requestHandler = requestHandler;
         }
 
-        [HttpGet]
+        [HttpGet("{alias}")]
         [Produces(typeof(IEnumerable<NotificationResponse>))]
-        public IActionResult Get(string alias)
+        public IActionResult Get([FromRoute] string alias)
         {
             var response = _requestHandler.List(alias);
             return Ok(response);

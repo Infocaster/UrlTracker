@@ -1,4 +1,4 @@
-import { LitElement, TemplateResult } from "lit";
+import { TemplateResult } from "lit";
 
 export function createTabStrategy(
   alias: string,

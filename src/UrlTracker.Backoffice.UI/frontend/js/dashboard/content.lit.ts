@@ -3,7 +3,7 @@ import {
   editorServiceContext,
 } from "@/context/editorservice.context";
 import { redirectServiceContext } from "@/context/redirectservice.context";
-import { IRedirectResponse, IRedirectService } from "@/services/redirect.service";
+import { IRedirectService } from "@/services/redirect.service";
 import { ensureServiceExists } from "@/util/tools/existancecheck";
 import { consume, provide } from "@lit/context";
 import { LitElement, css, html, nothing } from "lit";
@@ -14,6 +14,7 @@ import { ILocalizationService } from "../umbraco/localization.service";
 import "./footer/footer.lit";
 import tabStrategy, { ITab, TabStrategyCollection } from "./tab";
 import { IUmbracoNotificationsService, umbracoNotificationsServiceContext } from "@/context/notificationsservice.context";
+import { createNewRedirectOptions } from "./sidebars/simpleRedirect/manageredirect";
 
 @customElement("urltracker-dashboard-content")
 export class UrlTrackerDashboardContent extends LitElement {
@@ -100,39 +101,18 @@ export class UrlTrackerDashboardContent extends LitElement {
     }
   }
 
-  submitPanel = async (value: IRedirectResponse) => {
-    if(value.id) {
-      await this._redirectService?.update(value);
-      this.notificationsService.success("Redirect updated", "The redirect has been successfully updated");
-    }
-    else {
-      await this._redirectService?.create(value);
-      this.notificationsService.success("Redirect created", "The redirect has been successfully created");
-    }
-    this.closePanel();
-  };
-
   closePanel = () => {
     this.editorService!.close();
   };
 
   private _openSidebar(_: Event) {
-    //@TODO: find a more dynamic way to open the correct sidebar based on the active tab
-    let value = {};
-    if(this.activeTab?.name === "Advanced redirects") {
-      value = {
-        advancedView: true,
-      }
-    }
-
-    const options = {
-      title: "New redirect", // FIXME: translate
-      view: "/App_Plugins/UrlTracker/sidebar/redirect/simpleRedirect.html",
-      size: "medium",
-      submit: this.submitPanel,
+    
+    const options = createNewRedirectOptions({
+      title: "New redirect",
+      submit: this.closePanel,
       close: this.closePanel,
-      value: value,
-    };
+      advanced: this.activeTab?.name === "Advanced redirects"
+    });
 
     this.editorService!.open(options);
   }

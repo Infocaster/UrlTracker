@@ -1,4 +1,4 @@
-import { ensureServiceExists } from "@/util/tools/existancecheck";
+import { ensureExists, ensureServiceExists } from "@/util/tools/existancecheck";
 import { ContextConsumer } from "@lit/context";
 import { html, nothing } from "lit";
 import {
@@ -17,8 +17,14 @@ import {
 
 export function UrlTrackerNotificationWrapper<
   TBase extends LitElementConstructor
->(Base: TBase, alias: string) {
+>(Base: TBase, alias?: string) {
   return class NotificationWrapper extends Base {
+
+    private _alias = alias;
+    protected set alias(newAlias: string) {
+      this._alias = newAlias;
+    }
+
     private _notifications?: ITranslatedNotificationCollection;
     private get notifications(): ITranslatedNotificationCollection | undefined {
       return this._notifications;
@@ -110,7 +116,8 @@ export function UrlTrackerNotificationWrapper<
 
     connectedCallback(): void {
       super.connectedCallback();
-      this.updateNotifications(alias);
+      ensureExists(this._alias, 'An alias is required when using this element, but none was provided.');
+      this.updateNotifications(this._alias);
     }
 
     protected renderInternal(): unknown {

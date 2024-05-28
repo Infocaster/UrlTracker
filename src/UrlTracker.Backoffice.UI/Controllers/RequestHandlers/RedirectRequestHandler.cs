@@ -51,8 +51,9 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             var filters = new RedirectFilters(
                 request.Types?.Aggregate((l, r) => l | r) ?? RedirectType.All,
                 request.SourceTypes);
+            var page = request.Page - 1;
             
-            var entities = await _redirectRepository.GetAsync(request.Page * request.PageSize, request.PageSize, request.Query, filters, true);
+            var entities = await _redirectRepository.GetAsync(page * request.PageSize, request.PageSize, request.Query, filters, true);
             
             var result = RedirectCollectionResponse.FromEntityCollection(entities);
             Notify(result.Results);
@@ -127,7 +128,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
                 var entity = entities.FirstOrDefault(e => e.Id == request.Id);
                 if (entity is null) return null;
 
-                HandleUpdate(entity, request.Redirect);
+                HandleUpdate(entity, request.Data);
             }
 
             foreach (var entity in entities)
@@ -176,7 +177,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             entity.Target = CreateEntity(request.Target);
         }
 
-        private static IRedirect CreateEntity(RedirectRequest request)
+        private static IRedirect CreateEntity(CreateRedirectRequest request)
         {
             var entity = new RedirectEntity(
                         request.RetainQuery,

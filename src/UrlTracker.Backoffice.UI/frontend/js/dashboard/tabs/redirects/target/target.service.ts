@@ -23,12 +23,12 @@ export class TargetService implements ITargetService {
     constructor(private axios: Axios, private urlResource: IUrlResource) { }
 
     private get controller(): IControllerUrlResource {
-        return this.urlResource.getController('redirectTarget');
+        return this.urlResource.getController("RedirectTarget");
     }
 
     public async Content(request: IContentTargetRequest): Promise<IContentTargetResponse> {
 
-        let response = await this.axios.get<IContentTargetResponse>(this.controller.getUrl('content'), {
+        let response = await this.axios.get<IContentTargetResponse>(this.controller.getUrl('Content'), {
             params: request
         });
 
