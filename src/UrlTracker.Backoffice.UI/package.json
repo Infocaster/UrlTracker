@@ -14,7 +14,7 @@
   "dependencies": {
     "@lit/context": "^1.1.1",
     "@oddbird/popover-polyfill": "^0.4.3",
-    "@umbraco-ui/uui": "^1.7.1",
+    "@umbraco-ui/uui": "^1.5.0",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
     "js-cookie": "^3.0.5",
