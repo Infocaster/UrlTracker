@@ -1,9 +1,9 @@
-import { consume } from "@lit/context";
-import { UUIIconRegistry } from "@umbraco-ui/uui";
-import { LitElement, html, nothing } from "lit";
-import { customElement, state } from "lit/decorators.js";
-import { iconHelperContext } from "../../context/iconhelper.context";
-import { IIconHelper } from "../../umbraco/icon.service";
+import { consume } from '@lit/context';
+import { UUIIconRegistry } from '@umbraco-ui/uui';
+import { LitElement, html, nothing } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+import { iconHelperContext } from '../../context/iconhelper.context';
+import { IIconHelper } from '../../umbraco/icon.service';
 
 class AngularIconRegistry extends UUIIconRegistry {
   private _iconHelper?: IIconHelper;
@@ -19,14 +19,14 @@ class AngularIconRegistry extends UUIIconRegistry {
   }
 
   private async getIconFromHelper(iconName: string): Promise<string> {
-    let result = await this._iconHelper!.getIcon(iconName);
-    if (!result) return "";
+    const result = await this._iconHelper!.getIcon(iconName);
+    if (!result) return '';
 
     return result.svgString.$$unwrapTrustedValue();
   }
 }
 
-@customElement("urltracker-angular-icon-registry")
+@customElement('urltracker-angular-icon-registry')
 export class AngularIconRegistryElement extends LitElement {
   private _registry: AngularIconRegistry = new AngularIconRegistry();
 
@@ -44,8 +44,7 @@ export class AngularIconRegistryElement extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    if (!this.iconHelper)
-      throw new Error("Icon helper service is required to use this element");
+    if (!this.iconHelper) throw new Error('Icon helper service is required to use this element');
 
     this._registry.setIconHelper(this.iconHelper);
   }
@@ -58,9 +57,9 @@ export class AngularIconRegistryElement extends LitElement {
   protected render(): unknown {
     if (this.loading) return nothing;
     return html`
-     <uui-icon-registry-essential>
-      <slot></slot>
-     </uui-icon-registry-essential>
+      <uui-icon-registry-essential>
+        <slot></slot>
+      </uui-icon-registry-essential>
     `;
   }
 }

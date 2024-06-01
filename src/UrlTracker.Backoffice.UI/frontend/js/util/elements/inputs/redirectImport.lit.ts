@@ -1,12 +1,12 @@
-import { consume } from "@lit/context";
-import "@umbraco-ui/uui";
-import { UUIFileDropzoneEvent } from "@umbraco-ui/uui";
-import { LitElement, css, html } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
-import { localizationServiceContext } from "../../../context/localizationservice.context";
-import { ILocalizationService } from "../../../umbraco/localization.service";
+import { consume } from '@lit/context';
+import '@umbraco-ui/uui';
+import { UUIFileDropzoneEvent } from '@umbraco-ui/uui';
+import { LitElement, css, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import { localizationServiceContext } from '../../../context/localizationservice.context';
+import { ILocalizationService } from '../../../umbraco/localization.service';
 
-@customElement("urltracker-redirect-import")
+@customElement('urltracker-redirect-import')
 export class UrlTrackerRedirectImport extends LitElement {
   @consume({ context: localizationServiceContext })
   private _localizationService?: ILocalizationService;
@@ -15,35 +15,33 @@ export class UrlTrackerRedirectImport extends LitElement {
   public header?: string;
 
   @state()
-  private _headerText: string = "";
+  private _headerText: string = '';
 
   private _localizeHeaderText = async () => {
-    let translatedText = await this._localizationService?.localize(
-      "urlTrackerRedirectUpload_header"
-    );
+    const translatedText = await this._localizationService?.localize('urlTrackerRedirectUpload_header');
 
     if (this.header) {
       this._headerText = `${this.header}`;
     } else if (translatedText) {
       this._headerText = `${translatedText}`;
     } else {
-      this._headerText = "";
+      this._headerText = '';
     }
   };
 
   private handleChange = (e: UUIFileDropzoneEvent) => {
     const files = e.detail.files;
     this.dispatchEvent(
-      new CustomEvent("import", {
-        detail: files[0]
-      })
+      new CustomEvent('import', {
+        detail: files[0],
+      }),
     );
-  }
+  };
 
   private handleDownloadTemplate = () => {
-    this.dispatchEvent(new CustomEvent("download-template"));
-  }
-  
+    this.dispatchEvent(new CustomEvent('download-template'));
+  };
+
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
     this._localizeHeaderText();
@@ -53,7 +51,9 @@ export class UrlTrackerRedirectImport extends LitElement {
     return html`<div class="body">
       <p>
         Drop a csv file in the box below to import redirects.
-        <a @click=${this.handleDownloadTemplate}>You can download a template here <uui-icon name="icon-help-alt"></uui-icon></a>
+        <a @click=${this.handleDownloadTemplate}
+          >You can download a template here <uui-icon name="icon-help-alt"></uui-icon
+        ></a>
       </p>
       <uui-file-dropzone id="browse-dropzone" label="Drag / drop a file here" accept="csv" @change=${this.handleChange}>
         Drag / drop a file here
@@ -69,9 +69,7 @@ export class UrlTrackerRedirectImport extends LitElement {
   }
 
   static styles = css`
-
     uui-file-dropzone {
-      
       --uui-color-default: var(--uui-color-background);
     }
 

@@ -1,14 +1,14 @@
 ﻿// main stylesheet
 .urltracker-dashboard-body {
-    // This negative margin is required because Umbraco adds a padding around dashboards and we don't want that!
-    margin: -20px;
-    position: relative;
-    height: 100%;
-    background-color: red;
+  // This negative margin is required because Umbraco adds a padding around dashboards and we don't want that!
+  margin: -20px;
+  position: relative;
+  height: 100%;
+  background-color: red;
 
-    .urltracker-tab-wrap uui-tab-group {
-        --uui-tab-background: white;
-        border-bottom: 1px solid #e9e9eb;
-        box-sizing: border-box;
-    }
+  .urltracker-tab-wrap uui-tab-group {
+    --uui-tab-background: white;
+    border-bottom: 1px solid #e9e9eb;
+    box-sizing: border-box;
+  }
 }

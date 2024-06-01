@@ -1,4 +1,4 @@
 export interface IRedirectFilterRequestBase {
-    types: number;
-    sourceTypes: string[] | undefined;
+  types: number;
+  sourceTypes: string[] | undefined;
 }

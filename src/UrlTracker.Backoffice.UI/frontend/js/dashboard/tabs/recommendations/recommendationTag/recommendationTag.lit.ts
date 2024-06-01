@@ -1,28 +1,24 @@
-import { LitElement, css, html, nothing, unsafeCSS } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
-import { consume } from "@lit/context";
-import {
-  ILocalizationService,
-  localizationServiceContext,
-} from "../../../../context/localizationservice.context";
-import { styleMap } from "lit/directives/style-map.js";
+import { LitElement, css, html, nothing, unsafeCSS } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import { consume } from '@lit/context';
+import { ILocalizationService, localizationServiceContext } from '../../../../context/localizationservice.context';
+import { styleMap } from 'lit/directives/style-map.js';
 
-@customElement("urltracker-recommendation-tag")
+@customElement('urltracker-recommendation-tag')
 export class UrlTrackerRecommendationTag extends LitElement {
   @consume({ context: localizationServiceContext })
   private localizationService?: ILocalizationService;
 
   @property({ type: String })
-  color: string = "";
+  color: string = '';
 
   @property({ type: String })
-  text: string = "default";
+  text: string = 'default';
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    if (!this.localizationService)
-      throw new Error("This element requires the localization service");
+    if (!this.localizationService) throw new Error('This element requires the localization service');
   }
 
   protected render(): unknown {
@@ -30,8 +26,7 @@ export class UrlTrackerRecommendationTag extends LitElement {
       color: this.color,
     };
     return html`<uui-tag color="default" look="secondary"
-      ><span class="dot" style=${styleMap(dotStyle)}>•</span> ${this
-        .text}</uui-tag
+      ><span class="dot" style=${styleMap(dotStyle)}>•</span> ${this.text}</uui-tag
     >`;
   }
 

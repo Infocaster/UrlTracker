@@ -1,4 +1,3 @@
 export interface IQueryRequestBase {
-    
-    query?: string;
+  query?: string;
 }

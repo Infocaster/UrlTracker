@@ -1,9 +1,8 @@
-import { createContext } from "@lit/context";
+import { createContext } from '@lit/context';
 
 export interface IRedirectViewContext {
-
-    advanced: boolean;
+  advanced: boolean;
 }
 
-export const redirectViewKey = "redirectviewContext";
+export const redirectViewKey = 'redirectviewContext';
 export const redirectViewContext = createContext<IRedirectViewContext>(redirectViewKey);

@@ -1,10 +1,10 @@
-import { ContextProvider, createContext } from "@lit/context";
-import { UUIBooleanInputEvent } from "@umbraco-ui/uui";
-import { css, html, nothing } from "lit";
-import { UrlTrackerResultListItem } from "./resultlistitem.lit";
+import { ContextProvider, createContext } from '@lit/context';
+import { UUIBooleanInputEvent } from '@umbraco-ui/uui';
+import { css, html, nothing } from 'lit';
+import { UrlTrackerResultListItem } from './resultlistitem.lit';
 
 export function UrlTrackerSelectableResultListItem<T extends Record<string, any>>(
-  context: ReturnType<typeof createContext<T>>
+  context: ReturnType<typeof createContext<T>>,
 ) {
   return class SelectableResultListItem extends UrlTrackerResultListItem {
     private _item: T = {} as T;
@@ -19,7 +19,7 @@ export function UrlTrackerSelectableResultListItem<T extends Record<string, any>
     public set item(value: T) {
       this._item = value;
       this._itemProvider.setValue(value);
-      this.requestUpdate("item");
+      this.requestUpdate('item');
     }
 
     public get isSelected(): boolean {
@@ -28,7 +28,7 @@ export function UrlTrackerSelectableResultListItem<T extends Record<string, any>
 
     public set isSelected(value: boolean) {
       this._isSelected = value;
-      this.requestUpdate("isSelected");
+      this.requestUpdate('isSelected');
     }
 
     public get selectable(): boolean {
@@ -37,7 +37,7 @@ export function UrlTrackerSelectableResultListItem<T extends Record<string, any>
 
     public set selectable(value: boolean) {
       this._selectable = value;
-      this.requestUpdate("selectable");
+      this.requestUpdate('selectable');
     }
 
     protected renderBody(): unknown {
@@ -46,30 +46,20 @@ export function UrlTrackerSelectableResultListItem<T extends Record<string, any>
 
     protected renderCheckbox(): unknown {
       if (this._selectable) {
-        return html`<uui-checkbox
-          .checked=${this.isSelected}
-          @change=${this.onCheckboxPress}
-        ></uui-checkbox>`;
-      } else return nothing
+        return html`<uui-checkbox .checked=${this.isSelected} @change=${this.onCheckboxPress}></uui-checkbox>`;
+      } else return nothing;
     }
 
     protected render(): unknown {
-      return html`
-        ${this.renderCheckbox()}
-        ${this.renderBody()}
-      `;
+      return html` ${this.renderCheckbox()} ${this.renderBody()} `;
     }
 
     private onCheckboxPress = (e: UUIBooleanInputEvent) => {
       e.stopPropagation();
       if (e.target.checked) {
-        this.dispatchEvent(
-          new SelectableResultSelectEvent<T>("selected", this.item)
-        );
+        this.dispatchEvent(new SelectableResultSelectEvent<T>('selected', this.item));
       } else {
-        this.dispatchEvent(
-          new SelectableResultSelectEvent<T>("deselected", this.item)
-        );
+        this.dispatchEvent(new SelectableResultSelectEvent<T>('deselected', this.item));
       }
     };
 
@@ -94,7 +84,11 @@ export function UrlTrackerSelectableResultListItem<T extends Record<string, any>
 }
 
 export class SelectableResultSelectEvent<T> extends Event {
-  constructor(evName: string, public item?: T, eventInit: any | null = {}) {
+  constructor(
+    evName: string,
+    public item?: T,
+    eventInit: any | null = {},
+  ) {
     super(evName, {
       ...{ bubbles: false },
       ...eventInit,

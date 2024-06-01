@@ -1,22 +1,22 @@
+import { IEditorService, editorServiceContext } from '@/context/editorservice.context';
+import { redirectServiceContext } from '@/context/redirectservice.context';
+import { IRedirectService } from '@/services/redirect.service';
+import { ensureServiceExists } from '@/util/tools/existancecheck';
+import { consume, provide } from '@lit/context';
+import { LitElement, css, html, nothing } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+import { localizationServiceContext } from '../context/localizationservice.context';
+import { tabContext } from '../context/tabcontext.context';
+import { ILocalizationService } from '../umbraco/localization.service';
+import './footer/footer.lit';
+import tabStrategy, { ITab, TabStrategyCollection } from './tab';
 import {
-  IEditorService,
-  editorServiceContext,
-} from "@/context/editorservice.context";
-import { redirectServiceContext } from "@/context/redirectservice.context";
-import { IRedirectService } from "@/services/redirect.service";
-import { ensureServiceExists } from "@/util/tools/existancecheck";
-import { consume, provide } from "@lit/context";
-import { LitElement, css, html, nothing } from "lit";
-import { customElement, state } from "lit/decorators.js";
-import { localizationServiceContext } from "../context/localizationservice.context";
-import { tabContext } from "../context/tabcontext.context";
-import { ILocalizationService } from "../umbraco/localization.service";
-import "./footer/footer.lit";
-import tabStrategy, { ITab, TabStrategyCollection } from "./tab";
-import { IUmbracoNotificationsService, umbracoNotificationsServiceContext } from "@/context/notificationsservice.context";
-import { createNewRedirectOptions } from "./sidebars/simpleRedirect/manageredirect";
+  IUmbracoNotificationsService,
+  umbracoNotificationsServiceContext,
+} from '@/context/notificationsservice.context';
+import { createNewRedirectOptions } from './sidebars/simpleRedirect/manageredirect';
 
-@customElement("urltracker-dashboard-content")
+@customElement('urltracker-dashboard-content')
 export class UrlTrackerDashboardContent extends LitElement {
   @provide({ context: tabContext })
   private _tabs?: Array<ITab>;
@@ -69,31 +69,25 @@ export class UrlTrackerDashboardContent extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    ensureServiceExists(this._redirectService, "redirect service");
+    ensureServiceExists(this._redirectService, 'redirect service');
 
     this.loading++;
     try {
       if (!this.localizationService)
-        throw new Error(
-          "localization service is not defined, but is required by this element"
-        );
+        throw new Error('localization service is not defined, but is required by this element');
 
-      let titleAliases = this.tabStrategyCollection.map((item) => item.nameKey);
-      let labelAliases = this.tabStrategyCollection.map(
-        (item) => item.labelKey
-      );
+      const titleAliases = this.tabStrategyCollection.map((item) => item.nameKey);
+      const labelAliases = this.tabStrategyCollection.map((item) => item.labelKey);
 
-      let titlePromise = this.localizationService.localizeMany(titleAliases);
-      let labels = await this.localizationService.localizeMany(labelAliases);
-      let titles = await titlePromise;
+      const titlePromise = this.localizationService.localizeMany(titleAliases);
+      const labels = await this.localizationService.localizeMany(labelAliases);
+      const titles = await titlePromise;
 
-      let result: Array<ITab> = this.tabStrategyCollection.map(
-        (item, index) => ({
-          name: titles[index],
-          label: labels[index] ? labels[index] : titles[index],
-          template: item.template,
-        })
-      );
+      const result: Array<ITab> = this.tabStrategyCollection.map((item, index) => ({
+        name: titles[index],
+        label: labels[index] ? labels[index] : titles[index],
+        template: item.template,
+      }));
 
       this.tabs = result;
     } finally {
@@ -106,12 +100,11 @@ export class UrlTrackerDashboardContent extends LitElement {
   };
 
   private _openSidebar(_: Event) {
-    
     const options = createNewRedirectOptions({
-      title: "New redirect",
+      title: 'New redirect',
       submit: this.closePanel,
       close: this.closePanel,
-      advanced: this.activeTab?.name === "Advanced redirects"
+      advanced: this.activeTab?.name === 'Advanced redirects',
     });
 
     this.editorService!.open(options);
@@ -121,14 +114,11 @@ export class UrlTrackerDashboardContent extends LitElement {
     let contentOrLoader;
 
     if (this.loading) {
-      contentOrLoader = html`<uui-loader-bar
-        animationDuration="1.5"
-      ></uui-loader-bar>`;
+      contentOrLoader = html`<uui-loader-bar animationDuration="1.5"></uui-loader-bar>`;
     } else {
       let tabsOrNothing;
       if (this.tabs && this.tabs?.length > 1) {
-        tabsOrNothing = html`
-        <div class="tabs-wrapper">
+        tabsOrNothing = html` <div class="tabs-wrapper">
           <uui-tab-group>
             ${this.tabs?.map(
               (item) =>
@@ -137,20 +127,20 @@ export class UrlTrackerDashboardContent extends LitElement {
                   ?active="${item === this.activeTab}"
                   @click="${() => (this.activeTab = item)}"
                   >${item.name}</uui-tab
-                >`
+                >`,
             )}
           </uui-tab-group>
-            <uui-button
-              class="new-redirect"
-              style=""
-              look="primary"
-              color="positive"
-              label="Basic"
-              @click="${this._openSidebar}"
-            >
-                <uui-icon name="add"></uui-icon>
-              New redirect
-            </uui-button>
+          <uui-button
+            class="new-redirect"
+            style=""
+            look="primary"
+            color="positive"
+            label="Basic"
+            @click="${this._openSidebar}"
+          >
+            <uui-icon name="add"></uui-icon>
+            New redirect
+          </uui-button>
         </div>`;
       } else {
         tabsOrNothing = nothing;
@@ -158,9 +148,7 @@ export class UrlTrackerDashboardContent extends LitElement {
       contentOrLoader = html`
         ${tabsOrNothing}
         <uui-scroll-container class="dashboard-body">
-          <div class="dashboard-body-container">
-            ${this.activeTab?.template}
-          </div>
+          <div class="dashboard-body-container">${this.activeTab?.template}</div>
         </uui-scroll-container>
         <urltracker-dashboard-footer> </urltracker-dashboard-footer>
       `;
@@ -234,7 +222,7 @@ export class UrlTrackerDashboardContent extends LitElement {
     }
     .dashboard-body {
       flex: 1;
-      background-image: url("/app_plugins/urltracker/assets/images/background.svg");
+      background-image: url('/app_plugins/urltracker/assets/images/background.svg');
     }
     .dashboard-body-container {
       padding: 2rem;

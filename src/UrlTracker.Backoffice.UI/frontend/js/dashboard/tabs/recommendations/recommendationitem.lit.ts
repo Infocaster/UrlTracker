@@ -1,44 +1,33 @@
-import { ensureServiceExists } from "@/util/tools/existancecheck";
-import { ContextConsumer } from "@lit/context";
-import { css, html, nothing } from "lit";
-import { customElement, state } from "lit/decorators.js";
-import {
-  ILocalizationService,
-  localizationServiceContext,
-} from "../../../context/localizationservice.context";
-import {
-  IRecommendationResponse,
-  recommendationContext,
-} from "../../../context/recommendationitem.context";
-import { UrlTrackerSelectableResultListItem } from "../../../util/elements/selectableresultlistitem.lit";
+import { ensureServiceExists } from '@/util/tools/existancecheck';
+import { ContextConsumer } from '@lit/context';
+import { css, html, nothing } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+import { ILocalizationService, localizationServiceContext } from '../../../context/localizationservice.context';
+import { IRecommendationResponse, recommendationContext } from '../../../context/recommendationitem.context';
+import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';
 import {
   RECCOMENDATION_TYPES,
   RecommendationTypes,
   calculateRecommendationType,
   recommendationTagFactory,
-} from "./recommendationTag/recommendationTag";
-import "./recommendationTag/recommendationTag.lit";
-import recommendationTypeStrategyResolver from "./recommendationType/recommendation.strategy";
-import { ifDefined } from "lit/directives/if-defined.js";
-import { actionButton, cardWithClickableHeader, errorStyle } from "../styles";
+} from './recommendationTag/recommendationTag';
+import './recommendationTag/recommendationTag.lit';
+import recommendationTypeStrategyResolver from './recommendationType/recommendation.strategy';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
 
-const RecommendationListItem =
-  UrlTrackerSelectableResultListItem<IRecommendationResponse>(
-    recommendationContext
-  );
+const RecommendationListItem = UrlTrackerSelectableResultListItem<IRecommendationResponse>(recommendationContext);
 
-@customElement("urltracker-recommendation-item")
+@customElement('urltracker-recommendation-item')
 export class UrlTrackerRecommendationItem extends RecommendationListItem {
+  @state()
+  private recommendationTagText = '';
 
   @state()
-  private recommendationTagText = "";
+  private actionsText = '';
 
   @state()
-  private actionsText = "";
-
-  @state()
-  private recommendationType: RecommendationTypes =
-    RECCOMENDATION_TYPES.NOT_IMPORTANT;
+  private recommendationType: RecommendationTypes = RECCOMENDATION_TYPES.NOT_IMPORTANT;
 
   @state()
   private recommendationTypeText?: string;
@@ -57,7 +46,7 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    ensureServiceExists(this.localizationService, "localizationService");
+    ensureServiceExists(this.localizationService, 'localizationService');
 
     if (this.item) {
       this.recommendationType = calculateRecommendationType(this.item.score);
@@ -65,16 +54,12 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
     }
     this.localizeActionsText();
 
-    const sourceStrategy = recommendationTypeStrategyResolver.getStrategy({recommendation: this.item, element: this});
+    const sourceStrategy = recommendationTypeStrategyResolver.getStrategy({ recommendation: this.item, element: this });
     if (sourceStrategy) {
       this.recommendationTypeText = await sourceStrategy.getTitle();
       this.recommendationTypeIsError = false;
-    }
-    else {
-
-      this.recommendationTypeText = await this.localizationService.localize(
-        "urlTrackerRecommendationType_unknown"
-      );
+    } else {
+      this.recommendationTypeText = await this.localizationService.localize('urlTrackerRecommendationType_unknown');
       this.recommendationTypeIsError = true;
     }
   }
@@ -88,7 +73,9 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
     }
 
     return html`
-      <h3 class="${ifDefined(errorClass)}"><button class="inspect-button" @click=${this.handleAnalyse}>${this.recommendationTypeText}</button></h3>
+      <h3 class="${ifDefined(errorClass)}">
+        <button class="inspect-button" @click=${this.handleAnalyse}>${this.recommendationTypeText}</button>
+      </h3>
     `;
   }
 
@@ -98,58 +85,49 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   }
 
   private async localizeActionsText(): Promise<void> {
-    const actionsText = await this.localizationService?.localize(
-      "urlTrackerRecommendationItem_actions"
-    );
-    this.actionsText = actionsText ?? "";
+    const actionsText = await this.localizationService?.localize('urlTrackerRecommendationItem_actions');
+    this.actionsText = actionsText ?? '';
   }
 
   private async tagText(importance: RecommendationTypes): Promise<void> {
-    const text = await this.localizationService?.localize(
-      `urlTrackerRecommendationImportance_${importance}`
-    );
-    this.recommendationTagText = text ?? "";
+    const text = await this.localizationService?.localize(`urlTrackerRecommendationImportance_${importance}`);
+    this.recommendationTagText = text ?? '';
   }
 
   private renderTag(text: string): unknown {
     if (!this.item) return nothing;
-    return recommendationTagFactory(this.recommendationType, text ?? "");
+    return recommendationTagFactory(this.recommendationType, text ?? '');
   }
 
   private handleExplain(e: Event): void {
-    
-    this.dispatchEvent(new CustomEvent("explain", { detail: this.item }));
+    this.dispatchEvent(new CustomEvent('explain', { detail: this.item }));
     e.stopPropagation();
   }
 
   private handleAnalyse(e: Event): void {
-    
-    this.dispatchEvent(new CustomEvent("analyse", { detail: this.item }));
+    this.dispatchEvent(new CustomEvent('analyse', { detail: this.item }));
     e.stopPropagation();
   }
 
   private handleCreateTemporaryRedirect(e: Event): void {
     e.stopPropagation();
-    this.dispatchEvent(new CustomEvent("createTemporary", { detail: this.item }));
+    this.dispatchEvent(new CustomEvent('createTemporary', { detail: this.item }));
   }
 
   private handleCreatePermanentRedirect(e: Event): void {
     e.stopPropagation();
-    this.dispatchEvent(new CustomEvent("createPermanent", { detail: this.item }));
+    this.dispatchEvent(new CustomEvent('createPermanent', { detail: this.item }));
   }
 
   private handleIgnoreRecommendation(e: Event): void {
     e.stopPropagation();
-    this.dispatchEvent(new CustomEvent("ignore", { detail: this.item }));
+    this.dispatchEvent(new CustomEvent('ignore', { detail: this.item }));
   }
 
   protected renderBody(): unknown {
     return html`
       <div class="body">
-        <div class="type">
-          ${this.renderRecommendationType()}
-          ${this.renderTag(this.recommendationTagText)}
-        </div>
+        <div class="type">${this.renderRecommendationType()} ${this.renderTag(this.recommendationTagText)}</div>
         <div class="target">${this.renderTarget()}</div>
         <div class="actions">
           <button class="action-button help-button" @click=${this.handleExplain}>
@@ -175,7 +153,6 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
     cardWithClickableHeader,
     actionButton,
     css`
-
       .body {
         width: 100%;
       }

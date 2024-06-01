@@ -1,17 +1,14 @@
-import {
-  ILocalizationService,
-  localizationServiceContext,
-} from "@/context/localizationservice.context";
-import { IRecommendationHistoryResponse } from "@/services/recommendationanalysis.service";
-import { toReadableDate } from "@/util/functions/dateformatter";
-import { consume } from "@lit/context";
+import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
+import { IRecommendationHistoryResponse } from '@/services/recommendationanalysis.service';
+import { toReadableDate } from '@/util/functions/dateformatter';
+import { consume } from '@lit/context';
 import Chart from 'chart.js/auto';
-import { LitElement, PropertyValueMap, css, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { Ref, createRef, ref } from "lit/directives/ref.js";
-  
-export const ContentElementTag = "urltracker-history-chart";
-  
+import { LitElement, PropertyValueMap, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { Ref, createRef, ref } from 'lit/directives/ref.js';
+
+export const ContentElementTag = 'urltracker-history-chart';
+
 @customElement(ContentElementTag)
 export class UrlTrackerHistoryChart extends LitElement {
   @consume({ context: localizationServiceContext })
@@ -20,47 +17,44 @@ export class UrlTrackerHistoryChart extends LitElement {
   @property({ attribute: false, type: Object })
   private history!: IRecommendationHistoryResponse;
 
-  private chartRef: Ref<HTMLCanvasElement> = createRef(); 
+  private chartRef: Ref<HTMLCanvasElement> = createRef();
 
   private init() {
     const data = this.history.dailyOccurances;
 
-    new Chart(
-      this.chartRef.value!,
-      {
-        type: 'bar',
-        options: {
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              display: false
-            },
-            y: {
-              display: false
-            }
+    new Chart(this.chartRef.value!, {
+      type: 'bar',
+      options: {
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            display: false,
           },
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              enabled: false
-            }
-          }
+          y: {
+            display: false,
+          },
         },
-        data: {
-          labels: data.map(row => row.dateTime),
-          datasets: [
-            {
-              label: 'Occurances per day',
-              data: data.map(row => row.occurances),
-              backgroundColor: '#1B264F',
-              minBarLength: 0.5
-            }
-          ]
-        }
-      }
-    );
+        plugins: {
+          legend: {
+            display: false,
+          },
+          tooltip: {
+            enabled: false,
+          },
+        },
+      },
+      data: {
+        labels: data.map((row) => row.dateTime),
+        datasets: [
+          {
+            label: 'Occurances per day',
+            data: data.map((row) => row.occurances),
+            backgroundColor: '#1B264F',
+            minBarLength: 0.5,
+          },
+        ],
+      },
+    });
   }
 
   protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
@@ -102,14 +96,14 @@ export class UrlTrackerHistoryChart extends LitElement {
       height: 100px;
     }
 
-    .history-chart-legend{
+    .history-chart-legend {
       margin-top: 1rem;
       margin-bottom: 3rem;
     }
 
     .item {
-        display: grid;
-        grid-template-columns: 160px 1fr;
+      display: grid;
+      grid-template-columns: 160px 1fr;
     }
 
     dt {
@@ -122,8 +116,7 @@ export class UrlTrackerHistoryChart extends LitElement {
       font-size: 12px;
       font-weight: 400;
       line-height: 15px;
-      color: #68676B;
+      color: #68676b;
     }
   `;
 }
-  

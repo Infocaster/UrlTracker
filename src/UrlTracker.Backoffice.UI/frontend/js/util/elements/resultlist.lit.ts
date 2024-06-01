@@ -1,11 +1,11 @@
-import { LitElement, css, html } from "lit";
-import { ILocalizationService } from "../../umbraco/localization.service";
-import { consume } from "@lit/context";
-import { localizationServiceContext } from "../../context/localizationservice.context";
-import { customElement, property } from "lit/decorators.js";
-import "@umbraco-ui/uui";
+import { LitElement, css, html } from 'lit';
+import { ILocalizationService } from '../../umbraco/localization.service';
+import { consume } from '@lit/context';
+import { localizationServiceContext } from '../../context/localizationservice.context';
+import { customElement, property } from 'lit/decorators.js';
+import '@umbraco-ui/uui';
 
-@customElement("urltracker-result-list")
+@customElement('urltracker-result-list')
 export class UrlTrackerResultList extends LitElement {
   @consume({ context: localizationServiceContext })
   private _localizationService?: ILocalizationService;
@@ -21,9 +21,7 @@ export class UrlTrackerResultList extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    this._loadingText = await this._localizationService?.localize(
-      "urltrackergeneral_loading"
-    );
+    this._loadingText = await this._localizationService?.localize('urltrackergeneral_loading');
   }
 
   private renderBody(): unknown {

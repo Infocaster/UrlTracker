@@ -1,13 +1,13 @@
-import { LitElement, css, html, nothing } from "lit";
-import { customElement, state } from "lit/decorators.js";
-import { IDashboardFooter } from "./footer";
-import { ILocalizationService } from "../../umbraco/localization.service";
-import { IVersionProvider } from "../../util/tools/versionprovider.service";
-import { consume } from "@lit/context";
-import { versionProviderContext } from "../../context/versionprovider.context";
-import { localizationServiceContext } from "../../context/localizationservice.context";
+import { LitElement, css, html, nothing } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+import { IDashboardFooter } from './footer';
+import { ILocalizationService } from '../../umbraco/localization.service';
+import { IVersionProvider } from '../../util/tools/versionprovider.service';
+import { consume } from '@lit/context';
+import { versionProviderContext } from '../../context/versionprovider.context';
+import { localizationServiceContext } from '../../context/localizationservice.context';
 
-@customElement("urltracker-dashboard-footer")
+@customElement('urltracker-dashboard-footer')
 export class DashboardFooter extends LitElement {
   static styles = css`
     .url-tracker__footer {
@@ -74,14 +74,9 @@ export class DashboardFooter extends LitElement {
           ${this.model.links.map(
             (el) => html`
               <li>
-                <a
-                  href="${el.url}"
-                  target="${el.target}"
-                  rel="noreferrer noopener"
-                  >${el.title}</a
-                >
+                <a href="${el.url}" target="${el.target}" rel="noreferrer noopener">${el.title}</a>
               </li>
-            `
+            `,
           )}
         </ul>
       `;
@@ -94,10 +89,7 @@ export class DashboardFooter extends LitElement {
           target="_blank"
           rel="noopener noreferrer"
           class="url-tracker__footer__logo__link"
-          ><img
-            src="${this.model.logo}"
-            alt="Infocaster logo"
-            class="url-tracker__footer__logo"
+          ><img src="${this.model.logo}" alt="Infocaster logo" class="url-tracker__footer__logo"
         /></a>
         <div class="url-tracker__footer__version">v${this.model.version}</div>
         <div class="url-tracker__footer__links">${linkList}</div>
@@ -122,32 +114,32 @@ export class DashboardFooter extends LitElement {
   private initModel = () => {
     this.localizationService
       ?.localizeMany([
-        "urlTrackerDashboardFooter_logo",
-        "urlTrackerDashboardFooter_logourl",
-        "urlTrackerDashboardFooter_featurelabel",
-        "urlTrackerDashboardFooter_buglabel",
-        "urlTrackerDashboardFooter_wikilabel",
+        'urlTrackerDashboardFooter_logo',
+        'urlTrackerDashboardFooter_logourl',
+        'urlTrackerDashboardFooter_featurelabel',
+        'urlTrackerDashboardFooter_buglabel',
+        'urlTrackerDashboardFooter_wikilabel',
       ])
       .then((result) => {
         this.model = {
           logo: result[0],
           logoUrl: result[1],
-          version: this.versionProvider ? this.versionProvider.version : "",
+          version: this.versionProvider ? this.versionProvider.version : '',
           links: [
             {
-              url: "https://github.com/Infocaster/UrlTracker/discussions",
+              url: 'https://github.com/Infocaster/UrlTracker/discussions',
               title: result[2],
-              target: "_blank",
+              target: '_blank',
             },
             {
-              url: "https://github.com/Infocaster/UrlTracker/issues",
+              url: 'https://github.com/Infocaster/UrlTracker/issues',
               title: result[3],
-              target: "_blank",
+              target: '_blank',
             },
             {
-              url: "https://github.com/Infocaster/UrlTracker/wiki",
+              url: 'https://github.com/Infocaster/UrlTracker/wiki',
               title: result[4],
-              target: "_blank",
+              target: '_blank',
             },
           ],
         };

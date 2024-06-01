@@ -1,4 +1,3 @@
 export interface IUrlTrackerVariables {
-
-    version: string;
+  version: string;
 }

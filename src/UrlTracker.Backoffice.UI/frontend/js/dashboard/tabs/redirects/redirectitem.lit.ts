@@ -1,25 +1,20 @@
-import { consume } from "@lit/context";
-import { css, html, nothing } from "lit";
-import { customElement, state } from "lit/decorators.js";
-import {
-  ILocalizationService,
-  localizationServiceContext,
-} from "../../../context/localizationservice.context";
-import { redirectContext } from "../../../context/redirectitem.context";
-import { IRedirectResponse } from "../../../services/redirect.service";
-import { UrlTrackerSelectableResultListItem } from "../../../util/elements/selectableresultlistitem.lit";
-import sourceStrategyResolver from "./source/source.strategy";
-import targetStrategyResolver from "./target/target.strategy";
-import { ensureExists, ensureServiceExists } from "@/util/tools/existancecheck";
-import { ifDefined } from "lit/directives/if-defined.js";
-import { actionButton, cardWithClickableHeader, errorStyle } from "../styles";
+import { consume } from '@lit/context';
+import { css, html, nothing } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+import { ILocalizationService, localizationServiceContext } from '../../../context/localizationservice.context';
+import { redirectContext } from '../../../context/redirectitem.context';
+import { IRedirectResponse } from '../../../services/redirect.service';
+import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';
+import sourceStrategyResolver from './source/source.strategy';
+import targetStrategyResolver from './target/target.strategy';
+import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
+import { ifDefined } from 'lit/directives/if-defined.js';
+import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
 
-const RedirectListItem =
-  UrlTrackerSelectableResultListItem<IRedirectResponse>(redirectContext);
+const RedirectListItem = UrlTrackerSelectableResultListItem<IRedirectResponse>(redirectContext);
 
-@customElement("urltracker-redirect-item")
+@customElement('urltracker-redirect-item')
 export class UrlTrackerRedirectItem extends RedirectListItem {
-
   @consume({ context: localizationServiceContext })
   private localizationService?: ILocalizationService;
 
@@ -38,37 +33,31 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
     ensureServiceExists(this.localizationService, 'localizationService');
     ensureExists(this.item, 'A redirect is required to use this element, but no redirect was provided');
 
-    this.redirectToText = await this.localizationService.localize(
-      "urlTrackerRedirectTarget_redirectto"
-    );
+    this.redirectToText = await this.localizationService.localize('urlTrackerRedirectTarget_redirectto');
 
-    const sourceStrategy = sourceStrategyResolver.getStrategy({redirect: this.item, element: this});
+    const sourceStrategy = sourceStrategyResolver.getStrategy({ redirect: this.item, element: this });
     if (sourceStrategy) {
       this.redirectSourceText = await sourceStrategy.getTitle();
       this.sourceIsError = false;
-    }
-    else {
-
-      this.redirectSourceText = await this.localizationService.localize(
-        "urlTrackerRedirectSource_unknown"
-      );
+    } else {
+      this.redirectSourceText = await this.localizationService.localize('urlTrackerRedirectSource_unknown');
       this.sourceIsError = true;
     }
   }
 
   private handleInspect(e: Event): void {
     e.stopPropagation();
-    this.dispatchEvent(new CustomEvent("inspect", { detail: this.item }));
+    this.dispatchEvent(new CustomEvent('inspect', { detail: this.item }));
   }
 
   private handleEdit(e: Event): void {
     e.stopPropagation();
-    this.dispatchEvent(new CustomEvent("edit", { detail: this.item }));
+    this.dispatchEvent(new CustomEvent('edit', { detail: this.item }));
   }
 
   private handleDelete(e: Event): void {
     e.stopPropagation();
-    this.dispatchEvent(new CustomEvent("delete", { detail: this.item }));
+    this.dispatchEvent(new CustomEvent('delete', { detail: this.item }));
   }
 
   private renderSource(): unknown {
@@ -80,7 +69,9 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
     }
 
     return html`
-      <h3 class="${ifDefined(errorClass)}"><button class="inspect-button" @click=${this.handleInspect}>${this.redirectSourceText}</button></h3>
+      <h3 class="${ifDefined(errorClass)}">
+        <button class="inspect-button" @click=${this.handleInspect}>${this.redirectSourceText}</button>
+      </h3>
     `;
   }
 

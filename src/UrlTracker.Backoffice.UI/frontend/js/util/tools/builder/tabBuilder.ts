@@ -1,9 +1,9 @@
-import { TemplateResult } from "lit";
-import TabStrategy from "../../../dashboard/tab";
+import { TemplateResult } from 'lit';
+import TabStrategy from '../../../dashboard/tab';
 
 export class TabBuilder {
   public addTab(alias: string, template: TemplateResult) {
-    console.log("public acces test");
+    console.log('public acces test');
     console.log(this._checkTabNameUnqiue(alias));
   }
 

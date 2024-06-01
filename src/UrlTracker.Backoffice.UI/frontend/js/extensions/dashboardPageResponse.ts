@@ -1,8 +1,8 @@
 export interface IDashboardPageResponse {
-    results: Array<IDashboardPage>;
+  results: Array<IDashboardPage>;
 }
 
 export interface IDashboardPage {
-    alias: string;
-    view: string;
+  alias: string;
+  view: string;
 }

@@ -1,3 +1,3 @@
 export interface IChangeManager {
-    element: EventTarget;
+  element: EventTarget;
 }

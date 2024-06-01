@@ -1,19 +1,19 @@
-import { consume } from "@lit/context";
-import { LitElement, css, html } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
-import { localizationServiceContext } from "../../../../context/localizationservice.context";
-import { ILocalizationService } from "../../../../umbraco/localization.service";
+import { consume } from '@lit/context';
+import { LitElement, css, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import { localizationServiceContext } from '../../../../context/localizationservice.context';
+import { ILocalizationService } from '../../../../umbraco/localization.service';
 
-@customElement("urltracker-redirect-permanent")
+@customElement('urltracker-redirect-permanent')
 export class UrlTrackerRedirectPermanent extends LitElement {
   @property({ type: Boolean })
   public isPermanent: boolean = false;
 
   @state()
-  private _headerText: string = "";
+  private _headerText: string = '';
 
   @state()
-  private _infoText: string = "";
+  private _infoText: string = '';
 
   @consume({ context: localizationServiceContext })
   private _localizationService?: ILocalizationService;
@@ -26,30 +26,26 @@ export class UrlTrackerRedirectPermanent extends LitElement {
   }
 
   private _localizeHeaderText = async () => {
-    const text = await this._localizationService?.localize(
-      "urlTrackerNewRedirect_permanent"
-    );
+    const text = await this._localizationService?.localize('urlTrackerNewRedirect_permanent');
 
-    this._headerText = text ?? "fallback";
+    this._headerText = text ?? 'fallback';
   };
 
   private _localizeInfoText = async () => {
-    const text = await this._localizationService?.localize(
-      "urlTrackerNewRedirect_permanent-info"
-    );
+    const text = await this._localizationService?.localize('urlTrackerNewRedirect_permanent-info');
 
-    this._infoText = text ?? "fallback";
+    this._infoText = text ?? 'fallback';
   };
 
   private _onToggleChange = (e: any) => {
     this.isPermanent = !this.isPermanent;
 
     this.dispatchEvent(
-      new CustomEvent("toggle", {
+      new CustomEvent('toggle', {
         detail: this.isPermanent,
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   };
 
@@ -57,11 +53,7 @@ export class UrlTrackerRedirectPermanent extends LitElement {
     return html`
       <p><strong>${this._headerText}</strong></p>
       <p>${this._infoText}</p>
-      <uui-toggle
-        label=""
-        .checked=${this.isPermanent}
-        @change=${this._onToggleChange}
-      ></uui-toggle>
+      <uui-toggle label="" .checked=${this.isPermanent} @change=${this._onToggleChange}></uui-toggle>
     `;
   }
 

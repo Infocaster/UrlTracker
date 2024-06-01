@@ -1,3 +1,3 @@
-import { ExplainRecommendationsEditor } from "./explainrecommendations";
+import { ExplainRecommendationsEditor } from './explainrecommendations';
 
-export type ExplainRecommendationsScope = angular.IScope & {model: ExplainRecommendationsEditor}
+export type ExplainRecommendationsScope = angular.IScope & { model: ExplainRecommendationsEditor };

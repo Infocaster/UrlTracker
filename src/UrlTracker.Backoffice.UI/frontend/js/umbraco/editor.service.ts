@@ -57,7 +57,7 @@ interface IEditor {
   allowPublishAndClose: boolean;
 }
 
-type EditorSize = 'medium' | 'small'
+type EditorSize = 'medium' | 'small';
 
 export interface ICustomEditor {
   view: string;
@@ -66,11 +66,9 @@ export interface ICustomEditor {
 }
 
 export interface ICancelSubmitEditor<T> extends ICloseEditor {
-  
   submit: (value: T) => void;
 }
 
 export interface ICloseEditor {
-  
   close: () => void;
 }

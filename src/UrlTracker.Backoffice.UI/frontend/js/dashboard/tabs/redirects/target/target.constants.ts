@@ -1,6 +1,5 @@
 export interface ITargetStrategies {
-
-    url: string;
-    content: string;
-    media: string;
+  url: string;
+  content: string;
+  media: string;
 }

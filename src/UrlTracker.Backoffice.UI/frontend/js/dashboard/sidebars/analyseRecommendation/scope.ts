@@ -1,3 +1,3 @@
-import { AnalyseRecommendationEditor } from "./analyserecommendation";
+import { AnalyseRecommendationEditor } from './analyserecommendation';
 
-export type AnalyseRecommendationScope = angular.IScope & {model:AnalyseRecommendationEditor};
+export type AnalyseRecommendationScope = angular.IScope & { model: AnalyseRecommendationEditor };

@@ -4,9 +4,7 @@ export const RECOMMENDATION_SORT_TYPE = {
   URL: 2,
 } as const;
 
-export type RecommendationSortType =
-  (typeof RECOMMENDATION_SORT_TYPE)[keyof typeof RECOMMENDATION_SORT_TYPE];
-
+export type RecommendationSortType = (typeof RECOMMENDATION_SORT_TYPE)[keyof typeof RECOMMENDATION_SORT_TYPE];
 
 export const REDIRECTTYPE_SORT_TYPE = {
   NONE: 0,
@@ -15,5 +13,4 @@ export const REDIRECTTYPE_SORT_TYPE = {
   ALL: 3,
 } as const;
 
-export type RedirectSortType =
-  (typeof REDIRECTTYPE_SORT_TYPE)[keyof typeof REDIRECTTYPE_SORT_TYPE];
+export type RedirectSortType = (typeof REDIRECTTYPE_SORT_TYPE)[keyof typeof REDIRECTTYPE_SORT_TYPE];

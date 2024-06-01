@@ -1,13 +1,12 @@
 ﻿export interface IDashboardFooter {
-    logo: string,
-    logoUrl: string,
-    version: string,
-    links: Array<IDashboardFooterLink>
-};
+  logo: string;
+  logoUrl: string;
+  version: string;
+  links: Array<IDashboardFooterLink>;
+}
 
 export interface IDashboardFooterLink {
-
-    url: string,
-    title: string,
-    target: string
-};
+  url: string;
+  title: string;
+  target: string;
+}

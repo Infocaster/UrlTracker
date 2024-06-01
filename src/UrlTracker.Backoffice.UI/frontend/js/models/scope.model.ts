@@ -1,4 +1,4 @@
-import { ICustomEditor } from "@/umbraco/editor.service";
+import { ICustomEditor } from '@/umbraco/editor.service';
 
 export interface IScope extends angular.IScope {
   $parent: IParentScope;

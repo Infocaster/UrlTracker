@@ -1,4 +1,4 @@
 export interface IEntityResponseId {
-    id: number
-    key: string;
+  id: number;
+  key: string;
 }

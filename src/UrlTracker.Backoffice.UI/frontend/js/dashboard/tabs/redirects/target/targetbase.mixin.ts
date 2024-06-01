@@ -1,19 +1,10 @@
-import { ContextConsumer } from "@lit/context";
-import { css, html, nothing } from "lit";
-import {
-  ILocalizationService,
-  localizationServiceContext,
-} from "../../../../context/localizationservice.context";
-import {
-  IRedirectResponse,
-  redirectContext,
-} from "../../../../context/redirectitem.context";
-import { LitElementConstructor } from "../../../../util/tools/litelementconstructor";
+import { ContextConsumer } from '@lit/context';
+import { css, html, nothing } from 'lit';
+import { ILocalizationService, localizationServiceContext } from '../../../../context/localizationservice.context';
+import { IRedirectResponse, redirectContext } from '../../../../context/redirectitem.context';
+import { LitElementConstructor } from '../../../../util/tools/litelementconstructor';
 
-export function UrlTrackerRedirectTarget<TBase extends LitElementConstructor>(
-  Base: TBase,
-  typeKey: string
-) {
+export function UrlTrackerRedirectTarget<TBase extends LitElementConstructor>(Base: TBase, typeKey: string) {
   return class RedirectTarget extends Base {
     private _typeString?: string;
     private get typeString(): string | undefined {
@@ -21,7 +12,7 @@ export function UrlTrackerRedirectTarget<TBase extends LitElementConstructor>(
     }
     private set typeString(value: string | undefined) {
       this._typeString = value;
-      this.requestUpdate("typeString");
+      this.requestUpdate('typeString');
     }
 
     private _localizationServiceConsumer = new ContextConsumer(this, {

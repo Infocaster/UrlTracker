@@ -1,44 +1,44 @@
-import { ISourceStrategies } from "@/dashboard/tabs/redirects/source/source.constants";
-import { debounce } from "@/util/functions/debounce";
-import variableresourceService from "@/util/tools/variableresource.service";
-import { consume } from "@lit/context";
-import { UUIInputElement, UUIInputEvent } from "@umbraco-ui/uui";
-import { LitElement, css, html, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
-import { Ref, createRef, ref } from "lit/directives/ref.js";
-import { repeat } from "lit/directives/repeat.js";
-import { localizationServiceContext } from "../../../../context/localizationservice.context";
-import { ILocalizationService } from "../../../../umbraco/localization.service";
-import { ITypeButton } from "./simpleRedirectTypeProvider";
+import { ISourceStrategies } from '@/dashboard/tabs/redirects/source/source.constants';
+import { debounce } from '@/util/functions/debounce';
+import variableresourceService from '@/util/tools/variableresource.service';
+import { consume } from '@lit/context';
+import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui';
+import { LitElement, css, html, nothing } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import { Ref, createRef, ref } from 'lit/directives/ref.js';
+import { repeat } from 'lit/directives/repeat.js';
+import { localizationServiceContext } from '../../../../context/localizationservice.context';
+import { ILocalizationService } from '../../../../umbraco/localization.service';
+import { ITypeButton } from './simpleRedirectTypeProvider';
 
-@customElement("urltracker-redirect-incoming-url")
+@customElement('urltracker-redirect-incoming-url')
 export class UrlTrackerRedirectIncomingUrl extends LitElement {
   @consume({ context: localizationServiceContext })
   private _localizationService?: ILocalizationService;
 
   @property({ type: String })
-  private incomingUrl: string = "";
+  private incomingUrl: string = '';
 
   @property({ type: String })
-  private incomingStrategy: string = "url";
+  private incomingStrategy: string = 'url';
 
   @property({ type: Boolean })
   private advancedView: boolean = false;
 
   @state()
-  private _headerText: string = "";
+  private _headerText: string = '';
 
   @state()
-  private _infoText: string = "";
+  private _infoText: string = '';
 
   private inputRef: Ref<UUIInputElement> = createRef();
 
   public _typeButtons = [
     {
-      label: "urlTrackerRedirectSource_url",
-      labelFallback: "Content",
+      label: 'urlTrackerRedirectSource_url',
+      labelFallback: 'Content',
       value: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').url,
-      placeholder: "https://example.com/",
+      placeholder: 'https://example.com/',
       disabled: false,
     },
     // {
@@ -49,10 +49,10 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
     //   disabled: false,
     // },
     {
-      label: "urlTrackerRedirectSource_regex",
-      labelFallback: "URL",
+      label: 'urlTrackerRedirectSource_regex',
+      labelFallback: 'URL',
       value: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').regex,
-      placeholder: "$[a-z]^",
+      placeholder: '$[a-z]^',
       disabled: false,
     },
   ] as ITypeButton[];
@@ -70,25 +70,19 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
   }
 
   private _localizeHeaderText = async () => {
-    const text = await this._localizationService?.localize(
-      "urlTrackerNewRedirect_incoming-url"
-    );
+    const text = await this._localizationService?.localize('urlTrackerNewRedirect_incoming-url');
 
-    this._headerText = text ?? "";
+    this._headerText = text ?? '';
   };
 
   private _localizeInfoText = async () => {
-    const text = await this._localizationService?.localize(
-      "urlTrackerNewRedirect_incoming-url-info"
-    );
+    const text = await this._localizationService?.localize('urlTrackerNewRedirect_incoming-url-info');
 
-    this._infoText = text ?? "";
+    this._infoText = text ?? '';
   };
 
   private _localizeButtonLabels = async () => {
-    const labels = await this._localizationService?.localizeMany(
-      this._typeButtons.map((item) => item.label)
-    );
+    const labels = await this._localizationService?.localizeMany(this._typeButtons.map((item) => item.label));
 
     this._typeButtons = this._typeButtons.map((item, index) => ({
       ...item,
@@ -97,13 +91,13 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
   };
 
   private onInput = (e: UUIInputEvent) => {
-    this.incomingUrl = this.inputRef.value?.shadowRoot?.querySelector('input')?.value ?? ''
+    this.incomingUrl = this.inputRef.value?.shadowRoot?.querySelector('input')?.value ?? '';
     this.dispatchEvent(
-      new CustomEvent("input", {
+      new CustomEvent('input', {
         detail: this.incomingUrl,
         bubbles: true,
         composed: false,
-      })
+      }),
     );
   };
 
@@ -112,32 +106,31 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
   private onTypeChange = (item: ITypeButton, e: Event) => {
     this._selectedType = item;
     this.dispatchEvent(
-      new CustomEvent("typechange", {
+      new CustomEvent('typechange', {
         detail: item,
         bubbles: true,
         composed: false,
-      })
+      }),
     );
   };
 
   protected renderIncomingStrategy(): unknown {
-    if(!this.advancedView) {
+    if (!this.advancedView) {
       return nothing;
     }
     return html`
-     <uui-button-group>
+      <uui-button-group>
         ${repeat(
           this._typeButtons,
           (item) => item.value,
-          (item) => html` <uui-button
-            label=${item.label}
-            look=${this._selectedType.value === item.value
-              ? "primary"
-              : "outline"}
-            color="default"
-            .disabled=${item.disabled}
-            @click=${(e: Event) => this.onTypeChange(item, e)}
-          ></uui-button>`
+          (item) =>
+            html` <uui-button
+              label=${item.label}
+              look=${this._selectedType.value === item.value ? 'primary' : 'outline'}
+              color="default"
+              .disabled=${item.disabled}
+              @click=${(e: Event) => this.onTypeChange(item, e)}
+            ></uui-button>`,
         )}
       </uui-button-group>
     `;

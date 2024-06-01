@@ -1,3 +1,3 @@
-import { InspectRedirectEditor } from "./inspectredirect";
+import { InspectRedirectEditor } from './inspectredirect';
 
-export type InspectRedirectScope = angular.IScope & {model:InspectRedirectEditor} 
+export type InspectRedirectScope = angular.IScope & { model: InspectRedirectEditor };

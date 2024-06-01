@@ -1,32 +1,44 @@
-import { IEditorService, editorServiceContext } from "@/context/editorservice.context";
-import { landingpageServiceContext } from "@/context/landingspageservice.context";
-import { recommendationServiceContext } from "@/context/recommendationservice.context";
-import { redirectServiceContext } from "@/context/redirectservice.context";
-import { RECOMMENDATION_SORT_TYPE } from "@/enums/sortType";
-import { ILandingspageService } from "@/services/landingspage.service";
-import { IRecommendationCollection, IRecommendationResponse, IRecommendationsService } from "@/services/recommendation.service";
-import { IRedirectData, IRedirectResponse, IRedirectService, ISolvedRecommendationRequest } from "@/services/redirect.service";
-import { ensureServiceExists } from "@/util/tools/existancecheck";
-import variableresourceService from "@/util/tools/variableresource.service";
-import { consume } from "@lit/context";
-import { LitElement, PropertyValueMap, css, html, nothing } from "lit";
-import { customElement, state } from "lit/decorators.js";
-import { repeat } from "lit/directives/repeat.js";
-import { UrlTrackerNotificationWrapper } from "../notifications/notifications.mixin";
-import { IRecommendationAction, RECCOMENDATION_ACTIONS } from "../sidebars/explainRecommendations/explainRecommendations.lit";
-import "./redirects/redirectitem.lit";
-import { ISourceStrategies } from "./redirects/source/source.constants";
-import { ITargetStrategies } from "./redirects/target/target.constants";
-import { IUmbracoNotificationsService, umbracoNotificationsServiceContext } from "@/context/notificationsservice.context";
-import { createNewRedirectOptions } from "../sidebars/simpleRedirect/manageredirect";
-import { createExplainRecommendationsEditor } from "../sidebars/explainRecommendations/explainrecommendations";
-import { createAnalyseRecommendationEditor } from "../sidebars/analyseRecommendation/analyserecommendation";
+import { IEditorService, editorServiceContext } from '@/context/editorservice.context';
+import { landingpageServiceContext } from '@/context/landingspageservice.context';
+import { recommendationServiceContext } from '@/context/recommendationservice.context';
+import { redirectServiceContext } from '@/context/redirectservice.context';
+import { RECOMMENDATION_SORT_TYPE } from '@/enums/sortType';
+import { ILandingspageService } from '@/services/landingspage.service';
+import {
+  IRecommendationCollection,
+  IRecommendationResponse,
+  IRecommendationsService,
+} from '@/services/recommendation.service';
+import {
+  IRedirectData,
+  IRedirectResponse,
+  IRedirectService,
+  ISolvedRecommendationRequest,
+} from '@/services/redirect.service';
+import { ensureServiceExists } from '@/util/tools/existancecheck';
+import variableresourceService from '@/util/tools/variableresource.service';
+import { consume } from '@lit/context';
+import { LitElement, PropertyValueMap, css, html, nothing } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+import { repeat } from 'lit/directives/repeat.js';
+import { UrlTrackerNotificationWrapper } from '../notifications/notifications.mixin';
+import {
+  IRecommendationAction,
+  RECCOMENDATION_ACTIONS,
+} from '../sidebars/explainRecommendations/explainRecommendations.lit';
+import './redirects/redirectitem.lit';
+import { ISourceStrategies } from './redirects/source/source.constants';
+import { ITargetStrategies } from './redirects/target/target.constants';
+import {
+  IUmbracoNotificationsService,
+  umbracoNotificationsServiceContext,
+} from '@/context/notificationsservice.context';
+import { createNewRedirectOptions } from '../sidebars/simpleRedirect/manageredirect';
+import { createExplainRecommendationsEditor } from '../sidebars/explainRecommendations/explainrecommendations';
+import { createAnalyseRecommendationEditor } from '../sidebars/analyseRecommendation/analyserecommendation';
 
-@customElement("urltracker-landing-tab")
-export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
-  LitElement,
-  "landingpage"
-) {
+@customElement('urltracker-landing-tab')
+export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitElement, 'landingpage') {
   @consume({ context: recommendationServiceContext })
   private _recommendationsService?: IRecommendationsService;
 
@@ -58,23 +70,18 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
   @state()
   private loading: number = 0;
 
-  protected async firstUpdated(
-    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>
-  ): Promise<void> {
+  protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
     super.firstUpdated(_changedProperties);
 
     await this.init();
   }
 
   private async init() {
-    ensureServiceExists(
-      this._recommendationsService,
-      "recommendations service"
-    );
-    ensureServiceExists(this._redirectService, "redirect service");
-    ensureServiceExists(this._recommendationsService, "recommendations service");
-    ensureServiceExists(this._landingspageService, "landingspage service")
-    ensureServiceExists(this.editorService, "editor service");
+    ensureServiceExists(this._recommendationsService, 'recommendations service');
+    ensureServiceExists(this._redirectService, 'redirect service');
+    ensureServiceExists(this._recommendationsService, 'recommendations service');
+    ensureServiceExists(this._landingspageService, 'landingspage service');
+    ensureServiceExists(this.editorService, 'editor service');
 
     await this.search();
   }
@@ -85,29 +92,23 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
       this.recommendationCollection = await this._recommendationsService!.list({
         page: 1,
         pageSize: 10,
-        OrderBy: RECOMMENDATION_SORT_TYPE.IMPORTANCE
+        OrderBy: RECOMMENDATION_SORT_TYPE.IMPORTANCE,
       });
-      this.numericMetric = await this._landingspageService?.numericMetric() ?? 0;
+      this.numericMetric = (await this._landingspageService?.numericMetric()) ?? 0;
     } finally {
       this.loading--;
     }
   }
 
-  private handleCreatePermanentRedirect = async (
-    event: CustomEvent<IRecommendationResponse>
-  ) => {
+  private handleCreatePermanentRedirect = async (event: CustomEvent<IRecommendationResponse>) => {
     const redirect = {
       source: {
-        strategy: variableresourceService.get<ISourceStrategies>(
-          "redirectSourceStrategies"
-        ).url,
+        strategy: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').url,
         value: event.detail.url,
       },
       target: {
-        strategy: variableresourceService.get<ITargetStrategies>(
-          "redirectTargetStrategies"
-        ).content,
-        value: "",
+        strategy: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content,
+        value: '',
       },
       permanent: true,
       retainQuery: true,
@@ -117,21 +118,15 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
     this.openNewRedirectPanel(redirect, event.detail.id);
   };
 
-  private handleCreateTemporaryRedirect = async (
-    event: CustomEvent<IRecommendationResponse>
-  ) => {
+  private handleCreateTemporaryRedirect = async (event: CustomEvent<IRecommendationResponse>) => {
     const redirect = {
       source: {
-        strategy: variableresourceService.get<ISourceStrategies>(
-          "redirectSourceStrategies"
-        ).url,
+        strategy: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').url,
         value: event.detail.url,
       },
       target: {
-        strategy: variableresourceService.get<ITargetStrategies>(
-          "redirectTargetStrategies"
-        ).content,
-        value: "",
+        strategy: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content,
+        value: '',
       },
       permanent: false,
       retainQuery: true,
@@ -146,27 +141,28 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
       recommendationStrategy: event.detail.strategy,
       ignore: true,
     });
-    this.notificationsService.success("Recommendation ignored", "The recommendation has been removed from the overview");
+    this.notificationsService.success(
+      'Recommendation ignored',
+      'The recommendation has been removed from the overview',
+    );
 
     await this.search();
   };
 
   private openNewRedirectPanel(data: IRedirectData, solvedRecommendation?: number) {
     const options = createNewRedirectOptions({
-
-      title: "New redirect",
+      title: 'New redirect',
       submit: this.submitNewRedirectPanel,
       close: this.closePanel,
       data: data,
       advanced: false,
-      solvedRecommendation: solvedRecommendation
+      solvedRecommendation: solvedRecommendation,
     });
 
     this.editorService!.open(options);
   }
 
   submitNewRedirectPanel = (_: IRedirectResponse) => {
-
     this.closePanel();
     this.search();
   };
@@ -181,29 +177,25 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
     this.editorService!.open(options);
   }
 
-  private submitExplanationPanel = (
-    recommendation: IRecommendationResponse,
-    action: IRecommendationAction
-  ) => {
+  private submitExplanationPanel = (recommendation: IRecommendationResponse, action: IRecommendationAction) => {
     this.editorService!.close();
     switch (action) {
       case RECCOMENDATION_ACTIONS.MAKE_PERMANENT:
-        this.handleCreatePermanentRedirect(new CustomEvent("", { detail: recommendation }));
+        this.handleCreatePermanentRedirect(new CustomEvent('', { detail: recommendation }));
         break;
       case RECCOMENDATION_ACTIONS.MAKE_TEMPORARY:
-        this.handleCreateTemporaryRedirect(new CustomEvent("", { detail: recommendation }));
+        this.handleCreateTemporaryRedirect(new CustomEvent('', { detail: recommendation }));
         break;
       case RECCOMENDATION_ACTIONS.IGNORE:
-        this.handleIgnore(new CustomEvent("", { detail: recommendation }));
+        this.handleIgnore(new CustomEvent('', { detail: recommendation }));
         break;
     }
   };
 
   private openAnalysePanel(data: IRecommendationResponse) {
     const options = createAnalyseRecommendationEditor({
-
       close: this.closePanel,
-      recommendation: data
+      recommendation: data,
     });
     this.editorService!.open(options);
   }
@@ -234,7 +226,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
           @createPermanent=${this.handleCreatePermanentRedirect}
           @createTemporary=${this.handleCreateTemporaryRedirect}
           @ignore=${this.handleIgnore}
-        ></urltracker-recommendation-item>`
+        ></urltracker-recommendation-item>`,
     );
   }
 
@@ -242,10 +234,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
     return html`
       <div class="grid-root">
         <div class="results">
-          <urltracker-result-list
-              .loading=${!!this.loading}
-              header="Top 10 recommendations"
-            >
+          <urltracker-result-list .loading=${!!this.loading} header="Top 10 recommendations">
             ${this.renderRecommendations()}
           </urltracker-result-list>
         </div>

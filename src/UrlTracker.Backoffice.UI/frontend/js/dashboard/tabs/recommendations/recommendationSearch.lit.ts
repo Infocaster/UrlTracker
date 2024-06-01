@@ -1,17 +1,17 @@
-import { ensureExists } from "@/util/tools/existancecheck";
-import { consume } from "@lit/context";
-import { UUIInputEvent } from "@umbraco-ui/uui";
-import { LitElement, css, html } from "lit";
-import { customElement, state } from "lit/decorators.js";
-import { Ref, createRef, ref } from "lit/directives/ref.js";
-import { localizationServiceContext } from "../../../context/localizationservice.context";
-import { ILocalizationService } from "../../../umbraco/localization.service";
-import { debounce } from "../../../util/functions/debounce";
+import { ensureExists } from '@/util/tools/existancecheck';
+import { consume } from '@lit/context';
+import { UUIInputEvent } from '@umbraco-ui/uui';
+import { LitElement, css, html } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+import { Ref, createRef, ref } from 'lit/directives/ref.js';
+import { localizationServiceContext } from '../../../context/localizationservice.context';
+import { ILocalizationService } from '../../../umbraco/localization.service';
+import { debounce } from '../../../util/functions/debounce';
 
-@customElement("urltracker-recommendation-search")
+@customElement('urltracker-recommendation-search')
 export class UrlTrackerRecommendationSearch extends LitElement {
   @state()
-  private _placeholderText = "localize this";
+  private _placeholderText = 'localize this';
 
   @consume({ context: localizationServiceContext })
   private localizationService?: ILocalizationService;
@@ -20,15 +20,13 @@ export class UrlTrackerRecommendationSearch extends LitElement {
 
   async connectedCallback() {
     super.connectedCallback();
-    
+
     ensureExists(this.localizationService);
     this.localizePlaceholderText();
   }
 
   private async localizePlaceholderText(): Promise<void> {
-    const actionsText = await this.localizationService?.localize(
-      "urlTrackerRecommendationFilter_search-placeholder"
-    );
+    const actionsText = await this.localizationService?.localize('urlTrackerRecommendationFilter_search-placeholder');
 
     this._placeholderText = actionsText ?? this._placeholderText;
   }
@@ -39,13 +37,13 @@ export class UrlTrackerRecommendationSearch extends LitElement {
 
   private _dispatchSearch = (searchQuery: string) => {
     this.dispatchEvent(
-      new CustomEvent("search", {
+      new CustomEvent('search', {
         detail: {
           query: searchQuery,
         },
         bubbles: true,
         composed: false,
-      })
+      }),
     );
   };
 
@@ -53,12 +51,12 @@ export class UrlTrackerRecommendationSearch extends LitElement {
 
   protected render(): unknown {
     return html` <uui-input
-     ${ref(this.inputRef)}
+      ${ref(this.inputRef)}
       .placeholder=${this._placeholderText}
       @input=${this._debouncedOnSearchInput}
     >
       <div class="prepend" slot="prepend">
-          <uui-icon name="search"></uui-icon>
+        <uui-icon name="search"></uui-icon>
       </div>
     </uui-input>`;
   }

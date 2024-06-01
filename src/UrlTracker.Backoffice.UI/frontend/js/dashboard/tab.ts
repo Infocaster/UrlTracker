@@ -1,12 +1,9 @@
-import { TemplateResult } from "lit";
+import { TemplateResult } from 'lit';
 
-export function createTabStrategy(
-  alias: string,
-  template: TemplateResult
-): ITabStrategy {
+export function createTabStrategy(alias: string, template: TemplateResult): ITabStrategy {
   return {
-    nameKey: "urlTrackerDashboardTabs_" + alias,
-    labelKey: "urlTrackerDashboardTabLabels_" + alias,
+    nameKey: 'urlTrackerDashboardTabs_' + alias,
+    labelKey: 'urlTrackerDashboardTabLabels_' + alias,
     template: template,
   };
 }

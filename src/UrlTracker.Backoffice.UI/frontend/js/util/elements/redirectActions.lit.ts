@@ -1,11 +1,11 @@
-import { LitElement, css, html } from "lit";
-import { ILocalizationService } from "../../umbraco/localization.service";
-import { consume } from "@lit/context";
-import { localizationServiceContext } from "../../context/localizationservice.context";
-import { customElement, property, state } from "lit/decorators.js";
-import "@umbraco-ui/uui";
+import { LitElement, css, html } from 'lit';
+import { ILocalizationService } from '../../umbraco/localization.service';
+import { consume } from '@lit/context';
+import { localizationServiceContext } from '../../context/localizationservice.context';
+import { customElement, property, state } from 'lit/decorators.js';
+import '@umbraco-ui/uui';
 
-@customElement("urltracker-redirect-actions")
+@customElement('urltracker-redirect-actions')
 export class UrlTrackerRedirectActions extends LitElement {
   @consume({ context: localizationServiceContext })
   private _localizationService?: ILocalizationService;
@@ -17,7 +17,7 @@ export class UrlTrackerRedirectActions extends LitElement {
   public header?: string;
 
   @state()
-  private _headerText: string = "";
+  private _headerText: string = '';
 
   private _loadingText?: string;
 
@@ -29,9 +29,7 @@ export class UrlTrackerRedirectActions extends LitElement {
   }
 
   private _localizeHeaderText = async () => {
-    let translatedText = await this._localizationService?.localize(
-      "urlTrackerRedirectActions_header"
-    );
+    const translatedText = await this._localizationService?.localize('urlTrackerRedirectActions_header');
 
     // If custom property provided
     // Else if use translated header
@@ -41,14 +39,12 @@ export class UrlTrackerRedirectActions extends LitElement {
     } else if (translatedText) {
       this._headerText = `${translatedText}`;
     } else {
-      this._headerText = "";
+      this._headerText = '';
     }
   };
 
   private _localizeLoadingText = async () => {
-    this._loadingText = await this._localizationService?.localize(
-      "urltrackergeneral_loading"
-    );
+    this._loadingText = await this._localizationService?.localize('urltrackergeneral_loading');
   };
 
   private renderBody(): unknown {
@@ -83,7 +79,8 @@ export class UrlTrackerRedirectActions extends LitElement {
       box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
     }
 
-    ::slotted(:last-child), .action-container {
+    ::slotted(:last-child),
+    .action-container {
       border-bottom-left-radius: var(--uui-border-radius);
       border-bottom-right-radius: var(--uui-border-radius);
     }
