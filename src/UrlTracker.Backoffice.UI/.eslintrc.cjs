@@ -1,26 +1,17 @@
+/** @type {import("eslint").Linter.Config} */
 module.exports = {
-    "env": {
-        "browser": true,
-        "es2021": true
+  root: true,
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier', 'plugin:lit-a11y/recommended'],
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint', 'lit-a11y'],
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+  },
+  rules: {},
+  overrides: [
+    {
+      files: ['**/*.ts', '**/*.tsx'],
     },
-    "extends": "standard-with-typescript",
-    "overrides": [
-        {
-            "env": {
-                "node": true
-            },
-            "files": [
-                ".eslintrc.{js,cjs}"
-            ],
-            "parserOptions": {
-                "sourceType": "script"
-            }
-        }
-    ],
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
-    },
-    "rules": {
-    }
-}
+  ],
+};

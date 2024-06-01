@@ -1,5 +1,7 @@
 node_modules/
 wwwroot/
-.prettierrc.cjs
-.eslintrc.cjs
 env.d.ts
+obj/
+bin/
+package*.json
+*.cs

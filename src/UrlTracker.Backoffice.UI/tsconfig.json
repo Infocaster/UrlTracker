@@ -1,4 +1,4 @@
-{
+﻿{
   "compilerOptions": {
     "target": "ES2020",
     "experimentalDecorators": true,
@@ -19,10 +19,10 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-	"paths": {
-		"@/*": ["./frontend/js/*"],
-		"@sidebar": ["./frontend/js/dashboard/sidebars/*"]
-	  },
+    "paths": {
+      "@/*": ["./frontend/js/*"],
+      "@sidebar": ["./frontend/js/dashboard/sidebars/*"]
+    }
   },
   "include": ["frontend/js"]
 }

@@ -1,5 +1,10 @@
 node_modules/
 wwwroot/
-.prettierrc.cjs
+.prettierrc.mjs
 .eslintrc.cjs
 env.d.ts
+obj/
+bin/
+package*.json
+vite.config.mjs
+*.cs
