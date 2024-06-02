@@ -2,7 +2,7 @@ import { TemplateResult } from 'lit';
 import TabStrategy from '../../../dashboard/tab';
 
 export class TabBuilder {
-  public addTab(alias: string, template: TemplateResult) {
+  public addTab(alias: string, _: TemplateResult) {
     console.log('public acces test');
     console.log(this._checkTabNameUnqiue(alias));
   }

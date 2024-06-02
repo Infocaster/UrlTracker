@@ -13,7 +13,6 @@ import {
   IRedirectData,
   IRedirectResponse,
   IRedirectService,
-  ISolvedRecommendationRequest,
 } from '@/services/redirect.service';
 import { ensureServiceExists } from '@/util/tools/existancecheck';
 import variableresourceService from '@/util/tools/variableresource.service';

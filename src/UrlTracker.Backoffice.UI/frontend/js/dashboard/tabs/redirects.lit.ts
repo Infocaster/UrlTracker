@@ -203,7 +203,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
     this.openInspectPanel(e.detail);
   };
 
-  private onAddRedirect = (e: any) => {
+  private onAddRedirect = (_: any) => {
     this.openNewRedirectPanel();
   };
 
@@ -242,7 +242,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
     this.selectedItems = this.selectedItems.filter((i) => i !== e.item.id);
   };
 
-  private onSelectAll = (e: any) => {
+  private onSelectAll = (_: any) => {
     if (this.selectedItems.length === this.redirectCollection?.total) {
       this.selectedItems = [];
     } else {
@@ -250,15 +250,15 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
     }
   };
 
-  private onClearSelection = (e: any) => {
+  private onClearSelection = (_: any) => {
     this.selectedItems = [];
   };
 
-  private onConvertSelection = async (e: any) => {
+  private onConvertSelection = async (_: any) => {
     const selectedRedirects =
       this.redirectCollection?.results.filter((r) => this.selectedItems.some((i) => i === r.id)) || [];
     const bulkToUpdate = selectedRedirects.map((r) => {
-      const { id, key, additionalData, createDate, updateDate, ...data } = r;
+      const { id: _, key: __, additionalData: ___, createDate: ____, updateDate: _____, ...data } = r;
       return {
         id: r.id,
         data: data,
@@ -273,7 +273,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
     this.search();
   };
 
-  private onDeleteSelection = async (e: any) => {
+  private onDeleteSelection = async (_: any) => {
     const selectedRedirects =
       this.redirectCollection?.results.filter((r) => this.selectedItems.some((i) => i === r.id)) || [];
     const bulkToDelete = selectedRedirects.map((r) => r.id);

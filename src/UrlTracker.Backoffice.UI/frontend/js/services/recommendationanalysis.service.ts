@@ -1,7 +1,6 @@
 import { Axios } from 'axios';
 import { axiosInstance } from '../util/tools/axios.service';
 import urlresource, { IControllerUrlResource, IUrlResource } from '../util/tools/urlresource.service';
-import { IRecommendationResponse } from './recommendation.service';
 
 export interface IRecommendationHistoryResponse {
   firstOccurance: string;

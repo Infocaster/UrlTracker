@@ -1,5 +1,5 @@
 // based on https://our.umbraco.com/apidocs/v8/ui/#/api/umbraco.services.editorService
-export interface IEditorService<T extends any> {
+export interface IEditorService<T> {
   contentEditor(editor: IContentEditor): void;
   close: () => void;
   closeAll: () => void;
@@ -38,8 +38,8 @@ export interface IContent {
 export interface IContentEditor {
   id: string;
   create: boolean;
-  submit: Function;
-  close: Function;
+  submit: () => Promise<void>;
+  close: () => Promise<void>;
   parentId: string;
   documentTypeAlias: string;
   allowSaveAndClose: boolean;

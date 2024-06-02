@@ -1,5 +1,5 @@
-import { LitElement, css, html, nothing, unsafeCSS } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import { consume } from '@lit/context';
 import { ILocalizationService, localizationServiceContext } from '../../../../context/localizationservice.context';
 import { styleMap } from 'lit/directives/style-map.js';

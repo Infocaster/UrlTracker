@@ -90,7 +90,7 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
     }));
   };
 
-  private onInput = (e: UUIInputEvent) => {
+  private onInput = (_: UUIInputEvent) => {
     this.incomingUrl = this.inputRef.value?.shadowRoot?.querySelector('input')?.value ?? '';
     this.dispatchEvent(
       new CustomEvent('input', {
@@ -103,7 +103,7 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
 
   private _debouncedOnInput = debounce(this.onInput, 500);
 
-  private onTypeChange = (item: ITypeButton, e: Event) => {
+  private onTypeChange = (item: ITypeButton, _: Event) => {
     this._selectedType = item;
     this.dispatchEvent(
       new CustomEvent('typechange', {

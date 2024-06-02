@@ -87,7 +87,9 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
 
     switch (this.outgoingStrategy) {
       case variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content:
+        // eslint-disable-next-line no-case-declarations
         const [id, culture] = this.outgoingUrl.split(';');
+        // eslint-disable-next-line no-case-declarations
         const intId = Number.parseInt(id, 10);
 
         if (!isNaN(intId)) {
@@ -169,7 +171,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     );
   };
 
-  private onInput = (e?: UUIInputEvent) => {
+  private onInput = (_?: UUIInputEvent) => {
     this.dispatchEvent(
       new CustomEvent('input', {
         detail: this.inputRef.value?.shadowRoot?.querySelector('input')?.value ?? '',
@@ -181,7 +183,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
 
   private _debouncedOnInput = debounce(this.onInput, 500);
 
-  private onTypeChange = (item: ITypeButton, e: Event) => {
+  private onTypeChange = (item: ITypeButton, _: Event) => {
     this._selectedType = item;
 
     this.dispatchEvent(
