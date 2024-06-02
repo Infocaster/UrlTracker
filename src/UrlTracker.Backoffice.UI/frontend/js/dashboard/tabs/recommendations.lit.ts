@@ -4,7 +4,6 @@ import { Ref, createRef, ref } from 'lit/directives/ref.js';
 import recommendationService, {
   IRecommendationCollection,
   IRecommendationResponse,
-  IRecommendationUpdate,
   IRecommendationUpdateBulkRequest,
   IRecommendationsService,
 } from '../../services/recommendation.service';
@@ -18,7 +17,6 @@ import {
   IRedirectData,
   IRedirectResponse,
   IRedirectService,
-  ISolvedRecommendationRequest,
 } from '@/services/redirect.service';
 import variableresourceService from '@/util/tools/variableresource.service';
 import { consume, provide } from '@lit/context';
@@ -269,7 +267,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     this.selectedItems = this.selectedItems.filter((i) => i !== e.item.id);
   };
 
-  private onSelectAll = (e: any) => {
+  private onSelectAll = (_: any) => {
     if (this.selectedItems.length === this.recommendationCollection?.total) {
       this.selectedItems = [];
     } else {
@@ -277,11 +275,11 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     }
   };
 
-  private onClearSelection = (e: any) => {
+  private onClearSelection = (_: any) => {
     this.selectedItems = [];
   };
 
-  private onIgnoreSelection = async (e: any) => {
+  private onIgnoreSelection = async (_: any) => {
     const selectedRecommendations =
       this.recommendationCollection?.results.filter((r) => this.selectedItems.some((i) => i === r.id)) || [];
     const bulkToUpdate: IRecommendationUpdateBulkRequest = selectedRecommendations.map((r) => {

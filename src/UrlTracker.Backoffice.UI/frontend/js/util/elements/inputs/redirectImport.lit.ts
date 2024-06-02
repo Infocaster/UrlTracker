@@ -51,9 +51,9 @@ export class UrlTrackerRedirectImport extends LitElement {
     return html`<div class="body">
       <p>
         Drop a csv file in the box below to import redirects.
-        <a @click=${this.handleDownloadTemplate}
+        <button @click=${this.handleDownloadTemplate}
           >You can download a template here <uui-icon name="icon-help-alt"></uui-icon
-        ></a>
+        ></button>
       </p>
       <uui-file-dropzone id="browse-dropzone" label="Drag / drop a file here" accept="csv" @change=${this.handleChange}>
         Drag / drop a file here
@@ -77,15 +77,33 @@ export class UrlTrackerRedirectImport extends LitElement {
       margin-top: 0;
     }
 
-    a,
-    a:visited,
-    a:active {
-      color: black;
-      text-decoration: none;
+    button {
+      /* Reset button */
+      border: none;
+      margin: 0;
+      padding: 0;
+      width: auto;
+      overflow: visible;
+      background: transparent;
+
+      /* inherit font & color from ancestor */
+      color: inherit;
+      font: inherit;
+
+      /* Normalize line-height. Cannot be changed from normal in Firefox 4+. */
+      line-height: normal;
+
+      /* Corrects font smoothing for webkit */
+      -webkit-font-smoothing: inherit;
+      -moz-osx-font-smoothing: inherit;
+
+      /* Corrects inability to style clickable input types in iOS */
+      -webkit-appearance: none;
+      
       cursor: pointer;
     }
 
-    a:hover {
+    button:hover {
       text-decoration: underline;
     }
 

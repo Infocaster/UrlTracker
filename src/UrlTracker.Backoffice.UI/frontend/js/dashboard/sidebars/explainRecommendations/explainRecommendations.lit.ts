@@ -1,5 +1,4 @@
 import { scopeContext } from '@/context/scope.context';
-import { IScope } from '@/models/scope.model';
 import { ensureExists } from '@/util/tools/existancecheck';
 import { consume } from '@lit/context';
 import { LitElement, css, html } from 'lit';

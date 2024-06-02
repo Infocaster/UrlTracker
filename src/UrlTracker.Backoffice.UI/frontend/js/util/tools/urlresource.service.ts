@@ -78,7 +78,7 @@ class ControllerUrlResource implements IControllerUrlResource {
      * - Does not contain any other characters
      */
     if (!rawEndpoint.startsWith('/')) throw new Error('The endpoint does not start with a forward slash');
-    if (!/^\/[\w\{\}\/]+$/.test(rawEndpoint)) throw new Error('The endpoint does not conform to the expected pattern');
+    if (!/^\/[\w{}/]+$/.test(rawEndpoint)) throw new Error('The endpoint does not conform to the expected pattern');
   }
 
   private createFactoryFromComponents(

@@ -31,7 +31,7 @@ export class UrlTrackerRecommendationSearch extends LitElement {
     this._placeholderText = actionsText ?? this._placeholderText;
   }
 
-  private _onSearchInput = (e: UUIInputEvent) => {
+  private _onSearchInput = (_: UUIInputEvent) => {
     this._dispatchSearch(this.inputRef.value?.shadowRoot?.querySelector('input')?.value ?? '');
   };
 

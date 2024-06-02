@@ -8,6 +8,8 @@ interface IConfirmDeleteOverlay {
   confirmMessageStyle?: string;
   submitButtonStyle?: string;
   submitButtonLabelKey?: string;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   close?: Function;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   submit?: Function;
 }

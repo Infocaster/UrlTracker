@@ -4,7 +4,6 @@ import {
   recommendationsAnalysisServiceContext,
 } from '@/context/recommendationsanalysis.context';
 import { scopeContext } from '@/context/scope.context';
-import { IScope } from '@/models/scope.model';
 import { IRecommendationResponse } from '@/services/recommendation.service';
 import {
   IRecommendationHistoryResponse,

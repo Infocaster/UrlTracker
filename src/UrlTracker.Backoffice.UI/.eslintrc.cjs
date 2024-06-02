@@ -8,10 +8,14 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  rules: {},
   overrides: [
     {
       files: ['**/*.ts', '**/*.tsx'],
+      rules: {
+        'no-unused-vars': ['off'],
+        '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+        '@typescript-eslint/no-explicit-any': 'warn',
+      },
     },
   ],
 };

@@ -64,7 +64,7 @@ export class UrlTrackerContentRedirectTarget extends baseType {
       if (!this.contentItem) {
         this.errorText = await this.localizationService?.localize('urlTrackerRedirectTarget_contenterror');
       }
-      const [id, culture] = this.redirect.target.value.split(';');
+      const [id] = this.redirect.target.value.split(';');
       this.contentId = id;
     } else {
       await this.init();

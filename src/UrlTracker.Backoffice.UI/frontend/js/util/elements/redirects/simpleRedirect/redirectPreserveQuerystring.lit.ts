@@ -37,7 +37,7 @@ export class UrlTrackerRedirectPreserveQuerystring extends LitElement {
     this._infoText = text ?? 'fallback';
   };
 
-  private _onToggleChange = (e: any) => {
+  private _onToggleChange = (_: any) => {
     this.preserve = !this.preserve;
 
     this.dispatchEvent(
