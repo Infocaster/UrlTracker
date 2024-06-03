@@ -4,11 +4,10 @@
     <Title>URL Tracker Module registration</Title>
     <Description>This package contains objects for module registration. It keeps helps keeping track of installed modules for the URL Tracker</Description>
     <RootNamespace>UrlTracker.Modules</RootNamespace>
-    <PackageReleaseNotes>3 changes
+    <PackageReleaseNotes>1 bugfix, 1 other change
 
-- Replace custom content picker element with UUI
-- Add URL to content preview in redirect edit panel
-- Technical improvements</PackageReleaseNotes>
+- Fix disappearing tabs when shrinking and growing interface
+- Clean up frontend with linting and formatting rules (Thanks @nikcio)</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />

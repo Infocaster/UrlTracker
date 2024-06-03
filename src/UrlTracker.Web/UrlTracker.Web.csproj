@@ -5,11 +5,10 @@
     <Title>URL Tracker Web</Title>
     <Description>This package contains the web services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>3 changes
+    <PackageReleaseNotes>1 bugfix, 1 other change
 
-- Replace custom content picker element with UUI
-- Add URL to content preview in redirect edit panel
-- Technical improvements</PackageReleaseNotes>
+- Fix disappearing tabs when shrinking and growing interface
+- Clean up frontend with linting and formatting rules (Thanks @nikcio)</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->

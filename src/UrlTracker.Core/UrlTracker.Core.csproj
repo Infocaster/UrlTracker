@@ -4,11 +4,10 @@
     <Title>URL Tracker Core</Title>
     <Description>This package contains the core services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Core</RootNamespace>
-    <PackageReleaseNotes>3 changes
+    <PackageReleaseNotes>1 bugfix, 1 other change
 
-- Replace custom content picker element with UUI
-- Add URL to content preview in redirect edit panel
-- Technical improvements</PackageReleaseNotes>
+- Fix disappearing tabs when shrinking and growing interface
+- Clean up frontend with linting and formatting rules (Thanks @nikcio)</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Infrastructure" Version="10.6.1" />

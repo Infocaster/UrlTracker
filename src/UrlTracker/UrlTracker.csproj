@@ -12,11 +12,10 @@
       Use v12 for umbraco 12, v11 for umbraco 11, Use v10 for umbraco 10, Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </Description>
     <RootNamespace>UrlTracker</RootNamespace>
-    <PackageReleaseNotes>3 changes
+    <PackageReleaseNotes>1 bugfix, 1 other change
 
-- Replace custom content picker element with UUI
-- Add URL to content preview in redirect edit panel
-- Technical improvements</PackageReleaseNotes>
+- Fix disappearing tabs when shrinking and growing interface
+- Clean up frontend with linting and formatting rules (Thanks @nikcio)</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="10.6.1" />
