@@ -9,6 +9,7 @@ import { localizationServiceContext } from '../context/localizationservice.conte
 import { tabContext } from '../context/tabcontext.context';
 import { ILocalizationService } from '../umbraco/localization.service';
 import './footer/footer.lit';
+import '@/compatibility/uuiTabGroup.lit';
 import tabStrategy, { ITab, TabStrategyCollection } from './tab';
 import {
   IUmbracoNotificationsService,
@@ -119,7 +120,7 @@ export class UrlTrackerDashboardContent extends LitElement {
       let tabsOrNothing;
       if (this.tabs && this.tabs?.length > 1) {
         tabsOrNothing = html` <div class="tabs-wrapper">
-          <uui-tab-group>
+          <urltracker-tab-group>
             ${this.tabs?.map(
               (item) =>
                 html`<uui-tab
@@ -129,7 +130,7 @@ export class UrlTrackerDashboardContent extends LitElement {
                   >${item.name}</uui-tab
                 >`,
             )}
-          </uui-tab-group>
+          </urltracker-tab-group>
           <uui-button
             class="new-redirect"
             style=""
