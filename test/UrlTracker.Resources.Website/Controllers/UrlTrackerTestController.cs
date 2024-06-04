@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Linq;
+using Asp.Versioning;
 using Bogus;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Umbraco.Cms.Api.Common.Attributes;
+using Umbraco.Cms.Api.Common.Filters;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Infrastructure.Scoping;
-using Umbraco.Cms.Web.BackOffice.Controllers;
+using Umbraco.Cms.Web.Common.Authorization;
 using UrlTracker.Core;
 using UrlTracker.Core.Classification;
 using UrlTracker.Core.Database.Entities;
@@ -15,8 +20,14 @@ using UrlTracker.Resources.Website.Models;
 
 namespace UrlTracker.Resources.Website.Controllers
 {
+    [ApiController]
+    [ApiVersion(Defaults.Routing.V1.ApiVersion)]
+    [MapToApi(Defaults.Routing.V1.ApiName)]
+    [Authorize(Policy = AuthorizationPolicies.BackOfficeAccess)]
+    [JsonOptionsName(Constants.JsonOptionsNames.BackOffice)]
+    [Route(Defaults.Routing.V1.Route)]
     public class UrlTrackerTestController
-        : UmbracoAuthorizedApiController
+        : Controller
     {
         private readonly IRedactionScoreService _redactionScoreService;
         private readonly IRecommendationService _recommendationService;
@@ -46,6 +57,7 @@ namespace UrlTracker.Resources.Website.Controllers
         }
 
         [HttpGet]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         public IActionResult GetRedactionScores()
         {
             var scores = _redactionScoreService.GetAll();
@@ -61,6 +73,7 @@ namespace UrlTracker.Resources.Website.Controllers
         }
 
         [HttpPost]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         public IActionResult SetRedactionScore([FromQuery] Guid id, [FromBody] decimal value)
         {
             var score = _redactionScoreService.Get(id);
@@ -73,6 +86,7 @@ namespace UrlTracker.Resources.Website.Controllers
         }
 
         [HttpGet]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         public IActionResult GetResults(double c1, double c2, double c3)
         {
             var results = _recommendationService.Get(1, 100, new RecommendationOrderingOptions(), new RecommendationFilterOptions(), new Core.Database.Models.RecommendationScoreParameters
@@ -92,6 +106,7 @@ namespace UrlTracker.Resources.Website.Controllers
         }
 
         [HttpPost]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         public IActionResult ClearRecommendations()
         {
             _recommendationService.Clear();
@@ -100,6 +115,7 @@ namespace UrlTracker.Resources.Website.Controllers
         }
 
         [HttpPost]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         public IActionResult GenerateRandomRecommendations([FromBody] GenerateRandomRequest request)
         {
             var requests = requestGenerator.Generate(25, "default, img").Concat(
@@ -117,6 +133,7 @@ namespace UrlTracker.Resources.Website.Controllers
         }
 
         [HttpPost]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         public IActionResult SetRecommendation([FromBody] SetRecommendationRequest request)
         {
             var url = Core.Models.Url.Parse(request.Url);
@@ -133,7 +150,7 @@ namespace UrlTracker.Resources.Website.Controllers
 
             using var scope = _scopeProvider.CreateScope();
 
-            scope.Database.Execute($"UPDATE {Defaults.DatabaseSchema.Tables.Recommendation} SET updateDate = @date WHERE url = @url AND recommendationStrategy = @strategy", new
+            scope.Database.Execute($"UPDATE {Core.Defaults.DatabaseSchema.Tables.Recommendation} SET updateDate = @date WHERE url = @url AND recommendationStrategy = @strategy", new
             {
                 date = request.DateTime,
                 url = urlString,

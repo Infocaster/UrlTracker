@@ -1,49 +1,52 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
-  <PropertyGroup>
-    <PackageId>UrlTracker.Backoffice.UI</PackageId>
-    <Title>URL Tracker Backoffice interface</Title>
-    <Description>This package adds a backoffice interface for URL Tracker management</Description>
-    <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
-    <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>1 bugfix, 3 other changes
+    <PropertyGroup>
+        <PackageId>UrlTracker.Backoffice.UI</PackageId>
+        <Title>URL Tracker Backoffice interface</Title>
+        <Description>This package adds a backoffice interface for URL Tracker management</Description>
+        <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
+        <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
+        <PackageReleaseNotes>
+            1 bugfix, 3 other changes
 
-- Fix icon colors on redirect overview
-- Replaced custom content picker element with UUI
-- Add URL to content preview in Redirect edit panel
-- Technical improvements</PackageReleaseNotes>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Include="build\**\*.*">
-      <Pack>True</Pack>
-      <PackagePath>buildTransitive</PackagePath>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="UrlTracker.IntegrationTests" />
-    <InternalsVisibleTo Include="UrlTracker.Backoffice.UI.Tests" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Remove="package-lock.json" />
-    <Content Remove="package.json" />
-    <Content Remove="tsconfig.json" />
-    <None Include="package-lock.json" />
-    <None Include="package.json" />
-    <None Include="tsconfig.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <SupportedPlatform Include="browser" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="30.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.5" />
-    <PackageReference Include="Umbraco.Cms.Core" Version="13.0.0" />
-    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="13.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="wwwroot\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
-    <ProjectReference Include="..\UrlTracker.Modules\UrlTracker.Modules.csproj" />
-  </ItemGroup>
+            - Fix icon colors on redirect overview
+            - Replaced custom content picker element with UUI
+            - Add URL to content preview in Redirect edit panel
+            - Technical improvements
+        </PackageReleaseNotes>
+    </PropertyGroup>
+    <ItemGroup>
+        <None Include="build\**\*.*">
+            <Pack>True</Pack>
+            <PackagePath>buildTransitive</PackagePath>
+        </None>
+    </ItemGroup>
+    <ItemGroup>
+        <InternalsVisibleTo Include="UrlTracker.IntegrationTests" />
+        <InternalsVisibleTo Include="UrlTracker.Backoffice.UI.Tests" />
+    </ItemGroup>
+    <ItemGroup>
+        <Content Remove="package-lock.json" />
+        <Content Remove="package.json" />
+        <Content Remove="tsconfig.json" />
+        <None Include="package-lock.json" />
+        <None Include="package.json" />
+        <None Include="tsconfig.json" />
+    </ItemGroup>
+    <ItemGroup>
+        <SupportedPlatform Include="browser" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="CsvHelper" Version="32.0.3" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.6" />
+        <PackageReference Include="Umbraco.Cms.Core" Version="14.0.0" />
+        <PackageReference Include="Umbraco.Cms.Api.Management" Version="14.0.0" />
+        <PackageReference Include="Umbraco.Cms.Web.Website" Version="14.0.0" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="wwwroot\" />
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
+        <ProjectReference Include="..\UrlTracker.Modules\UrlTracker.Modules.csproj" />
+    </ItemGroup>
 </Project>

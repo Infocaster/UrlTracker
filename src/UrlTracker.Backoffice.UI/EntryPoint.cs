@@ -28,13 +28,7 @@ namespace UrlTracker.Backoffice.UI
         /// <returns>The umbraco dependency collection builder after all services are added</returns>
         public static IUmbracoBuilder ComposeUrlTrackerBackoffice(this IUmbracoBuilder builder)
         {
-            builder.AddDashboard<UrlTrackerDashboard>();
             builder.AddDefaultUrlTrackerNotifications();
-
-            builder.ManifestFilters()
-                .Append<UrlTrackerManifestFilter>();
-            builder.BackOfficeAssets()
-                .Append<UrlTrackerScript>();
 
             builder.AddNotificationHandler<ServerVariablesParsingNotification, ServerVariablesNotificationHandler>();
             builder.AddNotificationHandler<ServingRedirectsNotification, PreloadRedirectTargetNotificationHandler>();

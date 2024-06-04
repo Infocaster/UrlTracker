@@ -12,7 +12,7 @@ using Microsoft.Extensions.Options;
 
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Security;
-using Umbraco.Cms.Web.BackOffice.Security;
+using Umbraco.Cms.Web.Common.Security;
 using Umbraco.Extensions;
 
 namespace UrlTracker.Resources.Website.SystemFeatures.AutoLogin;
@@ -30,13 +30,12 @@ internal sealed class AutologinAuthenticationHandler
         IOptionsMonitor<AutoAuthenticationOptions> options,
         ILoggerFactory logger,
         UrlEncoder encoder,
-        ISystemClock clock,
         IHttpContextAccessor httpContextAccessor,
         IBackOfficeUserManager backOfficeUserManager,
         IBackOfficeSignInManager backOfficeSignInManager,
         LinkGenerator linkGenerator,
         IWebHostEnvironment webHostEnvironment)
-        : base(options, logger, encoder, clock)
+        : base(options, logger, encoder)
     {
         _httpContextAccessor = httpContextAccessor;
         _backOfficeUserManager = backOfficeUserManager;

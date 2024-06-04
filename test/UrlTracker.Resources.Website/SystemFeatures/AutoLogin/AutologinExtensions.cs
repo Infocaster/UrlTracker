@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Umbraco.Cms.Api.Management.Security;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Extensions;
 
@@ -15,7 +16,7 @@ internal static class AutologinExtensions
         {
             logins.AddBackOfficeLogin(authBuilder =>
             {
-                authBuilder.AddRemoteScheme<AutoAuthenticationOptions, AutologinAuthenticationHandler>(authBuilder.SchemeForBackOffice(AutoAuthenticationOptions.AuthenticationScheme)!, "developer login", alOptions =>
+                authBuilder.AddRemoteScheme<AutoAuthenticationOptions, AutologinAuthenticationHandler>(BackOfficeAuthenticationBuilder.SchemeForBackOffice(AutoAuthenticationOptions.AuthenticationScheme)!, "developer login", alOptions =>
                 {
                     alOptions.CallbackPath = new PathString("/umbraco-auto-login");
                 });

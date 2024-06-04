@@ -1,9 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Web.BackOffice.Controllers;
+using Umbraco.Cms.Api.Common.Attributes;
+using Umbraco.Cms.Api.Common.Filters;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Web.Common.Attributes;
+using Umbraco.Cms.Web.Common.Authorization;
 using UrlTracker.Backoffice.UI.Controllers.Models.Recommendations.Analysis;
 using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
 using UrlTracker.Core.Models;
@@ -11,9 +16,12 @@ using UrlTracker.Core.Models;
 namespace UrlTracker.Backoffice.UI.Controllers;
 
 [ApiController]
-[PluginController(Defaults.Routing.Area)]
-[Route(Defaults.Routing.Route)]
-internal class RecommendationAnalysisController : UmbracoAuthorizedApiController
+[ApiVersion(Defaults.Routing.V1.ApiVersion)]
+[MapToApi(Defaults.Routing.V1.ApiName)]
+[Authorize(Policy = AuthorizationPolicies.BackOfficeAccess)]
+[JsonOptionsName(Constants.JsonOptionsNames.BackOffice)]
+[Route(Defaults.Routing.V1.Route)]
+internal class RecommendationAnalysisController : Controller
 {
     private readonly IRecommendationAnalysisRequestHandler _requestHandler;
 
@@ -22,8 +30,8 @@ internal class RecommendationAnalysisController : UmbracoAuthorizedApiController
         _requestHandler = requestHandler;
     }
 
-    [HttpGet]
-    [Route("{recommendationId}/history")]
+    [HttpGet("{recommendationId}/history")]
+    [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
     [Produces(typeof(RecommendationHistory))]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetHistoryAsync([FromRoute] int recommendationId, [FromQuery] int pastDays = 20)
@@ -39,8 +47,8 @@ internal class RecommendationAnalysisController : UmbracoAuthorizedApiController
         return Ok(result);
     }
 
-    [HttpGet]
-    [Route("{recommendationId}/referrers")]
+    [HttpGet("{recommendationId}/referrers")]
+    [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
     [Produces(typeof(IEnumerable<ReferrerResponse>))]
     [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetReferrersAsync([FromRoute] int recommendationId)

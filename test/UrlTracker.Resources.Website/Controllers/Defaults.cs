@@ -1,4 +1,4 @@
-﻿namespace UrlTracker.Backoffice.UI
+﻿namespace UrlTracker.Resources.Website.Controllers
 {
     /// <inheritdoc cref="Core.Defaults" />
     public static partial class Defaults
@@ -16,7 +16,7 @@
                 /// <summary>
                 /// The unique name for the URL Tracker api version 1. Used in swagger
                 /// </summary>
-                public const string ApiName = "url-tracker-v1";
+                public const string ApiName = "url-tracker-test-v1";
 
                 /// <summary>
                 /// The version string for the URL Tracker api version 1. Used in swagger and in the route
@@ -32,17 +32,7 @@
             /// <summary>
             /// The controller area. Adds an area segment to endpoint urls
             /// </summary>
-            public const string Area = "UrlTracker";
-
-            /// <summary>
-            /// The base folder for all static resources
-            /// </summary>
-            public const string AppPluginFolder = "/app_plugins/urltracker/";
-
-            /// <summary>
-            /// The base folder for all dashboard pages
-            /// </summary>
-            public const string DashboardPageFolder = AppPluginFolder + "dashboard/tabs/";
+            public const string Area = "UrlTrackerTest";
         }
     }
 }

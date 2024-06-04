@@ -16,8 +16,7 @@
   <!-- External references -->
   <ItemGroup>
     <PackageReference Include="UAParser" Version="3.1.47" />
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="13.0.0" />
-    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="14.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />

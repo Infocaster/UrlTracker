@@ -2,10 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Web.BackOffice.Controllers;
+using Umbraco.Cms.Api.Common.Attributes;
+using Umbraco.Cms.Api.Common.Filters;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Web.Common.Attributes;
+using Umbraco.Cms.Web.Common.Authorization;
 using UrlTracker.Backoffice.UI.Controllers.Models.Redirects;
 using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
 
@@ -15,9 +20,12 @@ namespace UrlTracker.Backoffice.UI.Controllers
     /// A controller for managing redirects for the URL Tracker
     /// </summary>
     [ApiController]
-    [PluginController(Defaults.Routing.Area)]
-    [Route(Defaults.Routing.Route)]
-    internal class RedirectsController : UmbracoAuthorizedApiController
+    [ApiVersion(Defaults.Routing.V1.ApiVersion)]
+    [MapToApi(Defaults.Routing.V1.ApiName)]
+    [Authorize(Policy = AuthorizationPolicies.BackOfficeAccess)]
+    [JsonOptionsName(Constants.JsonOptionsNames.BackOffice)]
+    [Route(Defaults.Routing.V1.Route)]
+    internal class RedirectsController : Controller
     {
         private readonly IRedirectRequestHandler _redirectRequestHandler;
 
@@ -27,6 +35,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         }
 
         [HttpGet]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         [Produces(typeof(RedirectCollectionResponse))]
         public async Task<IActionResult> ListAsync([FromQuery] ListRedirectRequest request)
         {
@@ -41,6 +50,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         /// <param name="redirectId">The unique identifier of the requested redirect</param>
         /// <returns>A 200 OK result with a redirect or 404 NOT FOUND if no redirect with given id exists</returns>
         [HttpGet("{redirectId}")]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         [Produces(typeof(RedirectResponse))]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult Get([FromRoute] int redirectId)
@@ -58,6 +68,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         /// <returns>201 CREATED with the new redirect as body if the creation was successful or 400 BAD REQUEST if the request was invalid</returns>
         /// <exception cref="NotImplementedException"></exception>
         [HttpPost]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         [Produces(typeof(RedirectResponse))]
         public IActionResult Create([FromBody] CreateRedirectRequest request)
         {
@@ -73,8 +84,8 @@ namespace UrlTracker.Backoffice.UI.Controllers
         /// <param name="redirectId">The unique identifier of the requested redirect</param>
         /// <param name="request">The new properties of the redirect</param>
         /// <returns>200 OK with the new redirect as body if the update was successful, 404 NOT FOUND if no redirect with given id exists or 400 BAD REQUEST if the request was invalid</returns>
-        [HttpPost]
-        [Route("{redirectId}")]
+        [HttpPost("{redirectId}")]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         [Produces(typeof(RedirectResponse))]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult Update([FromRoute] int redirectId, [FromBody] RedirectRequest request)
@@ -86,6 +97,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         }
 
         [HttpPost("updatebulk")]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         [Produces(typeof(IEnumerable<RedirectResponse>))]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult UpdateBulk([FromBody] RedirectBulkRequest[] request)
@@ -101,8 +113,8 @@ namespace UrlTracker.Backoffice.UI.Controllers
         /// </summary>
         /// <param name="redirectId">The unique identifier of the requested redirect</param>
         /// <returns>204 NO CONTENT if the redirect was deleted successfully or 404 NOT FOUND if no redirect with given id exists</returns>
-        [HttpPost]
-        [Route("{redirectId}/delete")]
+        [HttpPost("{redirectId}/delete")]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         [Produces(typeof(RedirectResponse))]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult Delete([FromRoute] int redirectId)
@@ -114,6 +126,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         }
 
         [HttpPost("deletebulk")]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult DeleteBulk([FromBody] int[] ids)

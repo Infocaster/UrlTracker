@@ -1,0 +1,25 @@
+{
+    "$schema": "../../umbraco-package-schema.json",
+    "name": "Developer login",
+    "allowPublicAccess": true,
+    "extensions": [
+        {
+            "type": "authProvider",
+            "alias": "DeveloperLogin.Generic",
+            "name": "Developer auth provider",
+            "forProviderName": "Umbraco.AutoLogin",
+            "meta": {
+                "label": "Generic",
+                "defaultView": {
+                    "icon": "icon-cloud"
+                },
+                "behavior": {
+                    "autoRedirect": true
+                },
+                "linking": {
+                    "allowManualLinking": false
+                }
+            }
+        }
+    ]
+}

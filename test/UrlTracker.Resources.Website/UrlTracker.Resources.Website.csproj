@@ -14,10 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="35.5.0" />
-    <PackageReference Include="Clean" Version="4.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-    <PackageReference Include="Umbraco.Cms" Version="13.2.2" />
+    <PackageReference Include="Bogus" Version="35.5.1" />
+    <PackageReference Include="Umbraco.Cms" Version="14.0.0" />
   </ItemGroup>
 
   <Import Project="..\..\src\UrlTracker.Backoffice.UI\build\UrlTracker.Backoffice.UI.targets" />
@@ -30,6 +28,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\UrlTracker\UrlTracker.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="App_Plugins\ExternalLoginProviders\" />
   </ItemGroup>
 
   <PropertyGroup>

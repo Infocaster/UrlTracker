@@ -1,16 +1,24 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Umbraco.Cms.Web.BackOffice.Controllers;
+using Umbraco.Cms.Api.Common.Attributes;
+using Umbraco.Cms.Api.Common.Filters;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Web.Common.Attributes;
+using Umbraco.Cms.Web.Common.Authorization;
 using UrlTracker.Backoffice.UI.Controllers.Models.RedirectTarget;
 using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
 
 namespace UrlTracker.Backoffice.UI.Controllers
 {
-    [PluginController(Defaults.Routing.Area)]
     [ApiController]
-    [Route(Defaults.Routing.Route)]
-    internal class RedirectTargetController : UmbracoAuthorizedApiController
+    [ApiVersion(Defaults.Routing.V1.ApiVersion)]
+    [MapToApi(Defaults.Routing.V1.ApiName)]
+    [Authorize(Policy = AuthorizationPolicies.BackOfficeAccess)]
+    [JsonOptionsName(Constants.JsonOptionsNames.BackOffice)]
+    [Route(Defaults.Routing.V1.Route)]
+    internal class RedirectTargetController : Controller
     {
         private readonly IRedirectTargetRequestHandler _requestHandler;
 
@@ -20,6 +28,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
         }
 
         [HttpGet("content")]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         [Produces(typeof(ContentTargetResponse))]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult Content([FromQuery] GetContentTargetRequest request)

@@ -1,23 +1,42 @@
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Umbraco.Cms.Core.DependencyInjection;
+using Umbraco.Extensions;
+using UrlTracker.Resources.Website.SystemFeatures.AutoLogin;
 
-namespace UrlTracker.Resources.Website
+public class Program
 {
-    public class Program
+    private static async Task Main(string[] args)
     {
-        public static Task Main(string[] args)
-            => CreateHostBuilder(args)
-                .Build()
-                .RunAsync();
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureUmbracoDefaults()
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStaticWebAssets();
-                    webBuilder.UseStartup<Startup>();
-                });
+        builder.CreateUmbracoBuilder()
+            .AddBackOffice()
+            .AddWebsite()
+            .AddDeliveryApi()
+            .AddComposers()
+#if DEBUG
+                .AddAutoLogin()
+#endif
+            .Build();
+
+        WebApplication app = builder.Build();
+
+        await app.BootUmbracoAsync();
+
+
+        app.UseUmbraco()
+            .WithMiddleware(u =>
+            {
+                u.UseBackOffice();
+                u.UseWebsite();
+            })
+            .WithEndpoints(u =>
+            {
+                u.UseBackOfficeEndpoints();
+                u.UseWebsiteEndpoints();
+            });
+
+        await app.RunAsync();
     }
 }

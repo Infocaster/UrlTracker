@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.Extensions.Options;
-
-using Umbraco.Cms.Web.BackOffice.Security;
+using Umbraco.Cms.Api.Management.Security;
 
 namespace UrlTracker.Resources.Website.SystemFeatures.AutoLogin;
 
@@ -20,7 +19,6 @@ public class AutologinProviderOptions
 
     public void Configure(BackOfficeExternalLoginProviderOptions options)
     {
-        options.AutoRedirectLoginToExternalProvider = true;
         options.AutoLinkOptions = new ExternalSignInAutoLinkOptions(true);
     }
 }

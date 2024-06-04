@@ -12,7 +12,7 @@
 - Technical improvements</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Core" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="14.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
     <PackageReference Include="Scrutor" Version="4.2.2" />
   </ItemGroup>

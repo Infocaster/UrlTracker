@@ -1,14 +1,24 @@
-﻿using Bogus;
+﻿using Asp.Versioning;
+using Bogus;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Umbraco.Cms.Api.Common.Attributes;
+using Umbraco.Cms.Api.Common.Filters;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Infrastructure.Scoping;
-using Umbraco.Cms.Web.BackOffice.Controllers;
-using UrlTracker.Core;
+using Umbraco.Cms.Web.Common.Authorization;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
 
 namespace UrlTracker.Resources.Website.Controllers
 {
-    public class UrlTrackerRedirectGeneratorController : UmbracoAuthorizedApiController
+    [ApiController]
+    [ApiVersion(Defaults.Routing.V1.ApiVersion)]
+    [MapToApi(Defaults.Routing.V1.ApiName)]
+    [Authorize(Policy = AuthorizationPolicies.BackOfficeAccess)]
+    [JsonOptionsName(Constants.JsonOptionsNames.BackOffice)]
+    [Route(Defaults.Routing.V1.Route)]
+    public class UrlTrackerRedirectGeneratorController : Controller
     {
         private readonly IRedirectRepository _redirectRepository;
         private readonly IScopeProvider _scopeProvider;
@@ -23,6 +33,7 @@ namespace UrlTracker.Resources.Website.Controllers
         }
 
         [HttpPost]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         public IActionResult Generate()
         {
             using var scope = _scopeProvider.CreateScope();
@@ -36,6 +47,7 @@ namespace UrlTracker.Resources.Website.Controllers
         }
 
         [HttpPost]
+        [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
         public IActionResult Clear()
         {
             using var scope = _scopeProvider.CreateScope();
