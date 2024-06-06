@@ -82,7 +82,7 @@ namespace UrlTracker.Core.Models
 
         #region Creation, parsing and casting
         // One may start to question the use of regex once it passes a certain threshold
-        private static readonly Regex _urlPattern = new(@"^(((?<protocol>https?):\/\/)?(?<host>[a-z0-9-\.]+)(\:(?<port>\d+))?)?(?<path>\/([a-z0-9\-\._~!$&'\(\)\*\+,;=:@\/]|%[a-f0-9]{2})*)?(\?(?<query>([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})+\=([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})*(\&([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})+\=([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})*)*))?", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.ExplicitCapture);
+        private static readonly Regex _urlPattern = new(@"^(((?<protocol>https?):\/\/)?(?<host>[a-z0-9-\.]+)(\:(?<port>\d+))?)?(?<path>\/([a-z0-9\-\._~!$&'\(\)\*\+,;=:@\/]|%[a-f0-9]{2})*)?(\?(?<query>([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})+\=([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})*(\&([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})+\=([a-z0-9\-\._~!$'\(\)\*\+,;:@\/]|%[a-f0-9]{2})*)*))?", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.ExplicitCapture, TimeSpan.FromMilliseconds(100));
         public static Url Parse(string input)
         {
             if (string.IsNullOrWhiteSpace(input))

@@ -35,7 +35,7 @@ namespace UrlTracker.Web.Processing.Handling
             //    example: regex:"(ipsum)" targeturl: "http://example.com/$1" input: "lorem/ipsum/dolor" result: "lorem/http://example.com/ipsum/dolor"
             if (intercept.Source is RegexSourceStrategy regexsource)
             {
-                urlString = Regex.Replace((context.Request.Path + context.Request.QueryString.Value).TrimStart('/'), regexsource.Value, urlString);
+                urlString = Regex.Replace((context.Request.Path + context.Request.QueryString.Value).TrimStart('/'), regexsource.Value, urlString, RegexOptions.None, TimeSpan.FromMilliseconds(100));
             }
 
             var url = Url.Parse(urlString);

@@ -21,7 +21,7 @@ namespace UrlTracker.Core.Validation.Attributes
 
             try
             {
-                Regex.Match(string.Empty, stringValue);
+                Regex.Match(string.Empty, stringValue, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
             }
             catch (ArgumentException)
             {
