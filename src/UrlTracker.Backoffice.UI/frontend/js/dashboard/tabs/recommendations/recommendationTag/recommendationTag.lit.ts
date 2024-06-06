@@ -1,25 +1,15 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { consume } from '@lit/context';
-import { ILocalizationService, localizationServiceContext } from '../../../../context/localizationservice.context';
 import { styleMap } from 'lit/directives/style-map.js';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 
 @customElement('urltracker-recommendation-tag')
-export class UrlTrackerRecommendationTag extends LitElement {
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
-
+export class UrlTrackerRecommendationTag extends UmbElementMixin(LitElement) {
   @property({ type: String })
   color: string = '';
 
   @property({ type: String })
   text: string = 'default';
-
-  async connectedCallback(): Promise<void> {
-    super.connectedCallback();
-
-    if (!this.localizationService) throw new Error('This element requires the localization service');
-  }
 
   protected render(): unknown {
     const dotStyle = {

@@ -1,17 +1,5 @@
-import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
-import {
-  IRecommendationsAnalysisService,
-  recommendationsAnalysisServiceContext,
-} from '@/context/recommendationsanalysis.context';
-import { scopeContext } from '@/context/scope.context';
-import { IRecommendationResponse } from '@/services/recommendation.service';
-import {
-  IRecommendationHistoryResponse,
-  IRecommendationReferrerResponse,
-} from '@/services/recommendationanalysis.service';
-import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
-import { consume } from '@lit/context';
-import { LitElement, css, html, nothing } from 'lit';
+import { ensureExists } from '@/util/tools/existancecheck';
+import { css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import recommendationTypeStrategyResolver from '../../tabs/recommendations/recommendationType/recommendation.strategy';
 
@@ -19,40 +7,32 @@ import './historyChart.lit';
 import './referrersChart.lit';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { cardWithClickableHeader } from '@/dashboard/tabs/styles';
-import { AnalyseRecommendationScope } from './scope';
+import { IAnalyseRecommendationModel } from './analyserecommendation';
+import { UmbModalBaseElement } from '@umbraco-cms/backoffice/modal';
+import {
+  GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistoryResponse,
+  GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrersResponse,
+  getApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistory,
+  getApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrers,
+} from '@/api';
 
 export const ContentElementTag = 'urltracker-sidebar-analyse-recommendation';
 
 @customElement(ContentElementTag)
-export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
+export default class UrlTrackerSidebarAnalyseRecommendation extends UmbModalBaseElement<
+  IAnalyseRecommendationModel,
+  void
+> {
   private recommendationTypeStrategy = recommendationTypeStrategyResolver;
-
-  @consume({ context: recommendationsAnalysisServiceContext })
-  private recommendationsAnalysisService?: IRecommendationsAnalysisService;
-
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
-
-  @consume({ context: scopeContext })
-  private $scope?: AnalyseRecommendationScope;
-
-  @property({ attribute: false })
-  get scope() {
-    ensureExists(this.$scope, 'scope');
-    return this.$scope;
-  }
-
-  @state()
-  private data!: IRecommendationResponse;
 
   @state()
   private _subText = '';
 
   @state()
-  private referrers: IRecommendationReferrerResponse | null = null;
+  private referrers: GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrersResponse | null = null;
 
   @state()
-  private history: IRecommendationHistoryResponse | null = null;
+  private history: GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistoryResponse | null = null;
 
   @state()
   private recommendationTypeText?: string;
@@ -77,35 +57,42 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    ensureServiceExists(this.recommendationsAnalysisService, 'recommendationsAnalysisService');
-    ensureServiceExists(this.localizationService, 'localizationService');
+    ensureExists(this.data, 'Expected contextual data, but none was found');
 
-    this.data = this.scope.model.recommendation;
-    this._subText = this.scope.model.recommendation.url ?? '';
+    this._subText = this.data.recommendation.url ?? '';
 
-    const referrersPromise = this.recommendationsAnalysisService.getReferrers(this.data.id);
-    const historyPromise = this.recommendationsAnalysisService.getHistory(this.data.id, {});
+    const referrersPromise = getApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrers({
+      recommendationId: this.data.recommendation.id,
+    });
+    const historyPromise = getApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistory({
+      recommendationId: this.data.recommendation.id,
+    });
 
     const [referrers, history] = await Promise.all([referrersPromise, historyPromise]).catch((error) => {
-      throw new Error(`Failed to fetch referrers and history for recommendation ${this.data.id}: ${error}`);
+      throw new Error(
+        `Failed to fetch referrers and history for recommendation ${this.data?.recommendation.id}: ${error}`,
+      );
     });
 
     this.referrers = referrers;
     this.history = history;
 
-    const sourceStrategy = recommendationTypeStrategyResolver.getStrategy({ recommendation: this.data, element: this });
+    const sourceStrategy = recommendationTypeStrategyResolver.getStrategy({
+      recommendation: this.data?.recommendation,
+      element: this,
+    });
     if (sourceStrategy) {
       this.recommendationTypeText = await sourceStrategy.getTitle();
       this.recommendationTypeDescription = await sourceStrategy.getDescription();
       this.recommendationTypeIsError = false;
     } else {
-      this.recommendationTypeText = await this.localizationService.localize('urlTrackerRecommendationType_unknown');
+      this.recommendationTypeText = this.localize.term('urlTrackerRecommendationType_unknown');
       this.recommendationTypeIsError = true;
     }
   }
 
   close() {
-    this.scope.model.close();
+    this.modalContext?.submit();
   }
 
   protected renderHistoryChart() {

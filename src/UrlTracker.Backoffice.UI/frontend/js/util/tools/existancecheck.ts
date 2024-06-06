@@ -1,7 +1,4 @@
-export function ensureExists<T>(
-  obj: T | undefined,
-  msg: string = 'Required object is undefined',
-): asserts obj is T {
+export function ensureExists<T>(obj: T | undefined, msg: string = 'Required object is undefined'): asserts obj is T {
   if (!obj) throw Error(msg);
 }
 

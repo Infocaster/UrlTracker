@@ -1,6 +1,6 @@
-import { LitElement } from 'lit';
-import { IRecommendationResponse } from '../../../../services/recommendation.service';
+import { RecommendationResponse } from '@/api';
 import { UnsafeStrategyResolver } from '../../../../util/tools/strategy/strategyresolver';
+import { UmbElement } from '@umbraco-cms/backoffice/element-api';
 
 export interface IRecommendationTypeStrategy {
   getTitle(): Promise<string>;
@@ -8,8 +8,8 @@ export interface IRecommendationTypeStrategy {
 }
 
 export interface IRecommendationTypeStrategyFactoryParameters {
-  recommendation: IRecommendationResponse;
-  element: LitElement;
+  recommendation: RecommendationResponse;
+  element: UmbElement;
 }
 
 export interface IRecommendationTypeStrategyFactory {

@@ -1,7 +1,4 @@
-﻿import * as _angular_ from 'angular';
-
-declare global {
-  const angular: typeof _angular_;
+﻿declare global {
   interface Window {
     URL_TRACKER: {
       TabBuilder: TabBuilder;

@@ -1,34 +1,20 @@
-import { ContextConsumer } from '@lit/context';
-import { ILocalizationService, localizationServiceContext } from '../../../../context/localizationservice.context';
-import { ReactiveControllerHost } from 'lit';
 import { IRecommendationTypeStrategy } from './recommendation.strategy';
-
-type HostElement = ReactiveControllerHost & HTMLElement;
+import { UmbElement } from '@umbraco-cms/backoffice/element-api';
 
 export class UrlTrackerRecommendationType implements IRecommendationTypeStrategy {
-  private _localizationServiceConsumer;
-
   constructor(
-    base: HostElement,
+    private base: UmbElement,
     private _typeKey: string,
     private _typeDescriptionKey: string,
-  ) {
-    this._localizationServiceConsumer = new ContextConsumer(base, {
-      context: localizationServiceContext,
-    });
-  }
+  ) {}
 
   async getTitle(): Promise<string> {
-    const typeString = await this.localizationService?.localize(this._typeKey);
+    const typeString = this.base.localize.term(this._typeKey);
     return typeString ?? this._typeKey;
   }
 
   async getDescription(): Promise<string> {
-    const result = await this.localizationService?.localize(this._typeDescriptionKey);
+    const result = this.base.localize.term(this._typeDescriptionKey);
     return result ?? this._typeDescriptionKey;
-  }
-
-  protected get localizationService(): ILocalizationService | undefined {
-    return this._localizationServiceConsumer.value;
   }
 }

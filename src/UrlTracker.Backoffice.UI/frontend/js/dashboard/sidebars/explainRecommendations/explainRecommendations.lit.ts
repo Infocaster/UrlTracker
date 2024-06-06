@@ -1,45 +1,30 @@
-import { scopeContext } from '@/context/scope.context';
-import { ensureExists } from '@/util/tools/existancecheck';
-import { consume } from '@lit/context';
-import { LitElement, css, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
-import { ExplainRecommendationsScope } from './scope';
+import { css, html } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
+import { UmbModalBaseElement } from '@umbraco-cms/backoffice/modal';
+import { IExplainRecommendationsModel, IRecommendationAction, RECCOMENDATION_ACTIONS } from './explainrecommendations';
 
 export const ContentElementTag = 'urltracker-sidebar-inspect-recommendations';
 
-export const RECCOMENDATION_ACTIONS = {
-  MAKE_PERMANENT: 'MAKE_PERMANENT',
-  MAKE_TEMPORARY: 'MAKE_TEMPORARY',
-  IGNORE: 'IGNORE',
-} as const;
-
-export type IRecommendationAction = (typeof RECCOMENDATION_ACTIONS)[keyof typeof RECCOMENDATION_ACTIONS];
-
 @customElement(ContentElementTag)
-export class UrlTrackerSidebarRecommendations extends LitElement {
-  @consume({ context: scopeContext })
-  private $scope?: ExplainRecommendationsScope;
-
-  @property({ attribute: false })
-  get scope() {
-    ensureExists(this.$scope, 'scope');
-    return this.$scope;
-  }
-
+export default class UrlTrackerSidebarRecommendations extends UmbModalBaseElement<
+  IExplainRecommendationsModel,
+  IRecommendationAction
+> {
   @state()
   private _headerText = '';
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    this._headerText = 'Recommendations for: ' + this.$scope?.model.recommendation.url;
+    this._headerText = 'Recommendations for: ' + this.data?.recommendation.url;
   }
 
   save(action: IRecommendationAction = RECCOMENDATION_ACTIONS.IGNORE) {
-    this.scope.model.submit(action);
+    this.modalContext?.setValue(action);
+    this.modalContext?.submit();
   }
 
   close() {
-    this.scope.model.close();
+    this.modalContext?.reject();
   }
 
   protected render() {

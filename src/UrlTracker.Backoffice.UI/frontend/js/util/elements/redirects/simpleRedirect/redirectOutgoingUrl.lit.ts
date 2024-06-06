@@ -1,9 +1,4 @@
-import { IEditorService, editorServiceContext } from '@/context/editorservice.context';
-import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
-import { ITargetService, redirectTargetServiceContext } from '@/context/redirecttargetservice.context';
 import { ITargetStrategies } from '@/dashboard/tabs/redirects/target/target.constants';
-import { IContentTargetResponse } from '@/dashboard/tabs/redirects/target/target.service';
-import { IContent } from '@/umbraco/editor.service';
 import { debounce } from '@/util/functions/debounce';
 import variableresourceService from '@/util/tools/variableresource.service';
 import { consume } from '@lit/context';
@@ -16,9 +11,25 @@ import './simpleRedirectTypeProvider';
 import { ITypeButton } from './simpleRedirectTypeProvider';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { colors } from '@/dashboard/tabs/styles';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
+import { UMB_MODAL_MANAGER_CONTEXT, UmbModalManagerContext } from '@umbraco-cms/backoffice/modal';
+import { ensureServiceExists } from '@/util/tools/existancecheck';
+import { UMB_TREE_PICKER_MODAL } from '@umbraco-cms/backoffice/tree';
+import { ContentTargetResponse, getApiV1UrlTrackerRedirectTargetContent } from '@/api';
+import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
 @customElement('urltracker-redirect-outgoing-url')
-export class UrlTrackerRedirectOutgoingUrl extends LitElement {
+export class UrlTrackerRedirectOutgoingUrl extends UmbElementMixin(LitElement) {
+  private modalManager?: UmbModalManagerContext;
+
+  constructor() {
+    super();
+
+    this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (instance?: UmbModalManagerContext) => {
+      this.modalManager = instance;
+    });
+  }
+
   @property({ type: String })
   private outgoingUrl: string = '';
 
@@ -30,15 +41,6 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
 
   @state()
   private _infoText: string = '';
-
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
-
-  @consume({ context: editorServiceContext })
-  private editorService?: IEditorService<any>;
-
-  @consume({ context: redirectTargetServiceContext })
-  private redirectTargetService?: ITargetService;
 
   private inputRef: Ref<HTMLInputElement> = createRef();
 
@@ -66,7 +68,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     },
   ] as ITypeButton[];
 
-  private contentItem: (IContentTargetResponse & { id: number }) | undefined = undefined;
+  private contentItem: (ContentTargetResponse & { id: number }) | undefined = undefined;
   private url: string = '';
 
   @state()
@@ -93,15 +95,20 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
         const intId = Number.parseInt(id, 10);
 
         if (!isNaN(intId)) {
-          const content = await this.redirectTargetService!.Content({
-            id: Number.parseInt(id, 10),
-            culture: culture,
-          });
+          const { data, error } = await tryExecuteAndNotify(
+            this,
+            getApiV1UrlTrackerRedirectTargetContent({
+              id: Number.parseInt(id, 10),
+              culture: culture,
+            }),
+          );
 
-          this.contentItem = {
-            ...content,
-            id: Number.parseInt(id, 10),
-          };
+          if (data) {
+            this.contentItem = {
+              ...data,
+              id: Number.parseInt(id, 10),
+            };
+          }
         }
 
         this.requestUpdate();
@@ -113,27 +120,30 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
   }
 
   private _localizeHeaderText = async () => {
-    const text = await this._localizationService?.localize('urlTrackerNewRedirect_outgoing-url');
+    const text = this.localize.term('urlTrackerNewRedirect_outgoing-url');
 
     this._headerText = text ?? 'Outgoing URL fallback';
   };
 
   private _localizeInfoText = async () => {
-    const text = await this._localizationService?.localize('urlTrackerNewRedirect_outgoing-url-info');
+    const text = this.localize.term('urlTrackerNewRedirect_outgoing-url-info');
 
     this._infoText = text ?? 'Select where the URL should redirect to';
   };
 
   private _localizeButtonLabels = async () => {
-    const labels = await this._localizationService?.localizeMany(this._typeButtons.map((item) => item.label));
-
     this._typeButtons = this._typeButtons.map((item, index) => ({
       ...item,
-      label: labels?.[index] ?? item.labelFallback,
+      label: this.localize.term(item.label) ?? item.labelFallback,
     }));
   };
 
   private openContentPicker = () => {
+    ensureServiceExists(this.modalManager, 'modalManager');
+    this.modalManager.open(this, UMB_TREE_PICKER_MODAL, {
+      data: {},
+    });
+
     this.editorService?.contentPicker({
       multiPicker: false,
       submit: this.submitContentPicker,

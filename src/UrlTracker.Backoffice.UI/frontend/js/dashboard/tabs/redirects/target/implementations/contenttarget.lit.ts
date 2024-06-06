@@ -1,22 +1,20 @@
-import { IRedirectResponse } from '@/services/redirect.service';
 import { consume } from '@lit/context';
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { IChangeManager, changeManagerContext } from '../../../../../context/changemanager.context';
-import { IEditorService, editorServiceContext } from '../../../../../context/editorservice.context';
-import { ITargetService, redirectTargetServiceContext } from '../../../../../context/redirecttargetservice.context';
 import { ensureServiceExists } from '../../../../../util/tools/existancecheck';
-import { IContentTargetResponse } from '../target.service';
 import { UrlTrackerRedirectTarget } from '../targetbase.mixin';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { colors } from '@/dashboard/tabs/styles';
+import { ContentTargetResponse, getApiV1UrlTrackerRedirectTargetContent } from '@/api';
+import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
 export class ContentUpdateEvent extends Event {
   static event = 'content-update';
 
   constructor(
     public contentId: string,
-    public contentItem: IContentTargetResponse,
+    public contentItem: ContentTargetResponse,
     eventInitDict?: EventInit,
   ) {
     super(ContentUpdateEvent.event, {
@@ -31,17 +29,11 @@ const baseType = UrlTrackerRedirectTarget(LitElement, 'urlTrackerRedirectTarget_
 
 @customElement('urltracker-redirect-target-content')
 export class UrlTrackerContentRedirectTarget extends baseType {
-  @consume({ context: redirectTargetServiceContext })
-  private redirectTargetService?: ITargetService;
-
-  @consume({ context: editorServiceContext })
-  private editorService?: IEditorService<IRedirectResponse>;
-
   @consume({ context: changeManagerContext })
   private changeManager?: IChangeManager;
 
   @state()
-  private contentItem?: IContentTargetResponse;
+  private contentItem?: ContentTargetResponse;
 
   @state()
   private contentId?: string;
@@ -60,9 +52,9 @@ export class UrlTrackerContentRedirectTarget extends baseType {
 
     if (this.redirect && 'content' in this.redirect.additionalData) {
       this.errorText = undefined;
-      this.contentItem = this.redirect.additionalData.content as IContentTargetResponse;
+      this.contentItem = this.redirect.additionalData.content as ContentTargetResponse;
       if (!this.contentItem) {
-        this.errorText = await this.localizationService?.localize('urlTrackerRedirectTarget_contenterror');
+        this.errorText = this.localize.term('urlTrackerRedirectTarget_contenterror');
       }
       const [id] = this.redirect.target.value.split(';');
       this.contentId = id;
@@ -86,7 +78,6 @@ export class UrlTrackerContentRedirectTarget extends baseType {
   };
 
   private async init(): Promise<void> {
-    ensureServiceExists(this.redirectTargetService, 'redirect target resource');
     ensureServiceExists(this.redirect, 'redirect');
 
     this.loading++;
@@ -94,13 +85,22 @@ export class UrlTrackerContentRedirectTarget extends baseType {
     try {
       const [id, culture] = this.redirect.target.value.split(';');
 
-      this.contentItem = await this.redirectTargetService.Content({
-        id: Number.parseInt(id),
-        culture: culture,
-      });
-      this.contentId = id;
-    } catch {
-      this.errorText = await this.localizationService?.localize('urlTrackerRedirectTarget_contenterror');
+      const { data, error } = await tryExecuteAndNotify(
+        this,
+        getApiV1UrlTrackerRedirectTargetContent({
+          id: Number.parseInt(id, 10),
+          culture: culture,
+        }),
+      );
+
+      if (data) {
+        this.contentItem = data;
+        this.contentId = id;
+      }
+
+      if (error) {
+        this.errorText = this.localize.term('urlTrackerRedirectTarget_contenterror');
+      }
     } finally {
       this.loading--;
     }

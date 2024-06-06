@@ -1,11 +1,10 @@
 import { consume } from '@lit/context';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { localizationServiceContext } from '../../../../context/localizationservice.context';
-import { ILocalizationService } from '../../../../umbraco/localization.service';
 
 @customElement('urltracker-redirect-force')
-export class UrlTrackerRedirectForce extends LitElement {
+export class UrlTrackerRedirectForce extends UmbElementMixin(LitElement) {
   @property({ type: Boolean })
   public force: boolean = false;
 
@@ -15,9 +14,6 @@ export class UrlTrackerRedirectForce extends LitElement {
   @state()
   private _infoText: string = '';
 
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
-
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
@@ -26,13 +22,13 @@ export class UrlTrackerRedirectForce extends LitElement {
   }
 
   private _localizeHeaderText = async () => {
-    const text = await this._localizationService?.localize('urlTrackerNewRedirect_force');
+    const text = this.localize.term('urlTrackerNewRedirect_force');
 
     this._headerText = text ?? 'fallback';
   };
 
   private _localizeInfoText = async () => {
-    const text = await this._localizationService?.localize('urlTrackerNewRedirect_force-info');
+    const text = this.localize.term('urlTrackerNewRedirect_force-info');
 
     this._infoText = text ?? 'fallback';
   };

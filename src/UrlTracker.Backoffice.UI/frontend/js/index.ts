@@ -1,33 +1,18 @@
-import '@oddbird/popover-polyfill';
-import '@umbraco-ui/uui';
-import './dashboard';
-import {
-  ngAnalyseRecommendationSidebar,
-  ngInspectRecommendationsSidebar,
-  ngInspectRedirectSidebar,
-  ngSimpleRedirectSidebar,
-  ngUrltrackerDashboard,
-} from './dashboard/directive';
-import './dashboard/main.lit';
-import './dashboard/notifications/notification.lit';
-import './dashboard/tabs/landingpage.lit';
-import './dashboard/tabs/recommendations.lit';
-import './dashboard/tabs/recommendations/recommendationType';
-import './dashboard/tabs/redirects.lit';
-import './dashboard/tabs/redirects/source';
-import './dashboard/tabs/redirects/target';
+import { UmbEntryPointOnInit } from '@umbraco-cms/backoffice/extension-api';
+import { dashboardManifests } from '@/dashboard/manifests';
+import { manifests as scoringManifests } from './services/scoring/manifest';
+import { UMB_AUTH_CONTEXT } from '@umbraco-cms/backoffice/auth';
+import { OpenAPI } from './api';
 
-import { TabBuilder } from './util/tools/builder/tabBuilder';
+export const onInit: UmbEntryPointOnInit = (_host, extensionRegistry) => {
+  extensionRegistry.registerMany([...dashboardManifests, ...scoringManifests]);
 
-window.URL_TRACKER = {
-  TabBuilder: new TabBuilder(),
+  _host.consumeContext(UMB_AUTH_CONTEXT, (authContext) => {
+    const config = authContext.getOpenApiConfiguration();
+
+    OpenAPI.BASE = config.base;
+    OpenAPI.WITH_CREDENTIALS = config.withCredentials;
+    OpenAPI.CREDENTIALS = config.credentials;
+    OpenAPI.TOKEN = config.token;
+  });
 };
-
-const module = angular.module('umbraco');
-
-// directives
-module.directive(ngUrltrackerDashboard.alias, ngUrltrackerDashboard);
-module.directive(ngSimpleRedirectSidebar.alias, ngSimpleRedirectSidebar);
-module.directive(ngInspectRedirectSidebar.alias, ngInspectRedirectSidebar);
-module.directive(ngInspectRecommendationsSidebar.alias, ngInspectRecommendationsSidebar);
-module.directive(ngAnalyseRecommendationSidebar.alias, ngAnalyseRecommendationSidebar);

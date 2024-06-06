@@ -1,13 +1,13 @@
 import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
 import { ContextConsumer } from '@lit/context';
 import { html, nothing } from 'lit';
-import { ILocalizationService, localizationServiceContext } from '../../context/localizationservice.context';
-import { INotificationService, notificationServiceContext } from '../../context/notificationservice.context';
 import { LitElementConstructor } from '../../util/tools/litelementconstructor';
 import { ITranslatedNotification, ITranslatedNotificationCollection } from './notification';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
+import { getApiV1UrlTrackerNotificationsByAlias } from '@/api';
 
 export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructor>(Base: TBase, alias?: string) {
-  return class NotificationWrapper extends Base {
+  return class NotificationWrapper extends UmbElementMixin(Base) {
     private _alias = alias;
     protected set alias(newAlias: string) {
       this._alias = newAlias;
@@ -20,21 +20,6 @@ export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructo
     private set notifications(value: ITranslatedNotificationCollection | undefined) {
       this._notifications = value;
       this.requestUpdate('notifications');
-    }
-
-    private _notificationServiceConsumer = new ContextConsumer(this, {
-      context: notificationServiceContext,
-    });
-    private _localizationServiceConsumer = new ContextConsumer(this, {
-      context: localizationServiceContext,
-    });
-
-    protected get notificationService(): INotificationService | undefined {
-      return this._notificationServiceConsumer.value;
-    }
-
-    protected get localizationService(): ILocalizationService | undefined {
-      return this._localizationServiceConsumer.value;
     }
 
     private async onNotificationClosed(event: CustomEvent<ITranslatedNotification>) {
@@ -50,13 +35,7 @@ export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructo
     }
 
     protected async updateNotifications(alias: string): Promise<void> {
-      const notificationService = this.notificationService;
-      const localizationService = this.localizationService;
-
-      ensureServiceExists(notificationService, 'notification service');
-      ensureServiceExists(localizationService, 'localization service');
-
-      const response = await notificationService.GetNotifications(alias);
+      const response = await getApiV1UrlTrackerNotificationsByAlias({ alias });
       if (!response) {
         this.notifications = undefined;
         return;
@@ -64,17 +43,11 @@ export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructo
 
       const notifications = response;
 
-      const translations = await Promise.all([
-        // localize all titles and descriptions
-        localizationService.localizeMany(notifications.map((n) => n.translatableTitleComponent)),
-        localizationService.localizeMany(notifications.map((n) => n.translatableBodyComponent)),
-      ]);
-
       const normalizedNotifications = {
         notifications: notifications.map<ITranslatedNotification>((n, i) => ({
           id: n.id,
-          title: localizationService.tokenReplace(translations[0][i], n.titleArguments),
-          body: localizationService.tokenReplace(translations[1][i], n.bodyArguments),
+          title: this.localize.term(n.translatableTitleComponent, ...n.titleArguments),
+          body: this.localize.term(n.translatableBodyComponent, ...n.bodyArguments),
         })),
       };
 

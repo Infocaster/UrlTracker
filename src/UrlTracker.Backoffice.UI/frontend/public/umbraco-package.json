@@ -1,0 +1,14 @@
+{
+  "$schema": "../../umbraco-package-schema.json",
+  "id": "UrlTracker",
+  "name": "URL Tracker",
+  "allowPackageTelemetry": true,
+  "extensions": [
+    {
+      "type": "entryPoint",
+      "name": "URL Tracker entrypoint",
+      "alias": "UrlTracker.Entrypoint",
+      "js": "/App_Plugins/UrlTracker/frontend.js"
+    }
+  ]
+}

@@ -1,41 +1,25 @@
-import { IEditorService, editorServiceContext } from '@/context/editorservice.context';
-import { redirectServiceContext } from '@/context/redirectservice.context';
-import { IRedirectService } from '@/services/redirect.service';
 import { ensureServiceExists } from '@/util/tools/existancecheck';
 import { consume, provide } from '@lit/context';
 import { LitElement, css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { localizationServiceContext } from '../context/localizationservice.context';
 import { tabContext } from '../context/tabcontext.context';
-import { ILocalizationService } from '../umbraco/localization.service';
 import './footer/footer.lit';
 import tabStrategy, { ITab, TabStrategyCollection } from './tab';
-import {
-  IUmbracoNotificationsService,
-  umbracoNotificationsServiceContext,
-} from '@/context/notificationsservice.context';
 import { createNewRedirectOptions } from './sidebars/simpleRedirect/manageredirect';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
+import { UMB_MODAL_MANAGER_CONTEXT, UmbModalManagerContext } from '@umbraco-cms/backoffice/modal';
+import { URLTRACKER_EDIT_REDIRECT_MODAL } from './sidebars/simpleRedirect/manifest';
 
 @customElement('urltracker-dashboard-content')
-export class UrlTrackerDashboardContent extends LitElement {
+export default class UrlTrackerDashboardContent extends UmbElementMixin(LitElement) {
+  private _modalManager?: UmbModalManagerContext;
+  private get modalManager(): UmbModalManagerContext {
+    ensureServiceExists(this._modalManager, 'modalManager');
+    return this._modalManager;
+  }
+
   @provide({ context: tabContext })
   private _tabs?: Array<ITab>;
-
-  @consume({ context: editorServiceContext })
-  private editorService?: IEditorService<any>;
-
-  @consume({ context: redirectServiceContext })
-  private _redirectService?: IRedirectService;
-
-  @consume({ context: umbracoNotificationsServiceContext })
-  private _notificationsService?: IUmbracoNotificationsService | undefined;
-  public get notificationsService(): IUmbracoNotificationsService {
-    ensureServiceExists(this._notificationsService, 'notificationsService');
-    return this._notificationsService;
-  }
-  public set notificationsService(value: IUmbracoNotificationsService | undefined) {
-    this._notificationsService = value;
-  }
 
   @state()
   set tabs(tabs: Array<ITab> | undefined) {
@@ -58,34 +42,23 @@ export class UrlTrackerDashboardContent extends LitElement {
 
   private tabStrategyCollection: TabStrategyCollection = tabStrategy;
 
-  @consume({ context: localizationServiceContext })
-  public localizationService?: ILocalizationService;
-
   constructor() {
     super();
     this.loading = 0;
+
+    this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (instance?: UmbModalManagerContext) => {
+      this._modalManager = instance;
+    });
   }
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    ensureServiceExists(this._redirectService, 'redirect service');
-
     this.loading++;
     try {
-      if (!this.localizationService)
-        throw new Error('localization service is not defined, but is required by this element');
-
-      const titleAliases = this.tabStrategyCollection.map((item) => item.nameKey);
-      const labelAliases = this.tabStrategyCollection.map((item) => item.labelKey);
-
-      const titlePromise = this.localizationService.localizeMany(titleAliases);
-      const labels = await this.localizationService.localizeMany(labelAliases);
-      const titles = await titlePromise;
-
       const result: Array<ITab> = this.tabStrategyCollection.map((item, index) => ({
-        name: titles[index],
-        label: labels[index] ? labels[index] : titles[index],
+        name: this.localize.term(item.nameKey),
+        label: this.localize.term(item.labelKey) ?? this.localize.term(item.nameKey),
         template: item.template,
       }));
 
@@ -95,19 +68,20 @@ export class UrlTrackerDashboardContent extends LitElement {
     }
   }
 
-  closePanel = () => {
-    this.editorService!.close();
-  };
-
-  private _openSidebar(_: Event) {
+  private async _openSidebar(_: Event) {
     const options = createNewRedirectOptions({
       title: 'New redirect',
-      submit: this.closePanel,
-      close: this.closePanel,
       advanced: this.activeTab?.name === 'Advanced redirects',
     });
 
-    this.editorService!.open(options);
+    const modal = this.modalManager.open(this, URLTRACKER_EDIT_REDIRECT_MODAL, {
+      data: options,
+    });
+    try {
+      await modal.onSubmit();
+    } catch {
+      /* Nothing to do when the promise fails */
+    }
   }
 
   render() {

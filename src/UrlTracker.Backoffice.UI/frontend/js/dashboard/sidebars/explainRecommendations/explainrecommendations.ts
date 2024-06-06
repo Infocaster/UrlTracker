@@ -1,25 +1,13 @@
-import { IRecommendationResponse } from '@/services/recommendation.service';
-import { ICancelSubmitEditor, ICustomEditor } from '@/umbraco/editor.service';
-import { IRecommendationAction } from './explainRecommendations.lit';
+import { RecommendationResponse } from '@/api';
+
+export type IRecommendationAction = (typeof RECCOMENDATION_ACTIONS)[keyof typeof RECCOMENDATION_ACTIONS];
+
+export const RECCOMENDATION_ACTIONS = {
+  MAKE_PERMANENT: 'MAKE_PERMANENT',
+  MAKE_TEMPORARY: 'MAKE_TEMPORARY',
+  IGNORE: 'IGNORE',
+} as const;
 
 export interface IExplainRecommendationsModel {
-  recommendation: IRecommendationResponse;
-}
-
-export type ExplainRecommendationsEditor = ICustomEditor &
-  ICancelSubmitEditor<IRecommendationAction> &
-  IExplainRecommendationsModel;
-
-const editorBase: ICustomEditor = {
-  view: '/App_Plugins/UrlTracker/sidebar/recommendations/inspectRecommendations.html',
-  size: 'medium',
-};
-
-export function createExplainRecommendationsEditor(
-  model: ICancelSubmitEditor<IRecommendationAction> & IExplainRecommendationsModel,
-): ExplainRecommendationsEditor {
-  return {
-    ...editorBase,
-    ...model,
-  };
+  recommendation: RecommendationResponse;
 }

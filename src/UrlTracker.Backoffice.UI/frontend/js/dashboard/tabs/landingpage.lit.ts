@@ -1,19 +1,10 @@
-import { IEditorService, editorServiceContext } from '@/context/editorservice.context';
-import { landingpageServiceContext } from '@/context/landingspageservice.context';
 import { recommendationServiceContext } from '@/context/recommendationservice.context';
-import { redirectServiceContext } from '@/context/redirectservice.context';
 import { RECOMMENDATION_SORT_TYPE } from '@/enums/sortType';
-import { ILandingspageService } from '@/services/landingspage.service';
 import {
   IRecommendationCollection,
   IRecommendationResponse,
   IRecommendationsService,
 } from '@/services/recommendation.service';
-import {
-  IRedirectData,
-  IRedirectResponse,
-  IRedirectService,
-} from '@/services/redirect.service';
 import { ensureServiceExists } from '@/util/tools/existancecheck';
 import variableresourceService from '@/util/tools/variableresource.service';
 import { consume } from '@lit/context';
@@ -21,44 +12,37 @@ import { LitElement, PropertyValueMap, css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { UrlTrackerNotificationWrapper } from '../notifications/notifications.mixin';
-import {
-  IRecommendationAction,
-  RECCOMENDATION_ACTIONS,
-} from '../sidebars/explainRecommendations/explainRecommendations.lit';
 import './redirects/redirectitem.lit';
 import { ISourceStrategies } from './redirects/source/source.constants';
 import { ITargetStrategies } from './redirects/target/target.constants';
-import {
-  IUmbracoNotificationsService,
-  umbracoNotificationsServiceContext,
-} from '@/context/notificationsservice.context';
 import { createNewRedirectOptions } from '../sidebars/simpleRedirect/manageredirect';
-import { createExplainRecommendationsEditor } from '../sidebars/explainRecommendations/explainrecommendations';
-import { createAnalyseRecommendationEditor } from '../sidebars/analyseRecommendation/analyserecommendation';
+import { getApiV1UrlTrackerLandingPageMetric } from '@/api';
+import { UMB_MODAL_MANAGER_CONTEXT, UmbModalManagerContext } from '@umbraco-cms/backoffice/modal';
+import { URLTRACKER_EXPLAIN_RECOMMENDATION_MODAL } from '../sidebars/explainRecommendations/manifest';
+import {
+  IRecommendationAction,
+  RECCOMENDATION_ACTIONS,
+} from '../sidebars/explainRecommendations/explainrecommendations';
+import { URLTRACKER_ANALYSE_RECOMMENDATION_MODAL } from '../sidebars/analyseRecommendation/manifest';
 
 @customElement('urltracker-landing-tab')
 export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitElement, 'landingpage') {
+  private _modalManager?: UmbModalManagerContext | undefined;
+  public get modalManager(): UmbModalManagerContext {
+    ensureServiceExists(this._modalManager, 'modalManager');
+    return this._modalManager;
+  }
+
+  constructor() {
+    super();
+
+    this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (instance?: UmbModalManagerContext) => {
+      this._modalManager = instance;
+    });
+  }
+
   @consume({ context: recommendationServiceContext })
   private _recommendationsService?: IRecommendationsService;
-
-  @consume({ context: redirectServiceContext })
-  private _redirectService?: IRedirectService;
-
-  @consume({ context: editorServiceContext })
-  private editorService?: IEditorService<any>;
-
-  @consume({ context: landingpageServiceContext })
-  private _landingspageService?: ILandingspageService;
-
-  @consume({ context: umbracoNotificationsServiceContext })
-  private _notificationsService?: IUmbracoNotificationsService | undefined;
-  public get notificationsService(): IUmbracoNotificationsService {
-    ensureServiceExists(this._notificationsService, 'notificationsService');
-    return this._notificationsService;
-  }
-  public set notificationsService(value: IUmbracoNotificationsService | undefined) {
-    this._notificationsService = value;
-  }
 
   @state()
   private recommendationCollection?: IRecommendationCollection;
@@ -77,10 +61,6 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
 
   private async init() {
     ensureServiceExists(this._recommendationsService, 'recommendations service');
-    ensureServiceExists(this._redirectService, 'redirect service');
-    ensureServiceExists(this._recommendationsService, 'recommendations service');
-    ensureServiceExists(this._landingspageService, 'landingspage service');
-    ensureServiceExists(this.editorService, 'editor service');
 
     await this.search();
   }
@@ -93,7 +73,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
         pageSize: 10,
         OrderBy: RECOMMENDATION_SORT_TYPE.IMPORTANCE,
       });
-      this.numericMetric = (await this._landingspageService?.numericMetric()) ?? 0;
+      this.numericMetric = (await getApiV1UrlTrackerLandingPageMetric()).value;
     } finally {
       this.loading--;
     }
@@ -166,18 +146,20 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
     this.search();
   };
 
-  private openExplanationPanel(data: IRecommendationResponse) {
-    const options = createExplainRecommendationsEditor({
-      recommendation: data,
-      submit: (action) => this.submitExplanationPanel(data, action),
-      close: this.closePanel,
+  private async openExplanationPanel(data: IRecommendationResponse) {
+    const modal = this.modalManager.open(this, URLTRACKER_EXPLAIN_RECOMMENDATION_MODAL, {
+      data: {
+        recommendation: data,
+      },
     });
 
-    this.editorService!.open(options);
+    try {
+      const action = await modal.onSubmit();
+      this.submitExplanationPanel(data, action);
+    } catch {}
   }
 
   private submitExplanationPanel = (recommendation: IRecommendationResponse, action: IRecommendationAction) => {
-    this.editorService!.close();
     switch (action) {
       case RECCOMENDATION_ACTIONS.MAKE_PERMANENT:
         this.handleCreatePermanentRedirect(new CustomEvent('', { detail: recommendation }));
@@ -191,17 +173,19 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
     }
   };
 
-  private openAnalysePanel(data: IRecommendationResponse) {
-    const options = createAnalyseRecommendationEditor({
-      close: this.closePanel,
-      recommendation: data,
+  private async openAnalysePanel(data: IRecommendationResponse) {
+    const modal = this.modalManager.open(this, URLTRACKER_ANALYSE_RECOMMENDATION_MODAL, {
+      data: {
+        recommendation: data,
+      },
     });
-    this.editorService!.open(options);
-  }
 
-  closePanel = () => {
-    this.editorService!.close();
-  };
+    try {
+      await modal.onSubmit();
+    } catch {
+      /* We should never come here, because the analysis view never rejects */
+    }
+  }
 
   private onExplain = (e: CustomEvent<IRecommendationResponse>) => {
     this.openExplanationPanel(e.detail);

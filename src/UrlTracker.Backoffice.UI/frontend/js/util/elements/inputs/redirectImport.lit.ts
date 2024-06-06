@@ -1,16 +1,11 @@
-import { consume } from '@lit/context';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import '@umbraco-ui/uui';
 import { UUIFileDropzoneEvent } from '@umbraco-ui/uui';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { localizationServiceContext } from '../../../context/localizationservice.context';
-import { ILocalizationService } from '../../../umbraco/localization.service';
 
 @customElement('urltracker-redirect-import')
-export class UrlTrackerRedirectImport extends LitElement {
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
-
+export class UrlTrackerRedirectImport extends UmbElementMixin(LitElement) {
   @property({ type: String })
   public header?: string;
 
@@ -18,7 +13,7 @@ export class UrlTrackerRedirectImport extends LitElement {
   private _headerText: string = '';
 
   private _localizeHeaderText = async () => {
-    const translatedText = await this._localizationService?.localize('urlTrackerRedirectUpload_header');
+    const translatedText = this.localize.term('urlTrackerRedirectUpload_header');
 
     if (this.header) {
       this._headerText = `${this.header}`;
@@ -51,9 +46,9 @@ export class UrlTrackerRedirectImport extends LitElement {
     return html`<div class="body">
       <p>
         Drop a csv file in the box below to import redirects.
-        <button @click=${this.handleDownloadTemplate}
-          >You can download a template here <uui-icon name="icon-help-alt"></uui-icon
-        ></button>
+        <button @click=${this.handleDownloadTemplate}>
+          You can download a template here <uui-icon name="icon-help-alt"></uui-icon>
+        </button>
       </p>
       <uui-file-dropzone id="browse-dropzone" label="Drag / drop a file here" accept="csv" @change=${this.handleChange}>
         Drag / drop a file here
@@ -99,7 +94,7 @@ export class UrlTrackerRedirectImport extends LitElement {
 
       /* Corrects inability to style clickable input types in iOS */
       -webkit-appearance: none;
-      
+
       cursor: pointer;
     }
 

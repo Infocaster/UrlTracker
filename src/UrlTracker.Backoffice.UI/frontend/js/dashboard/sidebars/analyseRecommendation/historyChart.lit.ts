@@ -1,7 +1,6 @@
-import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
-import { IRecommendationHistoryResponse } from '@/services/recommendationanalysis.service';
+import { GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistoryResponse } from '@/api';
 import { toReadableDate } from '@/util/functions/dateformatter';
-import { consume } from '@lit/context';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import Chart from 'chart.js/auto';
 import { LitElement, PropertyValueMap, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -10,12 +9,9 @@ import { Ref, createRef, ref } from 'lit/directives/ref.js';
 export const ContentElementTag = 'urltracker-history-chart';
 
 @customElement(ContentElementTag)
-export class UrlTrackerHistoryChart extends LitElement {
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
-
+export class UrlTrackerHistoryChart extends UmbElementMixin(LitElement) {
   @property({ attribute: false, type: Object })
-  private history!: IRecommendationHistoryResponse;
+  private history!: GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistoryResponse;
 
   private chartRef: Ref<HTMLCanvasElement> = createRef();
 

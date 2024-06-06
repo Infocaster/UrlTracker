@@ -1,50 +1,33 @@
-import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
-import { scopeContext } from '@/context/scope.context';
-import { IRedirectResponse } from '@/services/redirect.service';
 import { toReadableDate } from '@/util/functions/dateformatter';
-import { ensureExists } from '@/util/tools/existancecheck';
-import { consume } from '@lit/context';
-import { LitElement, css, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
-import { InspectRedirectScope } from './scope';
+import { css, html } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
 import sourceStrategyResolver from '../../tabs/redirects/source/source.strategy';
+import { RedirectResponse } from '@/api';
+import { UmbModalBaseElement } from '@umbraco-cms/backoffice/modal';
+import { ensureExists } from '@/util/tools/existancecheck';
 
 export const ContentElementTag = 'urltracker-sidebar-inspect-redirect';
 
 @customElement(ContentElementTag)
-export class UrlTrackerSidebarInspectRedirect extends LitElement {
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
-
-  @consume({ context: scopeContext })
-  private $scope?: InspectRedirectScope;
-
-  @property({ attribute: false })
-  get scope() {
-    ensureExists(this.$scope, 'scope');
-    return this.$scope;
-  }
-
-  @state()
-  private data!: IRedirectResponse;
-
+export default class UrlTrackerSidebarInspectRedirect extends UmbModalBaseElement<RedirectResponse, void> {
   @state()
   private _headerText = 'Inspect Redirect';
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    this.data = this.scope.model.redirect;
 
+    ensureExists(this.data, 'This modal requires data');
     const sourceStrategy = sourceStrategyResolver.getStrategy({ redirect: this.data, element: this });
 
     if (sourceStrategy) this._headerText = await sourceStrategy.getTitle();
   }
 
   close() {
-    this.scope.model.close();
+    this.modalContext?.submit();
   }
 
   protected render() {
+    ensureExists(this.data, 'Redirect data must be provided to this modal');
     return html`<div class="header">${this._headerText}</div>
       <div class="main">
         <uui-box>

@@ -2,8 +2,7 @@ import { ensureServiceExists } from '@/util/tools/existancecheck';
 import { ContextConsumer } from '@lit/context';
 import { css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { ILocalizationService, localizationServiceContext } from '../../../context/localizationservice.context';
-import { IRecommendationResponse, recommendationContext } from '../../../context/recommendationitem.context';
+import { RecommendationResponse, recommendationContext } from '../../../context/recommendationitem.context';
 import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';
 import {
   RECCOMENDATION_TYPES,
@@ -16,7 +15,7 @@ import recommendationTypeStrategyResolver from './recommendationType/recommendat
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
 
-const RecommendationListItem = UrlTrackerSelectableResultListItem<IRecommendationResponse>(recommendationContext);
+const RecommendationListItem = UrlTrackerSelectableResultListItem<RecommendationResponse>(recommendationContext);
 
 @customElement('urltracker-recommendation-item')
 export class UrlTrackerRecommendationItem extends RecommendationListItem {
@@ -35,18 +34,8 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   @state()
   private recommendationTypeIsError: boolean = false;
 
-  //   @consume({ context: localizationServiceContext })
-  //   private localizationService?: ILocalizationService;
-  private _localizationServiceConsumer = new ContextConsumer(this, {
-    context: localizationServiceContext,
-  });
-  protected get localizationService(): ILocalizationService | undefined {
-    return this._localizationServiceConsumer.value;
-  }
-
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    ensureServiceExists(this.localizationService, 'localizationService');
 
     if (this.item) {
       this.recommendationType = calculateRecommendationType(this.item.score);
@@ -59,7 +48,7 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
       this.recommendationTypeText = await sourceStrategy.getTitle();
       this.recommendationTypeIsError = false;
     } else {
-      this.recommendationTypeText = await this.localizationService.localize('urlTrackerRecommendationType_unknown');
+      this.recommendationTypeText = this.localize.term('urlTrackerRecommendationType_unknown');
       this.recommendationTypeIsError = true;
     }
   }
@@ -85,12 +74,12 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   }
 
   private async localizeActionsText(): Promise<void> {
-    const actionsText = await this.localizationService?.localize('urlTrackerRecommendationItem_actions');
+    const actionsText = this.localize.term('urlTrackerRecommendationItem_actions');
     this.actionsText = actionsText ?? '';
   }
 
   private async tagText(importance: RecommendationTypes): Promise<void> {
-    const text = await this.localizationService?.localize(`urlTrackerRecommendationImportance_${importance}`);
+    const text = this.localize.term(`urlTrackerRecommendationImportance_${importance}`);
     this.recommendationTagText = text ?? '';
   }
 

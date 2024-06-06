@@ -10,29 +10,28 @@
     "preview": "vite preview",
     "lint": "eslint . --ext .ts,.tsx",
     "lint-fix": "eslint . --ext .ts,.tsx --fix",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "generate-api": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 openapi-ts --input https://localhost:44328/umbraco/swagger/url-tracker-v1/swagger.json --output frontend/js/api"
   },
   "dependencies": {
     "@lit/context": "^1.1.1",
-    "@oddbird/popover-polyfill": "^0.4.3",
-    "@umbraco-ui/uui": "^1.7.1",
-    "axios": "^1.7.2",
     "chart.js": "^4.4.3",
-    "js-cookie": "^3.0.5",
-    "lit": "^3.1.3",
     "qs": "^6.12.1"
   },
   "devDependencies": {
-    "@types/angular": "^1.8.3",
+    "@hey-api/openapi-ts": "^0.46.3",
     "@types/js-cookie": "^3.0.6",
     "@types/qs": "^6.9.15",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
     "@typescript-eslint/parser": "^7.11.0",
+    "@umbraco-cms/backoffice": "^14.0.0",
+    "cross-env": "^7.0.3",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-lit-a11y": "^4.1.2",
     "prettier": "^3.2.5",
     "typescript": "^5.4.5",
-    "vite": "^5.2.12"
+    "vite": "^5.2.12",
+    "vite-tsconfig-paths": "^4.3.2"
   }
 }

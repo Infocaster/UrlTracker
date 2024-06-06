@@ -1,11 +1,10 @@
 import { consume } from '@lit/context';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { localizationServiceContext } from '../../../../context/localizationservice.context';
-import { ILocalizationService } from '../../../../umbraco/localization.service';
 
 @customElement('urltracker-redirect-preserve-querystring')
-export class UrlTrackerRedirectPreserveQuerystring extends LitElement {
+export class UrlTrackerRedirectPreserveQuerystring extends UmbElementMixin(LitElement) {
   @property({ type: Boolean })
   public preserve: boolean = false;
 
@@ -15,9 +14,6 @@ export class UrlTrackerRedirectPreserveQuerystring extends LitElement {
   @state()
   private _infoText: string = '';
 
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
-
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
@@ -26,13 +22,13 @@ export class UrlTrackerRedirectPreserveQuerystring extends LitElement {
   }
 
   private _localizeHeaderText = async () => {
-    const text = await this._localizationService?.localize('urlTrackerNewRedirect_permanent');
+    const text = this.localize.term('urlTrackerNewRedirect_permanent');
 
     this._headerText = text ?? 'fallback';
   };
 
   private _localizeInfoText = async () => {
-    const text = await this._localizationService?.localize('urlTrackerNewRedirect_permanent-info');
+    const text = this.localize.term('urlTrackerNewRedirect_permanent-info');
 
     this._infoText = text ?? 'fallback';
   };

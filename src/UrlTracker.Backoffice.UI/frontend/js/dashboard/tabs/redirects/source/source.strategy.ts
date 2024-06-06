@@ -1,10 +1,10 @@
-import { LitElement } from 'lit';
-import { IRedirectResponse } from '../../../../services/redirect.service';
 import { UnsafeStrategyResolver } from '../../../../util/tools/strategy/strategyresolver';
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { RedirectResponse } from '@/api';
 
 export interface IRedirectSourceStrategyFactoryParameters {
-  redirect: IRedirectResponse;
-  element: LitElement;
+  redirect: RedirectResponse;
+  element: UmbLitElement;
 }
 
 export interface IRedirectSourceStrategy {

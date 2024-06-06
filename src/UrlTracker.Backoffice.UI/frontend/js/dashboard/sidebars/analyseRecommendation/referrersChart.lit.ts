@@ -1,6 +1,5 @@
-import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
-import { IRecommendationReferrerResponse } from '@/services/recommendationanalysis.service';
-import { consume } from '@lit/context';
+import { GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrersResponse } from '@/api';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { Chart } from 'chart.js';
 import { LitElement, PropertyValueMap, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -9,12 +8,9 @@ import { Ref, createRef, ref } from 'lit/directives/ref.js';
 export const ContentElementTag = 'urltracker-referrers-chart';
 
 @customElement(ContentElementTag)
-export class UrlTrackerReferrersChart extends LitElement {
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
-
+export class UrlTrackerReferrersChart extends UmbElementMixin(LitElement) {
   @property({ type: Array })
-  private referrers!: IRecommendationReferrerResponse;
+  private referrers!: GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrersResponse;
 
   private chartRef: Ref<HTMLCanvasElement> = createRef();
 
@@ -55,11 +51,11 @@ export class UrlTrackerReferrersChart extends LitElement {
         },
       },
       data: {
-        labels: data.map((row) => this.truncate(`${row.ReferrerOccurances} - ${row.ReferrerUrl}`)),
+        labels: data.map((row) => this.truncate(`${row.referrerOccurances} - ${row.referrerUrl}`)),
         datasets: [
           {
             label: 'Occurances per day',
-            data: data.map((row) => row.ReferrerOccurances),
+            data: data.map((row) => row.referrerOccurances),
             backgroundColor: '#1B264F',
             maxBarThickness: 25,
           },

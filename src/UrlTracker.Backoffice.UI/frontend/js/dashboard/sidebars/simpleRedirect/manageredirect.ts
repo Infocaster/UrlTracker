@@ -1,45 +1,33 @@
-import { IRedirectData, IRedirectResponse } from '@/services/redirect.service';
-import { ICancelSubmitEditor, ICustomEditor } from '@/umbraco/editor.service';
+import { RedirectRequest } from '@/api';
 
-export interface IManageRedirectModel {
+export type IManageRedirectModel = ICreateRedirectModel &
+  IRedirectEditorConfig & {
+    id?: number;
+  };
+
+export interface IRedirectEditorConfig {
   advanced: boolean;
   title: string;
 }
 
 export interface ICreateRedirectModel {
   solvedRecommendation?: number;
-  data?: IRedirectData;
+  data?: RedirectRequest;
 }
 
 export interface IUpdateRedirectModel {
   id: number;
-  data: IRedirectData;
+  data: RedirectRequest;
 }
 
-export type ManageRedirectEditor = ICustomEditor &
-  ICancelSubmitEditor<IRedirectResponse> &
-  IManageRedirectModel &
-  ICreateRedirectModel & { id?: number };
-
-const editorBase: ICustomEditor = {
-  view: '/App_Plugins/UrlTracker/sidebar/redirect/simpleRedirect.html',
-  size: 'medium',
-};
-
-export function createNewRedirectOptions(
-  model: IManageRedirectModel & ICreateRedirectModel & ICancelSubmitEditor<IRedirectResponse>,
-): ManageRedirectEditor {
+export function createNewRedirectOptions(model: ICreateRedirectModel & IRedirectEditorConfig): IManageRedirectModel {
   return {
-    ...editorBase,
     ...model,
   };
 }
 
-export function createEditRedirectOptions(
-  model: IManageRedirectModel & IUpdateRedirectModel & ICancelSubmitEditor<IRedirectResponse>,
-): ManageRedirectEditor {
+export function createEditRedirectOptions(model: IUpdateRedirectModel & IRedirectEditorConfig): IManageRedirectModel {
   return {
-    ...editorBase,
     ...model,
   };
 }

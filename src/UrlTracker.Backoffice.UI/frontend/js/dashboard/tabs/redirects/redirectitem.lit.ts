@@ -1,9 +1,6 @@
-import { consume } from '@lit/context';
 import { css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { ILocalizationService, localizationServiceContext } from '../../../context/localizationservice.context';
-import { redirectContext } from '../../../context/redirectitem.context';
-import { IRedirectResponse } from '../../../services/redirect.service';
+import { RedirectResponse, redirectContext } from '../../../context/redirectitem.context';
 import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';
 import sourceStrategyResolver from './source/source.strategy';
 import targetStrategyResolver from './target/target.strategy';
@@ -11,13 +8,10 @@ import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
 
-const RedirectListItem = UrlTrackerSelectableResultListItem<IRedirectResponse>(redirectContext);
+const RedirectListItem = UrlTrackerSelectableResultListItem<RedirectResponse>(redirectContext);
 
 @customElement('urltracker-redirect-item')
 export class UrlTrackerRedirectItem extends RedirectListItem {
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
-
   @state()
   private redirectToText?: string;
 
@@ -30,17 +24,16 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    ensureServiceExists(this.localizationService, 'localizationService');
     ensureExists(this.item, 'A redirect is required to use this element, but no redirect was provided');
 
-    this.redirectToText = await this.localizationService.localize('urlTrackerRedirectTarget_redirectto');
+    this.redirectToText = this.localize.term('urlTrackerRedirectTarget_redirectto');
 
     const sourceStrategy = sourceStrategyResolver.getStrategy({ redirect: this.item, element: this });
     if (sourceStrategy) {
       this.redirectSourceText = await sourceStrategy.getTitle();
       this.sourceIsError = false;
     } else {
-      this.redirectSourceText = await this.localizationService.localize('urlTrackerRedirectSource_unknown');
+      this.redirectSourceText = this.localize.term('urlTrackerRedirectSource_unknown');
       this.sourceIsError = true;
     }
   }
