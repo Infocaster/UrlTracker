@@ -5,6 +5,7 @@ using Umbraco.Cms.Core.Notifications;
 using Umbraco.Extensions;
 using UrlTracker.Backoffice.UI.Controllers;
 using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
+using UrlTracker.Backoffice.UI.Controllers.Swagger;
 using UrlTracker.Backoffice.UI.Notifications;
 using UrlTracker.Backoffice.UI.UserNotifications;
 using UrlTracker.Modules.Options;
@@ -32,6 +33,8 @@ namespace UrlTracker.Backoffice.UI
 
             builder.AddNotificationHandler<ServerVariablesParsingNotification, ServerVariablesNotificationHandler>();
             builder.AddNotificationHandler<ServingRedirectsNotification, PreloadRedirectTargetNotificationHandler>();
+
+            builder.Services.ConfigureOptions<UrlTrackerSwaggerGenOptions>();
 
             builder.Services.AddSingleton<IUrltrackerVersionProvider, UrltrackerVersionProvider>();
             builder.Services.AddScoped<IRedirectRequestHandler, RedirectRequestHandler>();

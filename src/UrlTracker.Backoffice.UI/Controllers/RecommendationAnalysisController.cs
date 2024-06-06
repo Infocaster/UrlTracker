@@ -18,6 +18,7 @@ namespace UrlTracker.Backoffice.UI.Controllers;
 [ApiController]
 [ApiVersion(Defaults.Routing.V1.ApiVersion)]
 [MapToApi(Defaults.Routing.V1.ApiName)]
+[ApiExplorerSettings(GroupName = "Recommendation analysis")]
 [Authorize(Policy = AuthorizationPolicies.BackOfficeAccess)]
 [JsonOptionsName(Constants.JsonOptionsNames.BackOffice)]
 [Route(Defaults.Routing.V1.Route)]
