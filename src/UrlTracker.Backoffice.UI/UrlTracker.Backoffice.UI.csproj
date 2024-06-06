@@ -5,12 +5,10 @@
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>1 bugfix, 3 other changes
+    <PackageReleaseNotes>1 bugfix, 1 other change
 
-- Fix icon colors on redirect overview
-- Replaced custom content picker element with UUI
-- Add URL to content preview in Redirect edit panel
-- Technical improvements</PackageReleaseNotes>
+- Fix invalid strategy keys in SQLite when migrating from previous version
+- Add execution timeouts to all regexes</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">

@@ -5,12 +5,10 @@
     <Title>URL Tracker Web</Title>
     <Description>This package contains the web services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>1 bugfix, 3 other changes
+    <PackageReleaseNotes>1 bugfix, 1 other change
 
-- Fix icon colors on redirect overview
-- Replaced custom content picker element with UUI
-- Add URL to content preview in Redirect edit panel
-- Technical improvements</PackageReleaseNotes>
+- Fix invalid strategy keys in SQLite when migrating from previous version
+- Add execution timeouts to all regexes</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->
