@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
@@ -52,7 +53,7 @@ namespace UrlTracker.Core.Intercepting
         {
             try
             {
-                return Regex.IsMatch(interceptString, sourceRegex, RegexOptions.IgnoreCase);
+                return Regex.IsMatch(interceptString, sourceRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
             }
             catch
             {

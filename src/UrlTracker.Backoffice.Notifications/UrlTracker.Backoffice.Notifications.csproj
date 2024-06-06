@@ -4,12 +4,10 @@
     <Title>URL Tracker Backoffice Notifications</Title>
     <Description>This package contains notification handlers for the URL Tracker to handle Umbraco content notifications</Description>
     <RootNamespace>UrlTracker.Backoffice.Notifications</RootNamespace>
-    <PackageReleaseNotes>1 bugfix, 3 other changes
+    <PackageReleaseNotes>1 bugfix, 1 other change
 
-- Fix icon colors on redirect overview
-- Replaced custom content picker element with UUI
-- Add URL to content preview in Redirect edit panel
-- Technical improvements</PackageReleaseNotes>
+- Fix invalid strategy keys in SQLite when migrating from previous version
+- Add execution timeouts to all regexes</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
