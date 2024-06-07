@@ -1,4 +1,4 @@
-import { css, html, nothing } from 'lit';
+import { css, html, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, state } from 'lit/decorators.js';
 import { RedirectResponse, redirectContext } from '../../../context/redirectitem.context';
 import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';

@@ -1,5 +1,5 @@
 import { toReadableDate } from '@/util/functions/dateformatter';
-import { css, html } from 'lit';
+import { css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, state } from 'lit/decorators.js';
 import sourceStrategyResolver from '../../tabs/redirects/source/source.strategy';
 import { RedirectResponse } from '@/api';

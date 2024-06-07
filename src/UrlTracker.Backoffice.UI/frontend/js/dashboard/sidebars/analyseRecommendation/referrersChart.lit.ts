@@ -1,7 +1,7 @@
 import { GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrersResponse } from '@/api';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { Chart } from 'chart.js';
-import { LitElement, PropertyValueMap, css, html } from 'lit';
+import { LitElement, PropertyValueMap, css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 

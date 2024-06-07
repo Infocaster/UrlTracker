@@ -1,4 +1,4 @@
-import { LitElement, css } from 'lit';
+import { LitElement, css } from '@umbraco-cms/backoffice/external/lit';
 import { UrlTrackerRedirectTarget } from '../targetbase.mixin';
 import { customElement } from 'lit/decorators.js';
 

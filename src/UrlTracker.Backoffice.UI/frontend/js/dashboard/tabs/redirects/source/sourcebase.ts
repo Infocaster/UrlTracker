@@ -2,13 +2,14 @@ import { ContextConsumer } from '@lit/context';
 import { IRedirectSourceStrategy } from './source.strategy';
 import { IRedirectViewContext, redirectViewContext } from '../redirectview.context';
 import { RedirectResponse } from '@/api';
-import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { LitElement } from '@umbraco-cms/backoffice/external/lit';
+import { UmbElement } from '@umbraco-cms/backoffice/element-api';
 
 export class UrlTrackerRedirectSource implements IRedirectSourceStrategy {
   private _redirectViewContextConsumer;
 
   constructor(
-    private base: UmbLitElement,
+    private base: UmbElement & LitElement,
     private _typeKey: string,
     private _redirect: RedirectResponse,
   ) {
@@ -21,7 +22,7 @@ export class UrlTrackerRedirectSource implements IRedirectSourceStrategy {
     let result = this._redirect.source.value;
     if (!this.viewContext?.advanced) return result;
 
-    const typeString = await this.base.localize.term(this._typeKey);
+    const typeString = this.base.localize.term(this._typeKey);
     result = `${typeString ?? this._typeKey}: ${result}`;
 
     return result;

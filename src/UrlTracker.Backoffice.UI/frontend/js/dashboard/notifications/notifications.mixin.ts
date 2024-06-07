@@ -1,6 +1,6 @@
 import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
 import { ContextConsumer } from '@lit/context';
-import { html, nothing } from 'lit';
+import { html, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { LitElementConstructor } from '../../util/tools/litelementconstructor';
 import { ITranslatedNotification, ITranslatedNotificationCollection } from './notification';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';

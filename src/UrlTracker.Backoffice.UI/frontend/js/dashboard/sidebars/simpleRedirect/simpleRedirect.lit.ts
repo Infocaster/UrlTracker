@@ -2,7 +2,7 @@ import { ISourceStrategies } from '@/dashboard/tabs/redirects/source/source.cons
 import { ITargetStrategies } from '@/dashboard/tabs/redirects/target/target.constants';
 import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
 import variableresourceService from '@/util/tools/variableresource.service';
-import { css, html } from 'lit';
+import { css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
 import '../../../util/elements/redirects/simpleRedirect/createSimpleRedirect.lit';

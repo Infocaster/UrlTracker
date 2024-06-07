@@ -1,4 +1,4 @@
-import { html } from 'lit';
+import { html } from '@umbraco-cms/backoffice/external/lit';
 import { IVariableResource } from '../../../../../util/tools/variableresource.service';
 import { ITargetStrategies } from '../target.constants';
 import { IRedirectTargetStrategy, IRedirectTargetStrategyFactory } from '../target.strategy';

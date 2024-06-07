@@ -1,4 +1,4 @@
-import { TemplateResult, html } from 'lit';
+import { TemplateResult, html } from '@umbraco-cms/backoffice/external/lit';
 import './recommendationTag.lit';
 
 export const RECCOMENDATION_TYPES = {

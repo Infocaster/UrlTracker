@@ -1,5 +1,5 @@
 import { provide } from '@lit/context';
-import { LitElement, html } from 'lit';
+import { LitElement, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement } from 'lit/decorators.js';
 import { simpleRedirectContext } from '../../../../context/simpleRedirect.context';
 

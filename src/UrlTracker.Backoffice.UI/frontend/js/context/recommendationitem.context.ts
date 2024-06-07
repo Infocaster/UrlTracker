@@ -1,5 +1,5 @@
 import { createContext } from '@lit/context';
-import type { RecommendationResponse } from '@/api';
-export type { RecommendationResponse } from '@/api';
+import type { ProcessedRecommendationResponse } from '@/services/scoring/scoring.service';
+export type { ProcessedRecommendationResponse } from '@/services/scoring/scoring.service';
 export const recommendationKey = 'recommendation';
-export const recommendationContext = createContext<RecommendationResponse>(recommendationKey);
+export const recommendationContext = createContext<ProcessedRecommendationResponse>(recommendationKey);

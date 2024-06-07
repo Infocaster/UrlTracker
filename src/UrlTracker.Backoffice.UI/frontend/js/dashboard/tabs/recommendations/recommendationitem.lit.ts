@@ -1,8 +1,6 @@
-import { ensureServiceExists } from '@/util/tools/existancecheck';
-import { ContextConsumer } from '@lit/context';
-import { css, html, nothing } from 'lit';
+import { css, html, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, state } from 'lit/decorators.js';
-import { RecommendationResponse, recommendationContext } from '../../../context/recommendationitem.context';
+import { recommendationContext } from '../../../context/recommendationitem.context';
 import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';
 import {
   RECCOMENDATION_TYPES,
@@ -14,8 +12,10 @@ import './recommendationTag/recommendationTag.lit';
 import recommendationTypeStrategyResolver from './recommendationType/recommendation.strategy';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
+import { ProcessedRecommendationResponse } from '@/services/scoring/scoring.service';
 
-const RecommendationListItem = UrlTrackerSelectableResultListItem<RecommendationResponse>(recommendationContext);
+const RecommendationListItem =
+  UrlTrackerSelectableResultListItem<ProcessedRecommendationResponse>(recommendationContext);
 
 @customElement('urltracker-recommendation-item')
 export class UrlTrackerRecommendationItem extends RecommendationListItem {

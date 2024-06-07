@@ -1,5 +1,5 @@
 import { consume } from '@lit/context';
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, state } from 'lit/decorators.js';
 import { IChangeManager, changeManagerContext } from '../../../../../context/changemanager.context';
 import { ensureServiceExists } from '../../../../../util/tools/existancecheck';
@@ -108,7 +108,6 @@ export class UrlTrackerContentRedirectTarget extends baseType {
 
   private onClick = (e: Event) => {
     e.stopImmediatePropagation();
-    ensureServiceExists(this.editorService, 'editor service');
 
     const onClose = async () => {
       this.editorService!.close();

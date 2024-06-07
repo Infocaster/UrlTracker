@@ -1,5 +1,5 @@
-import { RecommendationSortType } from '@/enums/sortType';
+import { RecommendationOrderBy } from '@/api';
 
 export interface IRecommendationFilterRequestBase {
-  OrderBy: RecommendationSortType;
+  OrderBy: RecommendationOrderBy;
 }

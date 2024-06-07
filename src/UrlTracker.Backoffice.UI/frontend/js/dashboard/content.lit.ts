@@ -1,6 +1,6 @@
 import { ensureServiceExists } from '@/util/tools/existancecheck';
 import { consume, provide } from '@lit/context';
-import { LitElement, css, html, nothing } from 'lit';
+import { LitElement, css, html, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, state } from 'lit/decorators.js';
 import { tabContext } from '../context/tabcontext.context';
 import './footer/footer.lit';

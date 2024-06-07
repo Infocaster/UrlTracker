@@ -1,5 +1,5 @@
 import '@umbraco-ui/uui';
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 import { IPaginationRequestBase } from '../../../services/models/paginationrequestbase';

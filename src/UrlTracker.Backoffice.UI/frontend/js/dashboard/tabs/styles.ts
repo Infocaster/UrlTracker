@@ -1,4 +1,4 @@
-import { css } from 'lit';
+import { css } from '@umbraco-cms/backoffice/external/lit';
 
 export const errorStyle = css`
   .error {

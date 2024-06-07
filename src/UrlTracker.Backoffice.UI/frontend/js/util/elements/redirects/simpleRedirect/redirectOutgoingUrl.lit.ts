@@ -3,7 +3,7 @@ import { debounce } from '@/util/functions/debounce';
 import variableresourceService from '@/util/tools/variableresource.service';
 import { consume } from '@lit/context';
 import { UUIInputEvent } from '@umbraco-ui/uui';
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 import { repeat } from 'lit/directives/repeat.js';
@@ -17,6 +17,7 @@ import { ensureServiceExists } from '@/util/tools/existancecheck';
 import { UMB_TREE_PICKER_MODAL } from '@umbraco-cms/backoffice/tree';
 import { ContentTargetResponse, getApiV1UrlTrackerRedirectTargetContent } from '@/api';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
+import { UMB_DOCUMENT_PICKER_MODAL } from '@umbraco-cms/backoffice/document';
 
 @customElement('urltracker-redirect-outgoing-url')
 export class UrlTrackerRedirectOutgoingUrl extends UmbElementMixin(LitElement) {
@@ -138,34 +139,36 @@ export class UrlTrackerRedirectOutgoingUrl extends UmbElementMixin(LitElement) {
     }));
   };
 
-  private openContentPicker = () => {
+  private openContentPicker = async () => {
     ensureServiceExists(this.modalManager, 'modalManager');
-    this.modalManager.open(this, UMB_TREE_PICKER_MODAL, {
-      data: {},
-    });
+    const modal = this.modalManager.open(this, UMB_DOCUMENT_PICKER_MODAL);
 
-    this.editorService?.contentPicker({
-      multiPicker: false,
-      submit: this.submitContentPicker,
-      close: () => this.editorService?.close(),
-    });
+    try {
+      const result = await modal.onSubmit();
+      this.submitContentPicker(result);
+    } catch {
+      /* Nothing to do when the modal result is rejected */
+    }
   };
 
-  private submitContentPicker = async (model: { selection: IContent[] }) => {
-    this.editorService?.close();
-
+  private submitContentPicker = async (model: { selection: (string | null)[] }) => {
     if (model.selection.length === 0) return;
 
     const selectedItem = model.selection[0];
-    const newTarget = await this.redirectTargetService?.Content({ id: selectedItem.id });
-    if (!newTarget) {
+    if (!selectedItem) return;
+
+    const { data, error } = await tryExecuteAndNotify(
+      this,
+      getApiV1UrlTrackerRedirectTargetContent({ id: selectedItem }),
+    );
+    if (!data) {
       this.contentItem = undefined;
       return;
     }
 
     this.contentItem = {
-      id: selectedItem.id,
-      ...newTarget,
+      id: selectedItem,
+      ...data,
     };
     this.onContentUpdate();
     this.requestUpdate();

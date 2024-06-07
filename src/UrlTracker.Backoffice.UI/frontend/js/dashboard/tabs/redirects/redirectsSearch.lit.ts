@@ -1,33 +1,27 @@
 import { ensureExists } from '@/util/tools/existancecheck';
-import { consume } from '@lit/context';
 import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui';
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
-import { localizationServiceContext } from '../../../context/localizationservice.context';
-import { ILocalizationService } from '../../../umbraco/localization.service';
 import { debounce } from '../../../util/functions/debounce';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 
 @customElement('urltracker-redirects-search')
-export class UrlTrackerRedirectsSearch extends LitElement {
+export class UrlTrackerRedirectsSearch extends UmbElementMixin(LitElement) {
   @state()
   private _placeholderText = 'localize this';
-
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
 
   private inputRef: Ref<UUIInputElement> = createRef();
 
   async connectedCallback() {
     super.connectedCallback();
 
-    ensureExists(this.localizationService);
     this.localizePlaceholderText();
     this.addEventListener('input', this._debouncedOnSearchInput);
   }
 
   private async localizePlaceholderText(): Promise<void> {
-    const actionsText = await this.localizationService?.localize('urlTrackerRecommendationFilter_search-placeholder');
+    const actionsText = this.localize.term('urlTrackerRecommendationFilter_search-placeholder');
 
     this._placeholderText = actionsText ?? this._placeholderText;
   }

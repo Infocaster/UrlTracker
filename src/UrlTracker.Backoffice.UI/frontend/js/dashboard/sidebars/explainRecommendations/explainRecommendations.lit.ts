@@ -1,4 +1,4 @@
-import { css, html } from 'lit';
+import { css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, state } from 'lit/decorators.js';
 import { UmbModalBaseElement } from '@umbraco-cms/backoffice/modal';
 import { IExplainRecommendationsModel, IRecommendationAction, RECCOMENDATION_ACTIONS } from './explainrecommendations';

@@ -1,4 +1,4 @@
-import { IRedirectResponse } from '../../../../services/redirect.service';
+import { RedirectResponse } from '@/api';
 import { StrategyResolver } from '../../../../util/tools/strategy/strategyresolver';
 import { UnknownTargetStrategyFactory } from './implementations/fallbacktarget';
 
@@ -7,9 +7,9 @@ export interface IRedirectTargetStrategy {
 }
 
 export interface IRedirectTargetStrategyFactory {
-  getStrategy(redirect: IRedirectResponse): IRedirectTargetStrategy | undefined;
+  getStrategy(redirect: RedirectResponse): IRedirectTargetStrategy | undefined;
 }
 
-export const RedirectTargetStrategyResolver = StrategyResolver<IRedirectResponse, IRedirectTargetStrategy>;
+export const RedirectTargetStrategyResolver = StrategyResolver<RedirectResponse, IRedirectTargetStrategy>;
 
 export default new RedirectTargetStrategyResolver(new UnknownTargetStrategyFactory());

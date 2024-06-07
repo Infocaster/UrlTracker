@@ -1,21 +1,11 @@
-import { IEditorService, editorServiceContext } from '@/context/editorservice.context';
-import { redirectImportServiceContext } from '@/context/redirectimportservice.context';
-import { REDIRECTTYPE_SORT_TYPE, RedirectSortType } from '@/enums/sortType';
-import { IRedirectImportService } from '@/services/redirectimport.service';
 import { DropdownChangeEvent, IDropdownValue } from '@/util/elements/inputs/dropdown.lit';
-import { consume, provide } from '@lit/context';
-import { LitElement, PropertyValueMap, css, html, nothing } from 'lit';
+import { provide } from '@lit/context';
+import { LitElement, PropertyValueMap, css, html, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { IChangeManager, changeManagerContext } from '../../context/changemanager.context';
-import { IRedirectService, redirectServiceContext } from '../../context/redirectservice.context';
-import redirectService, {
-  IRedirectCollectionResponse,
-  IRedirectData,
-  IRedirectResponse,
-} from '../../services/redirect.service';
 import '../../util/elements/bulkActions.lit';
 import '../../util/elements/inputs/pagination.lit';
 import { UrlTrackerPagination } from '../../util/elements/inputs/pagination.lit';
@@ -28,34 +18,53 @@ import { ensureExists, ensureServiceExists } from '../../util/tools/existanceche
 import { UrlTrackerNotificationWrapper } from '../notifications/notifications.mixin';
 import './redirects/redirectitem.lit';
 import './redirects/redirectsSearch.lit';
-import {
-  IUmbracoNotificationsService,
-  umbracoNotificationsServiceContext,
-} from '@/context/notificationsservice.context';
 import { IRedirectViewContext, redirectViewContext } from './redirects/redirectview.context';
 import { ISourceStrategies } from './redirects/source/source.constants';
 import { createEditRedirectOptions, createNewRedirectOptions } from '../sidebars/simpleRedirect/manageredirect';
-import { createInspectRedirectEditor } from '../sidebars/inspectRedirect/inspectredirect';
+import {
+  RedirectCollectionResponse,
+  RedirectRequest,
+  RedirectResponse,
+  RedirectType,
+  getApiV1UrlTrackerRedirectImportExport,
+  getApiV1UrlTrackerRedirectImportExportexample,
+  getApiV1UrlTrackerRedirects,
+  postApiV1UrlTrackerRedirectImportImport,
+  postApiV1UrlTrackerRedirectsByRedirectIdDelete,
+  postApiV1UrlTrackerRedirectsDeletebulk,
+  postApiV1UrlTrackerRedirectsUpdatebulk,
+} from '@/api';
+import { UMB_NOTIFICATION_CONTEXT, UmbNotificationContext } from '@umbraco-cms/backoffice/notification';
+import { UMB_MODAL_MANAGER_CONTEXT, UmbModalManagerContext } from '@umbraco-cms/backoffice/modal';
+import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
+import { URLTRACKER_INSPECT_REDIRECT_MODAL } from '../sidebars/inspectRedirect/manifest';
+import { URLTRACKER_EDIT_REDIRECT_MODAL } from '../sidebars/simpleRedirect/manifest';
+import { blobDownload } from '@umbraco-cms/backoffice/utils';
 
 @customElement('urltracker-redirect-tab')
 export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElement) {
-  @consume({ context: redirectServiceContext })
-  private redirectService?: IRedirectService;
-
-  @consume({ context: redirectImportServiceContext })
-  private redirectImportService?: IRedirectImportService;
-
-  @consume({ context: editorServiceContext })
-  private editorService?: IEditorService<any>;
-
-  @consume({ context: umbracoNotificationsServiceContext })
-  private _notificationsService?: IUmbracoNotificationsService | undefined;
-  public get notificationsService(): IUmbracoNotificationsService {
-    ensureServiceExists(this._notificationsService, 'notificationsService');
-    return this._notificationsService;
+  private _notificationContext: UmbNotificationContext | undefined;
+  private get notificationContext(): UmbNotificationContext {
+    ensureServiceExists(this._notificationContext, 'notificationContext');
+    return this._notificationContext;
   }
-  public set notificationsService(value: IUmbracoNotificationsService | undefined) {
-    this._notificationsService = value;
+
+  private _modalManager: UmbModalManagerContext | undefined;
+  private get modalManager(): UmbModalManagerContext {
+    ensureServiceExists(this._modalManager, 'modalManager');
+    return this._modalManager;
+  }
+
+  constructor() {
+    super();
+
+    this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance?: UmbNotificationContext) => {
+      this._notificationContext = instance;
+    });
+
+    this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (instance?: UmbModalManagerContext) => {
+      this._modalManager = instance;
+    });
   }
 
   @provide({ context: changeManagerContext })
@@ -68,7 +77,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
   public advanced: boolean = false;
 
   @state()
-  private redirectCollection?: IRedirectCollectionResponse;
+  private redirectCollection?: RedirectCollectionResponse;
 
   @state()
   private loading: number = 0;
@@ -86,23 +95,23 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
   }
 
   private query = '';
-  private selectedType: RedirectSortType = REDIRECTTYPE_SORT_TYPE.ALL;
+  private selectedType: RedirectType = RedirectType.ALL;
   private paginationRef: Ref<UrlTrackerPagination> = createRef();
   private sortOptions: IDropdownValue[] = [
     {
       display: 'All',
-      value: REDIRECTTYPE_SORT_TYPE.ALL,
-      key: REDIRECTTYPE_SORT_TYPE.ALL.toString(),
+      value: RedirectType.ALL,
+      key: RedirectType.ALL.toString(),
     },
     {
       display: 'Permanent',
-      value: REDIRECTTYPE_SORT_TYPE.PERMANENT,
-      key: REDIRECTTYPE_SORT_TYPE.PERMANENT.toString(),
+      value: RedirectType.PERMANENT,
+      key: RedirectType.PERMANENT.toString(),
     },
     {
       display: 'Temporary',
-      value: REDIRECTTYPE_SORT_TYPE.TEMPORARY,
-      key: REDIRECTTYPE_SORT_TYPE.TEMPORARY.toString(),
+      value: RedirectType.TEMPORARY,
+      key: RedirectType.TEMPORARY.toString(),
     },
   ];
 
@@ -112,9 +121,6 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
   }
 
   private async init() {
-    ensureServiceExists(this.redirectService, 'redirect service');
-    ensureServiceExists(this.redirectImportService, 'redirect import service');
-    ensureServiceExists(this.editorService, 'editor service');
     await this.search();
   }
 
@@ -131,58 +137,73 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
 
     this.loading++;
     try {
-      this.redirectCollection = await this.redirectService?.list({
-        ...page,
-        types: type,
-        query,
-        sourceTypes: this.redirectTypes,
-      });
+      const { data } = await tryExecuteAndNotify(
+        this,
+        getApiV1UrlTrackerRedirects({
+          ...page,
+          types: [type],
+          query,
+          sourceTypes: this.redirectTypes,
+        }),
+      );
+      if (data) {
+        this.redirectCollection = data;
+      }
     } finally {
       this.loading--;
     }
   }
 
-  private openInspectPanel(data: IRedirectResponse) {
-    const options = createInspectRedirectEditor({
-      close: this.closePanel,
-      redirect: data,
+  private async openInspectPanel(data: RedirectResponse) {
+    const modal = this.modalManager.open(this, URLTRACKER_INSPECT_REDIRECT_MODAL, {
+      data: data,
     });
-    this.editorService!.open(options);
+
+    try {
+      await modal.onSubmit();
+    } catch {
+      /* Nothing to do when the promise rejects */
+    }
   }
 
-  private openNewRedirectPanel(data?: IRedirectData) {
+  private async openNewRedirectPanel(data?: RedirectRequest) {
     const options = createNewRedirectOptions({
       title: 'New redirect', // FIXME: translate
-      submit: this.submitNewRedirectPanel,
-      close: this.closePanel,
       advanced: this.viewContext.advanced,
       data: data,
     });
 
-    this.editorService!.open(options);
+    const modal = this.modalManager.open(this, URLTRACKER_EDIT_REDIRECT_MODAL, {
+      data: options,
+    });
+
+    try {
+      await modal.onSubmit();
+      await this.search();
+    } catch {
+      /* Nothing to do when the promise rejects */
+    }
   }
 
-  private openEditRedirectPanel(id: number, data: IRedirectData) {
+  private async openEditRedirectPanel(id: number, data: RedirectRequest) {
     const options = createEditRedirectOptions({
       title: 'Edit ' + data.source.value,
-      submit: this.submitNewRedirectPanel,
-      close: this.closePanel,
       advanced: this.viewContext.advanced,
       data: data,
       id: id,
     });
 
-    this.editorService!.open(options);
+    const modal = this.modalManager.open(this, URLTRACKER_EDIT_REDIRECT_MODAL, {
+      data: options,
+    });
+
+    try {
+      await modal.onSubmit();
+      await this.search();
+    } catch {
+      /* Nothing to do when the promise rejects */
+    }
   }
-
-  private submitNewRedirectPanel = (_: IRedirectResponse) => {
-    this.closePanel();
-    this.search();
-  };
-
-  private closePanel = () => {
-    this.editorService!.close();
-  };
 
   private onSearch = ({ detail: { query } = {} }: CustomEvent) => {
     this.query = query;
@@ -190,7 +211,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
   };
 
   private onTypeChange = ({ data }: DropdownChangeEvent) => {
-    this.selectedType = data.value as RedirectSortType;
+    this.selectedType = data.value as RedirectType;
     this.search();
   };
 
@@ -199,7 +220,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
     this.search();
   };
 
-  private onInspect = (e: CustomEvent<IRedirectResponse>) => {
+  private onInspect = (e: CustomEvent<RedirectResponse>) => {
     this.openInspectPanel(e.detail);
   };
 
@@ -207,30 +228,70 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
     this.openNewRedirectPanel();
   };
 
-  private onEditRedirect = (e: CustomEvent<IRedirectResponse>) => {
+  private onEditRedirect = (e: CustomEvent<RedirectResponse>) => {
     this.openEditRedirectPanel(e.detail.id, e.detail);
   };
 
-  private onDeleteRedirect = async (e: CustomEvent<IRedirectResponse>) => {
-    await this.redirectService?.delete(e.detail.id);
-    this.notificationsService.success('Redirect deleted', 'The redirect has been successfully deleted');
-    this.search();
+  private onDeleteRedirect = async (e: CustomEvent<RedirectResponse>) => {
+    const { error } = await tryExecuteAndNotify(
+      this,
+      postApiV1UrlTrackerRedirectsByRedirectIdDelete({ redirectId: e.detail.id }),
+    );
+    if (!error) {
+      this.notificationContext.peek('positive', {
+        data: {
+          headline: 'Redirect deleted',
+          message: 'The redirect has been successfully deleted',
+        },
+      });
+      this.search();
+    }
   };
 
   private onExportRedirects = async (_: any) => {
-    await this.redirectImportService?.export();
-    this.notificationsService.success('Redirects exported', 'Check your downloads to find the exported redirects');
+    const { data } = await tryExecuteAndNotify(this, getApiV1UrlTrackerRedirectImportExport());
+    if (data) {
+      blobDownload(data, 'redirects.csv', data.type);
+      this.notificationContext.peek('positive', {
+        data: {
+          headline: 'Redirects exported',
+          message: 'Check your downloads to find the exported redirects',
+        },
+      });
+    }
   };
 
   private onImportRedirects = async (e: CustomEvent<File>) => {
-    await this.redirectImportService!.import(e.detail);
-    this.notificationsService.success('Redirects imported', 'The redirects have been successfully imported');
+    const { error } = await tryExecuteAndNotify(
+      this,
+      postApiV1UrlTrackerRedirectImportImport({
+        formData: {
+          Redirects: e.detail,
+        },
+      }),
+    );
+    if (!error) {
+      this.notificationContext.peek('positive', {
+        data: {
+          headline: 'Redirects imported',
+          message: 'The redirects have been successfully imported',
+        },
+      });
+    }
     this.search();
   };
 
   private onDownloadImportTemplate = async () => {
-    await this.redirectImportService!.exportTemplate();
-    this.notificationsService.success('Template downloaded', 'Check your downloads to find the template');
+    const { data } = await tryExecuteAndNotify(this, getApiV1UrlTrackerRedirectImportExportexample());
+    if (data) {
+      blobDownload(data, 'redirect-template.csv', data.type);
+      this.notificationContext.peek('positive', {
+        data: {
+          headline: 'Template downloaded',
+          message: 'Check your downloads to find the template',
+        },
+      });
+    }
   };
 
   private onSelectItem = (e: any) => {
@@ -264,23 +325,44 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
         data: data,
       };
     });
-    await redirectService.updateBulk(bulkToUpdate);
-    this.notificationsService.success(
-      'Redirects converted to permanent',
-      'The selected redirects have been successfully converted to permanent',
+    const { error } = await tryExecuteAndNotify(
+      this,
+      postApiV1UrlTrackerRedirectsUpdatebulk({
+        requestBody: bulkToUpdate,
+      }),
     );
-    this.selectedItems = [];
-    this.search();
+    if (!error) {
+      this.notificationContext.peek('positive', {
+        data: {
+          headline: 'Redirects converted to permanent',
+          message: 'The selected redirects have been successfully converted to permanent',
+        },
+      });
+      this.selectedItems = [];
+      this.search();
+    }
   };
 
   private onDeleteSelection = async (_: any) => {
     const selectedRedirects =
       this.redirectCollection?.results.filter((r) => this.selectedItems.some((i) => i === r.id)) || [];
     const bulkToDelete = selectedRedirects.map((r) => r.id);
-    await redirectService.deleteBulk(bulkToDelete);
-    this.notificationsService.success('Redirects deleted', 'The selected redirects have been successfully deleted');
-    this.selectedItems = [];
-    this.search();
+    const { error } = await tryExecuteAndNotify(
+      this,
+      postApiV1UrlTrackerRedirectsDeletebulk({
+        requestBody: bulkToDelete,
+      }),
+    );
+    if (!error) {
+      this.notificationContext.peek('positive', {
+        data: {
+          headline: 'Redirects deleted',
+          message: 'The selected redirects have been successfully deleted',
+        },
+      });
+      this.selectedItems = [];
+      this.search();
+    }
   };
 
   connectedCallback(): void {

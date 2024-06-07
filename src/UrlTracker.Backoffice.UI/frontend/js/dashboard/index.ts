@@ -1,4 +1,4 @@
-import { html } from 'lit';
+import { html } from '@umbraco-cms/backoffice/external/lit';
 import tabStrategy, { createTabStrategy } from './tab';
 
 tabStrategy.push(createTabStrategy('dashboard', html`<urltracker-landing-tab></urltracker-landing-tab>`));

@@ -1,5 +1,5 @@
 import { ensureExists } from '@/util/tools/existancecheck';
-import { css, html, nothing } from 'lit';
+import { css, html, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import recommendationTypeStrategyResolver from '../../tabs/recommendations/recommendationType/recommendation.strategy';
 

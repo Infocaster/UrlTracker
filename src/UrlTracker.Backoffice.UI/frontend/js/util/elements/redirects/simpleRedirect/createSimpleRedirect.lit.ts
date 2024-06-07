@@ -1,4 +1,4 @@
-import { LitElement, css, html, nothing } from 'lit';
+import { LitElement, css, html, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property } from 'lit/decorators.js';
 import './redirectForce.lit';
 import './redirectIncomingUrl.lit';

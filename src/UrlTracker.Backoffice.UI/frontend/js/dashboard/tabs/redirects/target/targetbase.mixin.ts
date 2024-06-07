@@ -1,5 +1,5 @@
 import { ContextConsumer } from '@lit/context';
-import { css, html, nothing } from 'lit';
+import { css, html, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { RedirectResponse, redirectContext } from '../../../../context/redirectitem.context';
 import { LitElementConstructor } from '../../../../util/tools/litelementconstructor';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';

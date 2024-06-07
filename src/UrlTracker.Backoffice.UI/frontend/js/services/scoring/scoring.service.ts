@@ -10,6 +10,8 @@ import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
 import { URLTRACKER_SCORING_CONTEXT } from './contexttoken';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
+export type ProcessedRecommendationResponse = RecommendationResponse & { score: number };
+
 export default class ScoringService extends UmbContextBase<ScoringService> {
   private resourcePromise?: Promise<void>;
   private redactionScores?: RedactionScoreResponse[];
@@ -17,6 +19,13 @@ export default class ScoringService extends UmbContextBase<ScoringService> {
 
   constructor(host: UmbControllerHost) {
     super(host, URLTRACKER_SCORING_CONTEXT);
+  }
+
+  public async processRecommendation(recommendation: RecommendationResponse): Promise<ProcessedRecommendationResponse> {
+    return {
+      ...recommendation,
+      score: await this.getScore(recommendation),
+    };
   }
 
   public async getScore(recommendation: RecommendationResponse): Promise<number> {

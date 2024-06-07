@@ -1,6 +1,6 @@
 import { consume } from '@lit/context';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
 @customElement('urltracker-redirect-preserve-querystring')

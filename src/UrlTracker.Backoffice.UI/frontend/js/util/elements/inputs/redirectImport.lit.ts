@@ -1,7 +1,7 @@
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import '@umbraco-ui/uui';
 import { UUIFileDropzoneEvent } from '@umbraco-ui/uui';
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
 @customElement('urltracker-redirect-import')

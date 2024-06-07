@@ -1,4 +1,4 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import '@umbraco-ui/uui';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';

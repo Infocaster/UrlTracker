@@ -1,4 +1,4 @@
-import { TemplateResult } from 'lit';
+import { TemplateResult } from '@umbraco-cms/backoffice/external/lit';
 import TabStrategy from '../../../dashboard/tab';
 
 export class TabBuilder {

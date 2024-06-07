@@ -3,7 +3,7 @@ import { debounce } from '@/util/functions/debounce';
 import variableresourceService from '@/util/tools/variableresource.service';
 import { consume } from '@lit/context';
 import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui';
-import { LitElement, css, html, nothing } from 'lit';
+import { LitElement, css, html, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 import { repeat } from 'lit/directives/repeat.js';

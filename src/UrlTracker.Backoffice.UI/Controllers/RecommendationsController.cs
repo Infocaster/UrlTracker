@@ -56,7 +56,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
 
         [HttpPost("updatebulk")]
         [MapToApiVersion(Defaults.Routing.V1.ApiVersion)]
-        [Produces(typeof(RecommendationResponse))]
+        [Produces(typeof(IEnumerable<RecommendationResponse>))]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         public IActionResult UpdateBulk(IEnumerable<EntityWithIdRequest<UpdateRecommendationRequest>> request)
         {

@@ -1,4 +1,4 @@
-import { TemplateResult } from 'lit';
+import { TemplateResult } from '@umbraco-cms/backoffice/external/lit';
 
 export function createTabStrategy(alias: string, template: TemplateResult): ITabStrategy {
   return {

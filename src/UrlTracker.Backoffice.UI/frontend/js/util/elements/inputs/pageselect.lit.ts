@@ -1,6 +1,6 @@
 import { ensureExists } from '@/util/tools/existancecheck';
 import { UUIPaginationElement } from '@umbraco-ui/uui';
-import { LitElement, html } from 'lit';
+import { LitElement, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 
