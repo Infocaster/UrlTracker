@@ -1,6 +1,6 @@
 import { LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import '@umbraco-ui/uui';
+import '@umbraco-cms/backoffice/external/uui';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 
 @customElement('urltracker-redirect-actions')

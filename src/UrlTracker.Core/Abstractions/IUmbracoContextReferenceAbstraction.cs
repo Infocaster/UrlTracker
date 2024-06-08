@@ -18,6 +18,13 @@ namespace UrlTracker.Core.Abstractions
         IPublishedContent? GetContentById(int id);
 
         /// <summary>
+        /// When implemented, this method finds published content with the given key
+        /// </summary>
+        /// <param name="key">The unique key of the published content</param>
+        /// <returns>The <see cref="IPublishedContent"/> with the given id or <see langword="null"/></returns>
+        IPublishedContent? GetContentById(Guid key);
+
+        /// <summary>
         /// When implemented, this method finds media as published content with the given id
         /// </summary>
         /// <param name="id">The unique id of the media</param>

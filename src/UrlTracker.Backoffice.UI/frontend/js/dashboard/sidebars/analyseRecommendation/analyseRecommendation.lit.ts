@@ -23,8 +23,6 @@ export default class UrlTrackerSidebarAnalyseRecommendation extends UmbModalBase
   IAnalyseRecommendationModel,
   void
 > {
-  private recommendationTypeStrategy = recommendationTypeStrategyResolver;
-
   @state()
   private _subText = '';
 

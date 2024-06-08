@@ -25,7 +25,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
                 Target = new StrategyViewModel
                 {
                     Strategy = UrlTracker.Core.Defaults.DatabaseSchema.RedirectTargetStrategies.Content,
-                    Value = GetDefaultRootNode().Id.ToString()
+                    Value = GetDefaultRootNode().Key.ToString("D").ToUpper()
                 }
             };
 

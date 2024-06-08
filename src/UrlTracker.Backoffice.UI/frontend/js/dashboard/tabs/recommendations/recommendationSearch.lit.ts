@@ -1,10 +1,9 @@
-import { ensureExists } from '@/util/tools/existancecheck';
-import { UUIInputEvent } from '@umbraco-ui/uui';
 import { LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 import { debounce } from '../../../util/functions/debounce';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
+import { UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
 
 @customElement('urltracker-recommendation-search')
 export class UrlTrackerRecommendationSearch extends UmbElementMixin(LitElement) {
@@ -20,7 +19,7 @@ export class UrlTrackerRecommendationSearch extends UmbElementMixin(LitElement) 
   }
 
   private async localizePlaceholderText(): Promise<void> {
-    const actionsText = await this.localize.term('urlTrackerRecommendationFilter_search-placeholder');
+    const actionsText = this.localize.term('urlTrackerRecommendationFilter_search-placeholder');
 
     this._placeholderText = actionsText ?? this._placeholderText;
   }

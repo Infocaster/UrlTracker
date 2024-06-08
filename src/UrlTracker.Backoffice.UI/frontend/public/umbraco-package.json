@@ -8,7 +8,7 @@
       "type": "entryPoint",
       "name": "URL Tracker entrypoint",
       "alias": "UrlTracker.Entrypoint",
-      "js": "/App_Plugins/UrlTracker/frontend.js"
+      "js": "/App_Plugins/UrlTracker/urltracker.js"
     }
   ]
 }

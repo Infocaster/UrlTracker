@@ -3,60 +3,19 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type {
-  GetApiV1UrlTrackerLandingPageMetricResponse,
-  GetApiV1UrlTrackerNotificationsByAliasData,
-  GetApiV1UrlTrackerNotificationsByAliasResponse,
-  GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistoryData,
-  GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistoryResponse,
-  GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrersData,
-  GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrersResponse,
-  GetApiV1UrlTrackerRecommendationsData,
-  GetApiV1UrlTrackerRecommendationsResponse,
-  PostApiV1UrlTrackerRecommendationsByRecommendationIdData,
-  PostApiV1UrlTrackerRecommendationsByRecommendationIdResponse,
-  PostApiV1UrlTrackerRecommendationsByRecommendationIdDeleteData,
-  PostApiV1UrlTrackerRecommendationsByRecommendationIdDeleteResponse,
-  PostApiV1UrlTrackerRecommendationsUpdatebulkData,
-  PostApiV1UrlTrackerRecommendationsUpdatebulkResponse,
-  GetApiV1UrlTrackerRedirectImportExportResponse,
-  GetApiV1UrlTrackerRedirectImportExportexampleResponse,
-  PostApiV1UrlTrackerRedirectImportImportData,
-  PostApiV1UrlTrackerRedirectImportImportResponse,
-  GetApiV1UrlTrackerRedirectTargetContentData,
-  GetApiV1UrlTrackerRedirectTargetContentResponse,
-  PostApiV1UrlTrackerRedirectsData,
-  PostApiV1UrlTrackerRedirectsResponse,
-  GetApiV1UrlTrackerRedirectsData,
-  GetApiV1UrlTrackerRedirectsResponse,
-  GetApiV1UrlTrackerRedirectsByRedirectIdData,
-  GetApiV1UrlTrackerRedirectsByRedirectIdResponse,
-  PostApiV1UrlTrackerRedirectsByRedirectIdData,
-  PostApiV1UrlTrackerRedirectsByRedirectIdResponse,
-  PostApiV1UrlTrackerRedirectsByRedirectIdDeleteData,
-  PostApiV1UrlTrackerRedirectsByRedirectIdDeleteResponse,
-  PostApiV1UrlTrackerRedirectsDeletebulkData,
-  PostApiV1UrlTrackerRedirectsDeletebulkResponse,
-  PostApiV1UrlTrackerRedirectsUpdatebulkData,
-  PostApiV1UrlTrackerRedirectsUpdatebulkResponse,
-  GetApiV1UrlTrackerScoringRedactionscoresResponse,
-  GetApiV1UrlTrackerScoringScoreparametersResponse,
-} from './types.gen';
+import type { GetApiV1UrlTrackerLandingPageMetricResponse, GetApiV1UrlTrackerNotificationsByAliasData, GetApiV1UrlTrackerNotificationsByAliasResponse, GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistoryData, GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistoryResponse, GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrersData, GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrersResponse, GetApiV1UrlTrackerRecommendationsData, GetApiV1UrlTrackerRecommendationsResponse, PostApiV1UrlTrackerRecommendationsByRecommendationIdData, PostApiV1UrlTrackerRecommendationsByRecommendationIdResponse, PostApiV1UrlTrackerRecommendationsByRecommendationIdDeleteData, PostApiV1UrlTrackerRecommendationsByRecommendationIdDeleteResponse, PostApiV1UrlTrackerRecommendationsUpdatebulkData, PostApiV1UrlTrackerRecommendationsUpdatebulkResponse, GetApiV1UrlTrackerRedirectImportExportResponse, GetApiV1UrlTrackerRedirectImportExportexampleResponse, PostApiV1UrlTrackerRedirectImportImportData, PostApiV1UrlTrackerRedirectImportImportResponse, GetApiV1UrlTrackerRedirectStrategyContentData, GetApiV1UrlTrackerRedirectStrategyContentResponse, GetApiV1UrlTrackerRedirectStrategySourcesResponse, GetApiV1UrlTrackerRedirectStrategyTargetsResponse, PostApiV1UrlTrackerRedirectsData, PostApiV1UrlTrackerRedirectsResponse, GetApiV1UrlTrackerRedirectsData, GetApiV1UrlTrackerRedirectsResponse, GetApiV1UrlTrackerRedirectsByRedirectIdData, GetApiV1UrlTrackerRedirectsByRedirectIdResponse, PostApiV1UrlTrackerRedirectsByRedirectIdData, PostApiV1UrlTrackerRedirectsByRedirectIdResponse, PostApiV1UrlTrackerRedirectsByRedirectIdDeleteData, PostApiV1UrlTrackerRedirectsByRedirectIdDeleteResponse, PostApiV1UrlTrackerRedirectsDeletebulkData, PostApiV1UrlTrackerRedirectsDeletebulkResponse, PostApiV1UrlTrackerRedirectsUpdatebulkData, PostApiV1UrlTrackerRedirectsUpdatebulkResponse, GetApiV1UrlTrackerScoringRedactionscoresResponse, GetApiV1UrlTrackerScoringScoreparametersResponse } from './types.gen';
 
 /**
  * @returns unknown OK
  * @throws ApiError
  */
-export const getApiV1UrlTrackerLandingPageMetric =
-  (): CancelablePromise<GetApiV1UrlTrackerLandingPageMetricResponse> => {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/UrlTracker/LandingPage/metric',
-      errors: {
-        401: 'The resource is protected and requires an authentication token',
-      },
-    });
-  };
+export const getApiV1UrlTrackerLandingPageMetric = (): CancelablePromise<GetApiV1UrlTrackerLandingPageMetricResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v1/UrlTracker/LandingPage/metric',
+    errors: {
+        401: 'The resource is protected and requires an authentication token'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -64,20 +23,16 @@ export const getApiV1UrlTrackerLandingPageMetric =
  * @returns unknown OK
  * @throws ApiError
  */
-export const getApiV1UrlTrackerNotificationsByAlias = (
-  data: GetApiV1UrlTrackerNotificationsByAliasData,
-): CancelablePromise<GetApiV1UrlTrackerNotificationsByAliasResponse> => {
-  return __request(OpenAPI, {
+export const getApiV1UrlTrackerNotificationsByAlias = (data: GetApiV1UrlTrackerNotificationsByAliasData): CancelablePromise<GetApiV1UrlTrackerNotificationsByAliasResponse> => { return __request(OpenAPI, {
     method: 'GET',
     url: '/api/v1/UrlTracker/Notifications/{alias}',
     path: {
-      alias: data.alias,
+        alias: data.alias
     },
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -86,24 +41,20 @@ export const getApiV1UrlTrackerNotificationsByAlias = (
  * @returns unknown OK
  * @throws ApiError
  */
-export const getApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistory = (
-  data: GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistoryData,
-): CancelablePromise<GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistoryResponse> => {
-  return __request(OpenAPI, {
+export const getApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistory = (data: GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistoryData): CancelablePromise<GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistoryResponse> => { return __request(OpenAPI, {
     method: 'GET',
     url: '/api/v1/UrlTracker/RecommendationAnalysis/{recommendationId}/history',
     path: {
-      recommendationId: data.recommendationId,
+        recommendationId: data.recommendationId
     },
     query: {
-      pastDays: data.pastDays,
+        pastDays: data.pastDays
     },
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-      404: 'Not Found',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token',
+        404: 'Not Found'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -111,21 +62,17 @@ export const getApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistory =
  * @returns unknown OK
  * @throws ApiError
  */
-export const getApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrers = (
-  data: GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrersData,
-): CancelablePromise<GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrersResponse> => {
-  return __request(OpenAPI, {
+export const getApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrers = (data: GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrersData): CancelablePromise<GetApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrersResponse> => { return __request(OpenAPI, {
     method: 'GET',
     url: '/api/v1/UrlTracker/RecommendationAnalysis/{recommendationId}/referrers',
     path: {
-      recommendationId: data.recommendationId,
+        recommendationId: data.recommendationId
     },
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-      404: 'Not Found',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token',
+        404: 'Not Found'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -138,25 +85,21 @@ export const getApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrers
  * @returns unknown OK
  * @throws ApiError
  */
-export const getApiV1UrlTrackerRecommendations = (
-  data: GetApiV1UrlTrackerRecommendationsData,
-): CancelablePromise<GetApiV1UrlTrackerRecommendationsResponse> => {
-  return __request(OpenAPI, {
+export const getApiV1UrlTrackerRecommendations = (data: GetApiV1UrlTrackerRecommendationsData): CancelablePromise<GetApiV1UrlTrackerRecommendationsResponse> => { return __request(OpenAPI, {
     method: 'GET',
     url: '/api/v1/UrlTracker/Recommendations',
     query: {
-      Query: data.query,
-      Types: data.types,
-      OrderBy: data.orderBy,
-      Desc: data.desc,
-      Page: data.page,
-      PageSize: data.pageSize,
+        Query: data.query,
+        Types: data.types,
+        OrderBy: data.orderBy,
+        Desc: data.desc,
+        Page: data.page,
+        PageSize: data.pageSize
     },
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -165,23 +108,19 @@ export const getApiV1UrlTrackerRecommendations = (
  * @returns unknown OK
  * @throws ApiError
  */
-export const postApiV1UrlTrackerRecommendationsByRecommendationId = (
-  data: PostApiV1UrlTrackerRecommendationsByRecommendationIdData,
-): CancelablePromise<PostApiV1UrlTrackerRecommendationsByRecommendationIdResponse> => {
-  return __request(OpenAPI, {
+export const postApiV1UrlTrackerRecommendationsByRecommendationId = (data: PostApiV1UrlTrackerRecommendationsByRecommendationIdData): CancelablePromise<PostApiV1UrlTrackerRecommendationsByRecommendationIdResponse> => { return __request(OpenAPI, {
     method: 'POST',
     url: '/api/v1/UrlTracker/Recommendations/{recommendationId}',
     path: {
-      recommendationId: data.recommendationId,
+        recommendationId: data.recommendationId
     },
     body: data.requestBody,
     mediaType: 'application/json',
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-      404: 'Not Found',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token',
+        404: 'Not Found'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -189,21 +128,17 @@ export const postApiV1UrlTrackerRecommendationsByRecommendationId = (
  * @returns unknown OK
  * @throws ApiError
  */
-export const postApiV1UrlTrackerRecommendationsByRecommendationIdDelete = (
-  data: PostApiV1UrlTrackerRecommendationsByRecommendationIdDeleteData,
-): CancelablePromise<PostApiV1UrlTrackerRecommendationsByRecommendationIdDeleteResponse> => {
-  return __request(OpenAPI, {
+export const postApiV1UrlTrackerRecommendationsByRecommendationIdDelete = (data: PostApiV1UrlTrackerRecommendationsByRecommendationIdDeleteData): CancelablePromise<PostApiV1UrlTrackerRecommendationsByRecommendationIdDeleteResponse> => { return __request(OpenAPI, {
     method: 'POST',
     url: '/api/v1/UrlTracker/Recommendations/{recommendationId}/delete',
     path: {
-      recommendationId: data.recommendationId,
+        recommendationId: data.recommendationId
     },
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-      404: 'Not Found',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token',
+        404: 'Not Found'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -211,50 +146,40 @@ export const postApiV1UrlTrackerRecommendationsByRecommendationIdDelete = (
  * @returns unknown OK
  * @throws ApiError
  */
-export const postApiV1UrlTrackerRecommendationsUpdatebulk = (
-  data: PostApiV1UrlTrackerRecommendationsUpdatebulkData = {},
-): CancelablePromise<PostApiV1UrlTrackerRecommendationsUpdatebulkResponse> => {
-  return __request(OpenAPI, {
+export const postApiV1UrlTrackerRecommendationsUpdatebulk = (data: PostApiV1UrlTrackerRecommendationsUpdatebulkData = {}): CancelablePromise<PostApiV1UrlTrackerRecommendationsUpdatebulkResponse> => { return __request(OpenAPI, {
     method: 'POST',
     url: '/api/v1/UrlTracker/Recommendations/updatebulk',
     body: data.requestBody,
     mediaType: 'application/json',
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-      404: 'Not Found',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token',
+        404: 'Not Found'
+    }
+}); };
 
 /**
  * @returns unknown OK
  * @throws ApiError
  */
-export const getApiV1UrlTrackerRedirectImportExport =
-  (): CancelablePromise<GetApiV1UrlTrackerRedirectImportExportResponse> => {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/UrlTracker/RedirectImport/export',
-      errors: {
-        401: 'The resource is protected and requires an authentication token',
-      },
-    });
-  };
+export const getApiV1UrlTrackerRedirectImportExport = (): CancelablePromise<GetApiV1UrlTrackerRedirectImportExportResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v1/UrlTracker/RedirectImport/export',
+    errors: {
+        401: 'The resource is protected and requires an authentication token'
+    }
+}); };
 
 /**
  * @returns unknown OK
  * @throws ApiError
  */
-export const getApiV1UrlTrackerRedirectImportExportexample =
-  (): CancelablePromise<GetApiV1UrlTrackerRedirectImportExportexampleResponse> => {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/UrlTracker/RedirectImport/exportexample',
-      errors: {
-        401: 'The resource is protected and requires an authentication token',
-      },
-    });
-  };
+export const getApiV1UrlTrackerRedirectImportExportexample = (): CancelablePromise<GetApiV1UrlTrackerRedirectImportExportexampleResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v1/UrlTracker/RedirectImport/exportexample',
+    errors: {
+        401: 'The resource is protected and requires an authentication token'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -262,20 +187,16 @@ export const getApiV1UrlTrackerRedirectImportExportexample =
  * @returns number OK
  * @throws ApiError
  */
-export const postApiV1UrlTrackerRedirectImportImport = (
-  data: PostApiV1UrlTrackerRedirectImportImportData = {},
-): CancelablePromise<PostApiV1UrlTrackerRedirectImportImportResponse> => {
-  return __request(OpenAPI, {
+export const postApiV1UrlTrackerRedirectImportImport = (data: PostApiV1UrlTrackerRedirectImportImportData = {}): CancelablePromise<PostApiV1UrlTrackerRedirectImportImportResponse> => { return __request(OpenAPI, {
     method: 'POST',
     url: '/api/v1/UrlTracker/RedirectImport/import',
     formData: data.formData,
     mediaType: 'multipart/form-data',
     errors: {
-      400: 'Bad Request',
-      401: 'The resource is protected and requires an authentication token',
-    },
-  });
-};
+        400: 'Bad Request',
+        401: 'The resource is protected and requires an authentication token'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -284,22 +205,42 @@ export const postApiV1UrlTrackerRedirectImportImport = (
  * @returns unknown OK
  * @throws ApiError
  */
-export const getApiV1UrlTrackerRedirectTargetContent = (
-  data: GetApiV1UrlTrackerRedirectTargetContentData,
-): CancelablePromise<GetApiV1UrlTrackerRedirectTargetContentResponse> => {
-  return __request(OpenAPI, {
+export const getApiV1UrlTrackerRedirectStrategyContent = (data: GetApiV1UrlTrackerRedirectStrategyContentData): CancelablePromise<GetApiV1UrlTrackerRedirectStrategyContentResponse> => { return __request(OpenAPI, {
     method: 'GET',
-    url: '/api/v1/UrlTracker/RedirectTarget/content',
+    url: '/api/v1/UrlTracker/RedirectStrategy/content',
     query: {
-      Id: data.id,
-      Culture: data.culture,
+        Id: data.id,
+        Culture: data.culture
     },
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-      404: 'Not Found',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token',
+        404: 'Not Found'
+    }
+}); };
+
+/**
+ * @returns unknown OK
+ * @throws ApiError
+ */
+export const getApiV1UrlTrackerRedirectStrategySources = (): CancelablePromise<GetApiV1UrlTrackerRedirectStrategySourcesResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v1/UrlTracker/RedirectStrategy/sources',
+    errors: {
+        401: 'The resource is protected and requires an authentication token'
+    }
+}); };
+
+/**
+ * @returns unknown OK
+ * @throws ApiError
+ */
+export const getApiV1UrlTrackerRedirectStrategyTargets = (): CancelablePromise<GetApiV1UrlTrackerRedirectStrategyTargetsResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v1/UrlTracker/RedirectStrategy/targets',
+    errors: {
+        401: 'The resource is protected and requires an authentication token'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -307,19 +248,15 @@ export const getApiV1UrlTrackerRedirectTargetContent = (
  * @returns unknown OK
  * @throws ApiError
  */
-export const postApiV1UrlTrackerRedirects = (
-  data: PostApiV1UrlTrackerRedirectsData = {},
-): CancelablePromise<PostApiV1UrlTrackerRedirectsResponse> => {
-  return __request(OpenAPI, {
+export const postApiV1UrlTrackerRedirects = (data: PostApiV1UrlTrackerRedirectsData = {}): CancelablePromise<PostApiV1UrlTrackerRedirectsResponse> => { return __request(OpenAPI, {
     method: 'POST',
     url: '/api/v1/UrlTracker/Redirects',
     body: data.requestBody,
     mediaType: 'application/json',
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -331,24 +268,20 @@ export const postApiV1UrlTrackerRedirects = (
  * @returns unknown OK
  * @throws ApiError
  */
-export const getApiV1UrlTrackerRedirects = (
-  data: GetApiV1UrlTrackerRedirectsData,
-): CancelablePromise<GetApiV1UrlTrackerRedirectsResponse> => {
-  return __request(OpenAPI, {
+export const getApiV1UrlTrackerRedirects = (data: GetApiV1UrlTrackerRedirectsData): CancelablePromise<GetApiV1UrlTrackerRedirectsResponse> => { return __request(OpenAPI, {
     method: 'GET',
     url: '/api/v1/UrlTracker/Redirects',
     query: {
-      Query: data.query,
-      Types: data.types,
-      SourceTypes: data.sourceTypes,
-      Page: data.page,
-      PageSize: data.pageSize,
+        Query: data.query,
+        Types: data.types,
+        SourceTypes: data.sourceTypes,
+        Page: data.page,
+        PageSize: data.pageSize
     },
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -356,21 +289,17 @@ export const getApiV1UrlTrackerRedirects = (
  * @returns unknown OK
  * @throws ApiError
  */
-export const getApiV1UrlTrackerRedirectsByRedirectId = (
-  data: GetApiV1UrlTrackerRedirectsByRedirectIdData,
-): CancelablePromise<GetApiV1UrlTrackerRedirectsByRedirectIdResponse> => {
-  return __request(OpenAPI, {
+export const getApiV1UrlTrackerRedirectsByRedirectId = (data: GetApiV1UrlTrackerRedirectsByRedirectIdData): CancelablePromise<GetApiV1UrlTrackerRedirectsByRedirectIdResponse> => { return __request(OpenAPI, {
     method: 'GET',
     url: '/api/v1/UrlTracker/Redirects/{redirectId}',
     path: {
-      redirectId: data.redirectId,
+        redirectId: data.redirectId
     },
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-      404: 'Not Found',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token',
+        404: 'Not Found'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -379,23 +308,19 @@ export const getApiV1UrlTrackerRedirectsByRedirectId = (
  * @returns unknown OK
  * @throws ApiError
  */
-export const postApiV1UrlTrackerRedirectsByRedirectId = (
-  data: PostApiV1UrlTrackerRedirectsByRedirectIdData,
-): CancelablePromise<PostApiV1UrlTrackerRedirectsByRedirectIdResponse> => {
-  return __request(OpenAPI, {
+export const postApiV1UrlTrackerRedirectsByRedirectId = (data: PostApiV1UrlTrackerRedirectsByRedirectIdData): CancelablePromise<PostApiV1UrlTrackerRedirectsByRedirectIdResponse> => { return __request(OpenAPI, {
     method: 'POST',
     url: '/api/v1/UrlTracker/Redirects/{redirectId}',
     path: {
-      redirectId: data.redirectId,
+        redirectId: data.redirectId
     },
     body: data.requestBody,
     mediaType: 'application/json',
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-      404: 'Not Found',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token',
+        404: 'Not Found'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -403,21 +328,17 @@ export const postApiV1UrlTrackerRedirectsByRedirectId = (
  * @returns unknown OK
  * @throws ApiError
  */
-export const postApiV1UrlTrackerRedirectsByRedirectIdDelete = (
-  data: PostApiV1UrlTrackerRedirectsByRedirectIdDeleteData,
-): CancelablePromise<PostApiV1UrlTrackerRedirectsByRedirectIdDeleteResponse> => {
-  return __request(OpenAPI, {
+export const postApiV1UrlTrackerRedirectsByRedirectIdDelete = (data: PostApiV1UrlTrackerRedirectsByRedirectIdDeleteData): CancelablePromise<PostApiV1UrlTrackerRedirectsByRedirectIdDeleteResponse> => { return __request(OpenAPI, {
     method: 'POST',
     url: '/api/v1/UrlTracker/Redirects/{redirectId}/delete',
     path: {
-      redirectId: data.redirectId,
+        redirectId: data.redirectId
     },
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-      404: 'Not Found',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token',
+        404: 'Not Found'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -425,21 +346,17 @@ export const postApiV1UrlTrackerRedirectsByRedirectIdDelete = (
  * @returns string No Content
  * @throws ApiError
  */
-export const postApiV1UrlTrackerRedirectsDeletebulk = (
-  data: PostApiV1UrlTrackerRedirectsDeletebulkData = {},
-): CancelablePromise<PostApiV1UrlTrackerRedirectsDeletebulkResponse> => {
-  return __request(OpenAPI, {
+export const postApiV1UrlTrackerRedirectsDeletebulk = (data: PostApiV1UrlTrackerRedirectsDeletebulkData = {}): CancelablePromise<PostApiV1UrlTrackerRedirectsDeletebulkResponse> => { return __request(OpenAPI, {
     method: 'POST',
     url: '/api/v1/UrlTracker/Redirects/deletebulk',
     body: data.requestBody,
     mediaType: 'application/json',
     responseHeader: 'Umb-Notifications',
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-      404: 'Not Found',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token',
+        404: 'Not Found'
+    }
+}); };
 
 /**
  * @param data The data for the request.
@@ -447,47 +364,37 @@ export const postApiV1UrlTrackerRedirectsDeletebulk = (
  * @returns unknown OK
  * @throws ApiError
  */
-export const postApiV1UrlTrackerRedirectsUpdatebulk = (
-  data: PostApiV1UrlTrackerRedirectsUpdatebulkData = {},
-): CancelablePromise<PostApiV1UrlTrackerRedirectsUpdatebulkResponse> => {
-  return __request(OpenAPI, {
+export const postApiV1UrlTrackerRedirectsUpdatebulk = (data: PostApiV1UrlTrackerRedirectsUpdatebulkData = {}): CancelablePromise<PostApiV1UrlTrackerRedirectsUpdatebulkResponse> => { return __request(OpenAPI, {
     method: 'POST',
     url: '/api/v1/UrlTracker/Redirects/updatebulk',
     body: data.requestBody,
     mediaType: 'application/json',
     errors: {
-      401: 'The resource is protected and requires an authentication token',
-      404: 'Not Found',
-    },
-  });
-};
+        401: 'The resource is protected and requires an authentication token',
+        404: 'Not Found'
+    }
+}); };
 
 /**
  * @returns unknown OK
  * @throws ApiError
  */
-export const getApiV1UrlTrackerScoringRedactionscores =
-  (): CancelablePromise<GetApiV1UrlTrackerScoringRedactionscoresResponse> => {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/UrlTracker/Scoring/redactionscores',
-      errors: {
-        401: 'The resource is protected and requires an authentication token',
-      },
-    });
-  };
+export const getApiV1UrlTrackerScoringRedactionscores = (): CancelablePromise<GetApiV1UrlTrackerScoringRedactionscoresResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v1/UrlTracker/Scoring/redactionscores',
+    errors: {
+        401: 'The resource is protected and requires an authentication token'
+    }
+}); };
 
 /**
  * @returns unknown OK
  * @throws ApiError
  */
-export const getApiV1UrlTrackerScoringScoreparameters =
-  (): CancelablePromise<GetApiV1UrlTrackerScoringScoreparametersResponse> => {
-    return __request(OpenAPI, {
-      method: 'GET',
-      url: '/api/v1/UrlTracker/Scoring/scoreparameters',
-      errors: {
-        401: 'The resource is protected and requires an authentication token',
-      },
-    });
-  };
+export const getApiV1UrlTrackerScoringScoreparameters = (): CancelablePromise<GetApiV1UrlTrackerScoringScoreparametersResponse> => { return __request(OpenAPI, {
+    method: 'GET',
+    url: '/api/v1/UrlTracker/Scoring/scoreparameters',
+    errors: {
+        401: 'The resource is protected and requires an authentication token'
+    }
+}); };

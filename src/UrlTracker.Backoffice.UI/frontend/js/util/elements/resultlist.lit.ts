@@ -1,11 +1,10 @@
 import { LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
-import { consume } from '@lit/context';
 import { customElement, property } from 'lit/decorators.js';
-import '@umbraco-ui/uui';
+import '@umbraco-cms/backoffice/external/uui';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 
 @customElement('urltracker-result-list')
-export class UrlTrackerResultList extends UmbElementMixin(LitElement) {
+export default class UrlTrackerResultList extends UmbElementMixin(LitElement) {
   @property({ type: Boolean })
   public loading: boolean = false;
 
@@ -53,4 +52,10 @@ export class UrlTrackerResultList extends UmbElementMixin(LitElement) {
       border-top-right-radius: 0;
     }
   `;
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'urltracker-result-list': UrlTrackerResultList;
+  }
 }

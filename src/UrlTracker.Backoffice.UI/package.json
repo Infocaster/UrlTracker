@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@lit/context": "^1.1.1",
+    "axios": "^1.7.2",
     "chart.js": "^4.4.3",
     "qs": "^6.12.1"
   },

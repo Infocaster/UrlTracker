@@ -1,8 +1,6 @@
 import { ITargetStrategies } from '@/dashboard/tabs/redirects/target/target.constants';
 import { debounce } from '@/util/functions/debounce';
-import variableresourceService from '@/util/tools/variableresource.service';
-import { consume } from '@lit/context';
-import { UUIInputEvent } from '@umbraco-ui/uui';
+import { UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
 import { LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
@@ -14,10 +12,10 @@ import { colors } from '@/dashboard/tabs/styles';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { UMB_MODAL_MANAGER_CONTEXT, UmbModalManagerContext } from '@umbraco-cms/backoffice/modal';
 import { ensureServiceExists } from '@/util/tools/existancecheck';
-import { UMB_TREE_PICKER_MODAL } from '@umbraco-cms/backoffice/tree';
-import { ContentTargetResponse, getApiV1UrlTrackerRedirectTargetContent } from '@/api';
+import { ContentTargetResponse, getApiV1UrlTrackerRedirectStrategyContent } from '@/api';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 import { UMB_DOCUMENT_PICKER_MODAL } from '@umbraco-cms/backoffice/document';
+import variableresourceService from '@/util/tools/variableresource.service';
 
 @customElement('urltracker-redirect-outgoing-url')
 export class UrlTrackerRedirectOutgoingUrl extends UmbElementMixin(LitElement) {
@@ -69,7 +67,7 @@ export class UrlTrackerRedirectOutgoingUrl extends UmbElementMixin(LitElement) {
     },
   ] as ITypeButton[];
 
-  private contentItem: (ContentTargetResponse & { id: number }) | undefined = undefined;
+  private contentItem: (ContentTargetResponse & { id: string }) | undefined = undefined;
   private url: string = '';
 
   @state()
@@ -96,10 +94,10 @@ export class UrlTrackerRedirectOutgoingUrl extends UmbElementMixin(LitElement) {
         const intId = Number.parseInt(id, 10);
 
         if (!isNaN(intId)) {
-          const { data, error } = await tryExecuteAndNotify(
+          const { data } = await tryExecuteAndNotify(
             this,
-            getApiV1UrlTrackerRedirectTargetContent({
-              id: Number.parseInt(id, 10),
+            getApiV1UrlTrackerRedirectStrategyContent({
+              id: id,
               culture: culture,
             }),
           );
@@ -107,7 +105,7 @@ export class UrlTrackerRedirectOutgoingUrl extends UmbElementMixin(LitElement) {
           if (data) {
             this.contentItem = {
               ...data,
-              id: Number.parseInt(id, 10),
+              id: id,
             };
           }
         }
@@ -159,7 +157,7 @@ export class UrlTrackerRedirectOutgoingUrl extends UmbElementMixin(LitElement) {
 
     const { data, error } = await tryExecuteAndNotify(
       this,
-      getApiV1UrlTrackerRedirectTargetContent({ id: selectedItem }),
+      getApiV1UrlTrackerRedirectStrategyContent({ id: selectedItem }),
     );
     if (!data) {
       this.contentItem = undefined;

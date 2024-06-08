@@ -7,10 +7,11 @@ namespace UrlTracker.Resources.Testing.Objects
 {
     public static class TestPublishedContent
     {
-        public static IPublishedContent Create(int id, PublishedItemType itemType = PublishedItemType.Content, bool addDefaultCulture = true)
+        public static IPublishedContent Create(int id, Guid key, PublishedItemType itemType = PublishedItemType.Content, bool addDefaultCulture = true)
         {
             var contentMock = new Mock<IPublishedContent>();
             contentMock.Setup(x => x.Id).Returns(id);
+            contentMock.Setup(x => x.Key).Returns(key);
             contentMock.Setup(x => x.ItemType).Returns(itemType);
             if (addDefaultCulture)
             {

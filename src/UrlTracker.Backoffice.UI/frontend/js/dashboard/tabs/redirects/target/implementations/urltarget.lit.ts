@@ -1,7 +1,7 @@
 import { LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
 import { UrlTrackerRedirectTarget } from '../targetbase.mixin';
 import { customElement } from 'lit/decorators.js';
-import '@umbraco-ui/uui';
+import '@umbraco-cms/backoffice/external/uui';
 
 const baseType = UrlTrackerRedirectTarget(LitElement, 'urlTrackerRedirectTarget_url');
 

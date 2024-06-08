@@ -51,6 +51,9 @@ namespace UrlTracker.Core.Abstractions
         public IPublishedContent? GetContentById(int id)
             => _cref.UmbracoContext.Content?.GetById(id);
 
+        public IPublishedContent? GetContentById(Guid key)
+            => _cref.UmbracoContext.Content?.GetById(key);
+
         public string GetUrl(IPublishedContent content, UrlMode mode, string? culture)
             => content.Url(_urlProvider, culture, mode);
 

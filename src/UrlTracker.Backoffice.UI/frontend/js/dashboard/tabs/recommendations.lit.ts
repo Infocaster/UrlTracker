@@ -6,7 +6,7 @@ import { ensureExists, ensureServiceExists } from '../../util/tools/existanceche
 import { UrlTrackerNotificationWrapper } from '../notifications/notifications.mixin';
 
 import variableresourceService from '@/util/tools/variableresource.service';
-import { consume, provide } from '@lit/context';
+import { provide } from '@lit/context';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { IChangeManager, changeManagerContext } from '../../context/changemanager.context';
@@ -37,7 +37,7 @@ import {
 import { URLTRACKER_ANALYSE_RECOMMENDATION_MODAL } from '../sidebars/analyseRecommendation/manifest';
 
 @customElement('urltracker-recommendations-tab')
-export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(LitElement, 'recommendations') {
+export default class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(LitElement, 'recommendations') {
   private _notificationContext: UmbNotificationContext | undefined;
   private get notificationContext(): UmbNotificationContext {
     ensureServiceExists(this._notificationContext, 'notificationContext');

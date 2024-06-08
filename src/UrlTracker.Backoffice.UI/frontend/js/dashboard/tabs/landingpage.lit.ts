@@ -5,6 +5,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { UrlTrackerNotificationWrapper } from '../notifications/notifications.mixin';
 import './redirects/redirectitem.lit';
+import '@/util/elements/resultlist.lit';
 import { ISourceStrategies } from './redirects/source/source.constants';
 import { ITargetStrategies } from './redirects/target/target.constants';
 import { createNewRedirectOptions } from '../sidebars/simpleRedirect/manageredirect';
@@ -31,7 +32,7 @@ import { URLTRACKER_SCORING_CONTEXT } from '@/services/scoring/contexttoken';
 import ScoringService from '@/services/scoring/scoring.service';
 
 @customElement('urltracker-landing-tab')
-export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitElement, 'landingpage') {
+export default class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitElement, 'landingpage') {
   private _modalManager?: UmbModalManagerContext | undefined;
   public get modalManager(): UmbModalManagerContext {
     ensureServiceExists(this._modalManager, 'modalManager');

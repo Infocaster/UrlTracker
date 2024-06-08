@@ -10,7 +10,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
 {
     public class RedirectTestBase : BackofficeIntegrationTestBase
     {
-        protected const string _endpointBase = "/umbraco/backoffice/urltracker/redirects";
+        protected const string _endpointBase = "/api/v1/urltracker/redirects";
 
         public UmbracoContextReference ContextReference { get; private set; } = null!;
         protected IUmbracoContext UmbracoContext => ContextReference.UmbracoContext;

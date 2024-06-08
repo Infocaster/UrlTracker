@@ -1,5 +1,5 @@
 import { ensureExists } from '@/util/tools/existancecheck';
-import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui';
+import { UUIInputElement, UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
 import { LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';

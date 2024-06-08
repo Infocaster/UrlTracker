@@ -42,7 +42,7 @@ import { URLTRACKER_EDIT_REDIRECT_MODAL } from '../sidebars/simpleRedirect/manif
 import { blobDownload } from '@umbraco-cms/backoffice/utils';
 
 @customElement('urltracker-redirect-tab')
-export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElement) {
+export default class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElement) {
   private _notificationContext: UmbNotificationContext | undefined;
   private get notificationContext(): UmbNotificationContext {
     ensureServiceExists(this._notificationContext, 'notificationContext');

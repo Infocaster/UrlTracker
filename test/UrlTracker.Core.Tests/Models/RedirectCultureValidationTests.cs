@@ -51,7 +51,7 @@ namespace UrlTracker.Core.Tests.Models
             var redirect = new Redirect
             {
                 Source = new UrlSourceStrategy("http://example.com"),
-                Target = new ContentPageTargetStrategy(TestPublishedContent.Create(1), input),
+                Target = new ContentPageTargetStrategy(TestPublishedContent.Create(1, Guid.Parse("bf4fa97e-7021-4ddf-b39b-f943d910fb53")), input),
             };
 
             // act

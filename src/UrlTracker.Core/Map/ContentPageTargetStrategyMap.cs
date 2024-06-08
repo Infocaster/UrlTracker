@@ -24,14 +24,14 @@ namespace UrlTracker.Core.Map
             string? culture = components.Length > 1 ? components[1] : null;
 
             using var cref = _umbracoContextFactory.EnsureUmbracoContext();
-            var content = cref.GetContentById(int.Parse(components[0]));
+            var content = cref.GetContentById(Guid.Parse(components[0]));
 
             return new ContentPageTargetStrategy(content, culture);
         }
 
         protected override EntityStrategy Convert(ContentPageTargetStrategy strategy)
         {
-            var value = strategy.Content?.Id.ToString() ?? throw new ArgumentException("When converting to a simplified model, the content item must exist", nameof(strategy));
+            var value = strategy.Content?.Key.ToString("D").ToUpper() ?? throw new ArgumentException("When converting to a simplified model, the content item must exist", nameof(strategy));
 
             if (strategy.Culture != null)
                 value += ";" + strategy.Culture;

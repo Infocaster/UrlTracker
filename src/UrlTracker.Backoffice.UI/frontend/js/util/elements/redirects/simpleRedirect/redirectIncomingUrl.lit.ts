@@ -1,8 +1,7 @@
 import { ISourceStrategies } from '@/dashboard/tabs/redirects/source/source.constants';
 import { debounce } from '@/util/functions/debounce';
 import variableresourceService from '@/util/tools/variableresource.service';
-import { consume } from '@lit/context';
-import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui';
+import { UUIInputElement, UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
 import { LitElement, css, html, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
@@ -14,9 +13,6 @@ import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 export class UrlTrackerRedirectIncomingUrl extends UmbElementMixin(LitElement) {
   @property({ type: String })
   private incomingUrl: string = '';
-
-  @property({ type: String })
-  private incomingStrategy: string = 'url';
 
   @property({ type: Boolean })
   private advancedView: boolean = false;
@@ -78,7 +74,7 @@ export class UrlTrackerRedirectIncomingUrl extends UmbElementMixin(LitElement) {
   };
 
   private _localizeButtonLabels = async () => {
-    this._typeButtons = this._typeButtons.map((item, index) => ({
+    this._typeButtons = this._typeButtons.map((item) => ({
       ...item,
       label: this.localize.term(item.label) ?? item.labelFallback,
     }));

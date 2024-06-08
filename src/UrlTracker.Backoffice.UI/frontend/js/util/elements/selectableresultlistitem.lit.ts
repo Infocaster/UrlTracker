@@ -1,5 +1,5 @@
 import { ContextProvider, createContext } from '@lit/context';
-import { UUIBooleanInputEvent } from '@umbraco-ui/uui';
+import { UUIBooleanInputEvent } from '@umbraco-cms/backoffice/external/uui';
 import { css, html, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { UrlTrackerResultListItem } from './resultlistitem.lit';
 

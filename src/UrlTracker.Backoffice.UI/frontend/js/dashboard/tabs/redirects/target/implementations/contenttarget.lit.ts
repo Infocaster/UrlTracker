@@ -6,7 +6,7 @@ import { ensureServiceExists } from '../../../../../util/tools/existancecheck';
 import { UrlTrackerRedirectTarget } from '../targetbase.mixin';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { colors } from '@/dashboard/tabs/styles';
-import { ContentTargetResponse, getApiV1UrlTrackerRedirectTargetContent } from '@/api';
+import { ContentTargetResponse, getApiV1UrlTrackerRedirectStrategyContent } from '@/api';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
 
 export class ContentUpdateEvent extends Event {
@@ -87,8 +87,8 @@ export class UrlTrackerContentRedirectTarget extends baseType {
 
       const { data, error } = await tryExecuteAndNotify(
         this,
-        getApiV1UrlTrackerRedirectTargetContent({
-          id: Number.parseInt(id, 10),
+        getApiV1UrlTrackerRedirectStrategyContent({
+          id: id,
           culture: culture,
         }),
       );
@@ -109,22 +109,22 @@ export class UrlTrackerContentRedirectTarget extends baseType {
   private onClick = (e: Event) => {
     e.stopImmediatePropagation();
 
-    const onClose = async () => {
-      this.editorService!.close();
-      await this.init();
-      this.dispatchEvent(new ContentUpdateEvent(this.contentId!, this.contentItem!));
-    };
+    // const onClose = async () => {
+    //   this.editorService!.close();
+    //   await this.init();
+    //   this.dispatchEvent(new ContentUpdateEvent(this.contentId!, this.contentItem!));
+    // };
 
-    this.editorService.contentEditor({
-      id: this.contentId!,
-      create: false,
-      submit: onClose,
-      close: onClose,
-      documentTypeAlias: '',
-      allowPublishAndClose: false,
-      allowSaveAndClose: false,
-      parentId: '',
-    });
+    // this.editorService.contentEditor({
+    //   id: this.contentId!,
+    //   create: false,
+    //   submit: onClose,
+    //   close: onClose,
+    //   documentTypeAlias: '',
+    //   allowPublishAndClose: false,
+    //   allowSaveAndClose: false,
+    //   parentId: '',
+    // });
   };
 
   protected renderBody(): unknown {

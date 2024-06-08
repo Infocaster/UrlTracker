@@ -47,13 +47,13 @@ namespace UrlTracker.Resources.Website.Controllers
         {
             return new EntityStrategy(
                 Core.Defaults.DatabaseSchema.RedirectTargetStrategies.Content,
-                $"{faker.Random.Int(1000, 9999)};{faker.Random.RandomLocale()}");
+                $"{faker.Random.Guid().ToString("D").ToUpper()};{faker.Random.RandomLocale()}");
         }
 
         private static EntityStrategy GenerateMediaTarget(Faker faker)
         {
             return new EntityStrategy(
-                Core.Defaults.DatabaseSchema.RedirectTargetStrategies.Content,
+                Core.Defaults.DatabaseSchema.RedirectTargetStrategies.Media,
                 faker.Random.Int(1000, 9999).ToString());
         }
     }

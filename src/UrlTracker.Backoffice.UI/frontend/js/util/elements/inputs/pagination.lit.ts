@@ -1,4 +1,4 @@
-import '@umbraco-ui/uui';
+import '@umbraco-cms/backoffice/external/uui';
 import { LitElement, css, html } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';

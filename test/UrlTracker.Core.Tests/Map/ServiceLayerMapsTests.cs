@@ -33,9 +33,10 @@ namespace UrlTracker.Core.Tests.Map
         {
             _strategyMapCollectionMock = new Mock<IStrategyMapCollection>();
             _strategyMapCollectionMock.Setup(obj => obj.Map<ISourceStrategy>(It.IsAny<EntityStrategy>())).Returns((EntityStrategy es) => new UrlSourceStrategy(es.Value));
-            _strategyMapCollectionMock.Setup(obj => obj.Map<ITargetStrategy>(It.IsAny<EntityStrategy>())).Returns(new ContentPageTargetStrategy(TestPublishedContent.Create(1234), "en-US"));
+            _strategyMapCollectionMock.Setup(obj => obj.Map<ITargetStrategy>(It.IsAny<EntityStrategy>())).Returns(new ContentPageTargetStrategy(TestPublishedContent.Create(1234, Guid.Parse("bf4fa97e-7021-4ddf-b39b-f943d910fb53")), "en-US"));
             _umbracoContextFactoryAbstractionMock = new UmbracoContextFactoryAbstractionMock();
-            _umbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => TestPublishedContent.Create(id));
+            _umbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<int>())).Returns((int id) => TestPublishedContent.Create(id, Guid.NewGuid()));
+            _umbracoContextFactoryAbstractionMock!.CrefMock.Setup(obj => obj.GetContentById(It.IsAny<Guid>())).Returns((Guid key) => TestPublishedContent.Create(1234, key));
             _mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<ICoreScopeProvider>(), new VoidLogger<UmbracoMapper>());
         }
 
