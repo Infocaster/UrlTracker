@@ -57,8 +57,8 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         {
             var result = new List<RedirectStrategyResponse>
             {
-                new("Url", Core.Defaults.DatabaseSchema.RedirectTargetStrategies.Url),
-                new("Content", Core.Defaults.DatabaseSchema.RedirectTargetStrategies.Content),
+                new("url", Core.Defaults.DatabaseSchema.RedirectTargetStrategies.Url),
+                new("content", Core.Defaults.DatabaseSchema.RedirectTargetStrategies.Content),
             };
 
             return result;

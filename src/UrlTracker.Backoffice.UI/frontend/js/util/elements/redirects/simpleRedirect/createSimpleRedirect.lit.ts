@@ -42,12 +42,12 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
   };
 
   private onIncomingTypeChange = ({ detail }: { detail: ITypeButton }) => {
-    this.redirect.source.strategy = detail.value;
+    this.redirect.source.strategy = detail.value!;
     this.updateRedirect();
   };
 
   private onOutgoingTypeChange = ({ detail }: { detail: ITypeButton }) => {
-    this.redirect.target.strategy = detail.value;
+    this.redirect.target.strategy = detail.value!;
     this.updateRedirect();
   };
 

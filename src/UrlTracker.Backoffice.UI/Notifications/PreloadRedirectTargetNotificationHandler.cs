@@ -48,7 +48,7 @@ internal class PreloadRedirectTargetNotificationHandler
         var mapItem = contentMap.FirstOrDefault(c => c.RedirectId == redirect.Id);
         if (mapItem == default) return null;
 
-        var contentItem = content.FirstOrDefault(c => c.Id == mapItem.ContentId);
+        var contentItem = content.FirstOrDefault(c => c.Key == mapItem.ContentId);
         if (contentItem is null) return null;
 
         var iconComponents = contentItem.ContentType.Icon!.Split(' ', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
@@ -75,7 +75,7 @@ internal class PreloadRedirectTargetNotificationHandler
         foreach (var redirect in relevantRedirects)
         {
             var components = redirect.Target.Value.Split(';', StringSplitOptions.RemoveEmptyEntries);
-            if (!int.TryParse(components[0], out var id))
+            if (!Guid.TryParse(components[0], out var id))
             {
                 continue;
             }
@@ -87,5 +87,5 @@ internal class PreloadRedirectTargetNotificationHandler
         return result;
     }
 
-    private record struct ContentMapItem(int RedirectId, int ContentId, string? Culture);
+    private record struct ContentMapItem(int RedirectId, Guid ContentId, string? Culture);
 }

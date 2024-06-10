@@ -6,7 +6,7 @@ import { simpleRedirectContext } from '../../../../context/simpleRedirect.contex
 export interface ITypeButton {
   label: string;
   labelFallback: string;
-  value: 'content' | 'media' | 'url';
+  value: string | undefined;
   placeholder: string;
   disabled: boolean;
 }

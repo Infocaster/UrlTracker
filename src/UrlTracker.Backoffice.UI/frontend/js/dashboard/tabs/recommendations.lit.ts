@@ -14,13 +14,13 @@ import { DropdownChangeEvent, IDropdownValue } from '../../util/elements/inputs/
 import './recommendations/recommendationSearch.lit';
 import './recommendations/recommendationitem.lit';
 import { ISourceStrategies } from './redirects/source/source.constants';
-import { ITargetStrategies } from './redirects/target/target.constants';
 import { createNewRedirectOptions } from '../sidebars/simpleRedirect/manageredirect';
 import {
   RecommendationCollectionResponse,
   RecommendationOrderBy,
   RecommendationResponse,
   RedirectRequest,
+  RedirectStrategyResponse,
   getApiV1UrlTrackerRecommendations,
   postApiV1UrlTrackerRecommendationsByRecommendationId,
   postApiV1UrlTrackerRecommendationsUpdatebulk,
@@ -35,6 +35,8 @@ import {
   RECCOMENDATION_ACTIONS,
 } from '../sidebars/explainRecommendations/explainrecommendations';
 import { URLTRACKER_ANALYSE_RECOMMENDATION_MODAL } from '../sidebars/analyseRecommendation/manifest';
+import { URLTRACKER_REDIRECT_TARGET_CONSTANTS_CONTEXT } from './redirects/target/api/redirecttargetconstants.contexttokens';
+import UrlTrackerRedirectTargetConstantsContext from './redirects/target/api/redirecttargetconstants.context';
 
 @customElement('urltracker-recommendations-tab')
 export default class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(LitElement, 'recommendations') {
@@ -50,6 +52,12 @@ export default class UrlTrackerRecommendationsTab extends UrlTrackerNotification
     return this._modalManager;
   }
 
+  private _contentStrategy?: RedirectStrategyResponse;
+  private get contentStrategy(): RedirectStrategyResponse {
+    ensureExists(this._contentStrategy, "content strategy key is required, but couldn't be found");
+    return this._contentStrategy;
+  }
+
   constructor() {
     super();
 
@@ -60,6 +68,15 @@ export default class UrlTrackerRecommendationsTab extends UrlTrackerNotification
     this.consumeContext(UMB_MODAL_MANAGER_CONTEXT, (instance?: UmbModalManagerContext) => {
       this._modalManager = instance;
     });
+
+    this.consumeContext(
+      URLTRACKER_REDIRECT_TARGET_CONSTANTS_CONTEXT,
+      (instance?: UrlTrackerRedirectTargetConstantsContext) => {
+        instance?.getStrategyKey('content').subscribe((value) => {
+          this._contentStrategy = value;
+        });
+      },
+    );
   }
 
   @provide({ context: changeManagerContext })
@@ -138,7 +155,7 @@ export default class UrlTrackerRecommendationsTab extends UrlTrackerNotification
         value: event.detail.url,
       },
       target: {
-        strategy: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content,
+        strategy: this.contentStrategy.key,
         value: '',
       },
       permanent: true,
@@ -156,7 +173,7 @@ export default class UrlTrackerRecommendationsTab extends UrlTrackerNotification
         value: event.detail.url,
       },
       target: {
-        strategy: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content,
+        strategy: this.contentStrategy.key,
         value: '',
       },
       permanent: false,

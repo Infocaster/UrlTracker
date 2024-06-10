@@ -1,4 +1,4 @@
-import { ensureServiceExists } from '@/util/tools/existancecheck';
+import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
 import variableresourceService from '@/util/tools/variableresource.service';
 import { LitElement, PropertyValueMap, css, html, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, state } from 'lit/decorators.js';
@@ -7,12 +7,12 @@ import { UrlTrackerNotificationWrapper } from '../notifications/notifications.mi
 import './redirects/redirectitem.lit';
 import '@/util/elements/resultlist.lit';
 import { ISourceStrategies } from './redirects/source/source.constants';
-import { ITargetStrategies } from './redirects/target/target.constants';
 import { createNewRedirectOptions } from '../sidebars/simpleRedirect/manageredirect';
 import {
   RecommendationOrderBy,
   RecommendationResponse,
   RedirectRequest,
+  RedirectStrategyResponse,
   getApiV1UrlTrackerLandingPageMetric,
   getApiV1UrlTrackerRecommendations,
   postApiV1UrlTrackerRecommendationsByRecommendationId,
@@ -30,6 +30,8 @@ import { URLTRACKER_EDIT_REDIRECT_MODAL } from '../sidebars/simpleRedirect/manif
 import { ProcessedRecommendationResponse } from '@/context/recommendationitem.context';
 import { URLTRACKER_SCORING_CONTEXT } from '@/services/scoring/contexttoken';
 import ScoringService from '@/services/scoring/scoring.service';
+import { URLTRACKER_REDIRECT_TARGET_CONSTANTS_CONTEXT } from './redirects/target/api/redirecttargetconstants.contexttokens';
+import UrlTrackerRedirectTargetConstantsContext from './redirects/target/api/redirecttargetconstants.context';
 
 @customElement('urltracker-landing-tab')
 export default class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitElement, 'landingpage') {
@@ -51,6 +53,12 @@ export default class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
     return this._scoringService;
   }
 
+  private _contentStrategy?: RedirectStrategyResponse;
+  private get contentStrategy(): RedirectStrategyResponse {
+    ensureExists(this._contentStrategy, "content strategy key is required, but couldn't be found");
+    return this._contentStrategy;
+  }
+
   constructor() {
     super();
 
@@ -65,6 +73,15 @@ export default class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
     this.consumeContext(URLTRACKER_SCORING_CONTEXT, (instance?: ScoringService) => {
       this._scoringService = instance;
     });
+
+    this.consumeContext(
+      URLTRACKER_REDIRECT_TARGET_CONSTANTS_CONTEXT,
+      (instance?: UrlTrackerRedirectTargetConstantsContext) => {
+        instance?.getStrategyKey('content').subscribe((value) => {
+          this._contentStrategy = value;
+        });
+      },
+    );
   }
 
   @state()
@@ -119,7 +136,7 @@ export default class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
         value: event.detail.url,
       },
       target: {
-        strategy: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content,
+        strategy: this.contentStrategy.key,
         value: '',
       },
       permanent: true,
@@ -137,7 +154,7 @@ export default class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(
         value: event.detail.url,
       },
       target: {
-        strategy: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content,
+        strategy: this.contentStrategy.key,
         value: '',
       },
       permanent: false,

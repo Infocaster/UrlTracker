@@ -58,37 +58,7 @@ namespace UrlTracker.Web.Events
                 ["version"] = _urltrackerVersionProvider.GetCurrentVersion()
             };
 
-            urlTrackerVariables = IncludeRoutes(urlTrackerVariables);
-
             notification.ServerVariables.Add("urlTracker", urlTrackerVariables);
-        }
-
-        private Dictionary<string, object> IncludeRoutes(Dictionary<string, object> host)
-        {
-            var descriptors = _actionDescriptorCollectionProvider
-                .ActionDescriptors
-                .Items
-                .OfType<ControllerActionDescriptor>()
-                .Where(cad => cad.ControllerTypeInfo.Assembly.Equals(Assembly.GetExecutingAssembly()))
-                .GroupBy(cad => cad.ControllerName)
-                .ToList();
-
-            foreach (var group in descriptors)
-            {
-                Dictionary<string, string?> routes = new ()
-                {
-                    ["base"] = group.Key
-                };
-
-                foreach (var descriptor in group)
-                {
-                    routes.Add(descriptor.ActionName, descriptor.AttributeRouteInfo?.Template?.EnsureStartsWith('/'));
-                }
-
-                host.Add(group.Key, routes);
-            }
-
-            return host;
         }
     }
 }

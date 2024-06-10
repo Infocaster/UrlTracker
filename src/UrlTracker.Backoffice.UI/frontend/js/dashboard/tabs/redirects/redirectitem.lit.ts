@@ -3,10 +3,12 @@ import { customElement, state } from 'lit/decorators.js';
 import { RedirectResponse, redirectContext } from '../../../context/redirectitem.context';
 import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';
 import sourceStrategyResolver from './source/source.strategy';
-import targetStrategyResolver from './target/target.strategy';
-import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
+import { ensureExists } from '@/util/tools/existancecheck';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
+import { URLTRACKER_REDIRECT_TARGET_CONTEXT } from './target/api/redirecttarget.contexttoken';
+import UrlTrackerRedirectTargetContext from './target/api/redirecttarget.context';
+import { IRedirectTargetStrategy } from './target/api/redirecttarget.types';
 
 const RedirectListItem = UrlTrackerSelectableResultListItem<RedirectResponse>(redirectContext);
 
@@ -21,10 +23,16 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
   @state()
   private sourceIsError: boolean = false;
 
+  @state()
+  private targetStrategy?: IRedirectTargetStrategy;
+
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
     ensureExists(this.item, 'A redirect is required to use this element, but no redirect was provided');
+    this.consumeContext(URLTRACKER_REDIRECT_TARGET_CONTEXT, (instance?: UrlTrackerRedirectTargetContext) => {
+      this.targetStrategy = instance?.getStrategy(this.item);
+    });
 
     this.redirectToText = this.localize.term('urlTrackerRedirectTarget_redirectto');
 
@@ -69,8 +77,8 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
   }
 
   private renderTarget(): unknown {
-    if (!this.item) return nothing;
-    return targetStrategyResolver.getStrategy(this.item).getTemplate();
+    if (!this.item || !this.targetStrategy) return nothing;
+    return this.targetStrategy.getTemplate();
   }
 
   protected renderBody(): unknown {

@@ -1,17 +1,29 @@
 import { html } from '@umbraco-cms/backoffice/external/lit';
-import { IVariableResource } from '../../../../../util/tools/variableresource.service';
-import { ITargetStrategies } from '../target.constants';
-import { IRedirectTargetStrategy, IRedirectTargetStrategyFactory } from '../target.strategy';
 import './contenttarget.lit';
-import { RedirectResponse } from '@/api';
+import { RedirectResponse, RedirectStrategyResponse } from '@/api';
+import { UmbControllerHost } from '@umbraco-cms/backoffice/controller-api';
+import { IRedirectTargetStrategy, UrlTrackerRedirectTargetBase } from '../api/redirecttarget.types';
+import UrlTrackerRedirectTargetConstantsContext from '../api/redirecttargetconstants.context';
+import { URLTRACKER_REDIRECT_TARGET_CONSTANTS_CONTEXT } from '../api/redirecttargetconstants.contexttokens';
+import { URLTRACKER_REDIRECT_TARGET_CONTENT_ALIAS } from './manifests';
 
-export class ContentTargetStrategyFactory implements IRedirectTargetStrategyFactory {
-  constructor(private variableResource: IVariableResource) {}
+export default class ContentTargetStrategyFactory extends UrlTrackerRedirectTargetBase {
+  private strategy?: RedirectStrategyResponse;
+
+  constructor(host: UmbControllerHost) {
+    super(host, URLTRACKER_REDIRECT_TARGET_CONTENT_ALIAS);
+    this.consumeContext(
+      URLTRACKER_REDIRECT_TARGET_CONSTANTS_CONTEXT,
+      (instance?: UrlTrackerRedirectTargetConstantsContext) => {
+        instance?.getStrategyKey('content').subscribe((value) => {
+          this.strategy = value;
+        });
+      },
+    );
+  }
 
   getStrategy(redirect: RedirectResponse): IRedirectTargetStrategy | undefined {
-    const key = this.variableResource.get<ITargetStrategies>('redirectTargetStrategies').content;
-
-    if (redirect.target.strategy === key) {
+    if (redirect.target.strategy === this.strategy?.key) {
       return {
         getTemplate() {
           return html`<urltracker-redirect-target-content></urltracker-redirect-target-content>`;

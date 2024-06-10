@@ -5,7 +5,7 @@
   "allowPackageTelemetry": true,
   "extensions": [
     {
-      "type": "entryPoint",
+      "type": "backofficeEntryPoint",
       "name": "URL Tracker entrypoint",
       "alias": "UrlTracker.Entrypoint",
       "js": "/App_Plugins/UrlTracker/urltracker.js"

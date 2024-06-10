@@ -1,5 +1,7 @@
 import { ManifestDashboard } from '@umbraco-cms/backoffice/extension-registry';
 import { manifests as sidebarManifests } from './sidebars/manifests';
+import { manifests as redirecttargetapimanifests } from './tabs/redirects/target/api/manifests';
+import { manifests as redirecttargetimplementationmanifests } from './tabs/redirects/target/implementations/manifests';
 
 const dashboardManifest: ManifestDashboard = {
   type: 'dashboard',
@@ -15,4 +17,9 @@ const dashboardManifest: ManifestDashboard = {
   ],
 };
 
-export const dashboardManifests = [dashboardManifest, ...sidebarManifests];
+export const dashboardManifests = [
+  dashboardManifest,
+  ...sidebarManifests,
+  ...redirecttargetapimanifests,
+  ...redirecttargetimplementationmanifests,
+];

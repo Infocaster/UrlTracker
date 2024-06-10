@@ -1,8 +1,7 @@
 import { ISourceStrategies } from '@/dashboard/tabs/redirects/source/source.constants';
-import { ITargetStrategies } from '@/dashboard/tabs/redirects/target/target.constants';
 import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
 import variableresourceService from '@/util/tools/variableresource.service';
-import { css, html } from '@umbraco-cms/backoffice/external/lit';
+import { css, html, nothing } from '@umbraco-cms/backoffice/external/lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
 import '../../../util/elements/redirects/simpleRedirect/createSimpleRedirect.lit';
@@ -10,12 +9,15 @@ import { UmbModalBaseElement } from '@umbraco-cms/backoffice/modal';
 import {
   RedirectRequest,
   RedirectResponse,
+  RedirectStrategyResponse,
   postApiV1UrlTrackerRedirects,
   postApiV1UrlTrackerRedirectsByRedirectId,
 } from '@/api';
 import { IManageRedirectModel } from './manageredirect';
 import { UMB_NOTIFICATION_CONTEXT, UmbNotificationContext } from '@umbraco-cms/backoffice/notification';
 import { tryExecuteAndNotify } from '@umbraco-cms/backoffice/resources';
+import { URLTRACKER_REDIRECT_TARGET_CONSTANTS_CONTEXT } from '@/dashboard/tabs/redirects/target/api/redirecttargetconstants.contexttokens';
+import UrlTrackerRedirectTargetConstantsContext from '@/dashboard/tabs/redirects/target/api/redirecttargetconstants.context';
 
 export const ContentElementTag = 'urltracker-sidebar-simple-redirect';
 
@@ -30,12 +32,23 @@ export default class UrlTrackerSidebarSimpleRedirect extends UmbModalBaseElement
     return this._notificationContext;
   }
 
+  private contentStrategy?: RedirectStrategyResponse;
+
   constructor() {
     super();
 
     this.consumeContext(UMB_NOTIFICATION_CONTEXT, (instance?: UmbNotificationContext) => {
       this._notificationContext = instance;
     });
+
+    this.consumeContext(
+      URLTRACKER_REDIRECT_TARGET_CONSTANTS_CONTEXT,
+      (instance?: UrlTrackerRedirectTargetConstantsContext) => {
+        instance?.getStrategyKey('content').subscribe((value) => {
+          this.contentStrategy = value;
+        });
+      },
+    );
   }
 
   @property({ attribute: false })
@@ -54,19 +67,7 @@ export default class UrlTrackerSidebarSimpleRedirect extends UmbModalBaseElement
   private headerText = '';
 
   @state()
-  private redirectData: RedirectRequest = {
-    source: {
-      strategy: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').url,
-      value: '',
-    },
-    target: {
-      strategy: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content,
-      value: '',
-    },
-    permanent: false,
-    retainQuery: true,
-    force: false,
-  };
+  private redirectData?: RedirectRequest;
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
@@ -83,11 +84,31 @@ export default class UrlTrackerSidebarSimpleRedirect extends UmbModalBaseElement
         retainQuery: this.redirect.retainQuery,
         force: this.redirect.force,
       };
+    } else {
+      this.assignDefaultRedirect();
     }
+  }
+
+  private assignDefaultRedirect() {
+    ensureExists(this.contentStrategy, "Don't know what the strategy key is for content, because it is not assigned");
+    this.redirectData = {
+      source: {
+        strategy: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').url,
+        value: '',
+      },
+      target: {
+        strategy: this.contentStrategy?.key,
+        value: '',
+      },
+      permanent: false,
+      retainQuery: true,
+      force: false,
+    };
   }
 
   async save() {
     ensureExists(this.data, 'data is required when using this modal');
+    ensureExists(this.redirectData, "Redirect data should exist at this point, but it doesn't");
     let response: RedirectResponse;
     if (this.data.id) {
       const { data } = await tryExecuteAndNotify(
@@ -129,6 +150,9 @@ export default class UrlTrackerSidebarSimpleRedirect extends UmbModalBaseElement
   }
 
   protected render() {
+    if (!this.redirectData) {
+      return nothing;
+    }
     return html`<div class="header">${this.headerText}</div>
       <div class="main">
         <urltracker-create-simple-redirect
