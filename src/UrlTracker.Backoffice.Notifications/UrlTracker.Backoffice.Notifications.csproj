@@ -6,10 +6,9 @@
     <Title>URL Tracker Backoffice Notifications</Title>
     <Description>This package contains notification handlers for the URL Tracker to handle Umbraco content notifications</Description>
     <RootNamespace>UrlTracker.Backoffice.Notifications</RootNamespace>
-    <PackageReleaseNotes>1 bugfix, 1 other change
+    <PackageReleaseNotes>1 bugfix
 
-- Fix invalid strategy keys in SQLite when migrating from previous version
-- Add execution timeouts to all regexes</PackageReleaseNotes>
+- Fix 500 error when fetching javascript bundle in the backoffice</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
