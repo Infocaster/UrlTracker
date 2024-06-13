@@ -33,8 +33,6 @@ namespace UrlTracker.Backoffice.UI
 
             builder.ManifestFilters()
                 .Append<UrlTrackerManifestFilter>();
-            builder.BackOfficeAssets()
-                .Append<UrlTrackerScript>();
 
             builder.AddNotificationHandler<ServerVariablesParsingNotification, ServerVariablesNotificationHandler>();
             builder.AddNotificationHandler<ServingRedirectsNotification, PreloadRedirectTargetNotificationHandler>();
