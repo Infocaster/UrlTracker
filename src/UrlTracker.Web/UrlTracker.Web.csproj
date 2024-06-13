@@ -5,10 +5,9 @@
     <Title>URL Tracker Web</Title>
     <Description>This package contains the web services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>1 bugfix, 1 other change
+    <PackageReleaseNotes>1 bugfix
 
-- Fix invalid strategy keys in SQLite when migrating from previous version
-- Add execution timeouts to all regexes</PackageReleaseNotes>
+- Fix 500 response when fetching javascript bundle in the backoffice</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->

@@ -5,10 +5,9 @@
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>1 bugfix, 1 other change
+    <PackageReleaseNotes>1 bugfix
 
-- Fix invalid strategy keys in SQLite when migrating from previous version
-- Add execution timeouts to all regexes</PackageReleaseNotes>
+- Fix 500 response when fetching javascript bundle in the backoffice</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">
