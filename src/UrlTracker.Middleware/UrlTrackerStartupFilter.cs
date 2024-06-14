@@ -22,7 +22,6 @@ namespace UrlTracker.Middleware
         public void OnPostPipeline(IApplicationBuilder app)
         {
             app.UseUrlTrackerRecommendationTracking()
-               .UseUrlTrackerClientErrorTracking()
                .UseUrlTrackerRedirects();
         }
 
