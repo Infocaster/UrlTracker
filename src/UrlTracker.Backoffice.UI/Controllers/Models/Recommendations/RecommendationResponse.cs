@@ -11,7 +11,8 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Recommendations
         [property: DataMember(Name = "url")] string Url,
         [property: DataMember(Name = "strategy")] Guid Strategy,
         [property: DataMember(Name = "score")] int VariableScore,
-        [property: DataMember(Name = "updatedate")] DateTime UpdateDate)
+        [property: DataMember(Name = "updatedate")] DateTime UpdateDate,
+        [property: DataMember(Name = "createdate")] DateTime CreateDate)
     {
         public static RecommendationResponse FromEntity(IRecommendation entity)
             => new(
@@ -20,6 +21,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Recommendations
                 entity.Url,
                 entity.Strategy.Key,
                 entity.VariableScore,
-                entity.UpdateDate);
+                entity.UpdateDate,
+                entity.CreateDate);
     }
 }

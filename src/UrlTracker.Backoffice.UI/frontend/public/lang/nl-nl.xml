@@ -54,6 +54,7 @@
   </area>
   <area alias="urlTrackerRedirectTarget">
     <key alias="redirectto">Redirect naar</key>
+    <key alias="redirectdate">Aangemaakt op</key>
     <key alias="unknown">Onbekende doelsoort</key>
     <key alias="url">URL</key>
     <key alias="content">Inhoud</key>
@@ -119,6 +120,7 @@
     <key alias="action-temporary">Creëer een tijdelijke redirect</key>
     <key alias="action-permanent">Creëer een permanente redirect</key>
     <key alias="action-ignore">Negeer dit</key>
+    <key alias="dates">Plaatsgevonden tussen</key>
   </area>
   <area alias="urlTrackerNewRedirect">
     <key alias="permanent">Is de redirect permanent?</key>

@@ -57,6 +57,7 @@
   </area>
   <area alias="urlTrackerRedirectTarget">
     <key alias="redirectto">Redirects to</key>
+    <key alias="redirectdate">Created on</key>
     <key alias="unknown">Unknown target type</key>
     <key alias="url">URL</key>
     <key alias="content">Content</key>
@@ -121,6 +122,7 @@
     <key alias="action-temporary">Create a temporary redirect</key>
     <key alias="action-permanent">Create a permanent redirect</key>
     <key alias="action-ignore">Ignore this</key>
+    <key alias="dates">Occurred between</key>
   </area>
   <area alias="urlTrackerNewRedirect">
     <key alias="permanent">Is the redirect permanent?</key>

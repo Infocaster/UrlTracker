@@ -15,6 +15,7 @@ import './recommendationTag/recommendationTag.lit';
 import recommendationTypeStrategyResolver from './recommendationType/recommendation.strategy';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
+import { toReadableDateOnly } from '@/util/functions/dateformatter';
 
 const RecommendationListItem = UrlTrackerSelectableResultListItem<IRecommendationResponse>(recommendationContext);
 
@@ -35,6 +36,9 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   @state()
   private recommendationTypeIsError: boolean = false;
 
+  @state()
+  private occurranceDatesText?: string;
+
   //   @consume({ context: localizationServiceContext })
   //   private localizationService?: ILocalizationService;
   private _localizationServiceConsumer = new ContextConsumer(this, {
@@ -53,6 +57,7 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
       this.tagText(this.recommendationType);
     }
     this.localizeActionsText();
+    this.localizeDatesText();
 
     const sourceStrategy = recommendationTypeStrategyResolver.getStrategy({ recommendation: this.item, element: this });
     if (sourceStrategy) {
@@ -87,6 +92,11 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   private async localizeActionsText(): Promise<void> {
     const actionsText = await this.localizationService?.localize('urlTrackerRecommendationItem_actions');
     this.actionsText = actionsText ?? '';
+  }
+
+  private async localizeDatesText(): Promise<void> {
+    const datesText = await this.localizationService?.localize('urlTrackerRecommendationItem_dates');
+    this.occurranceDatesText = datesText;
   }
 
   private async tagText(importance: RecommendationTypes): Promise<void> {
@@ -143,6 +153,10 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
             <uui-icon name="icon-navigation-right" class="icon-before"></uui-icon>Ignore this
           </button>
         </div>
+        <div class="dates">
+          ${this.occurranceDatesText}: ${toReadableDateOnly(this.item.createdate)} -
+          ${toReadableDateOnly(this.item.updatedate)}
+        </div>
       </div>
     `;
   }
@@ -176,11 +190,20 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
         text-decoration: underline;
       }
 
-      .target {
+      .target,
+      .dates {
         color: var(--uui-palette-chamoisee-dimmed);
         line-height: 15px;
         font-size: 12px;
+      }
+
+      .target {
         margin-bottom: 0.5rem;
+      }
+
+      .dates {
+        font-style: italic;
+        margin-top: 1rem;
       }
     `,
   ];

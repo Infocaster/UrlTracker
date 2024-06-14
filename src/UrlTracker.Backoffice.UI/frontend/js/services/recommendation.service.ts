@@ -17,6 +17,7 @@ export interface IRecommendationResponseData {
   strategy: string;
   score: number;
   updatedate: Date;
+  createdate: Date;
 }
 
 export type IRecommendationUpdateBulkRequest = IDataWithId<IRecommendationUpdate>[];
