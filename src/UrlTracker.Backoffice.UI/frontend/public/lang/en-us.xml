@@ -21,13 +21,27 @@
   </area>
   <area alias="urlTrackerNotifications">
     <key alias="landingpagewelcometitle">Welcome to the URL Tracker</key>
-    <key alias="landingpagewelcomebody">On this overview, a selection of the most important recommendations is compiled for your convenience. Improve your visitors' experience by solving these issues</key>
+    <key alias="landingpagewelcomebody">On this overview, a selection of the most important
+      recommendations is compiled for your convenience. Improve your visitors' experience by solving
+      these issues</key>
     <key alias="recommendationswelcometitle">Recommendations overview</key>
-    <key alias="recommendationswelcomebody">Over here you can see all current recommendations. By default, recommendations are ordered by their importance. Use the inputs and dropdowns to filter and sort the recommendations.</key>
+    <key alias="recommendationswelcomebody">Over here you can see all current recommendations. By
+      default, recommendations are ordered by their importance. Use the inputs and dropdowns to
+      filter and sort the recommendations.</key>
     <key alias="redirectswelcometitle">Redirects overview</key>
-    <key alias="redirectswelcomebody">This tab shows the redirects that are configured for your website. The various controls on this page allow you to create, delete and edit your redirects. This page only shows standard redirects. Check out the 'advanced redirects' tab to see all the redirects.</key>
+    <key alias="redirectswelcomebody">This tab shows the redirects that are configured for your
+      website. The various controls on this page allow you to create, delete and edit your
+      redirects. This page only shows standard redirects. Check out the 'advanced redirects' tab to
+      see all the redirects.</key>
     <key alias="advancedredirectswelcometitle">Advanced redirects overview</key>
-    <key alias="advancedredirectswelcomebody">In addition to the standard redirects, this page shows you all redirects with advanced configuration options.</key>
+    <key alias="advancedredirectswelcomebody">In addition to the standard redirects, this page shows
+      you all redirects with advanced configuration options.</key>
+  </area>
+  <area alias="urltrackerGeneral">
+    <key alias="loading">Loading...</key>
+  </area>
+  <area alias="urlTrackerDashboardLanding">
+    <key alias="statisticLabel">pages returned a 404 response last week</key>
   </area>
   <area alias="urlTrackerDashboardFooter">
     <key alias="logo">/App_Plugins/UrlTracker/assets/layout/footerlogo.svg</key>
@@ -50,68 +64,78 @@
     <key alias="contenterror">The selected content does not exist or is in the trashcan</key>
   </area>
   <area alias="urlTrackerRedirectActions">
-	<key alias="header">Actions</key>
-	<key alias="new">New redirect</key>
-	<key alias="export">Export redirects</key>
-  </area>  
+    <key alias="header">Actions</key>
+    <key alias="new">New redirect</key>
+    <key alias="export">Export redirects</key>
+  </area>
   <area alias="urlTrackerRedirectUpload">
-	<key alias="header">Import</key>
-	<key alias="info">Drop a csv file in the box below to import redirects.</key>
-	<key alias="help">You can download template here</key>
+    <key alias="header">Import</key>
+    <key alias="info">Drop a csv file in the box below to import redirects.</key>
+    <key alias="help">You can download template here</key>
   </area>
   <area alias="urlTrackerRecommendationType">
     <key alias="image">Image was not found</key>
     <key alias="imagedescription">
-      This entry indicates that an image could not be found. As a consequence, 
-      certain pages may not be displayed correctly and visitors might lack visual context to the content on particular pages. 
+      This entry indicates that an image could not be found. As a consequence,
+      certain pages may not be displayed correctly and visitors might lack visual context to the
+      content on particular pages.
       Check out the referrer information to see on which pages the image is requested.
-      Redirect this url to an existing image to restore the user experience. Alternatively, 
+      Redirect this url to an existing image to restore the user experience. Alternatively,
       you can check out the referrer overview below to see from which pages the image is requested.
       After manually repairing the images, this recommendation will eventually disappear.
     </key>
     <key alias="file">File was not found</key>
     <key alias="filedescription">
       This entry indicates that a file could not be found. As a consequence,
-      certain pages may contain broken links to downloadable content. Visitors may not be able to download the files on those pages.
+      certain pages may contain broken links to downloadable content. Visitors may not be able to
+      download the files on those pages.
       Check the referrer information to see on which pages the downloadable content is referenced.
       Repair the downloads on those pages and this recommendation will eventually disappear.
       Alternatively, you can create a redirect to redirect all urls to a new file at once.
     </key>
     <key alias="page">Page was not found</key>
     <key alias="pagedescription">
-      This entry indicates that a page could not be found. This means that visitors are trying to visit pages that don't exist.
+      This entry indicates that a page could not be found. This means that visitors are trying to
+      visit pages that don't exist.
       Create a redirect to redirect users to a new content page.
     </key>
     <key alias="technicalFile">Technical file was not found</key>
     <key alias="technicalFiledescription">
-      This entry indicates that a technical file could not be found. The consequences of this depend on the nature of the file.
+      This entry indicates that a technical file could not be found. The consequences of this depend
+      on the nature of the file.
       You should contact your administrator to get instructions on what to do with this.
-      If you really know what you're doing, you may create a redirect for this file, but you likely shouldn't.
+      If you really know what you're doing, you may create a redirect for this file, but you likely
+      shouldn't.
     </key>
     <key alias="unknown">Unknown recommendation type</key>
-  </area>  
+  </area>
   <area alias="urlTrackerRecommendationImportance">
     <key alias="VERY_IMPORTANT">VERY IMPORTANT</key>
     <key alias="IMPORTANT">IMPORTANT</key>
     <key alias="MODERATELY_IMPORTANT">MODERATELY IMPORTANT</key>
     <key alias="SLIGHTLY_IMPORTANT">SLIGHTLY IMPORTANT</key>
     <key alias="NOT_IMPORTANT">NOT IMPORTANT</key>
-  </area>  
+  </area>
   <area alias="urlTrackerRecommendationItem">
     <key alias="actions">Recommendations</key>
-	<key alias="action-temporary">Create a temporary redirect</key>
-	<key alias="action-permanent">Create a permanent redirect</key>
-	<key alias="action-ignore">Ignore this</key>
+    <key alias="action-temporary">Create a temporary redirect</key>
+    <key alias="action-permanent">Create a permanent redirect</key>
+    <key alias="action-ignore">Ignore this</key>
   </area>
   <area alias="urlTrackerNewRedirect">
     <key alias="permanent">Is the redirect permanent?</key>
-	<key alias="permanent-info">A permanent redirect is better for your site’s performance, but cannot be changed afterwards. Permanent redirects are a signal to google and other search engines to update their search results to the target that you specify. It makes the internet “forget” your incoming URLs so to speak.</key>
-	<key alias="incoming-url">Incoming URL</key>
-	<key alias="incoming-url-info">Enter the URL which should be redirected from</key>
-	<key alias="outgoing-url">Outgoing URL</key>
-	<key alias="outgoing-url-info">Select where the URL should redirect to</key>
+    <key alias="permanent-info">A permanent redirect is better for your site’s performance, but
+      cannot be changed afterwards. Permanent redirects are a signal to google and other search
+      engines to update their search results to the target that you specify. It makes the internet
+      “forget” your incoming URLs so to speak.</key>
+    <key alias="permanent-permanent-label">Permanent (301)</key>
+    <key alias="permanent-temporary-label">Temporary (302)</key>
+    <key alias="incoming-url">Incoming URL</key>
+    <key alias="incoming-url-info">Enter the URL which should be redirected from</key>
+    <key alias="outgoing-url">Outgoing URL</key>
+    <key alias="outgoing-url-info">Select where the URL should redirect to</key>
   </area>
   <area alias="urlTrackerRecommendationFilter">
-	<key alias="search-placeholder">Type to search...</key>
+    <key alias="search-placeholder">Type to search...</key>
   </area>
 </language>

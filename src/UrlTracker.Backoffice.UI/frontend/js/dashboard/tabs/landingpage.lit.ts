@@ -9,11 +9,7 @@ import {
   IRecommendationResponse,
   IRecommendationsService,
 } from '@/services/recommendation.service';
-import {
-  IRedirectData,
-  IRedirectResponse,
-  IRedirectService,
-} from '@/services/redirect.service';
+import { IRedirectData, IRedirectResponse, IRedirectService } from '@/services/redirect.service';
 import { ensureServiceExists } from '@/util/tools/existancecheck';
 import variableresourceService from '@/util/tools/variableresource.service';
 import { consume } from '@lit/context';
@@ -56,9 +52,6 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
     ensureServiceExists(this._notificationsService, 'notificationsService');
     return this._notificationsService;
   }
-  public set notificationsService(value: IUmbracoNotificationsService | undefined) {
-    this._notificationsService = value;
-  }
 
   @state()
   private recommendationCollection?: IRecommendationCollection;
@@ -68,6 +61,9 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
 
   @state()
   private loading: number = 0;
+
+  @state()
+  private statisticLabel?: string;
 
   protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
     super.firstUpdated(_changedProperties);
@@ -81,6 +77,9 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
     ensureServiceExists(this._recommendationsService, 'recommendations service');
     ensureServiceExists(this._landingspageService, 'landingspage service');
     ensureServiceExists(this.editorService, 'editor service');
+    ensureServiceExists(this.localizationService, 'localization service');
+
+    this.statisticLabel = await this.localizationService.localize('urlTrackerDashboardLanding_statisticLabel');
 
     await this.search();
   }
@@ -241,7 +240,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
         <uui-box>
           <div class="total">
             <span>${this.numericMetric}</span>
-            <p>Pages were not found last week</p>
+            <p>${this.statisticLabel}</p>
           </div>
         </uui-box>
       </div>

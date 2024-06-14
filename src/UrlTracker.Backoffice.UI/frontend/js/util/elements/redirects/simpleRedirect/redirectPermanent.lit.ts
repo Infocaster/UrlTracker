@@ -3,6 +3,7 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { localizationServiceContext } from '../../../../context/localizationservice.context';
 import { ILocalizationService } from '../../../../umbraco/localization.service';
+import { ensureServiceExists } from '@/util/tools/existancecheck';
 
 @customElement('urltracker-redirect-permanent')
 export class UrlTrackerRedirectPermanent extends LitElement {
@@ -15,26 +16,39 @@ export class UrlTrackerRedirectPermanent extends LitElement {
   @state()
   private _infoText: string = '';
 
+  @state()
+  private _permanentLabel: string = '';
+
+  @state()
+  private _temporaryLabel: string = '';
+
   @consume({ context: localizationServiceContext })
   private _localizationService?: ILocalizationService;
+  private get localizationService(): ILocalizationService {
+    ensureServiceExists(this._localizationService, 'Localization service');
+    return this._localizationService;
+  }
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    this._localizeHeaderText();
-    this._localizeInfoText();
+    await this._localizeLabels();
   }
 
-  private _localizeHeaderText = async () => {
-    const text = await this._localizationService?.localize('urlTrackerNewRedirect_permanent');
+  private _localizeLabels = async () => {
+    const [permanent, temporary, title, description] = await this.localizationService.localizeMany([
+      'urlTrackerNewRedirect_permanent-permanent-label',
+      'urlTrackerNewRedirect_permanent-temporary-label',
+      'urlTrackerNewRedirect_permanent',
+      'urlTrackerNewRedirect_permanent-info',
+    ]);
 
-    this._headerText = text ?? 'fallback';
-  };
-
-  private _localizeInfoText = async () => {
-    const text = await this._localizationService?.localize('urlTrackerNewRedirect_permanent-info');
-
-    this._infoText = text ?? 'fallback';
+    this._permanentLabel = permanent ?? 'Permanent (301)';
+    this._temporaryLabel = temporary ?? 'Temporary (302)';
+    this._headerText = title ?? 'Permanent';
+    this._infoText =
+      description ??
+      'Select whether or not the redirect is permanent. Permanent redirects cannot be changed afterwards.';
   };
 
   private _onToggleChange = (_: any) => {
@@ -53,7 +67,11 @@ export class UrlTrackerRedirectPermanent extends LitElement {
     return html`
       <p><strong>${this._headerText}</strong></p>
       <p>${this._infoText}</p>
-      <uui-toggle label="" .checked=${this.isPermanent} @change=${this._onToggleChange}></uui-toggle>
+      <uui-toggle
+        label="${this.isPermanent ? this._permanentLabel : this._temporaryLabel}"
+        .checked=${this.isPermanent}
+        @change=${this._onToggleChange}
+      ></uui-toggle>
     `;
   }
 
