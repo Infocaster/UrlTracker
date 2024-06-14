@@ -5,9 +5,16 @@
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>1 bugfix
+    <PackageReleaseNotes>4 new features, 1 bugfix, 3 other changes
 
-- Fix 500 error when fetching javascript bundle in the backoffice</PackageReleaseNotes>
+- Fix untranslated text on the content picker in the redirect edit panel
+- Add create date to the redirects on the overview
+- Add the date of the first and last occurrance of a recommendation
+- Add global deny list package as default plugin
+- Disable the redirect source condition while solving a recommendation
+- Remove company logo
+- Include more technical words for recognition
+- The label above the top recommendations now matches the displayed amount</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">

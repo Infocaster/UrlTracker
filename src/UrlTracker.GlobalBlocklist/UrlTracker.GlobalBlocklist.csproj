@@ -1,20 +1,27 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<PackageId>UrlTracker.GlobalBlocklist</PackageId>
-		<Title>UrlTracker Global Block List</Title>
-		<Description>The global block list provides an extra filter for the URL Tracker that retrieves a global list from GitHub and adds it as a filter.</Description>
-		<RootNamespace>UrlTracker.GlobalBlocklist</RootNamespace>
-		<PackageReleaseNotes>First release for Umbraco 10</PackageReleaseNotes>
-	</PropertyGroup>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>UrlTracker.GlobalBlocklist</PackageId>
+    <Title>UrlTracker Global Block List</Title>
+    <Description>The global block list provides an extra filter for the URL Tracker that retrieves a global list from GitHub and adds it as a filter.</Description>
+    <RootNamespace>UrlTracker.GlobalBlocklist</RootNamespace>
+    <PackageReleaseNotes>4 new features, 1 bugfix, 3 other changes
 
-	<ItemGroup>
-		<PackageReference Include="Polly" Version="8.4.0" />
-		<PackageReference Include="Umbraco.Cms.Web.Website" Version="10.6.1" />
-		<PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.6.1" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\UrlTracker.Modules\UrlTracker.Modules.csproj" />
-	  <ProjectReference Include="..\UrlTracker.Web\UrlTracker.Web.csproj" />
-	</ItemGroup>
+- Fix untranslated text on the content picker in the redirect edit panel
+- Add create date to the redirects on the overview
+- Add the date of the first and last occurrance of a recommendation
+- Add global deny list package as default plugin
+- Disable the redirect source condition while solving a recommendation
+- Remove company logo
+- Include more technical words for recognition
+- The label above the top recommendations now matches the displayed amount</PackageReleaseNotes>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Polly" Version="8.4.0" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="10.6.1" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="10.6.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UrlTracker.Modules\UrlTracker.Modules.csproj" />
+    <ProjectReference Include="..\UrlTracker.Web\UrlTracker.Web.csproj" />
+  </ItemGroup>
 </Project>
