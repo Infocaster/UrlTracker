@@ -39,7 +39,6 @@ namespace UrlTracker.Middleware.Tests
                 context => Task.CompletedTask,
                 _clientErrorFilterCollectionMock.Object,
                 new VoidLogger<UrlTrackerClientErrorTrackingMiddleware>(),
-                _requestHandlerSettingsMock.Object,
                 _requestAbstractionMock.Object,
                 _runtimeStateMock.Object,
                 _clientErrorProcessorQueueMock.Object);
@@ -82,12 +81,13 @@ namespace UrlTracker.Middleware.Tests
         public async Task HandleAsync_Candidate_IsProcessed()
         {
             // arrange
+            Url url = Url.Parse("http://example.com");
             var httpContextMock = new HttpContextMock();
             httpContextMock = new HttpContextMock(new Uri("http://example.com"));
             httpContextMock.ResponseMock.Setup(obj => obj.StatusCode).Returns(404);
             _requestAbstractionMock.Setup(obj => obj.GetReferrer(httpContextMock.Request)).Returns(new Uri("http://example.com/lorem"));
             _clientErrorFilterCollectionMock.Setup(obj => obj.EvaluateCandidacyAsync(It.Is<HttpContext>(h => h == httpContextMock.Context))).ReturnsAsync(true);
-            _clientErrorProcessorQueueMock.Setup(obj => obj.WriteAsync(It.Is<ClientErrorProcessorItem>(i => i.Url == "http://example.com" && i.Referrer == "http://example.com/lorem"))).Verifiable();
+            _clientErrorProcessorQueueMock.Setup(obj => obj.WriteAsync(It.Is<ClientErrorProcessorItem>(i => i.Url == url && i.Referrer == "http://example.com/lorem"))).Verifiable();
 
             // act
             await _testSubject.InvokeAsync(httpContextMock.Context);

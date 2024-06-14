@@ -9,6 +9,11 @@ using UrlTracker.Core;
 
 namespace UrlTracker.IntegrationTests.RecommendationTracking
 {
+    /* TODO !!
+     * Is there a better way to test this?
+     * This test uses the Queueless test implementation, so we're essentially testing if our test implementation works
+     * and we're really not testing if our ACTUAL implementation works
+     */
     public class RecommendationTrackingTests : IntegrationTestBase
     {
         [TestCase(TestName = "A recommendation is created when a url is not found")]
