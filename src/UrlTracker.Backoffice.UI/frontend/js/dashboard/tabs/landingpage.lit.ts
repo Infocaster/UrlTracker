@@ -65,6 +65,9 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
   @state()
   private statisticLabel?: string;
 
+  @state()
+  private topRecommendationsLabel?: string;
+
   protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
     super.firstUpdated(_changedProperties);
 
@@ -93,6 +96,16 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
         OrderBy: RECOMMENDATION_SORT_TYPE.IMPORTANCE,
       });
       this.numericMetric = (await this._landingspageService?.numericMetric()) ?? 0;
+      if (this.recommendationCollection.total > 0) {
+        this.topRecommendationsLabel =
+          (await this.localizationService?.localize('urlTrackerDashboardLanding_topAmount', [
+            this.recommendationCollection.results.length.toString(),
+          ])) ?? 'Top recommendations';
+      } else {
+        this.topRecommendationsLabel =
+          (await this.localizationService?.localize('urlTrackerDashboardLanding_noRecommendations')) ??
+          'No recommendations';
+      }
     } finally {
       this.loading--;
     }
@@ -232,7 +245,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
     return html`
       <div class="grid-root">
         <div class="results">
-          <urltracker-result-list .loading=${!!this.loading} header="Top 10 recommendations">
+          <urltracker-result-list .loading=${!!this.loading} .header=${this.topRecommendationsLabel}>
             ${this.renderRecommendations()}
           </urltracker-result-list>
         </div>

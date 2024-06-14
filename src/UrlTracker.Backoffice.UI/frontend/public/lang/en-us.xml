@@ -42,6 +42,8 @@
   </area>
   <area alias="urlTrackerDashboardLanding">
     <key alias="statisticLabel">pages returned a 404 response last week</key>
+    <key alias="noRecommendations">There are no recommendations</key>
+    <key alias="topAmount">Top %0% recommendations</key>
   </area>
   <area alias="urlTrackerDashboardFooter">
     <key alias="logo">/App_Plugins/UrlTracker/assets/layout/footerlogo.svg</key>
