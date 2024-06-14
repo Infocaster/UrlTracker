@@ -17,31 +17,17 @@ export class DashboardFooter extends LitElement {
       height: 50px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       flex-direction: row;
-    }
-
-    .url-tracker__footer__logo {
-      height: 100%;
-    }
-
-    .url-tracker__footer__logo__link {
-      height: 100%;
-      margin-right: 1rem;
-    }
-
-    .url-tracker__footer__links {
-      flex: 1;
-      margin-right: 2rem;
+      padding-left: 2rem;
+      padding-right: 2rem;
     }
 
     .url-tracker__footer__links ul {
       display: flex;
       justify-content: flex-end;
       list-style-type: none;
-    }
-
-    .url-tracker__footer__links ul li {
-      margin-left: 2rem;
+      gap: 2rem;
     }
 
     .url-tracker__footer__links ul li a:link,
@@ -84,13 +70,6 @@ export class DashboardFooter extends LitElement {
 
     return html`
       <footer class="url-tracker__footer">
-        <a
-          href="${this.model.logoUrl}"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="url-tracker__footer__logo__link"
-          ><img src="${this.model.logo}" alt="Infocaster logo" class="url-tracker__footer__logo"
-        /></a>
         <div class="url-tracker__footer__version">v${this.model.version}</div>
         <div class="url-tracker__footer__links">${linkList}</div>
       </footer>
@@ -114,31 +93,27 @@ export class DashboardFooter extends LitElement {
   private initModel = () => {
     this.localizationService
       ?.localizeMany([
-        'urlTrackerDashboardFooter_logo',
-        'urlTrackerDashboardFooter_logourl',
         'urlTrackerDashboardFooter_featurelabel',
         'urlTrackerDashboardFooter_buglabel',
         'urlTrackerDashboardFooter_wikilabel',
       ])
       .then((result) => {
         this.model = {
-          logo: result[0],
-          logoUrl: result[1],
           version: this.versionProvider ? this.versionProvider.version : '',
           links: [
             {
               url: 'https://github.com/Infocaster/UrlTracker/discussions',
-              title: result[2],
+              title: result[0],
               target: '_blank',
             },
             {
               url: 'https://github.com/Infocaster/UrlTracker/issues',
-              title: result[3],
+              title: result[1],
               target: '_blank',
             },
             {
               url: 'https://github.com/Infocaster/UrlTracker/wiki',
-              title: result[4],
+              title: result[2],
               target: '_blank',
             },
           ],
