@@ -21,7 +21,7 @@ export class UrlTrackerResultList extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    this._loadingText = await this._localizationService?.localize('urltrackergeneral_loading');
+    this._loadingText = await this._localizationService?.localize('urltrackerGeneral_loading');
   }
 
   private renderBody(): unknown {

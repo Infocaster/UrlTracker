@@ -16,6 +16,7 @@ import './simpleRedirectTypeProvider';
 import { ITypeButton } from './simpleRedirectTypeProvider';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { colors } from '@/dashboard/tabs/styles';
+import { ensureServiceExists } from '@/util/tools/existancecheck';
 
 @customElement('urltracker-redirect-outgoing-url')
 export class UrlTrackerRedirectOutgoingUrl extends LitElement {
@@ -31,8 +32,18 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
   @state()
   private _infoText: string = '';
 
+  @state()
+  private _removeButtonText: string = '';
+
+  @state()
+  private _selectButtonText: string = '';
+
   @consume({ context: localizationServiceContext })
   private _localizationService?: ILocalizationService;
+  private get localizationService(): ILocalizationService {
+    ensureServiceExists(this._localizationService, 'localization service');
+    return this._localizationService;
+  }
 
   @consume({ context: editorServiceContext })
   private editorService?: IEditorService<any>;
@@ -78,6 +89,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     this._localizeHeaderText();
     this._localizeInfoText();
     this._localizeButtonLabels();
+    this._localizeContentStrategyLabels();
 
     this._selectedType =
       this._typeButtons.find((item) => item.value === this.outgoingStrategy) ??
@@ -113,15 +125,22 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
   }
 
   private _localizeHeaderText = async () => {
-    const text = await this._localizationService?.localize('urlTrackerNewRedirect_outgoing-url');
+    const text = await this.localizationService.localize('urlTrackerNewRedirect_outgoing-url');
 
     this._headerText = text ?? 'Outgoing URL fallback';
   };
 
   private _localizeInfoText = async () => {
-    const text = await this._localizationService?.localize('urlTrackerNewRedirect_outgoing-url-info');
+    const text = await this.localizationService.localize('urlTrackerNewRedirect_outgoing-url-info');
 
     this._infoText = text ?? 'Select where the URL should redirect to';
+  };
+
+  private _localizeContentStrategyLabels = async () => {
+    const [select, remove] = await this.localizationService.localizeMany(['general_choose', 'general_remove']);
+
+    this._selectButtonText = select ?? 'Choose';
+    this._removeButtonText = remove ?? 'Remove';
   };
 
   private _localizeButtonLabels = async () => {
@@ -229,15 +248,15 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
               class=${ifDefined(this.contentItem.iconColor)}
             ></uui-icon>
             <uui-action-bar slot="actions">
-              <uui-button label="Remove" @click=${this.onDeleteContent}> Remove </uui-button>
+              <uui-button label="Remove" @click=${this.onDeleteContent}> ${this._removeButtonText} </uui-button>
             </uui-action-bar>
           </uui-ref-node-document-type>
         `;
       }
 
       return html`
-        <uui-button class="w-100" look="placeholder" label="Toevoegen" @click=${this.openContentPicker}>
-          Toevoegen
+        <uui-button class="w-100" look="placeholder" label="Select" @click=${this.openContentPicker}>
+          ${this._selectButtonText}
         </uui-button>
       `;
     }
