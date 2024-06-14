@@ -5,6 +5,7 @@ using UrlTracker.Backoffice.Notifications;
 using UrlTracker.Backoffice.UI;
 using UrlTracker.Core;
 using UrlTracker.Core.Caching.Memory;
+using UrlTracker.GlobalBlocklist;
 using UrlTracker.Middleware;
 using UrlTracker.Modules.Options;
 using UrlTracker.Web;
@@ -25,7 +26,8 @@ namespace UrlTracker
                 .ComposeUrlTrackerMemoryCache()
                 .ComposeUrlTrackerBackoffice()
                 .ComposeUrlTrackerBackofficeNotifications()
-                .ComposeUrlTrackerMiddleware();
+                .ComposeUrlTrackerMiddleware()
+                .ComposeUrlTrackerGlobalDenyList();
 
             builder.Services.AddUrlTrackerModule("Standard installation");
         }
