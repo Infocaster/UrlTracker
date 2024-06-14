@@ -24,6 +24,7 @@
     <ProjectReference Include="..\UrlTracker.Backoffice.UI\UrlTracker.Backoffice.UI.csproj" />
     <ProjectReference Include="..\UrlTracker.Core.Caching.Memory\UrlTracker.Core.Caching.Memory.csproj" />
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
+    <ProjectReference Include="..\UrlTracker.GlobalBlocklist\UrlTracker.GlobalBlocklist.csproj" />
     <ProjectReference Include="..\UrlTracker.Middleware\UrlTracker.Middleware.csproj" />
     <ProjectReference Include="..\UrlTracker.Web\UrlTracker.Web.csproj" />
   </ItemGroup>

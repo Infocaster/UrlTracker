@@ -25,7 +25,7 @@ namespace UrlTracker.Backoffice.Notifications.Cleanup
         {
             try
             {
-                var timer = new PeriodicTimer(TimeSpan.FromHours(2));
+                using var timer = new PeriodicTimer(TimeSpan.FromHours(2));
                 while (await timer.WaitForNextTickAsync(stoppingToken))
                 {
                     await _queue.ScheduleAsync();
