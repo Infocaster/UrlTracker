@@ -23,6 +23,9 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
   private incomingStrategy: string = 'url';
 
   @property({ type: Boolean })
+  public disabled: boolean = false;
+
+  @property({ type: Boolean })
   private advancedView: boolean = false;
 
   @state()
@@ -39,21 +42,18 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
       labelFallback: 'Content',
       value: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').url,
       placeholder: 'https://example.com/',
-      disabled: false,
     },
     // {
     //   label: "urlTrackerNewRedirect_incoming-url-path",
     //   labelFallback: "Path",
     //   value: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').path,
     //   placeholder: "lorem/ipsum",
-    //   disabled: false,
     // },
     {
       label: 'urlTrackerRedirectSource_regex',
       labelFallback: 'URL',
       value: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').regex,
       placeholder: '$[a-z]^',
-      disabled: false,
     },
   ] as ITypeButton[];
 
@@ -128,7 +128,7 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
               label=${item.label}
               look=${this._selectedType.value === item.value ? 'primary' : 'outline'}
               color="default"
-              .disabled=${item.disabled}
+              .disabled=${this.disabled}
               @click=${(e: Event) => this.onTypeChange(item, e)}
             ></uui-button>`,
         )}
@@ -145,6 +145,7 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
         ${ref(this.inputRef)}
         .value=${this.incomingUrl}
         .placeholder=${this._selectedType.placeholder}
+        .disabled=${this.disabled}
         @input=${this._debouncedOnInput}
       ></uui-input>
     `;

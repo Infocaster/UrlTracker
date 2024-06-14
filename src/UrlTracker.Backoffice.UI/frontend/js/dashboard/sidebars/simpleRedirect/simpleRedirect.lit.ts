@@ -59,6 +59,11 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
     return this.scope.model.advanced;
   }
 
+  get sourceEditable(): boolean {
+    ensureExists(this.$scope, 'scope');
+    return this.scope.model.sourceEditable;
+  }
+
   @property({ attribute: false })
   get redirect() {
     ensureExists(this.$scope, 'scope');
@@ -124,6 +129,7 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
       <div class="main">
         <urltracker-create-simple-redirect
           .advancedView=${this.advancedView}
+          .sourceEditable=${this.sourceEditable}
           .redirect=${this.redirectData}
           @update=${({ detail }: { detail: IRedirectData }) => (this.redirectData = detail)}
         ></urltracker-create-simple-redirect>

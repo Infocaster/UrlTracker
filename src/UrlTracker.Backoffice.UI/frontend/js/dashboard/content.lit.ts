@@ -88,6 +88,7 @@ export class UrlTrackerDashboardContent extends LitElement {
         name: titles[index],
         label: labels[index] ? labels[index] : titles[index],
         template: item.template,
+        alias: item.alias,
       }));
 
       this.tabs = result;
@@ -105,7 +106,8 @@ export class UrlTrackerDashboardContent extends LitElement {
       title: 'New redirect',
       submit: this.closePanel,
       close: this.closePanel,
-      advanced: this.activeTab?.name === 'Advanced redirects',
+      advanced: this.activeTab?.alias === 'advancedRedirects',
+      sourceEditable: true,
     });
 
     this.editorService!.open(options);

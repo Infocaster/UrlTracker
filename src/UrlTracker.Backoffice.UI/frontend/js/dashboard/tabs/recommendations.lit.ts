@@ -13,11 +13,7 @@ import { UrlTrackerNotificationWrapper } from '../notifications/notifications.mi
 
 import { IEditorService, editorServiceContext } from '@/context/editorservice.context';
 import { redirectServiceContext } from '@/context/redirectservice.context';
-import {
-  IRedirectData,
-  IRedirectResponse,
-  IRedirectService,
-} from '@/services/redirect.service';
+import { IRedirectData, IRedirectResponse, IRedirectService } from '@/services/redirect.service';
 import variableresourceService from '@/util/tools/variableresource.service';
 import { consume, provide } from '@lit/context';
 import { ifDefined } from 'lit/directives/if-defined.js';
@@ -188,6 +184,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
       close: this.closePanel,
       data: data,
       advanced: false,
+      sourceEditable: false,
       solvedRecommendation: solvedRecommendation,
     });
 

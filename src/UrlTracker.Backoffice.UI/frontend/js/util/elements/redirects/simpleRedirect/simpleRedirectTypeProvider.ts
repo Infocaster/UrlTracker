@@ -8,7 +8,6 @@ export interface ITypeButton {
   labelFallback: string;
   value: 'content' | 'media' | 'url';
   placeholder: string;
-  disabled: boolean;
 }
 
 /*

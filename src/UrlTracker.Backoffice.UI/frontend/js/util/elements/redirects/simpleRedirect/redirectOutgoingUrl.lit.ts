@@ -59,21 +59,18 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
       labelFallback: 'Content',
       value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content,
       placeholder: 'link to content placeholder',
-      disabled: false,
     },
     // {
     //   label: "urlTrackerRedirectTarget_media",
     //   labelFallback: "Media",
     //   value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').media,
     //   placeholder: "link to media placeholder",
-    //   disabled: true,
     // },
     {
       label: 'urlTrackerRedirectTarget_url',
       labelFallback: 'URL',
       value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url,
       placeholder: 'https://example.com/',
-      disabled: false,
     },
   ] as ITypeButton[];
 
@@ -286,7 +283,6 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
               label=${item.label}
               look=${this._selectedType.value === item.value ? 'primary' : 'outline'}
               color="default"
-              .disabled=${item.disabled}
               @click=${(e: Event) => this.onTypeChange(item, e)}
             ></uui-button>`,
         )}
