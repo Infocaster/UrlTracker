@@ -42,6 +42,8 @@
   </area>
   <area alias="urlTrackerDashboardLanding">
     <key alias="statisticLabel">pagina's gaven een 404 afgelopen week</key>
+    <key alias="noRecommendations">Er zijn geen adviezen</key>
+    <key alias="topAmount">Top %0% adviezen</key>
   </area>
   <area alias="urlTrackerDashboardFooter">
     <key alias="featurelabel">Doe een suggestie</key>
