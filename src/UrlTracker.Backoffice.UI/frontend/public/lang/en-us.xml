@@ -46,8 +46,6 @@
     <key alias="topAmount">Top %0% recommendations</key>
   </area>
   <area alias="urlTrackerDashboardFooter">
-    <key alias="logo">/App_Plugins/UrlTracker/assets/layout/footerlogo.svg</key>
-    <key alias="logourl">https://infocaster.net</key>
     <key alias="featurelabel">Suggest a feature</key>
     <key alias="buglabel">Report a bug</key>
     <key alias="wikilabel">Open the wiki</key>
