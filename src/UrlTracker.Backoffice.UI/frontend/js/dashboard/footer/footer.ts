@@ -1,6 +1,4 @@
 ﻿export interface IDashboardFooter {
-  logo: string;
-  logoUrl: string;
   version: string;
   links: Array<IDashboardFooterLink>;
 }

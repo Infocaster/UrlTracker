@@ -48,6 +48,7 @@
   <area alias="urlTrackerDashboardFooter">
     <key alias="featurelabel">Doe een suggestie</key>
     <key alias="buglabel">Meld een bug</key>
+    <key alias="wikilabel">Lees de wiki</key>
   </area>
   <area alias="urlTrackerRedirectSource">
     <key alias="url">URL</key>
