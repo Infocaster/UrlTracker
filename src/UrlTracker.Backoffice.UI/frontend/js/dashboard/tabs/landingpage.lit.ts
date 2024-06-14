@@ -167,6 +167,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
       close: this.closePanel,
       data: data,
       advanced: false,
+      sourceEditable: false,
       solvedRecommendation: solvedRecommendation,
     });
 

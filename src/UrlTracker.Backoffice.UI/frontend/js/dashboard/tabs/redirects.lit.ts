@@ -156,6 +156,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
       submit: this.submitNewRedirectPanel,
       close: this.closePanel,
       advanced: this.viewContext.advanced,
+      sourceEditable: true,
       data: data,
     });
 
@@ -168,6 +169,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
       submit: this.submitNewRedirectPanel,
       close: this.closePanel,
       advanced: this.viewContext.advanced,
+      sourceEditable: true,
       data: data,
       id: id,
     });

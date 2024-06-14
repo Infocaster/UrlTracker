@@ -16,6 +16,9 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
   @property({ type: Boolean })
   public advancedView = false;
 
+  @property({ type: Boolean })
+  public sourceEditable = true;
+
   private onTogglePermanent = ({ detail }: { detail: boolean }) => {
     this.redirect.permanent = detail;
     this.updateRedirect();
@@ -98,6 +101,8 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
         .advancedView=${this.advancedView}
         .incomingStrategy=${this.redirect.source.strategy}
         .incomingUrl=${this.redirect.source.value}
+        .disabled=${!this.sourceEditable}
+        .ariaDisabled=${this.sourceEditable ? 'false' : 'true'}
         @input=${this.onIncomingUrlInput}
         @typechange=${this.onIncomingTypeChange}
       ></urltracker-redirect-incoming-url>

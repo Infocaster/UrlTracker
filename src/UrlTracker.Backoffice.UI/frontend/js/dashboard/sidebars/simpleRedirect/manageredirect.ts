@@ -4,6 +4,7 @@ import { ICancelSubmitEditor, ICustomEditor } from '@/umbraco/editor.service';
 export interface IManageRedirectModel {
   advanced: boolean;
   title: string;
+  sourceEditable: boolean;
 }
 
 export interface ICreateRedirectModel {
