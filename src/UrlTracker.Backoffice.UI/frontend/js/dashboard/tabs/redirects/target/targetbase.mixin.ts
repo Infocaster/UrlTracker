@@ -55,7 +55,7 @@ export function UrlTrackerRedirectTarget<TBase extends LitElementConstructor>(Ba
         }
 
         span {
-          color: var(--uui-palette-gravel-dimmed);
+          color: var(--uui-palette-dusty-grey-dark);
         }
       `,
     ];

@@ -10,6 +10,7 @@ import targetStrategyResolver from './target/target.strategy';
 import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
+import { toReadableDate } from '@/util/functions/dateformatter';
 
 const RedirectListItem = UrlTrackerSelectableResultListItem<IRedirectResponse>(redirectContext);
 
@@ -20,6 +21,9 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
 
   @state()
   private redirectToText?: string;
+
+  @state()
+  private createDateText?: string;
 
   @state()
   private redirectSourceText?: string;
@@ -33,7 +37,12 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
     ensureServiceExists(this.localizationService, 'localizationService');
     ensureExists(this.item, 'A redirect is required to use this element, but no redirect was provided');
 
-    this.redirectToText = await this.localizationService.localize('urlTrackerRedirectTarget_redirectto');
+    const [redirectToText, createDateText] = await this.localizationService.localizeMany([
+      'urlTrackerRedirectTarget_redirectto',
+      'urlTrackerRedirectTarget_redirectdate',
+    ]);
+    this.redirectToText = redirectToText;
+    this.createDateText = createDateText;
 
     const sourceStrategy = sourceStrategyResolver.getStrategy({ redirect: this.item, element: this });
     if (sourceStrategy) {
@@ -43,11 +52,6 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
       this.redirectSourceText = await this.localizationService.localize('urlTrackerRedirectSource_unknown');
       this.sourceIsError = true;
     }
-  }
-
-  private handleInspect(e: Event): void {
-    e.stopPropagation();
-    this.dispatchEvent(new CustomEvent('inspect', { detail: this.item }));
   }
 
   private handleEdit(e: Event): void {
@@ -70,7 +74,7 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
 
     return html`
       <h3 class="${ifDefined(errorClass)}">
-        <button class="inspect-button" @click=${this.handleInspect}>${this.redirectSourceText}</button>
+        <button class="inspect-button" @click=${this.handleEdit}>${this.redirectSourceText}</button>
       </h3>
     `;
   }
@@ -93,6 +97,7 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
             <uui-icon name="delete" class="icon-before"></uui-icon>Delete
           </button>
         </uui-button-group>
+        <div class="createdate">${this.createDateText}: ${toReadableDate(this.item.createDate)}</div>
       </div>
     `;
   }
@@ -107,10 +112,20 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
         min-width: 0;
       }
 
-      .target {
+      .target,
+      .createdate {
         line-height: 15px;
         font-size: 12px;
+      }
+
+      .target {
         margin-top: 8px;
+      }
+
+      .createdate {
+        font-style: italic;
+        color: var(--uui-palette-chamoisee-dimmed);
+        margin-top: 1rem;
       }
     `,
   ];
