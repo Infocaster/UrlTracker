@@ -66,9 +66,24 @@ jobs:
                     ]
                 }
 
+        - task: IISWebAppManagementOnMachineGroup@0
+          displayName: 'Stop application pool'
+          inputs:
+            IISDeploymentType: 'IISApplicationPool'
+            ActionIISApplicationPool: 'StopAppPool'
+            StartStopRecycleAppPoolName: '${{ parameters.websiteName }}'
+
         - task: IISWebAppDeploymentOnMachineGroup@0
           displayName: 'Deploy to IIS'
           inputs:
             WebsiteName: '${{ parameters.websiteName }}'
             Package: '${{ parameters.dropFolder }}'
             takeAppOfflineFlag: true
+            RemoveAdditionalFilesFlag: true
+
+        - task: IISWebAppManagementOnMachineGroup@0
+          displayName: 'Start application pool'
+          inputs:
+            IISDeploymentType: 'IISApplicationPool'
+            ActionIISApplicationPool: 'StartAppPool'
+            StartStopRecycleAppPoolName: '${{ parameters.websiteName }}'
