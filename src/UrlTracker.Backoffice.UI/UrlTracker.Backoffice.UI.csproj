@@ -5,9 +5,9 @@
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>1 other change
+    <PackageReleaseNotes>1 bugfix
 
-- Improve recommendation processing performance</PackageReleaseNotes>
+- Fix failure to load backoffice when running in production mode</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <None Include="build\**\*.*">

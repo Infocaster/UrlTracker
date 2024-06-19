@@ -4,9 +4,9 @@
     <Title>UrlTracker Global Block List</Title>
     <Description>The global block list provides an extra filter for the URL Tracker that retrieves a global list from GitHub and adds it as a filter.</Description>
     <RootNamespace>UrlTracker.GlobalBlocklist</RootNamespace>
-    <PackageReleaseNotes>1 other change
+    <PackageReleaseNotes>1 bugfix
 
-- Improve recommendation processing performance</PackageReleaseNotes>
+- Fix failure to load backoffice when running in production mode</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Polly" Version="8.4.0" />

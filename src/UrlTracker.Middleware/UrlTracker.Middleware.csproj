@@ -4,9 +4,9 @@
     <Title>URL Tracker Middleware</Title>
     <Description>This package contains middleware to perform redirects and to register client errors with the URL Tracker</Description>
     <RootNamespace>UrlTracker.Middleware</RootNamespace>
-    <PackageReleaseNotes>1 other change
+    <PackageReleaseNotes>1 bugfix
 
-- Improve recommendation processing performance</PackageReleaseNotes>
+- Fix failure to load backoffice when running in production mode</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="13.0.0" />
