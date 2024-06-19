@@ -1,5 +1,5 @@
 import { consume } from '@lit/context';
-import { UUIIconRegistry } from '@umbraco-ui/uui';
+import { UUIIconRegistry } from '@umbraco-ui/uui-icon-registry';
 import { LitElement, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { iconHelperContext } from '../../context/iconhelper.context';

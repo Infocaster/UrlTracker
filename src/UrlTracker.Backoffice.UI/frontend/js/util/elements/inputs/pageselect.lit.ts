@@ -1,5 +1,5 @@
 import { ensureExists } from '@/util/tools/existancecheck';
-import { UUIPaginationElement } from '@umbraco-ui/uui';
+import { UUIPaginationElement } from '@umbraco-ui/uui-pagination';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';

@@ -7,7 +7,7 @@ import { IContent } from '@/umbraco/editor.service';
 import { debounce } from '@/util/functions/debounce';
 import variableresourceService from '@/util/tools/variableresource.service';
 import { consume } from '@lit/context';
-import { UUIInputEvent } from '@umbraco-ui/uui';
+import { UUIInputEvent } from '@umbraco-ui/uui-input';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';

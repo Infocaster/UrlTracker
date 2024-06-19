@@ -1,6 +1,5 @@
 import { consume } from '@lit/context';
-import '@umbraco-ui/uui';
-import { UUIFileDropzoneEvent } from '@umbraco-ui/uui';
+import { UUIFileDropzoneEvent } from '@umbraco-ui/uui-file-dropzone';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { localizationServiceContext } from '../../../context/localizationservice.context';

@@ -3,7 +3,6 @@ import { ILocalizationService } from '../../umbraco/localization.service';
 import { consume } from '@lit/context';
 import { localizationServiceContext } from '../../context/localizationservice.context';
 import { customElement, property, state } from 'lit/decorators.js';
-import '@umbraco-ui/uui';
 
 @customElement('urltracker-redirect-actions')
 export class UrlTrackerRedirectActions extends LitElement {

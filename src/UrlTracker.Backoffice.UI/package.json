@@ -15,7 +15,11 @@
   "dependencies": {
     "@lit/context": "^1.1.1",
     "@oddbird/popover-polyfill": "^0.4.3",
-    "@umbraco-ui/uui": "^1.7.1",
+    "@umbraco-ui/uui-boolean-input": "^1.8.2",
+    "@umbraco-ui/uui-file-dropzone": "^1.8.0",
+    "@umbraco-ui/uui-icon-registry": "^1.7.1",
+    "@umbraco-ui/uui-input": "^1.7.1",
+    "@umbraco-ui/uui-pagination": "^1.7.1",
     "axios": "^1.7.2",
     "chart.js": "^4.4.3",
     "js-cookie": "^3.0.5",

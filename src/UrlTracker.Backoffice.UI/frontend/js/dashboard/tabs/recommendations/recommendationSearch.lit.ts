@@ -1,6 +1,6 @@
 import { ensureExists } from '@/util/tools/existancecheck';
 import { consume } from '@lit/context';
-import { UUIInputEvent } from '@umbraco-ui/uui';
+import { UUIInputEvent } from '@umbraco-ui/uui-input';
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';

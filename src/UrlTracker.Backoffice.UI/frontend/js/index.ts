@@ -1,5 +1,4 @@
 import '@oddbird/popover-polyfill';
-import '@umbraco-ui/uui';
 import './dashboard';
 import {
   ngAnalyseRecommendationSidebar,
