@@ -78,6 +78,7 @@ namespace UrlTracker.Core.Database.Migrations
         private class DefaultMigrationHelper : IMigrationHelper
         {
             private readonly M202210291430_RecommendationModel _migration;
+            private const int _urlMaxLength = 2083;
 
             public DefaultMigrationHelper(M202210291430_RecommendationModel migration)
             {
@@ -94,7 +95,7 @@ namespace UrlTracker.Core.Database.Migrations
                                SET [sourceStrategy] = @sourceStrategy, [sourceValue] = [sourceRegex]
                                WHERE [sourceValue] IS NULL", new { sourceStrategy = Defaults.DatabaseSchema.RedirectSourceStrategies.RegularExpression });
 
-                _migration.Alter.Table(_redirectTableName).AlterColumn(_newSourceName).AsString(255).NotNullable().Do();
+                _migration.Alter.Table(_redirectTableName).AlterColumn(_newSourceName).AsString(_urlMaxLength).NotNullable().Do();
             }
 
             public void MigrateTarget()
@@ -106,7 +107,7 @@ namespace UrlTracker.Core.Database.Migrations
                 _migration.Database.Execute(@"UPDATE [urltrackerRedirect]
                                SET [targetStrategy] = @targetStrategy, [targetValue] = [targetNodeId]
                                WHERE [targetNodeId] IS NOT NULL", new { targetStrategy = Defaults.DatabaseSchema.RedirectTargetStrategies.Content });
-                _migration.Alter.Table(_redirectTableName).AlterColumn(_newTargetName).AsString(255).NotNullable().Do();
+                _migration.Alter.Table(_redirectTableName).AlterColumn(_newTargetName).AsString(_urlMaxLength).NotNullable().Do();
             }
         }
 
