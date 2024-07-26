@@ -93,6 +93,12 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     },
   ];
 
+  private _sortDirectionMap: Record<RecommendationSortType, boolean> = {
+    [RECOMMENDATION_SORT_TYPE.IMPORTANCE]: true,
+    [RECOMMENDATION_SORT_TYPE.MOST_RECENTLY_UPDATED]: true,
+    [RECOMMENDATION_SORT_TYPE.URL]: false,
+  };
+
   protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
     super.firstUpdated(_changedProperties);
 
@@ -121,7 +127,12 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
     this.loading++;
     try {
-      this.recommendationCollection = await this._recommendationsService?.list({ ...page, query, OrderBy: type });
+      this.recommendationCollection = await this._recommendationsService?.list({
+        ...page,
+        query,
+        OrderBy: type,
+        Desc: this._sortDirectionMap[type],
+      });
     } finally {
       this.loading--;
     }
