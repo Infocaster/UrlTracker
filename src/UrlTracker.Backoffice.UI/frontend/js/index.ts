@@ -17,6 +17,7 @@ import './dashboard/tabs/redirects.lit';
 import './dashboard/tabs/redirects/source';
 import './dashboard/tabs/redirects/target';
 
+import angular from 'angular';
 import { TabBuilder } from './util/tools/builder/tabBuilder';
 
 window.URL_TRACKER = {

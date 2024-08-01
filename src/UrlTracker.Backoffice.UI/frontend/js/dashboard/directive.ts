@@ -1,4 +1,10 @@
-﻿import { scopeContext, scopeContextKey } from '@/context/scope.context';
+﻿import {
+  IUmbracoNotificationsService,
+  umbracoNotificationsServiceContext,
+  umbracoNotificationsServiceContextKey,
+} from '@/context/notificationsservice.context';
+import { IOverlayService, overlayServiceContext, overlayServiceContextKey } from '@/context/overlayservice.context';
+import { scopeContext, scopeContextKey } from '@/context/scope.context';
 import { IEditorService, editorServiceContext, editorServiceKey } from '../context/editorservice.context';
 import { IIconHelper, iconHelperContext, iconHelperKey } from '../context/iconhelper.context';
 import {
@@ -11,12 +17,6 @@ import { AnalyseRecommendationSidebar } from './sidebars/analyseRecommendation-m
 import { InspectRecommendationsSidebar } from './sidebars/explainRecommendations-main.lit';
 import { InspectRedirectSidebar } from './sidebars/inspectRedirect-main.lit';
 import { SimpleRedirectSidebar } from './sidebars/simpleRedirect-main.lit';
-import { IOverlayService, overlayServiceContext, overlayServiceContextKey } from '@/context/overlayservice.context';
-import {
-  IUmbracoNotificationsService,
-  umbracoNotificationsServiceContext,
-  umbracoNotificationsServiceContextKey,
-} from '@/context/notificationsservice.context';
 
 ngUrltrackerDashboard.alias = 'ngUrltrackerDashboard';
 ngUrltrackerDashboard.$inject = [
