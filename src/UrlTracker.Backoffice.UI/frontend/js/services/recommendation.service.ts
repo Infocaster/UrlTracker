@@ -1,13 +1,14 @@
 import { Axios } from 'axios';
+import qs from 'qs';
 import { axiosInstance } from '../util/tools/axios.service';
 import urlresource, { IControllerUrlResource, IUrlResource } from '../util/tools/urlresource.service';
+import { IDataWithId } from './models/datawithid';
+import { IEntityResponseId } from './models/entityresponseid';
 import { IPagedCollectionResponseBase } from './models/PagedCollectionResponseBase';
 import { IPaginationRequestBase } from './models/paginationrequestbase';
 import { IQueryRequestBase } from './models/queryrequestbase';
 import { IRecommendationFilterRequestBase } from './models/recommendationfilterrequestbase';
 import { ScoringService } from './scoring.service';
-import { IDataWithId } from './models/datawithid';
-import { IEntityResponseId } from './models/entityresponseid';
 
 export type IRecommendationResponse = IEntityResponseId & IRecommendationResponseData;
 
@@ -53,6 +54,9 @@ export class RecommendationsService implements IRecommendationsService {
   public async list(request: IListRecommendationRequest): Promise<IRecommendationCollection> {
     const response = await this.axios.get<IRecommendationCollection>(this.controller.getUrl('List'), {
       params: request,
+      paramsSerializer: (params) => {
+        return qs.stringify(params);
+      },
     });
 
     const results = await Promise.all(

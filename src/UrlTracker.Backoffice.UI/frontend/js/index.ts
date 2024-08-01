@@ -16,13 +16,13 @@ import './dashboard/tabs/redirects.lit';
 import './dashboard/tabs/redirects/source';
 import './dashboard/tabs/redirects/target';
 
-import angular from 'angular';
 import { TabBuilder } from './util/tools/builder/tabBuilder';
 
 window.URL_TRACKER = {
   TabBuilder: new TabBuilder(),
 };
 
+//@ts-ignore global angular import works, but typescript fails to recognize it
 const module = angular.module('umbraco');
 
 // directives

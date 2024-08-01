@@ -94,10 +94,23 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
   private async search() {
     this.loading++;
     try {
+      const recommendationTypeStrategies: {
+        [key: string]: string;
+      } = variableresourceService.get('recommendationTypeStrategies');
+
+      const strategiesToInclude = Object.keys(recommendationTypeStrategies).filter((key) => {
+        return key !== 'technicalFile' && key !== 'image';
+      });
+
+      const strategiesGuidArray = strategiesToInclude.map((key) => {
+        return recommendationTypeStrategies[key];
+      });
+
       this.recommendationCollection = await this._recommendationsService!.list({
         page: 1,
         pageSize: 10,
         OrderBy: RECOMMENDATION_SORT_TYPE.IMPORTANCE,
+        Types: strategiesGuidArray,
       });
       this.numericMetric = (await this._landingspageService?.numericMetric()) ?? 0;
       if (this.recommendationCollection.total > 0) {
