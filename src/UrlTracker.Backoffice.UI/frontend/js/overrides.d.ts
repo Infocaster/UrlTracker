@@ -3,6 +3,7 @@
     URL_TRACKER: {
       TabBuilder: TabBuilder;
     };
+    Umbraco: any;
   }
 }
 
