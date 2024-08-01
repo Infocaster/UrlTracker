@@ -1,4 +1,8 @@
 import { IEditorService, editorServiceContext } from '@/context/editorservice.context';
+import {
+  IUmbracoNotificationsService,
+  umbracoNotificationsServiceContext,
+} from '@/context/notificationsservice.context';
 import { redirectServiceContext } from '@/context/redirectservice.context';
 import { IRedirectService } from '@/services/redirect.service';
 import { ensureServiceExists } from '@/util/tools/existancecheck';
@@ -9,12 +13,8 @@ import { localizationServiceContext } from '../context/localizationservice.conte
 import { tabContext } from '../context/tabcontext.context';
 import { ILocalizationService } from '../umbraco/localization.service';
 import './footer/footer.lit';
-import tabStrategy, { ITab, TabStrategyCollection } from './tab';
-import {
-  IUmbracoNotificationsService,
-  umbracoNotificationsServiceContext,
-} from '@/context/notificationsservice.context';
 import { createNewRedirectOptions } from './sidebars/simpleRedirect/manageredirect';
+import tabStrategy, { ITab, TabStrategyCollection } from './tab';
 
 @customElement('urltracker-dashboard-content')
 export class UrlTrackerDashboardContent extends LitElement {
@@ -64,6 +64,13 @@ export class UrlTrackerDashboardContent extends LitElement {
   constructor() {
     super();
     this.loading = 0;
+    window.addEventListener('url-tracker-open-tab', ((evt: CustomEvent) => {
+      if (!this.tabs) return;
+      const tab = this.tabs.find((item) => item.alias === evt.detail.alias);
+      if (tab) {
+        this.activeTab = tab;
+      }
+    }) as EventListener);
   }
 
   async connectedCallback(): Promise<void> {

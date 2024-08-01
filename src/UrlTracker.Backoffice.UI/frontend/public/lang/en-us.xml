@@ -44,6 +44,7 @@
     <key alias="statisticLabel">pages returned a 404 response last week</key>
     <key alias="noRecommendations">There are no recommendations</key>
     <key alias="topAmount">Top %0% recommendations</key>
+	<key alias="recommendationRedirect">More recommendations</key>
   </area>
   <area alias="urlTrackerDashboardFooter">
     <key alias="featurelabel">Suggest a feature</key>

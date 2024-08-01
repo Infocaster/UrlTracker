@@ -1,5 +1,9 @@
 import { IEditorService, editorServiceContext } from '@/context/editorservice.context';
 import { landingpageServiceContext } from '@/context/landingspageservice.context';
+import {
+  IUmbracoNotificationsService,
+  umbracoNotificationsServiceContext,
+} from '@/context/notificationsservice.context';
 import { recommendationServiceContext } from '@/context/recommendationservice.context';
 import { redirectServiceContext } from '@/context/redirectservice.context';
 import { RECOMMENDATION_SORT_TYPE } from '@/enums/sortType';
@@ -17,20 +21,16 @@ import { LitElement, PropertyValueMap, css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { UrlTrackerNotificationWrapper } from '../notifications/notifications.mixin';
+import { createAnalyseRecommendationEditor } from '../sidebars/analyseRecommendation/analyserecommendation';
+import { createExplainRecommendationsEditor } from '../sidebars/explainRecommendations/explainrecommendations';
 import {
   IRecommendationAction,
   RECCOMENDATION_ACTIONS,
 } from '../sidebars/explainRecommendations/explainRecommendations.lit';
+import { createNewRedirectOptions } from '../sidebars/simpleRedirect/manageredirect';
 import './redirects/redirectitem.lit';
 import { ISourceStrategies } from './redirects/source/source.constants';
 import { ITargetStrategies } from './redirects/target/target.constants';
-import {
-  IUmbracoNotificationsService,
-  umbracoNotificationsServiceContext,
-} from '@/context/notificationsservice.context';
-import { createNewRedirectOptions } from '../sidebars/simpleRedirect/manageredirect';
-import { createExplainRecommendationsEditor } from '../sidebars/explainRecommendations/explainrecommendations';
-import { createAnalyseRecommendationEditor } from '../sidebars/analyseRecommendation/analyserecommendation';
 
 @customElement('urltracker-landing-tab')
 export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitElement, 'landingpage') {
@@ -68,6 +68,9 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
   @state()
   private topRecommendationsLabel?: string;
 
+  @state()
+  private redirectLabel?: string;
+
   protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
     super.firstUpdated(_changedProperties);
 
@@ -83,6 +86,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
     ensureServiceExists(this.localizationService, 'localization service');
 
     this.statisticLabel = await this.localizationService.localize('urlTrackerDashboardLanding_statisticLabel');
+    this.redirectLabel = await this.localizationService.localize('urlTrackerDashboardLanding_recommendationRedirect');
 
     await this.search();
   }
@@ -242,6 +246,26 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
     );
   }
 
+  private renderRedirectButton(): unknown {
+    if (!this.recommendationCollection?.results) return nothing;
+    return html` <div class="recommendation-redirect">
+      <uui-button look="primary" @click=${this.openRecommendations}
+        >${this.redirectLabel}
+        <uui-icon name="icon-navigation-right" class="icon-white"></uui-icon>
+      </uui-button>
+    </div>`;
+  }
+
+  private openRecommendations() {
+    const event = new CustomEvent('url-tracker-open-tab', {
+      detail: {
+        alias: 'recommendations',
+      },
+    });
+
+    window.dispatchEvent(event);
+  }
+
   protected renderInternal(): unknown {
     return html`
       <div class="grid-root">
@@ -249,6 +273,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
           <urltracker-result-list .loading=${!!this.loading} .header=${this.topRecommendationsLabel}>
             ${this.renderRecommendations()}
           </urltracker-result-list>
+          ${this.renderRedirectButton()}
         </div>
 
         <uui-box>
@@ -276,8 +301,21 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
       min-width: 0;
     }
 
+    .recommendation-redirect {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .icon-white {
+      fill: white;
+    }
+
+    urltracker-recommendation-item {
+      min-width: 0;
+    }
+
     urltracker-result-list {
-      flex: 1 1 32rem;
+      flex: 1 1 0;
     }
 
     uui-box {

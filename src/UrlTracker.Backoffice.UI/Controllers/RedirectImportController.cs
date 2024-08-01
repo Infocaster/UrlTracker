@@ -28,7 +28,8 @@ namespace UrlTracker.Backoffice.UI.Controllers
         {
             /* ToDo: Controllers should not do validation. This should happen in model validation preferrably
              */
-            if (!request.Redirects.ContentType.EndsWith("csv", StringComparison.OrdinalIgnoreCase))
+            if (!request.Redirects.ContentType.EndsWith("csv", StringComparison.OrdinalIgnoreCase)
+                && !string.Equals(request.Redirects.ContentType, "application/vnd.ms-excel", StringComparison.OrdinalIgnoreCase))
             {
                 ModelState.AddModelError(nameof(request.Redirects), "File must be a CSV");
                 return BadRequest(ModelState);
