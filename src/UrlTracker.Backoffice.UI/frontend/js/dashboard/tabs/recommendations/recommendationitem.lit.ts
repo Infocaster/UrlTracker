@@ -1,10 +1,13 @@
+import { toReadableDateOnly } from '@/util/functions/dateformatter';
 import { ensureServiceExists } from '@/util/tools/existancecheck';
 import { ContextConsumer } from '@lit/context';
 import { css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { ILocalizationService, localizationServiceContext } from '../../../context/localizationservice.context';
 import { IRecommendationResponse, recommendationContext } from '../../../context/recommendationitem.context';
 import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';
+import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
 import {
   RECCOMENDATION_TYPES,
   RecommendationTypes,
@@ -13,9 +16,6 @@ import {
 } from './recommendationTag/recommendationTag';
 import './recommendationTag/recommendationTag.lit';
 import recommendationTypeStrategyResolver from './recommendationType/recommendation.strategy';
-import { ifDefined } from 'lit/directives/if-defined.js';
-import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
-import { toReadableDateOnly } from '@/util/functions/dateformatter';
 
 const RecommendationListItem = UrlTrackerSelectableResultListItem<IRecommendationResponse>(recommendationContext);
 
@@ -28,6 +28,15 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   private actionsText = '';
 
   @state()
+  private actionTemporaryText = '';
+
+  @state()
+  private actionPermanentText = '';
+
+  @state()
+  private actionIgnoreText = '';
+
+  @state()
   private recommendationType: RecommendationTypes = RECCOMENDATION_TYPES.NOT_IMPORTANT;
 
   @state()
@@ -38,6 +47,12 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
 
   @state()
   private occurranceDatesText?: string;
+
+  @state()
+  private isImageRecommendation: boolean = false;
+
+  @state()
+  private isTechnicalFileRecommendation: boolean = false;
 
   //   @consume({ context: localizationServiceContext })
   //   private localizationService?: ILocalizationService;
@@ -58,11 +73,27 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
     }
     this.localizeActionsText();
     this.localizeDatesText();
+    this.localizeActionTemporaryText();
+    this.localizeActionPermanentText();
+    this.localizeActionIgnoreText();
 
     const sourceStrategy = recommendationTypeStrategyResolver.getStrategy({ recommendation: this.item, element: this });
     if (sourceStrategy) {
       this.recommendationTypeText = await sourceStrategy.getTitle();
       this.recommendationTypeIsError = false;
+
+      if (
+        this.recommendationTypeText === (await this.localizationService.localize('urlTrackerRecommendationType_image'))
+      ) {
+        this.isImageRecommendation = true;
+      }
+
+      if (
+        this.recommendationTypeText ===
+        (await this.localizationService.localize('urlTrackerRecommendationType_technicalFile'))
+      ) {
+        this.isTechnicalFileRecommendation = true;
+      }
     } else {
       this.recommendationTypeText = await this.localizationService.localize('urlTrackerRecommendationType_unknown');
       this.recommendationTypeIsError = true;
@@ -92,6 +123,21 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   private async localizeActionsText(): Promise<void> {
     const actionsText = await this.localizationService?.localize('urlTrackerRecommendationItem_actions');
     this.actionsText = actionsText ?? '';
+  }
+
+  private async localizeActionTemporaryText(): Promise<void> {
+    const temporaryText = await this.localizationService?.localize('urlTrackerRecommendationItem_action-temporary');
+    this.actionTemporaryText = temporaryText ?? '';
+  }
+
+  private async localizeActionPermanentText(): Promise<void> {
+    const permanentText = await this.localizationService?.localize('urlTrackerRecommendationItem_action-permanent');
+    this.actionPermanentText = permanentText ?? '';
+  }
+
+  private async localizeActionIgnoreText(): Promise<void> {
+    const ignoreText = await this.localizationService?.localize('urlTrackerRecommendationItem_action-ignore');
+    this.actionIgnoreText = ignoreText ?? '';
   }
 
   private async localizeDatesText(): Promise<void> {
@@ -134,6 +180,28 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
     this.dispatchEvent(new CustomEvent('ignore', { detail: this.item }));
   }
 
+  private renderTemporaryRedirect(): unknown {
+    if (this.isImageRecommendation || this.isTechnicalFileRecommendation) return nothing;
+
+    return html`<button class="action-button" @click=${this.handleCreateTemporaryRedirect}>
+      <uui-icon name="icon-navigation-right" class="icon-before"></uui-icon>${this.actionTemporaryText}
+    </button>`;
+  }
+
+  private renderPermanentRedirect(): unknown {
+    if (this.isImageRecommendation || this.isTechnicalFileRecommendation) return nothing;
+
+    return html`<button class="action-button" @click=${this.handleCreatePermanentRedirect}>
+      <uui-icon name="icon-navigation-right" class="icon-before"></uui-icon>${this.actionPermanentText}
+    </button>`;
+  }
+
+  private renderIgnore(): unknown {
+    return html`<button class="action-button" @click=${this.handleIgnoreRecommendation}>
+      <uui-icon name="icon-navigation-right" class="icon-before"></uui-icon>${this.actionIgnoreText}
+    </button>`;
+  }
+
   protected renderBody(): unknown {
     return html`
       <div class="body">
@@ -143,15 +211,7 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
           <button class="action-button help-button" @click=${this.handleExplain}>
             ${this.actionsText}<uui-icon name="icon-help-alt" class="icon-after"></uui-icon>
           </button>
-          <button class="action-button" @click=${this.handleCreateTemporaryRedirect}>
-            <uui-icon name="icon-navigation-right" class="icon-before"></uui-icon>Create temporary redirect
-          </button>
-          <button class="action-button" @click=${this.handleCreatePermanentRedirect}>
-            <uui-icon name="icon-navigation-right" class="icon-before"></uui-icon>Create permanent redirect
-          </button>
-          <button class="action-button" @click=${this.handleIgnoreRecommendation}>
-            <uui-icon name="icon-navigation-right" class="icon-before"></uui-icon>Ignore this
-          </button>
+          ${this.renderTemporaryRedirect()} ${this.renderPermanentRedirect()} ${this.renderIgnore()}
         </div>
         <div class="dates">
           ${this.occurranceDatesText}: ${toReadableDateOnly(this.item.createdate)} -
