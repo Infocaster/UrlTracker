@@ -123,7 +123,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
             {
                 return NotFound();
             }
-            _redirectRequestHandler.DeleteBulk(ids);
+            _redirectRequestHandler.DeleteBulk(existingRecords.ToArray());
 
             return NoContent();
         }

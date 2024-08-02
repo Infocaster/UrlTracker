@@ -2,6 +2,9 @@
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.Dashboards;
+using Umbraco.Cms.Core.DependencyInjection;
+using UrlTracker.Core.Notifications;
+using UrlTracker.Resources.Website.UrlTrackerNotifications;
 
 namespace UrlTracker.Resources.Website.Composing
 {
@@ -16,6 +19,10 @@ namespace UrlTracker.Resources.Website.Composing
             // Add a dashboard for experimenting with the settings
             builder.Dashboards()!.Add<UrlTrackerTestDashboard>();
             builder.AddDashboard<UrlTrackerRedirectGeneratorDashboard>();
+
+            builder.AddNotificationHandler<RedirectCreatedNotification, UrlTrackerNotificationHandler>();
+            builder.AddNotificationHandler<RedirectUpdatedNotification, UrlTrackerNotificationHandler>();
+            builder.AddNotificationHandler<RedirectDeletedNotification, UrlTrackerNotificationHandler>();
         }
     }
 
