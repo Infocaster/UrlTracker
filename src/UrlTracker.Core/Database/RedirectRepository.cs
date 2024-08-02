@@ -16,6 +16,7 @@ using Umbraco.Extensions;
 using UrlTracker.Core.Database.Dtos;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Factories;
+using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Core.Database
 {
@@ -80,6 +81,8 @@ namespace UrlTracker.Core.Database
                 {
                     q = q.WhereIn<RedirectDto>(e => e.SourceStrategy, filters.SourceTypes);
                 }
+
+                q = q.Where<RedirectDto>(e => e.Advanced == filters.Advanced);
 
                 return q;
             }

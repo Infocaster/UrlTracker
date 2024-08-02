@@ -9,7 +9,7 @@ namespace UrlTracker.Core.Database.Factories
     {
         internal static IRedirect BuildEntity(RedirectDto dto)
         {
-            var entity = new RedirectEntity(dto.RetainQuery, dto.Permanent, dto.Force, new EntityStrategy(dto.SourceStrategy, dto.SourceValue), new EntityStrategy(dto.TargetStrategy, dto.TargetValue));
+            var entity = new RedirectEntity(dto.RetainQuery, dto.Permanent, dto.Force, dto.Advanced, new EntityStrategy(dto.SourceStrategy, dto.SourceValue), new EntityStrategy(dto.TargetStrategy, dto.TargetValue));
             try
             {
                 entity.DisableChangeTracking();
@@ -34,6 +34,7 @@ namespace UrlTracker.Core.Database.Factories
                 RetainQuery = entity.RetainQuery,
                 Permanent = entity.Permanent,
                 Force = entity.Force,
+                Advanced = entity.Advanced,
                 TargetValue = entity.Target.Value,
                 SourceValue = entity.Source.Value,
                 SourceStrategy = entity.Source.Strategy,

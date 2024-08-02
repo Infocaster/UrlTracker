@@ -10,6 +10,7 @@ using UrlTracker.Core.Caching.Memory.Notifications;
 using UrlTracker.Core.Caching.Memory.Options;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
+using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Core.Caching.Memory.Database
 {

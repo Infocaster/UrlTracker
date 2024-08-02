@@ -9,6 +9,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
         : PaginationRequest
     {
         public string? Query { get; set; }
+        public bool Advanced { get; set; }
         public IEnumerable<RedirectType>? Types { get; set; }
         public IEnumerable<Guid>? SourceTypes { get; set; }
     }

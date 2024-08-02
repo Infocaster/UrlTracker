@@ -219,6 +219,13 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
                 result.Target = new UrlTargetStrategy(csvRedirect.TargetUrl);
             }
 
+            var advanced
+                 = result.Source is RegexSourceStrategy
+                || result.Force is true
+                || result.RetainQuery is false;
+
+            result.Advanced = advanced;
+
             return result;
         }
     }

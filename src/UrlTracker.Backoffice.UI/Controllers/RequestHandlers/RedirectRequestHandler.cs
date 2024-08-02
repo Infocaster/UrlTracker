@@ -10,6 +10,7 @@ using UrlTracker.Backoffice.UI.Notifications;
 using UrlTracker.Core;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
+using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
 {
@@ -49,6 +50,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             using var scope = _scopeProvider.CreateScope();
 
             var filters = new RedirectFilters(
+                request.Advanced,
                 request.Types?.Aggregate((l, r) => l | r) ?? RedirectType.All,
                 request.SourceTypes);
             var page = request.Page - 1;
@@ -173,6 +175,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             entity.Force = request.Force;
             entity.Permanent = request.Permanent;
             entity.RetainQuery = request.RetainQuery;
+            entity.Advanced = request.Advanced;
             entity.Source = CreateEntity(request.Source);
             entity.Target = CreateEntity(request.Target);
         }
@@ -183,6 +186,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
                         request.RetainQuery,
                         request.Permanent,
                         request.Force,
+                        request.Advanced,
                         CreateEntity(request.Source),
                         CreateEntity(request.Target));
             if (request.Key.HasValue) entity.Key = request.Key.Value;

@@ -26,7 +26,7 @@ namespace UrlTracker.Core.Map
                 (source, context) => Models.RedirectCollection.Create(context.MapEnumerable<IRedirect, Redirect>(source), source.Total));
 
             mapper.Define<Redirect, IRedirect>(
-                (source, context) => new RedirectEntity(source.RetainQuery, source.Permanent, source.Force, _strategyMapCollection.Map(source.Source), _strategyMapCollection.Map(source.Target)),
+                (source, context) => new RedirectEntity(source.RetainQuery, source.Permanent, source.Force, source.Advanced, _strategyMapCollection.Map(source.Source), _strategyMapCollection.Map(source.Target)),
                 Map);
 
             mapper.Define<ClientError, IClientError>(
@@ -66,6 +66,7 @@ namespace UrlTracker.Core.Map
             target.Key = source.Key == default ? null : source.Key;
             target.RetainQuery = source.RetainQuery;
             target.Permanent = source.Permanent;
+            target.Advanced = source.Advanced;
             target.Source = _strategyMapCollection.Map<ISourceStrategy>(source.Source);
             target.Target = _strategyMapCollection.Map<ITargetStrategy>(source.Target);
         }

@@ -41,7 +41,7 @@ namespace UrlTracker.Core.Tests
             return new IMapDefinition[]
             {
                 TestMapDefinition.CreateTestMap<Core.Database.Entities.RedirectEntityCollection, RedirectCollection>(RedirectCollection.Create(Enumerable.Empty<Redirect>())),
-                TestMapDefinition.CreateTestMap<Redirect, IRedirect>(new RedirectEntity(default, default, default, default!, default!)),
+                TestMapDefinition.CreateTestMap<Redirect, IRedirect>(new RedirectEntity(default, default, default, default, default!, default!)),
                 TestMapDefinition.CreateTestMap<IRedirect, Redirect>(new Redirect())
             };
         }

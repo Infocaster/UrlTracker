@@ -141,6 +141,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
       permanent: true,
       retainQuery: true,
       force: false,
+      advanced: false,
     };
 
     this.openNewRedirectPanel(redirect, event.detail.id);
@@ -159,6 +160,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
       permanent: false,
       retainQuery: true,
       force: false,
+      advanced: false,
     };
 
     this.openNewRedirectPanel(redirect, event.detail.id);

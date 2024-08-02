@@ -42,5 +42,8 @@ namespace UrlTracker.Core.Database.Dtos
 
         [Column("targetValue")]
         public string TargetValue { get; set; } = null!;
+
+        [Column("advanced")]
+        public bool Advanced { get; set; }
     }
 }
