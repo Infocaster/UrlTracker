@@ -17,7 +17,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
     {
         RedirectResponse? Create(CreateRedirectRequest request);
         RedirectResponse? Delete(int id);
-        void DeleteBulk(int[] ids);
+        void DeleteBulk(IRedirect[] redirects);
         RedirectResponse? GetById(int id);
         IEnumerable<IRedirect> Get(int[] ids);
         Task<RedirectCollectionResponse> GetAsync(ListRedirectRequest request);
@@ -64,7 +64,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         {
             using var scope = _scopeProvider.CreateScope();
 
-           return _redirectRepository.GetMany();
+           return _redirectRepository.GetMany(ids);
         }
 
         public RedirectResponse? GetById(int id)
@@ -160,7 +160,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             return result;
         }
 
-        public void DeleteBulk(int[] ids)
+        public void DeleteBulk(IRedirect[] ids)
         {
             using var scope = _scopeProvider.CreateScope();
             _redirectRepository.DeleteBulk(ids);

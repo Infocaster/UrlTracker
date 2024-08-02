@@ -9,7 +9,7 @@ namespace UrlTracker.Core.Database
     public interface IRedirectRepository
         : IReadWriteQueryRepository<int, IRedirect>
     {
-        void DeleteBulk(int[] ids);
+        void DeleteBulk(IRedirect[] redirects);
         Task<IReadOnlyCollection<IRedirect>> GetAsync(IEnumerable<string> urlsAndPaths);
         Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, RedirectFilters filters, bool descending);
         Task<IReadOnlyCollection<IRedirect>> GetWithRegexAsync();

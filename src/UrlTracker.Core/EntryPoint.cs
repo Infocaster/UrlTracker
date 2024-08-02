@@ -15,6 +15,7 @@ using UrlTracker.Core.Intercepting.Preprocessing;
 using UrlTracker.Core.Logging;
 using UrlTracker.Core.Map;
 using UrlTracker.Core.Models;
+using UrlTracker.Core.Notifications;
 using UrlTracker.Core.Validation;
 using UrlTracker.Modules.Options;
 
@@ -57,6 +58,7 @@ namespace UrlTracker.Core
             builder.Services.AddSingleton<IClientErrorRepository, ClientErrorRepository>();
             builder.Services.AddSingleton<IValidationHelper, ValidationHelper>();
             builder.Services.AddSingleton<IMigrationPlanFactory, MigrationPlanFactory>();
+            builder.Services.Decorate<IRedirectRepository, DecoratorRedirectRepositoryNotifications>();
 
             builder.Services.AddTransient(typeof(ILogger<>), typeof(Logger<>));
 

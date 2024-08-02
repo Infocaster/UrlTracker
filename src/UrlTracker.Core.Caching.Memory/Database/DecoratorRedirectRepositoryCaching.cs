@@ -53,9 +53,10 @@ namespace UrlTracker.Core.Caching.Memory.Database
             DeleteFromCache(entity.Id);
         }
 
-        public void DeleteBulk(int[] ids)
+        public void DeleteBulk(IRedirect[] redirects)
         {
-            _decoratee.DeleteBulk(ids);
+            _decoratee.DeleteBulk(redirects);
+            foreach (var r in redirects) DeleteFromCache(r.Id);
         }
 
         /// <inheritdoc/>

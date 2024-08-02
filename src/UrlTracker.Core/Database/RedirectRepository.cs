@@ -190,9 +190,9 @@ namespace UrlTracker.Core.Database
             return list;
         }
 
-        public void DeleteBulk(int[] ids)
+        public void DeleteBulk(IRedirect[] redirects)
         {
-
+            var ids = redirects.Select(r => r.Id).ToList();
             var deleteQuery = Sql().Delete()
                                             .From<RedirectDto>()
                                             .WhereIn<RedirectDto>(e => e.Id, ids);
