@@ -68,6 +68,8 @@ export class UrlTrackerRecommendationSearch extends LitElement {
       }
 
       .prepend {
+        display: flex;
+        align-items: center;
         margin-left: 0.5rem;
       }
     `,

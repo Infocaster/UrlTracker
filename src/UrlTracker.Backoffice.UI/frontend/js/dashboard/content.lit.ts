@@ -239,6 +239,7 @@ export class UrlTrackerDashboardContent extends LitElement {
 
     .new-redirect {
       margin: auto 1rem auto auto;
+      align-items: center;
     }
   `;
 }
