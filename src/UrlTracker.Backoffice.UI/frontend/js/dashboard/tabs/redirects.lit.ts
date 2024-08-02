@@ -136,6 +136,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
         types: type,
         query,
         sourceTypes: this.redirectTypes,
+        advanced: this.advanced,
       });
     } finally {
       this.loading--;

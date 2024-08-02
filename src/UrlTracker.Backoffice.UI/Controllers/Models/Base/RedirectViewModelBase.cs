@@ -26,5 +26,9 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Base
         [Required]
         [DataMember(Name = "force")]
         public bool Force { get; set; }
+
+        [Required]
+        [DataMember(Name = "advanced")]
+        public bool Advanced { get; set; }
     }
 }

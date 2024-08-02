@@ -1,5 +1,5 @@
 import { IRedirectData } from '@/services/redirect.service';
-import { LitElement, css, html, nothing } from 'lit';
+import { LitElement, PropertyValueMap, css, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import './redirectForce.lit';
 import './redirectIncomingUrl.lit';
@@ -53,6 +53,12 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
     this.redirect.target.strategy = detail.value;
     this.updateRedirect();
   };
+
+  protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
+    super.firstUpdated(_changedProperties);
+
+    this.redirect.advanced = this.advancedView;
+  }
 
   private updateRedirect = () =>
     this.dispatchEvent(

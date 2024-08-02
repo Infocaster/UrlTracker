@@ -31,6 +31,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
                 CreateDate = entity.CreateDate,
                 UpdateDate = entity.UpdateDate == default ? entity.CreateDate : entity.UpdateDate,
                 Force = entity.Force,
+                Advanced = entity.Advanced,
                 Id = entity.Id,
                 Key = entity.Key,
                 Permanent = entity.Permanent,
@@ -50,7 +51,8 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
                 && Target == other.Target
                 && Permanent == other.Permanent
                 && RetainQuery == other.RetainQuery
-                && Force == other.Force));
+                && Force == other.Force
+                && Advanced == other.Advanced));
         }
 
         public override bool Equals(object? obj)
@@ -60,7 +62,17 @@ namespace UrlTracker.Backoffice.UI.Controllers.Models.Redirects
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Id, Key, CreateDate, Source, Target, Permanent, RetainQuery, Force);
+            HashCode hash = new();
+            hash.Add(Id);
+            hash.Add(Key);
+            hash.Add(CreateDate);
+            hash.Add(Source);
+            hash.Add(Target);
+            hash.Add(Permanent);
+            hash.Add(RetainQuery);
+            hash.Add(Force);
+            hash.Add(Advanced);
+            return hash.ToHashCode();
         }
 
         public static bool operator ==(RedirectResponse? left, RedirectResponse? right)

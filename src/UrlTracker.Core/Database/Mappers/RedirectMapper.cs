@@ -28,6 +28,7 @@ namespace UrlTracker.Core.Database.Mappers
             DefineMap<IRedirect, RedirectDto>(nameof(IRedirect.SourceValue), nameof(RedirectDto.SourceValue));
             DefineMap<IRedirect, RedirectDto>(nameof(IRedirect.TargetStrategy), nameof(RedirectDto.TargetStrategy));
             DefineMap<IRedirect, RedirectDto>(nameof(IRedirect.TargetValue), nameof(RedirectDto.TargetValue));
+            DefineMap<IRedirect, RedirectDto>(nameof(IRedirect.Advanced), nameof(RedirectDto.Advanced));
         }
     }
 }

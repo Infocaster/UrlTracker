@@ -14,7 +14,7 @@ namespace UrlTracker.Resources.Website.Controllers
         private readonly IScopeProvider _scopeProvider;
         private static readonly Faker<IRedirect> redirectGenerator
             = new Faker<IRedirect>()
-            .CustomInstantiator((f) => new RedirectEntity(f.Random.Bool(), f.Random.Bool(), f.Random.Bool(), f.GenerateSourceStrategy(), f.GenerateTargetStrategy()));
+            .CustomInstantiator((f) => new RedirectEntity(f.Random.Bool(), f.Random.Bool(), f.Random.Bool(), f.Random.Bool(), f.GenerateSourceStrategy(), f.GenerateTargetStrategy()));
 
         public UrlTrackerRedirectGeneratorController(IRedirectRepository redirectRepository, IScopeProvider scopeProvider)
         {

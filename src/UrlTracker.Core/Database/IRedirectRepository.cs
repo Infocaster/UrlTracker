@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Persistence;
 using UrlTracker.Core.Database.Entities;
+using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Core.Database
 {

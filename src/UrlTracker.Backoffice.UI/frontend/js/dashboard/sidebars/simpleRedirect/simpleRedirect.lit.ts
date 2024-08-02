@@ -86,6 +86,7 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
     permanent: false,
     retainQuery: true,
     force: false,
+    advanced: false,
   };
 
   async connectedCallback(): Promise<void> {
@@ -100,6 +101,7 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
         permanent: this.redirect.permanent,
         retainQuery: this.redirect.retainQuery,
         force: this.redirect.force,
+        advanced: this.redirect.advanced,
       };
     }
   }

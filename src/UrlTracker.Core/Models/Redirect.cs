@@ -26,6 +26,9 @@ namespace UrlTracker.Core.Models
         public bool Force { get; set; }
 
         [Required]
+        public bool Advanced { get; set; }
+
+        [Required]
         public ISourceStrategy Source { get; set; }
 
         [Required]

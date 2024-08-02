@@ -30,6 +30,9 @@ namespace UrlTracker.Core.Database.Entities
         [DataMember]
         bool Force { get; set; }
 
+        [DataMember]
+        bool Advanced { get; set; }
+
         /// <summary>
         /// The strategy by which to match incoming URLs
         /// </summary>
@@ -75,15 +78,17 @@ namespace UrlTracker.Core.Database.Entities
         private bool _retainQuery;
         private bool _permanent;
         private bool _force;
+        private bool _advanced;
         private EntityStrategy _source;
         private EntityStrategy _target;
 
         /// <inheritdoc />
-        public RedirectEntity(bool retainQuery, bool permanent, bool force, EntityStrategy source, EntityStrategy target)
+        public RedirectEntity(bool retainQuery, bool permanent, bool force, bool advanced, EntityStrategy source, EntityStrategy target)
         {
             _retainQuery = retainQuery;
             _permanent = permanent;
             _force = force;
+            _advanced = advanced;
             _source = source;
             _target = target;
         }
@@ -104,6 +109,12 @@ namespace UrlTracker.Core.Database.Entities
         {
             get => _force;
             set => SetPropertyValueAndDetectChanges(value, ref _force, nameof(Force));
+        }
+
+        public bool Advanced
+        {
+            get => _advanced;
+            set => SetPropertyValueAndDetectChanges(value, ref _advanced, nameof(Advanced));
         }
 
         public EntityStrategy Target

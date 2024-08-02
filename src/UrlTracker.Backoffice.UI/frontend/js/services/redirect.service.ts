@@ -21,6 +21,7 @@ export interface IRedirectData {
   permanent: boolean;
   retainQuery: boolean;
   force: boolean;
+  advanced: boolean;
 }
 
 export interface IRedirectMetaData {
