@@ -7,6 +7,7 @@ using Umbraco.Cms.Core.Persistence.Querying;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
+using UrlTracker.Core.Database.Models;
 
 namespace UrlTracker.Core.Notifications
 {
