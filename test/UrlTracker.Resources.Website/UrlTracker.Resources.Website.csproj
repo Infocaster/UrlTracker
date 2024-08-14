@@ -11,6 +11,7 @@
     <Content Include="App_Plugins\**">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage" />
   </ItemGroup>
 
   <ItemGroup>
