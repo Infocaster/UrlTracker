@@ -12,9 +12,16 @@
       Use v12 for umbraco 12, v11 for umbraco 11, Use v10 for umbraco 10, Use v9.x for umbraco 9, use v5.x for umbraco 8, use v3.15 for umbraco 7.
     </Description>
     <RootNamespace>UrlTracker</RootNamespace>
-    <PackageReleaseNotes>1 other change
+    <PackageReleaseNotes>2 new features, 3 bugfixes, 3 other changes
 
-- Improve recommendation processing performance</PackageReleaseNotes>
+- Fix failing migration with long URLs
+- Fix sorting direction when sorting by URL
+- Fix alignment of elements in safari browsers
+- Add notifications when creating, updating and deleting redirects
+- Add button to all recommendations on landingpage
+- Remove image and technical file recommendations from the landingpage
+- Remove option to create redirects from image and technical file recommendations
+- Common redirects are no longer displayed on the advanced redirect page</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="10.6.1" />

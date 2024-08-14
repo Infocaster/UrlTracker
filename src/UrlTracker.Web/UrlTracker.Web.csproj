@@ -5,9 +5,16 @@
     <Title>URL Tracker Web</Title>
     <Description>This package contains the web services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Web</RootNamespace>
-    <PackageReleaseNotes>1 other change
+    <PackageReleaseNotes>2 new features, 3 bugfixes, 3 other changes
 
-- Improve recommendation processing performance</PackageReleaseNotes>
+- Fix failing migration with long URLs
+- Fix sorting direction when sorting by URL
+- Fix alignment of elements in safari browsers
+- Add notifications when creating, updating and deleting redirects
+- Add button to all recommendations on landingpage
+- Remove image and technical file recommendations from the landingpage
+- Remove option to create redirects from image and technical file recommendations
+- Common redirects are no longer displayed on the advanced redirect page</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->
