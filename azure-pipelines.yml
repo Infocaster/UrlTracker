@@ -96,17 +96,23 @@ stages:
           test/UrlTracker.Web.Tests/UrlTracker.Web.Tests.csproj
         arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion) --collect "XPlat Code Coverage" --no-build'
 
-    - script: |
-        dotnet tool install -g dotnet-reportgenerator-globaltool
-        reportgenerator -reports:$(Agent.WorkFolder)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:Cobertura -assemblyfilters:+UrlTracker.*;-UrlTracker.Resources.*;-UrlTracker.*.Tests
-      displayName: Create code coverage report
+    # - task: PublishCodeCoverageResults@2
+    #   displayName: 'Publish code coverage results'
+    #   inputs:
+    #     summaryFileLocation: $(Agent.WorkFolder)/**/coverage.cobertura.xml
+    #     failIfCoverageEmpty: true
 
-    - task: PublishCodeCoverageResults@1
-      displayName: 'Publish code coverage report'
-      inputs:
-        codeCoverageTool: 'Cobertura'
-        summaryFileLocation: '$(Build.SourcesDirectory)/CodeCoverage/Cobertura.xml'
-        reportDirectory: '$(Build.SourcesDirectory)/CodeCoverage'
+    # - script: |
+    #     dotnet tool install -g dotnet-reportgenerator-globaltool
+    #     reportgenerator -reports:$(Agent.WorkFolder)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:Cobertura -assemblyfilters:+UrlTracker.*;-UrlTracker.Resources.*;-UrlTracker.*.Tests
+    #   displayName: Create code coverage report
+
+    # - task: PublishCodeCoverageResults@1
+    #   displayName: 'Publish code coverage report'
+    #   inputs:
+    #     codeCoverageTool: 'Cobertura'
+    #     summaryFileLocation: '$(Build.SourcesDirectory)/CodeCoverage/Cobertura.xml'
+    #     reportDirectory: '$(Build.SourcesDirectory)/CodeCoverage'
 
     - task: DotNetCoreCLI@2
       displayName: 'dotnet pack'

@@ -9,10 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage" />
     <None Remove="Integration.settings.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="Integration.settings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
