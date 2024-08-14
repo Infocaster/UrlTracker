@@ -4,9 +4,16 @@
     <Title>URL Tracker Module registration</Title>
     <Description>This package contains objects for module registration. It keeps helps keeping track of installed modules for the URL Tracker</Description>
     <RootNamespace>UrlTracker.Modules</RootNamespace>
-    <PackageReleaseNotes>1 bugfix
+    <PackageReleaseNotes>2 new features, 3 bugfixes, 3 other changes
 
-- Fix failure to load backoffice when running in production mode</PackageReleaseNotes>
+- Fix failing migration with long URLs
+- Fix sorting direction when sorting by URL
+- Fix alignment of elements in safari browsers
+- Add notifications when creating, updating and deleting redirects
+- Add button to all recommendations on landingpage
+- Remove image and technical file recommendations from the landingpage
+- Remove option to create redirects from image and technical file recommendations
+- Common redirects are no longer displayed on the advanced redirect page</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />

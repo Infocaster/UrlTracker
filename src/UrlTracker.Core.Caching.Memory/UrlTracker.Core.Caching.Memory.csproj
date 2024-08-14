@@ -4,9 +4,16 @@
     <Title>URL Tracker Core Memory Cache</Title>
     <Description>This package contains an in-memory cache layer for the core services of the URL Tracker</Description>
     <RootNamespace>UrlTracker.Core.Caching.Memory</RootNamespace>
-    <PackageReleaseNotes>1 bugfix
+    <PackageReleaseNotes>2 new features, 3 bugfixes, 3 other changes
 
-- Fix failure to load backoffice when running in production mode</PackageReleaseNotes>
+- Fix failing migration with long URLs
+- Fix sorting direction when sorting by URL
+- Fix alignment of elements in safari browsers
+- Add notifications when creating, updating and deleting redirects
+- Add button to all recommendations on landingpage
+- Remove image and technical file recommendations from the landingpage
+- Remove option to create redirects from image and technical file recommendations
+- Common redirects are no longer displayed on the advanced redirect page</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="13.0.0" />
