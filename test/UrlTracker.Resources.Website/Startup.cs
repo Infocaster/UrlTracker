@@ -6,7 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Extensions;
-using UrlTracker.Resources.Website.Middleware;
+using UrlTracker.Resources.Website.SystemFeatures;
+using UrlTracker.Resources.Website.SystemFeatures.AutoLogin;
 
 namespace UrlTracker.Resources.Website
 {
@@ -39,12 +40,17 @@ namespace UrlTracker.Resources.Website
         /// </remarks>
         public void ConfigureServices(IServiceCollection services)
         {
+            services.ConfigureForwardedHeaders(_config);
+
             services.AddSwaggerGen();
 
             services.AddUmbraco(_env, _config)
                 .AddBackOffice()
                 .AddWebsite()
                 .AddComposers()
+#if DEBUG
+                .AddAutoLogin()
+#endif
                 .Build();
         }
 
@@ -55,6 +61,8 @@ namespace UrlTracker.Resources.Website
         /// <param name="env">The web hosting environment.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseForwardedHeaders();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -67,7 +75,6 @@ namespace UrlTracker.Resources.Website
                 {
                     u.UseBackOffice();
                     u.UseWebsite();
-                    u.AppBuilder.UseAutomatedBackOfficeAuthentication();
                 })
                 .WithEndpoints(u =>
                 {

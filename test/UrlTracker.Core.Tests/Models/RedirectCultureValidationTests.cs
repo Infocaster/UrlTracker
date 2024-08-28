@@ -5,7 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using Umbraco.Cms.Core.Models.PublishedContent;
 using UrlTracker.Backoffice.UI.Controllers.Models;
 using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing.Objects;
@@ -48,11 +50,8 @@ namespace UrlTracker.Core.Tests.Models
             // arrange
             var redirect = new Redirect
             {
-                Culture = input,
-                TargetRootNode = TestPublishedContent.Create(1),
-                TargetStatusCode = HttpStatusCode.Redirect,
-                SourceUrl = "http://example.com",
-                TargetUrl = "http://example.com/lorem"
+                Source = new UrlSourceStrategy("http://example.com"),
+                Target = new ContentPageTargetStrategy(TestPublishedContent.Create(1), input),
             };
 
             // act

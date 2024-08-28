@@ -13,7 +13,12 @@ namespace UrlTracker.Backoffice.UI
             manifests.Add(new PackageManifest
             {
                 PackageName = "URL Tracker",
-                Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? string.Empty
+                Version = Assembly.GetExecutingAssembly().GetName().Version?.ToString(3) ?? string.Empty,
+                BundleOptions = BundleOptions.None,
+                Scripts = new[]
+                {
+                    Defaults.Routing.AppPluginFolder + "script.iife.js"
+                }
             });
         }
     }

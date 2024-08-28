@@ -4,7 +4,7 @@ using Umbraco.Cms.Infrastructure.Migrations;
 namespace UrlTracker.Core.Database.Migrations
 {
     [ExcludeFromCodeCoverage]
-    public class M202111081155_UrlTracker
+    internal class M202111081155_UrlTracker
         : MigrationBase
     {
         private const string _urlTrackerEntryTableName = "icUrlTracker";

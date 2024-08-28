@@ -1,0 +1,19 @@
+﻿.urlInput {
+    border-width: 1px;
+    border-color: #d8d7d9;
+    border-style: solid;
+
+    display: flex;
+    align-items: center;
+}
+
+.urlInput span{
+    color: darkgrey;
+    padding-left: 6px;
+}
+
+.urlInput input {
+    border-style: none;
+    padding-left: 0;
+    margin: 0;
+}

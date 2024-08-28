@@ -1,10 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.DependencyInjection;
+using UrlTracker.Modules.Options;
 using UrlTracker.Web.Abstraction;
 using UrlTracker.Web.Configuration;
-using UrlTracker.Web.Map;
 using UrlTracker.Web.Processing;
+using UrlTracker.Web.Processing.Filtering;
+using UrlTracker.Web.Processing.Handling;
 
 namespace UrlTracker.Web
 {
@@ -24,8 +26,7 @@ namespace UrlTracker.Web
         /// <returns>The umbraco dependency collection builder after all URL Tracker web services are added</returns>
         public static IUmbracoBuilder ComposeUrlTrackerWeb(this IUmbracoBuilder builder)
         {
-            builder.ComposeUrlTrackerWebMaps()
-                   .ComposeDefaultResponseIntercepts()
+            builder.ComposeDefaultResponseIntercepts()
                    .ComposeDefaultRequestInterceptFilters()
                    .ComposeDefaultClientErrorFilters();
 
@@ -37,13 +38,16 @@ namespace UrlTracker.Web
             builder.Services.AddSingleton<IClientErrorFilterCollection>(factory => factory.GetRequiredService<ClientErrorFilterCollection>());
             builder.Services.AddSingleton<IReservedPathSettingsProvider, ReservedPathSettingsProvider>();
 
+            builder.Services.AddUrlTrackerModule("Http services");
+
             return builder;
         }
 
         public static IUmbracoBuilder ComposeDefaultResponseIntercepts(this IUmbracoBuilder builder)
         {
             builder.ResponseInterceptHandlers()!
-                .Append<RedirectResponseInterceptHandler>()
+                .Append<UrlRedirectResponseInterceptHandler>()
+                .Append<ContentRedirectResponseInterceptHandler>()
                 .Append<NoLongerExistsResponseInterceptHandler>()
                 .Append<NullInterceptHandler>();
 
@@ -67,13 +71,6 @@ namespace UrlTracker.Web
                 .Append<NotFoundClientErrorFilter>()
                 .Append<BlacklistedUrlsClientErrorFilter>()
                 .Append<ConstantsClientErrorFilter>();
-            return builder;
-        }
-
-        public static IUmbracoBuilder ComposeUrlTrackerWebMaps(this IUmbracoBuilder builder)
-        {
-            builder.MapDefinitions()!
-                .Add<RedirectMap>();
             return builder;
         }
 

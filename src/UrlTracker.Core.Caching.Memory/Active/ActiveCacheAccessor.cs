@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UrlTracker.Core.Database.Entities;
-using UrlTracker.Core.Database.Models.Entities;
 
 namespace UrlTracker.Core.Caching.Memory.Active
 {
@@ -11,7 +10,7 @@ namespace UrlTracker.Core.Caching.Memory.Active
     public interface IActiveCacheAccessor
     {
         IReadOnlyCollection<IClientError> GetNoLongerExists(IEnumerable<string> urlsAndPaths);
-        IReadOnlyCollection<IRedirect> GetRedirect(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null);
+        IReadOnlyCollection<IRedirect> GetRedirect(IEnumerable<string> urlsAndPaths);
         void Set(IDictionary<string, List<IRedirect>> cache);
         void Set(IDictionary<string, List<IClientError>> cache);
         IDictionary<string, List<IRedirect>> GetRedirectCache();
@@ -28,28 +27,25 @@ namespace UrlTracker.Core.Caching.Memory.Active
             _clientErrorDictionary = new Dictionary<string, List<IClientError>>();
         }
 
-        public IReadOnlyCollection<IRedirect> GetRedirect(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
+        public IReadOnlyCollection<IRedirect> GetRedirect(IEnumerable<string> urlsAndPaths)
         {
-            IEnumerable<IRedirect> result = [];
+            IEnumerable<IRedirect> result = Enumerable.Empty<IRedirect>();
             foreach (var url in urlsAndPaths)
             {
                 if (_redirectDictionary.TryGetValue(url.ToLower(), out var redirects))
                 {
-                    result = result.Concat(
-                        redirects
-                        .Where(r => rootNodeId is null || rootNodeId == r.TargetRootNodeId || r.TargetRootNodeId is null)
-                        .Where(r => culture == null || string.Equals(culture, r.Culture, System.StringComparison.OrdinalIgnoreCase) || r.Culture is null));
+                    result = result.Concat(redirects);
                 }
             }
 
-            return [.. result
+            return new List<IRedirect>(result
                 .OrderByDescending(r => r.Force)
-                .ThenByDescending(r => r.CreateDate)];
+                .ThenByDescending(r => r.CreateDate));
         }
 
         public IReadOnlyCollection<IClientError> GetNoLongerExists(IEnumerable<string> urlsAndPaths)
         {
-            IEnumerable<IClientError> result = [];
+            IEnumerable<IClientError> result = Enumerable.Empty<IClientError>();
             foreach (var url in urlsAndPaths)
             {
                 if (_clientErrorDictionary.TryGetValue(url.ToLower(), out var clientErrors))

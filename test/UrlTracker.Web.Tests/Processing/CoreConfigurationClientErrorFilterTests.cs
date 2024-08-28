@@ -1,18 +1,24 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
+using Moq;
 using NUnit.Framework;
-using UrlTracker.Resources.Testing;
+using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Resources.Testing.Mocks;
-using UrlTracker.Web.Processing;
+using UrlTracker.Web.Processing.Filtering;
 
 namespace UrlTracker.Web.Tests.Processing
 {
-    public class CoreConfigurationClientErrorFilterTests : TestBase
+    public class CoreConfigurationClientErrorFilterTests
     {
         private CoreConfigurationClientErrorFilter _testSubject = null!;
+        private Mock<IOptionsMonitor<UrlTrackerSettings>> _urlTrackerSettingsMock;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            _testSubject = new CoreConfigurationClientErrorFilter(UrlTrackerSettings);
+            _urlTrackerSettingsMock = new Mock<IOptionsMonitor<UrlTrackerSettings>>();
+            _urlTrackerSettingsMock.SetupGet(obj => obj.CurrentValue).Returns(new UrlTrackerSettings());
+            _testSubject = new CoreConfigurationClientErrorFilter(_urlTrackerSettingsMock.Object);
         }
 
         [TestCase(true, true, TestName = "EvaluateCandidateAsync returns true if Enable is true")]
@@ -20,11 +26,11 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidate_Configuration_ReturnsCorrectResult(bool enable, bool expected)
         {
             // arrange
-            var optionsValue = UrlTrackerSettings.CurrentValue;
+            var optionsValue = _urlTrackerSettingsMock.Object.CurrentValue;
             optionsValue.Enable = enable;
 
             // act
-            var result = await _testSubject.EvaluateCandidateAsync(HttpContextMock.Context);
+            var result = await _testSubject.EvaluateCandidateAsync(new HttpContextMock().Context);
 
             // assert
             Assert.That(result, Is.EqualTo(expected));

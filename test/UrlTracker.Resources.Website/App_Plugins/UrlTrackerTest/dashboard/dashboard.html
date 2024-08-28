@@ -1,0 +1,131 @@
+﻿<div class="urltrackertest-layout" ng-controller="urltrackertest.controller as vm">
+    <div class="urltrackertest-parametercontainer">
+        <umb-box>
+            <umb-box-header title="parameters">
+
+            </umb-box-header>
+            <umb-box-content>
+                <strong>Score = (C<sub>1</sub>S<sub>R</sub> + C<sub>2</sub>S<sub>V</sub>) × 0.5<sup>(S<sub>T</sub> / C<sub>3</sub>)</sup></strong>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Constant</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                C<sub>1 ... N</sub>
+                            </td>
+                            <td>
+                                Constants
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                S<sub>R</sub>
+                            </td>
+                            <td>
+                                Redaction score (score depending on the type of url)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                S<sub>V</sub>
+                            </td>
+                            <td>
+                                Variable score (score depending on amount of visits on the url)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                S<sub>T</sub>
+                            </td>
+                            <td>
+                                Time score (amount of days since last update)
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <strong>Values for S<sub>R</sub></strong>
+                <table class="table">
+                    <tbody>
+                        <tr ng-repeat="score in vm.redactionScores">
+                            <td>{{score.Name}}</td>
+                            <td><input type="number" ng-model="score.Score" ng-change="vm.update(score.Id, score.Score)" ng-model-options="{ debounce: 2000 }" ng-disabled="!!vm.loading" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <strong>Values for C<sub>1 ... N</sub></strong>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>C<sub>1</sub></td>
+                            <td><input type="number" ng-model="vm.rsconstant" ng-change="vm.fetch()" ng-model-options="{ debounce: 2000 }" ng-disabled="!!vm.loading" /></td>
+                        </tr>
+                        <tr>
+                            <td>C<sub>2</sub></td>
+                            <td><input type="number" ng-model="vm.vsconstant" ng-change="vm.fetch()" ng-model-options="{ debounce: 2000 }" ng-disabled="!!vm.loading" /></td>
+                        </tr>
+                        <tr>
+                            <td>C<sub>3</sub></td>
+                            <td><input type="number" ng-model="vm.tsconstant" ng-change="vm.fetch()" ng-model-options="{ debounce: 2000 }" ng-disabled="!!vm.loading" /></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </umb-box-content>
+        </umb-box>
+    </div>
+    <div class="urltrackertest-update">
+        <umb-box>
+            <umb-box-header title="Update recommendation"
+                            description="Enter a url, a variable score and a date here to update or add an entry">
+                <umb-button action="vm.clear()"
+                            label="Clear">
+                </umb-button>
+                <umb-button action="vm.seed()"
+                            label="Generate 100">
+                </umb-button>
+                <umb-button action="vm.submit()"
+                            label="Submit">
+                </umb-button>
+            </umb-box-header>
+            <umb-box-content>
+                <header>Url</header>
+                <div class="urlInput">
+                    <span>{{vm.getCurrentLocation()}}</span><input type="text" ng-model="vm.newUrl" />
+                </div>
+                <header>Variable score</header>
+                <input type="number" step="1" ng-model="vm.newVariableScore" />
+                <header>Update date</header>
+                <umb-date-time-picker ng-model="vm.newUpdateDate"
+                                      options="vm.dateTimeConfig"
+                                      on-change="vm.dtChange(selectedDates, dateStr, instance)">
+                </umb-date-time-picker>
+            </umb-box-content>
+        </umb-box>
+    </div>
+    <div class="urltrackertest-resultcontainer">
+        <umb-box>
+            <umb-box-header title="results">
+                <umb-button action="vm.fetch()"
+                            label="Refresh">
+                </umb-button>
+            </umb-box-header>
+            <umb-box-content ng-if="!!vm.loading">
+                <umb-load-indicator></umb-load-indicator>
+            </umb-box-content>
+            <umb-box-content ng-if="!vm.loading">
+                <ul>
+                    <li ng-repeat="rec in vm.results" style="margin-top: 1rem;">
+                        <header>{{vm.getStrategy(rec).Name}}</header>
+                        <div>({{vm.getScore(rec)}}) <strong>{{rec.Url}}</strong></div>
+                        <div>Total visits: {{rec.VariableScore}}</div>
+                        <div>Last update: {{vm.getDayDiff(rec)}} days ago</div>
+                    </li>
+                </ul>
+            </umb-box-content>
+        </umb-box>
+    </div>
+</div>

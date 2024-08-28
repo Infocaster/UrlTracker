@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Options;
 using UrlTracker.Core.Caching.Memory.Options;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
+using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Caching.Memory
 {

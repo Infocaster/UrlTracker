@@ -17,6 +17,8 @@ using UrlTracker.Core.Database.Dtos;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Factories;
 using UrlTracker.Core.Database.Models;
+using UrlTracker.Core.Models;
+using static Umbraco.Cms.Core.Constants;
 
 namespace UrlTracker.Core.Database
 {
@@ -35,73 +37,20 @@ namespace UrlTracker.Core.Database
         { }
 
         #region Old implementation
-        public Task<IReadOnlyCollection<IClientError>> GetAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
+        public Task<IReadOnlyCollection<IClientError>> GetAsync(IEnumerable<string> urlsAndPaths)
         {
             IQuery<IClientError> query = SqlContext.Query<IClientError>().Where(e => urlsAndPaths.Contains(e.Url));
             var results = Get(query);
             return Task.FromResult<IReadOnlyCollection<IClientError>>(results.ToList());
         }
 
-        public Task<IReadOnlyCollection<IClientError>> GetNoLongerExistsAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
+        public Task<IReadOnlyCollection<IClientError>> GetNoLongerExistsAsync(IEnumerable<string> urlsAndPaths)
         {
             IQuery<IClientError> query = SqlContext.Query<IClientError>()
                 .Where(e => e.Strategy == Defaults.DatabaseSchema.ClientErrorStrategies.NoLongerExists)
                 .Where(e => urlsAndPaths.Contains(e.Url));
             var results = Get(query);
             return Task.FromResult<IReadOnlyCollection<IClientError>>(results.ToList());
-        }
-
-        public async Task<int> CountAsync(DateTime start, DateTime end)
-        {
-            var query = Sql().SelectCount()
-                             .From<ClientError2ReferrerDto>()
-                             .Where<ClientError2ReferrerDto>(e => e.CreateDate >= start && e.CreateDate <= end);
-
-            return await Database.ExecuteScalarAsync<int>(query).ConfigureAwait(false);
-        }
-
-        public async Task<ClientErrorEntityCollection> GetAsync(uint skip, uint take, string? query, OrderBy order, bool descending)
-        {
-            var countQuery = Sql()
-                .SelectCount()
-                .From<ClientErrorDto>()
-                .Where<ClientErrorDto>(e => e.Ignored == false);
-
-            if (query is not null)
-            {
-                countQuery.Where<ClientErrorDto>(e => e.Url.Contains(query));
-            }
-
-            Task<int> totalRecordsTask = Database.ExecuteScalarAsync<int>(countQuery);
-
-            var aggregateQuery = Sql()
-                .Select<ClientError2ReferrerDto>(e => e.ClientError)
-                .AndSelectCount(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences)
-                .AndSelectMax<ClientError2ReferrerDto>(Defaults.DatabaseSchema.AggregateColumns.MostRecentOccurrence, null, e => e.CreateDate)
-                .From<ClientError2ReferrerDto>()
-                .GroupBy<ClientError2ReferrerDto>(e => e.ClientError)
-                ;
-
-            var selectQuery = Sql()
-                .Select<ClientErrorDto>("c")
-                .From<ClientErrorDto>("c")
-                .LeftJoin(aggregateQuery, "cr").On<ClientError2ReferrerDto, ClientErrorDto>((l, r) => l.ClientError == r.Id, "cr", "c")
-                .Where<ClientErrorDto>(e => e.Ignored == false, "c");
-            if (query is not null)
-            {
-                selectQuery.Where<ClientErrorDto>(e => e.Url.Contains(query), "c");
-            }
-            string orderParameter = order switch
-            {
-                OrderBy.LastOccurrence or
-                OrderBy.Created => SqlSyntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.MostRecentOccurrence),
-                OrderBy.Occurrences => SqlSyntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences),
-                _ => throw new ArgumentOutOfRangeException(nameof(order)),
-            };
-            selectQuery = selectQuery.GenericOrderBy(descending, orderParameter);
-            var dtos = await Database.SkipTakeAsync<ClientErrorDto>(skip, take, selectQuery).ConfigureAwait(false);
-
-            return ClientErrorEntityCollection.Create(dtos.Select(ClientErrorFactory.BuildEntity), await totalRecordsTask);
         }
         #endregion
 
@@ -209,6 +158,35 @@ namespace UrlTracker.Core.Database
             Database.Insert(dto);
         }
 
+        public async Task<IEnumerable<ReferrerResponse>> GetReferrersByClientIdAsync(int id)
+        {
+            var sql = Sql().SelectCount("occurrances")
+                            .AndSelect<ReferrerDto>("r", r => r.Url)
+                            .From<ClientError2ReferrerDto>("cr")
+                            .LeftJoin<ReferrerDto>("r")
+                            .On<ClientError2ReferrerDto, ReferrerDto>((l, r) => l.Referrer == r.Id, "cr", "r")
+                            .Where<ClientError2ReferrerDto>(e => e.ClientError == id, "cr")
+                            .GroupBy("cr.referrer", "r.url")
+                            .OrderByDescending("occurrances");
+
+            var dtos = await Database.FetchAsync<OccurrancesDto>(sql);
+            return dtos.Select(ReferrerFactory.Build);
+        }
+
+        public async Task<IEnumerable<DailyClientErrorResponse>> GetDailyClientErrorInRangeAsync(int clientError, DateTime start, DateTime end)
+        {
+            var query = Sql().Select("CAST(createDate AS date) AS dateOnly")
+                        .AndSelectCount("occurances")
+                        .From<ClientError2ReferrerDto>()
+                        .Where<ClientError2ReferrerDto>(e => e.CreateDate >= start
+                                                        && e.CreateDate <= end
+                                                        && e.ClientError == clientError)
+                        .GroupBy("CAST(createDate AS date)");
+            var dtos = await Database.FetchAsync<DailyClientErrorDto>(query);
+            return dtos.Select(DailyClientErrorFactory.Build);
+        }
+
+
         public async Task<IReadOnlyCollection<IClientErrorMetaData>> GetMetaDataAsync(params int[] clientErrors)
         {
             var sql = Sql();
@@ -243,6 +221,34 @@ namespace UrlTracker.Core.Database
             var dtos = await Database.FetchAsync<ClientErrorMetaDataDto>(sql);
 
             return dtos.Select(ClientErrorFactory.BuildEntity).ToList();
+        }
+
+        public async Task CleanupAsync(DateTime upperDate)
+        {
+            // Delete old registrations
+            await Database.DeleteManyAsync<ClientError2ReferrerDto>()
+                .Where(e => e.CreateDate < upperDate)
+                .Execute();
+
+            // Delete unused referrers
+            var deleteReferrersQuery = Sql()
+                .Delete<ReferrerDto>()
+                .WhereNotIn<ReferrerDto>(e => e.Id,
+                    Sql()
+                    .Select<ClientError2ReferrerDto>(e => e.Referrer)
+                    .From<ClientError2ReferrerDto>());
+
+            await Database.ExecuteAsync(deleteReferrersQuery);
+
+            // Delete unreferred client errors
+            var deleteClientErrorsQuery = Sql()
+                .Delete<ClientErrorDto>()
+                .WhereNotIn<ClientErrorDto>(e => e.Id,
+                    Sql()
+                    .Select<ClientError2ReferrerDto>(e => e.ClientError)
+                    .From<ClientError2ReferrerDto>());
+
+            await Database.ExecuteAsync(deleteClientErrorsQuery);
         }
     }
 }

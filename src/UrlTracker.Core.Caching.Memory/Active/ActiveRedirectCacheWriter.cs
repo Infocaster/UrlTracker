@@ -1,8 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Caching.Memory;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Core.Database;
-using UrlTracker.Core.Database.Models.Entities;
+using UrlTracker.Core.Database.Entities;
 
 namespace UrlTracker.Core.Caching.Memory.Active
 {
@@ -44,14 +45,14 @@ namespace UrlTracker.Core.Caching.Memory.Active
             using var scope = _scopeProvider.CreateScope();
             var redirect = _redirectRepository.Get(id);
 
-            if (redirect is not null && !string.IsNullOrEmpty(redirect.SourceUrl))
+            if (redirect is not null && redirect.Source.Strategy == Core.Defaults.DatabaseSchema.RedirectSourceStrategies.Url)
             {
                 // insert redirect in expected location
                 var cache = _cacheAccessor.GetRedirectCache();
-                if (!cache.TryGetValue(redirect.SourceUrl, out var list))
+                if (!cache.TryGetValue(redirect.Source.Value, out var list))
                 {
-                    list = [];
-                    cache[redirect.SourceUrl] = list;
+                    list = new List<IRedirect>();
+                    cache[redirect.Source.Value] = list;
                 }
 
                 list.Add(redirect);
@@ -67,13 +68,13 @@ namespace UrlTracker.Core.Caching.Memory.Active
             using var scope = _scopeProvider.CreateScope();
 
             var query = scope.SqlContext.Query<IRedirect>()
-                .Where(e => e.SourceUrl != null && e.SourceUrl != string.Empty);
+                .Where(e => e.SourceStrategy == Core.Defaults.DatabaseSchema.RedirectSourceStrategies.Url);
 
             var urlRedirects = _redirectRepository.Get(query);
 
             var result = urlRedirects
-                .Where(e => e.SourceUrl is not null)
-                .GroupBy(e => e.SourceUrl!.ToLower())
+                .Where(e => e.Source.Strategy == Core.Defaults.DatabaseSchema.RedirectSourceStrategies.Url)
+                .GroupBy(e => e.Source.Value.ToLower())
                 .ToDictionary(g => g.Key, g => g.ToList());
 
             _cacheAccessor.Set(result);

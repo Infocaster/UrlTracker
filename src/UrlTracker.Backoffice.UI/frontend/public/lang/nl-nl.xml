@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<language alias="nl" intName="Dutch (NL)" localName="Nederlands (NL)" lcid="" culture="nl-NL">
+  <area alias="dashboardTabs">
+    <key alias="UrlTracker">URL Tracker</key>
+  </area>
+  <area alias="treeHeaders">
+    <key alias="urlTrackerTreeGroup">URL Tracker</key>
+    <key alias="urlTrackerSettingsTree">URL Tracker instellingen</key>
+  </area>
+  <area alias="urlTrackerDashboardTabs">
+    <key alias="overview">Overzicht</key>
+    <key alias="recommendations">Adviezen</key>
+    <key alias="redirects">Redirects</key>
+    <key alias="advancedRedirects">Geavanceerde redirects</key>
+  </area>
+  <area alias="urlTrackerDashboardTabLabels">
+    <key alias="overview">Overzicht</key>
+    <key alias="recommendations">Adviezen</key>
+    <key alias="redirects">Redirects</key>
+    <key alias="advancedRedirects">Geavanceerde redirects</key>
+  </area>
+  <area alias="urlTrackerNotifications">
+    <key alias="landingpagewelcometitle">Welkom bij de URL Tracker</key>
+    <key alias="landingpagewelcomebody">In dit overzicht staat een reeks van de meest belangrijke
+      adviezen voor uw gemak. Verbeter de ervaring van uw bezoekers door deze problemen op te
+      lossen.</key>
+    <key alias="recommendationswelcometitle">Adviezen overzicht</key>
+    <key alias="recommendationswelcomebody">Hier kun je alle huidige adviezen terugvinden. Standaard
+      worden de adviezen gesorteerd op urgentie. Gebruik de invulvelden om het overzicht te filteren
+      en sorteren.</key>
+    <key alias="redirectswelcometitle">Redirects overzicht</key>
+    <key alias="redirectswelcomebody">Deze tab laat de redirects zien die op deze website zijn
+      ingesteld. Gebruik de verschillende knoppen en velden om redirects aan te maken, te
+      verwijderen en aan te passen. Deze pagina geeft alleen de standaard redirects weer. Bekijk het
+      geavanceerde redirects overzicht om alle redirects te zien.</key>
+    <key alias="advancedredirectswelcometitle">Geavanceerde redirects overzicht</key>
+    <key alias="advancedredirectswelcomebody">Bovenop de standaard redirects, laat deze pagina ook
+      de redirects zien met geavanceerde instellingen.</key>
+  </area>
+  <area alias="urltrackerGeneral">
+    <key alias="loading">Laden...</key>
+  </area>
+  <area alias="urlTrackerDashboardLanding">
+    <key alias="statisticLabel">pagina's gaven een 404 afgelopen week</key>
+    <key alias="noRecommendations">Er zijn geen adviezen</key>
+    <key alias="topAmount">Top %0% adviezen</key>
+	<key alias="recommendationRedirect">Meer adviezen</key>
+  </area>
+  <area alias="urlTrackerDashboardFooter">
+    <key alias="featurelabel">Doe een suggestie</key>
+    <key alias="buglabel">Meld een bug</key>
+    <key alias="wikilabel">Lees de wiki</key>
+  </area>
+  <area alias="urlTrackerRedirectSource">
+    <key alias="url">URL</key>
+    <key alias="unknown">Onbekende bronsoort</key>
+    <key alias="regex">Patroon</key>
+  </area>
+  <area alias="urlTrackerRedirectTarget">
+    <key alias="redirectto">Redirect naar</key>
+    <key alias="redirectdate">Aangemaakt op</key>
+    <key alias="unknown">Onbekende doelsoort</key>
+    <key alias="url">URL</key>
+    <key alias="content">Inhoud</key>
+    <key alias="media">Media</key>
+    <key alias="contenterror">De gekozen inhoud bestaat niet of zit in de prullenbak</key>
+  </area>
+  <area alias="urlTrackerRedirectActions">
+    <key alias="header">Acties</key>
+    <key alias="new">Nieuwe redirect</key>
+    <key alias="export">Redirects exporteren</key>
+  </area>
+  <area alias="urlTrackerRedirectUpload">
+    <key alias="header">Importeren</key>
+    <key alias="info">Sleep een CSV bestand in het onderstaande veld om redirects te importeren.</key>
+    <key alias="help">Hier kun je een voorbeeld downloaden</key>
+  </area>
+  <area alias="urlTrackerRecommendationType">
+    <key alias="image">Afbeelding kan niet gevonden worden</key>
+    <key alias="imagedescription">
+      Deze regel geeft aan dat een afbeelding niet gevonden kan worden. Het gevolg is dat sommige
+      pagina's incorrect weergegeven worden en bezoekers missen mogelijk visuele context.
+      Gebruik de referrer informatie om te zien op welke pagina's deze afbeelding opgevraagd wordt.
+      Maak een nieuwe redirect aan om de gebruikerservaring te herstellen.
+      Je kunt ook de referrer informatie bekijken en handmatig de pagina's repareren door de content
+      te bewerken voor die pagina in het CMS.
+      Nadat je handmatig de afbeelding hebt gerepareerd, zal dit advies op een gegeven moment
+      verdwijnen.
+    </key>
+    <key alias="file">Bestand kan niet gevonden worden</key>
+    <key alias="filedescription">
+      Deze regel geeft aan dat een bestand niet gevonden kan worden. Het gevolg is dat sommige
+      pagina's gebroken links bevatten naar downloadbare content. Bezoekers kunnen mogelijk deze
+      bestanden niet meer downloaden.
+      Gebruik de referrer informatie om te zien op welke pagina's dit bestand gebruikt wordt.
+      Repareer deze pagina's door in het CMS de link naar dit bestand aan te passen.
+      Je kunt ook een redirect aanmaken om dit bestand overal in één keer weer beschikbaar te maken.
+    </key>
+    <key alias="page">Pagina kan niet gevonden worden</key>
+    <key alias="pagedescription">
+      Deze regel geeft aan dat een pagina niet gevonden kan worden. Dit betekent dat bezoekers
+      pagina's proberen te bezoeken die niet bestaan.
+      Maak een redirect aan om de gebruikers door te sturen naar een pagina die wél bestaat.
+    </key>
+    <key alias="technicalFile">Technisch bestand kan niet gevonden worden</key>
+    <key alias="technicalFile">
+      Deze regel geeft aan dat een technisch bestand niet gevonden kan worden. De gevolgen hiervan
+      zijn afhankelijk van het soort bestand.
+      Neem contact op met je systeem beheerder en vraag om instructies wat je hier mee kunt doen.
+      Als je zeker weet wat je aan het doen bent, dan kun je eventueel een redirect aanmaken, maar
+      gewoonlijk is dat niet nodig.
+    </key>
+    <key alias="unknown">Onbekend soort advies</key>
+  </area>
+  <area alias="urlTrackerRecommendationImportance">
+    <key alias="VERY_IMPORTANT">HEEL BELANGRIJK</key>
+    <key alias="IMPORTANT">BELANGRIJK</key>
+    <key alias="MODERATELY_IMPORTANT">GEMIDDELD BELANGRIJK</key>
+    <key alias="SLIGHTLY_IMPORTANT">BEETJE BELANGRIJK</key>
+    <key alias="NOT_IMPORTANT">NIET BELANGRIJK</key>
+  </area>
+  <area alias="urlTrackerRecommendationItem">
+    <key alias="actions">Adviezen</key>
+    <key alias="action-temporary">Creëer een tijdelijke redirect</key>
+    <key alias="action-permanent">Creëer een permanente redirect</key>
+    <key alias="action-ignore">Negeer dit</key>
+    <key alias="dates">Plaatsgevonden tussen</key>
+  </area>
+  <area alias="urlTrackerNewRedirect">
+    <key alias="permanent">Is de redirect permanent?</key>
+    <key alias="permanent-info">Een permanente redirect is better voor de performance van je
+      website, maar kan niet achteraf worden aangepast.
+      Permanente redirects zijn een signaal naar google en andere zoekmachines om hun zoekresultaten
+      aan te passen naar de doel URL die je invult. Het zorgt ervoor dat het internet je URL
+      "vergeet" als het ware.</key>
+    <key alias="permanent-permanent-label">Permanent (301)</key>
+    <key alias="permanent-temporary-label">Tijdelijk (302)</key>
+    <key alias="incoming-url">Ingaande URL</key>
+    <key alias="incoming-url-info">Vul de URL in waarvandaan geredirect moet worden</key>
+    <key alias="outgoing-url">Uitgaande URL</key>
+    <key alias="outgoing-url-info">Selecteer waar de URL naartoe geredirect moet worden</key>
+  </area>
+  <area alias="urlTrackerRecommendationFilter">
+    <key alias="search-placeholder">Typ om te zoeken...</key>
+  </area>
+</language>

@@ -5,8 +5,8 @@ using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Services;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Logging;
+using UrlTracker.Core.Models;
 using UrlTracker.Middleware.Background;
 using UrlTracker.Web;
 using UrlTracker.Web.Abstraction;
@@ -24,14 +24,12 @@ namespace UrlTracker.Middleware
         private readonly ILogger<UrlTrackerClientErrorTrackingMiddleware> _logger;
         private readonly IRuntimeState _runtimeState;
         private readonly IClientErrorProcessorQueue _processorQueue;
-        private readonly IOptionsMonitor<RequestHandlerSettings> _requestHandlerOptions;
         private readonly IRequestAbstraction _requestAbstraction;
 
         /// <inheritdoc />
         public UrlTrackerClientErrorTrackingMiddleware(RequestDelegate next,
                                                     IClientErrorFilterCollection clientErrorFilterCollection,
                                                     ILogger<UrlTrackerClientErrorTrackingMiddleware> logger,
-                                                    IOptionsMonitor<RequestHandlerSettings> requestHandlerOptions,
                                                     IRequestAbstraction requestAbstraction,
                                                     IRuntimeState runtimeState,
                                                     IClientErrorProcessorQueue processorQueue)
@@ -39,7 +37,6 @@ namespace UrlTracker.Middleware
             _next = next;
             _clientErrorFilterCollection = clientErrorFilterCollection;
             _logger = logger;
-            _requestHandlerOptions = requestHandlerOptions;
             _requestAbstraction = requestAbstraction;
             _runtimeState = runtimeState;
             _processorQueue = processorQueue;
@@ -66,8 +63,7 @@ namespace UrlTracker.Middleware
                 return;
             }
 
-            var requestHandlerOptionsValue = _requestHandlerOptions.CurrentValue;
-            var url = context.Request.GetUrl().ToString(UrlType.Absolute, requestHandlerOptionsValue.AddTrailingSlash);
+            var url = context.Request.GetUrl();
             var referrer = context.Request.GetReferrer(_requestAbstraction);
 
             await _processorQueue.WriteAsync(new ClientErrorProcessorItem(url, DateTime.Now, referrer?.ToString()));

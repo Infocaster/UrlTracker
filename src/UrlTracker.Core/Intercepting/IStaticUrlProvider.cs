@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Intercepting
 {

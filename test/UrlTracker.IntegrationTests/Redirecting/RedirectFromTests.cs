@@ -10,21 +10,21 @@ namespace UrlTracker.IntegrationTests.Redirecting
         {
             var result = CreateRedirectBase();
 
-            result.TargetUrl = _defaultTargetUrl;
+            result.Target = new UrlTargetStrategy(_defaultTargetUrl);
             return result;
         }
 
         protected Redirect CreateRedirectFromUrl(string url)
         {
             var redirect = CreateRedirectFromBase();
-            redirect.SourceUrl = url;
+            redirect.Source = new UrlSourceStrategy(url);
             return redirect;
         }
 
         protected Redirect CreateRedirectFromRegex(string regex)
         {
             var redirect = CreateRedirectFromBase();
-            redirect.SourceRegex = regex;
+            redirect.Source = new RegexSourceStrategy(regex);
             return redirect;
         }
 

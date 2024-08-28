@@ -2,19 +2,21 @@
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using UrlTracker.Core.Domain.Models;
-using UrlTracker.Resources.Testing;
+using UrlTracker.Core.Models;
 using UrlTracker.Web.Processing;
 
 namespace UrlTracker.Web.Tests.Processing
 {
-    public class RequestInterceptFilterCollectionTests : TestBase
+    public class RequestInterceptFilterCollectionTests
     {
+        private Mock<IRequestInterceptFilter> _requestInterceptFilterMock;
         private RequestInterceptFilterCollection? _testSubject;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            _testSubject = new RequestInterceptFilterCollection(() => new List<IRequestInterceptFilter> { RequestInterceptFilter });
+            _requestInterceptFilterMock = new Mock<IRequestInterceptFilter>();
+            _testSubject = new RequestInterceptFilterCollection(() => new List<IRequestInterceptFilter> { _requestInterceptFilterMock.Object });
         }
 
         [TestCase(true, true, TestName = "EvaluateCandidateAsync returns true if all filters return true")]
@@ -22,7 +24,7 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_NormalFlow_ReturnsResult(bool output, bool expected)
         {
             // arrange
-            RequestInterceptFilterMock!.Setup(obj => obj.EvaluateCandidateAsync(It.IsAny<Url>()))
+            _requestInterceptFilterMock!.Setup(obj => obj.EvaluateCandidateAsync(It.IsAny<Url>()))
                                       .ReturnsAsync(output);
 
             // act

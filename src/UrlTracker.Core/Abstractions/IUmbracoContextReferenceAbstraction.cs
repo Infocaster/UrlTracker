@@ -18,6 +18,13 @@ namespace UrlTracker.Core.Abstractions
         IPublishedContent? GetContentById(int id);
 
         /// <summary>
+        /// When implemented, this method finds media as published content with the given id
+        /// </summary>
+        /// <param name="id">The unique id of the media</param>
+        /// <returns>The <see cref="IPublishedContent"/> with the given id or <see langword="null"/></returns>
+        IPublishedContent? GetMediaById(int id);
+
+        /// <summary>
         /// When implemented, this method produces a media url for given published content
         /// </summary>
         /// <param name="content">The content item for which the url should be produced</param>

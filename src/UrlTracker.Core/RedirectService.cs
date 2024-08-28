@@ -3,16 +3,25 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Scoping;
 using UrlTracker.Core.Database;
-using UrlTracker.Core.Database.Models;
-using UrlTracker.Core.Database.Models.Entities;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Exceptions;
 using UrlTracker.Core.Models;
 using UrlTracker.Core.Validation;
 
 namespace UrlTracker.Core
 {
+    public interface IRedirectService
+    {
+        Task<Redirect> AddAsync(Redirect redirect);
+        Task DeleteAsync(Redirect redirect);
+        Task<RedirectCollection> GetAsync();
+        Task<Redirect?> GetAsync(int id);
+        Task<Redirect> UpdateAsync(Redirect redirect);
+    }
+
     public class RedirectService
         : IRedirectService
     {
@@ -48,15 +57,6 @@ namespace UrlTracker.Core
 
             var redirect = _redirectRepository.Get(id);
             return Task.FromResult(_mapper.Map<Redirect>(redirect));
-        }
-
-        [ExcludeFromCodeCoverage]
-        public async Task<RedirectCollection> GetAsync(uint skip, uint take, string? query = null, OrderBy order = OrderBy.Created, bool descending = true)
-        {
-            using var scope = _scopeProvider.CreateScope(autoComplete: true);
-
-            var redirects = await _redirectRepository.GetAsync(skip, take, query, order, descending).ConfigureAwait(false);
-            return _mapper.Map<RedirectCollection>(redirects)!;
         }
 
         public Task<Redirect> AddAsync(Redirect redirect)

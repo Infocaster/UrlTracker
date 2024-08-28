@@ -2,8 +2,4 @@
 
 namespace UrlTracker.Core.Intercepting.Preprocessing
 {
-    public interface IDefaultInterceptContextFactory
-    {
-        IInterceptContext Create();
-    }
 }

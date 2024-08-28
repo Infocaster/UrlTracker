@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using NPoco;
 using Umbraco.Cms.Infrastructure.Persistence;
+using Umbraco.Cms.Infrastructure.Persistence.Dtos;
 using Umbraco.Cms.Infrastructure.Persistence.SqlSyntax;
 using Umbraco.Extensions;
 using UrlTracker.Core.Compatibility;
@@ -13,6 +14,26 @@ namespace UrlTracker.Core
     [ExcludeFromCodeCoverage]
     public static class NPocoSqlExtensions
     {
+        public static string DaysDifference<TDto>(this ISqlSyntaxProvider syntaxProvider, Expression<Func<TDto, object?>> field, string? tableAlias = null)
+        {
+            var fieldName = syntaxProvider.GetFieldName(field, tableAlias);
+            string template = syntaxProvider.ProviderName switch
+            {
+                "Microsoft.Data.Sqlite" => "julianday('now') - julianday({0})",
+                _ => "DATEDIFF(day, {0}, GETDATE())",
+            };
+            return string.Format(template, fieldName);
+        }
+
+        public static string TimeFactorFunction(this ISqlSyntaxProvider syntaxProvider, params string[] arguments)
+        {
+            return syntaxProvider.ProviderName switch
+            {
+                "Microsoft.Data.Sqlite" => string.Format("1 / (({0} * {1}) + 1)", arguments.Take(2).ToArray()),
+                _ => string.Format("POWER(CAST(0.5 as float), CAST({0} as float) / {1})", arguments),
+            };
+        }
+
         public static Sql<ISqlContext> From(this Sql<ISqlContext> sql, string alias, Action<Sql<ISqlContext>> subQuery)
         {
             sql.Append("FROM (");

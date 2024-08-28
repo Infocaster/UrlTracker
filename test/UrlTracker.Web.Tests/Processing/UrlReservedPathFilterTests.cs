@@ -1,21 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Moq;
 using NUnit.Framework;
-using UrlTracker.Core.Domain.Models;
-using UrlTracker.Resources.Testing;
+using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing.Logging;
-using UrlTracker.Web.Processing;
+using UrlTracker.Web.Configuration;
+using UrlTracker.Web.Processing.Filtering;
 
 namespace UrlTracker.Web.Tests.Processing
 {
-    public class UrlReservedPathFilterTests : TestBase
+    public class UrlReservedPathFilterTests
     {
+        private Mock<IReservedPathSettingsProvider> _reservedPathSettingsProviderMock;
         private UrlReservedPathFilter? _urlReservedPathFilter;
 
         [SetUp]
         public void Setup()
         {
-            _urlReservedPathFilter = new UrlReservedPathFilter(ReservedPathSettingsProvider, new VoidLogger<UrlReservedPathFilter>());
+            _reservedPathSettingsProviderMock = new Mock<IReservedPathSettingsProvider>();
+            _urlReservedPathFilter = new UrlReservedPathFilter(_reservedPathSettingsProviderMock.Object, new VoidLogger<UrlReservedPathFilter>());
         }
 
         [TestCase("http://example.com/lorem/ipsum", "lorem/ipsum/", false, TestName = "EvaluateCandidateAsync returns false if the url path matches a filter")]
@@ -24,7 +27,7 @@ namespace UrlTracker.Web.Tests.Processing
         public async Task EvaluateCandidateAsync_NormalFlow_ReturnsMatch(string input, string filteredPath, bool expectation)
         {
             // arrange
-            ReservedPathSettingsProviderMock!.Setup(obj => obj.Paths).Returns(new HashSet<string> { filteredPath });
+            _reservedPathSettingsProviderMock!.Setup(obj => obj.Paths).Returns(new HashSet<string> { filteredPath });
             var inputUri = Url.Parse(input);
 
             // act

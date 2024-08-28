@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <PackageId>UrlTracker.GlobalBlocklist</PackageId>
+    <Title>UrlTracker Global Block List</Title>
+    <Description>The global block list provides an extra filter for the URL Tracker that retrieves a global list from GitHub and adds it as a filter.</Description>
+    <RootNamespace>UrlTracker.GlobalBlocklist</RootNamespace>
+    <PackageReleaseNotes>2 new features, 3 bugfixes, 3 other changes
+
+- Fix failing migration with long URLs
+- Fix sorting direction when sorting by URL
+- Fix alignment of elements in safari browsers
+- Add notifications when creating, updating and deleting redirects
+- Add button to all recommendations on landingpage
+- Remove image and technical file recommendations from the landingpage
+- Remove option to create redirects from image and technical file recommendations
+- Common redirects are no longer displayed on the advanced redirect page</PackageReleaseNotes>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Polly" Version="8.4.0" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="13.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UrlTracker.Modules\UrlTracker.Modules.csproj" />
+    <ProjectReference Include="..\UrlTracker.Web\UrlTracker.Web.csproj" />
+  </ItemGroup>
+</Project>

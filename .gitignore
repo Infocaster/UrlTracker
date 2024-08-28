@@ -17,3 +17,9 @@ TestResults
 /src/UrlTracker.Web/frontend/.build-stamp
 node_modules
 /src/UrlTracker.Backoffice.UI/wwwroot
+/.vscode
+/test/UrlTracker.IntegrationTests/App_Plugins/Contentment
+/test/UrlTracker.IntegrationTests/Views/Components
+/test/UrlTracker.IntegrationTests/wwwroot/clean-assets
+/test/UrlTracker.IntegrationTests/wwwroot/css/dropdownStyles.css
+/test/UrlTracker.Resources.Website/Umbraco/Data

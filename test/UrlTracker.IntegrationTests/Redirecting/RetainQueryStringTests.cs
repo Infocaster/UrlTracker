@@ -1,4 +1,6 @@
-﻿namespace UrlTracker.IntegrationTests.Redirecting
+﻿using UrlTracker.Core.Models;
+
+namespace UrlTracker.IntegrationTests.Redirecting
 {
     public class RetainQueryStringTests : RedirectTestBase
     {
@@ -8,8 +10,8 @@
         protected Task AddRedirectAsync(bool retainQuery)
         {
             var redirect = CreateRedirectBase();
-            redirect.SourceUrl = _defaultSource;
-            redirect.TargetUrl = _defaultTargetUrl;
+            redirect.Source = new UrlSourceStrategy(_defaultSource);
+            redirect.Target = new UrlTargetStrategy(_defaultTargetUrl);
             redirect.RetainQuery = retainQuery;
 
             return GetRedirectService().AddAsync(redirect);

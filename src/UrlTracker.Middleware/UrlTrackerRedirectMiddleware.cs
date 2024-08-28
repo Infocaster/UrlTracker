@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Services;
 using UrlTracker.Core;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Logging;
+using UrlTracker.Core.Models;
 using UrlTracker.Web;
 using UrlTracker.Web.Processing;
 
