@@ -3,8 +3,12 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Umbraco.Cms.Core.Configuration.Models;
 using UrlTracker.Core;
+using UrlTracker.Core.Classification;
 using UrlTracker.Core.Logging;
+using UrlTracker.Core.Models;
 
 namespace UrlTracker.Middleware.Background
 {
@@ -14,7 +18,7 @@ namespace UrlTracker.Middleware.Background
     /// <param name="Url">The URL that generated the client error</param>
     /// <param name="Moment">The time and date at which the client error was generated</param>
     /// <param name="Referrer">The URL from which the current URL is requested</param>
-    public record ClientErrorProcessorItem(string Url, DateTime Moment, string? Referrer);
+    public record ClientErrorProcessorItem(Url Url, DateTime Moment, string? Referrer);
 
     /// <summary>
     /// A device to queue client errors to a background runner
@@ -71,15 +75,24 @@ namespace UrlTracker.Middleware.Background
         private readonly IClientErrorProcessorQueue _queue;
         private readonly ILogger<ClientErrorProcessor> _logger;
         private readonly IClientErrorService _clientErrorService;
+        private readonly IOptionsMonitor<RequestHandlerSettings> _requestHandlerOptions;
+        private readonly IUrlClassifierStrategyCollection _classifierStrategyCollection;
+        private readonly IRecommendationService _recommendationService;
 
         public ClientErrorProcessor(
             IClientErrorProcessorQueue queue,
             ILogger<ClientErrorProcessor> logger,
-            IClientErrorService clientErrorService)
+            IClientErrorService clientErrorService,
+            IOptionsMonitor<RequestHandlerSettings> requestHandlerOptions,
+            IUrlClassifierStrategyCollection classifierStrategyCollection,
+            IRecommendationService recommendationService)
         {
             _queue = queue;
             _logger = logger;
             _clientErrorService = clientErrorService;
+            _requestHandlerOptions = requestHandlerOptions;
+            _classifierStrategyCollection = classifierStrategyCollection;
+            _recommendationService = recommendationService;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -89,7 +102,15 @@ namespace UrlTracker.Middleware.Background
                 try
                 {
                     var item = await _queue.ReadAsync(stoppingToken);
-                    await _clientErrorService.ReportAsync(item.Url, item.Moment, item.Referrer);
+                    var urlString = item.Url.ToString(UrlType.Absolute, _requestHandlerOptions.CurrentValue.AddTrailingSlash);
+                    await _clientErrorService.ReportAsync(urlString, item.Moment, item.Referrer);
+
+                    var classification = _classifierStrategyCollection.Classify(item.Url);
+
+                    var recommendation = _recommendationService.GetOrCreate(urlString, classification);
+                    recommendation.VariableScore++;
+
+                    _recommendationService.Save(recommendation);
                 }
                 catch (OperationCanceledException)
                 {

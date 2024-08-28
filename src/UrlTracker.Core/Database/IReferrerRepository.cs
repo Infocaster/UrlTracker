@@ -1,4 +1,5 @@
-﻿using Umbraco.Cms.Core.Persistence;
+﻿using System.Collections.Generic;
+using Umbraco.Cms.Core.Persistence;
 using UrlTracker.Core.Database.Entities;
 
 namespace UrlTracker.Core.Database
@@ -7,5 +8,6 @@ namespace UrlTracker.Core.Database
         : IReadWriteQueryRepository<int, IReferrer>
     {
         IReferrer? Get(string url);
+        IEnumerable<IReferrer?> GetAll(string url);
     }
 }

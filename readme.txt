@@ -7,6 +7,13 @@
  ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝
                                                                                
 ===============================================================================
+╔═════════════════════════════════════════════════════════════════════════════╗
+║ ⚠️ WARNING: EXPERIMENTAL VERSION!                                            ║
+║                                                                             ║
+║ Before you build and run, make a backup of your database!!                  ║
+║ This version is experimental and may still contain bugs. You cannot revert  ║
+║ once you've updated!                                                        ║
+╚═════════════════════════════════════════════════════════════════════════════╝
 
 Thank you for choosing our awesome URL Tracker package!
 Don't forget to build before use.

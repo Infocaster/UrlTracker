@@ -12,6 +12,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
     {
         protected const string _defaultTargetUrl = "https://example.com/";
         protected const HttpStatusCode _defaultRedirectCode = HttpStatusCode.Redirect;
+        protected const bool _defaultPermanent = _defaultRedirectCode != HttpStatusCode.Redirect;
         protected IUmbracoContext UmbracoContext => ContextReference.UmbracoContext;
         private UmbracoContextReference ContextReference { get; set; } = null!;
 
@@ -19,11 +20,10 @@ namespace UrlTracker.IntegrationTests.Redirecting
         {
             return new Redirect
             {
-                Culture = "en-US",
                 Force = false,
                 RetainQuery = false,
-                TargetStatusCode = _defaultRedirectCode,
-                TargetRootNode = GetDefaultRootNode()
+                Permanent = _defaultPermanent,
+                Target = new ContentPageTargetStrategy(GetDefaultRootNode(), "en-US")
             };
         }
 
@@ -40,7 +40,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
             ContextReference.Dispose();
             base.TearDown();
         }
-        protected IPublishedContent GetDefaultRootNode() => UmbracoContext.Content!.GetById(Guid.Parse("59726a7c-f363-466d-b452-edc0473a4f23"))!;
+        protected IPublishedContent GetDefaultRootNode() => UmbracoContext.Content!.GetAtRoot().First();
         protected IRedirectService GetRedirectService() => ServiceProvider.GetRequiredService<IRedirectService>();
     }
 }

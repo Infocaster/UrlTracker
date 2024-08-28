@@ -4,16 +4,20 @@
     <Title>URL Tracker Middleware</Title>
     <Description>This package contains middleware to perform redirects and to register client errors with the URL Tracker</Description>
     <RootNamespace>UrlTracker.Middleware</RootNamespace>
-    <PackageReleaseNotes>1 new feature, 1 bugfix, 1 other change
+    <PackageReleaseNotes>2 new features, 3 bugfixes, 3 other changes
 
-- Fix stale caches on load balanced environments
-- (Experimental) Add active cache
-- Optimise database query performance</PackageReleaseNotes>
+- Fix failing migration with long URLs
+- Fix sorting direction when sorting by URL
+- Fix alignment of elements in safari browsers
+- Add notifications when creating, updating and deleting redirects
+- Add button to all recommendations on landingpage
+- Remove image and technical file recommendations from the landingpage
+- Remove option to create redirects from image and technical file recommendations
+- Common redirects are no longer displayed on the advanced redirect page</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Umbraco.Cms.Core" Version="10.0.0" />
-    <PackageReference Include="Umbraco.Cms.Web.Common" Version="10.0.0" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="10.6.1" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="10.6.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />

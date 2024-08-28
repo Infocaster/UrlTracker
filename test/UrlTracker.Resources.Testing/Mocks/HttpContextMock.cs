@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Moq;
-using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Models;
 
 namespace UrlTracker.Resources.Testing.Mocks
 {

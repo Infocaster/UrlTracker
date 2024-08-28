@@ -1,5 +1,12 @@
-﻿import * as _angular_ from 'angular';
+﻿export declare global {
+  interface Window {
+    URL_TRACKER: {
+      TabBuilder: TabBuilder;
+    };
+    Umbraco: any;
+  }
+}
 
-declare global {
-    const angular: typeof _angular_;
+declare module 'angular' {
+  typeof import('angular');
 }

@@ -1,9 +1,10 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UrlTracker.Core.Database;
-using UrlTracker.Core.Database.Models.Entities;
-using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Intercepting.Models;
+using UrlTracker.Core.Models;
 using ILogger = UrlTracker.Core.Logging.ILogger<UrlTracker.Core.Intercepting.RegexRedirectInterceptor>;
 
 namespace UrlTracker.Core.Intercepting
@@ -21,31 +22,25 @@ namespace UrlTracker.Core.Intercepting
             _logger = logger;
         }
 
-        public async ValueTask<ICachableIntercept?> InterceptAsync(Url url, IReadOnlyInterceptContext context)
+        public async ValueTask<ICachableIntercept?> InterceptAsync(Url url, IInterceptContext context)
         {
             var regexRedirects = await _redirectRepository.GetWithRegexAsync();
 
             // There may be multiple regexes for which the given url has an intercept. There is no way to tell which intercept is the best,
             //    so we just take the first intercept that we can find.
-            int? rootNodeId = context.GetRootNode();
-
             string interceptString = url.Path!.Trim('/');
             if (url.Query is not null) interceptString += "?" + url.Query;
 
             foreach (var redirect in regexRedirects)
             {
-                if ((rootNodeId == null
-                    || redirect.TargetRootNodeId == null
-                    || redirect.TargetRootNodeId == -1
-                    || redirect.TargetRootNodeId == rootNodeId)
-                   && IsRegexMatch(interceptString, redirect.SourceRegex!))
+                if (IsRegexMatch(interceptString, redirect.Source.Value))
                 {
-                    _logger.LogResults<RegexRedirectInterceptor>(1);
+                    _logger.LogResults(typeof(RegexRedirectInterceptor), 1);
                     return new CachableInterceptBase<IRedirect>(redirect);
                 }
             }
 
-            _logger.LogResults<RegexRedirectInterceptor>(0);
+            _logger.LogResults(typeof(RegexRedirectInterceptor), 0);
             return null;
         }
 
@@ -58,7 +53,7 @@ namespace UrlTracker.Core.Intercepting
         {
             try
             {
-                return Regex.IsMatch(interceptString, sourceRegex, RegexOptions.IgnoreCase);
+                return Regex.IsMatch(interceptString, sourceRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
             }
             catch
             {

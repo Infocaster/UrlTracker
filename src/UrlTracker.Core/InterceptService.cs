@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting;
 using UrlTracker.Core.Intercepting.Conversion;
 using UrlTracker.Core.Intercepting.Models;
+using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core
 {
+    public interface IInterceptService
+    {
+        Task<IIntercept> GetAsync(Url url);
+    }
+
     public class InterceptService
         : IInterceptService
     {

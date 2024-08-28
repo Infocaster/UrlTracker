@@ -1,35 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 
 namespace UrlTracker.Core
 {
     [ExcludeFromCodeCoverage]
-    internal static class LoggerExtensions
+    internal static partial class LoggerExtensions
     {
-        public static void LogApplyMigration(this ILogger logger, string migrationName)
-        {
-            logger.LogInformation(new EventId(1001), "Applying migration {migrationName}", migrationName);
-        }
+        [LoggerMessage(1001, LogLevel.Information, "Applying migration {migrationName}")]
+        public static partial void LogApplyMigration(this ILogger logger, string migrationName);
 
-        public static void LogSkipStep(this ILogger logger, string step, string reason)
-        {
-            logger.LogInformation(new EventId(1002), "Skip step {step}: {reason}", step, reason);
-        }
+        [LoggerMessage(1002, LogLevel.Information, "Skip step {step}: {reason}")]
+        public static partial void LogSkipStep(this ILogger logger, string step, string reason);
 
-        public static void LogStepSuccess(this ILogger logger, string step)
-        {
-            logger.LogInformation(new EventId(1003), "Step {step} succeeded", step);
-        }
+        [LoggerMessage(1003, LogLevel.Information, "Step {step} succeeded")]
+        public static partial void LogStepSuccess(this ILogger logger, string step);
 
-        public static void LogResults<T>(this ILogger logger, int resultCount)
-        {
-            logger.LogDebug(new EventId(1004), "{source} found {resultCount} results", typeof(T), resultCount);
-        }
+        [LoggerMessage(1004, LogLevel.Debug, "{source} found {resultCount} results")]
+        public static partial void LogResults(this ILogger logger, Type source, int resultCount);
 
-        public static void LogParameters(this ILogger logger, string? culture, int? rootnodeid, List<string> urls)
-        {
-            logger.LogDebug(new EventId(1005), "No longer available parameters: culture: {culture}, rootnodeid: {rootnodeid}, urls: {urls}", culture, rootnodeid, urls);
-        }
+        [LoggerMessage(1006, LogLevel.Warning, "Could not find a redaction score for given key: {key}")]
+        public static partial void LogRedactionScoreNotFound(this ILogger logger, Guid key);
+
+        [LoggerMessage(1007, LogLevel.Information, "Classification of the url failed. falling back on default classification...")]
+        public static partial void LogClassificationFailed(this ILogger logger);
     }
 }

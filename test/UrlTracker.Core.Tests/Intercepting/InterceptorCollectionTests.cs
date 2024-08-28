@@ -2,20 +2,22 @@
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting;
 using UrlTracker.Core.Intercepting.Models;
-using UrlTracker.Resources.Testing;
+using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Tests.Intercepting
 {
-    public class InterceptorCollectionTests : TestBase
+    public class InterceptorCollectionTests
     {
+        private Mock<IInterceptor> _interceptorMock;
         private InterceptorCollection? _testSubject;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            _testSubject = new InterceptorCollection(() => new List<IInterceptor> { Interceptor }, new NullInterceptor());
+            _interceptorMock = new Mock<IInterceptor>();
+            _testSubject = new InterceptorCollection(() => new List<IInterceptor> { _interceptorMock.Object }, new NullInterceptor());
         }
 
         public static TestCaseData[] TestCases()
@@ -32,7 +34,7 @@ namespace UrlTracker.Core.Tests.Intercepting
         public async Task InterceptAsync_NormalFlow_ReturnsExpectedResult(ICachableIntercept input, ICachableIntercept expected)
         {
             // arrange
-            InterceptorMock!.Setup(obj => obj.InterceptAsync(It.IsAny<Url>(), It.IsAny<IReadOnlyInterceptContext>()))
+            _interceptorMock!.Setup(obj => obj.InterceptAsync(It.IsAny<Url>(), It.IsAny<IInterceptContext>()))
                            .ReturnsAsync(input);
 
             // act

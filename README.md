@@ -29,9 +29,6 @@ The URL Tracker has several configurable properties that can be changed in appse
     "UrlTracker": {
         "Enable": true,
         "EnableLogging": false,
-        "AppendPortNumber": false,
-        "IncludeWildcardDomains": false,
-        "HasDomainOnChildNode": true,
         "BlockedUrlsList": [],
         "AllowedUserAgents": [],
         "Backoffice": {
@@ -60,9 +57,6 @@ The URL Tracker has several configurable properties that can be changed in appse
 |-------------------------------------------------------:|:---------|:------------|
 |                                      UrlTracker:Enable | bool     | Set this value to `false` to completely disable the URL Tracker. The URL Tracker will not intercept any requests nor track any content updates
 |                               UrlTracker:EnableLogging | bool     | Set this value to `true` to allow the URL Tracker to write logs to the Umbraco native logger. Most logs from the URL Tracker are written at Debug or Verbose level.
-|                            UrlTracker:AppendPortNumber | bool     | Set this value to `true` to add a port number behind the host component of a redirect url. This setting is ignored when the application is hosted on the default port 80.
-|                        UrlTracker:HasDomainOnChildNode | bool     | Set this value to `false` to exclude domains on nodes that are not in the root of the content tree.
-|                      UrlTracker:IncludeWildcardDomains | bool     | Set this value to `true` to include wildcard domains.
 |                             UrlTracker:BlockedUrlsList | string[] | Add strings to this array that should be blocked from the UrlTracker. The strings in this array will be filtered out and shall never appear as a 404. This is great for things that crawlers search for like wpadmin and prevents the UrlTracker from getting clogged. Keep in mind that the filter works with String.Contains so there is no need to use entire urls.
 |                           UrlTracker:AllowedUserAgents | string[] | Add strings to this array to use in a User Agent check. The UrlTracker will check if a request has one of these user agents before logging it as a 404 request, this prevents (by best effor) a lot of calls from bots. This defaults to: "IE", "Opera", "Google", "Safari", "Google Chrome", "Edge", "Mozilla", "Firefox". The [uap-csharp](https://github.com/ua-parser/uap-csharp) package is used to check the browser family.
 |             UrlTracker:Backoffice:Notifications:Enable | bool     | Set this value to `false` to disable tracking of content changes. The URL Tracker will not automatically create redirects when content is updated

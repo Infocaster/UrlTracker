@@ -1,5 +1,5 @@
-﻿using UrlTracker.Core.Domain.Models;
-using UrlTracker.Core.Intercepting.Models;
+﻿using UrlTracker.Core.Intercepting.Models;
+using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Caching.Memory
 {

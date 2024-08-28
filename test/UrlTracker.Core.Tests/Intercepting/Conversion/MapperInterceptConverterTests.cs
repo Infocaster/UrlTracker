@@ -1,30 +1,35 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Mapping;
+using Umbraco.Cms.Core.Scoping;
 using UrlTracker.Core.Intercepting.Conversion;
 using UrlTracker.Core.Intercepting.Models;
-using UrlTracker.Resources.Testing;
+using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Resources.Testing.Objects;
 
 namespace UrlTracker.Core.Tests.Intercepting.Conversion
 {
-    public class MapperInterceptConverterTests : TestBase
+    public class MapperInterceptConverterTests
     {
         private TestMapDefinition<TestResponseIntercept1, TestResponseIntercept2>? _testMapDefinition;
+        private UmbracoMapper _mapper;
         private MapperInterceptConverter<TestResponseIntercept1, TestResponseIntercept2>? _testSubject;
 
-        protected override ICollection<IMapDefinition> CreateMappers()
+        private ICollection<IMapDefinition> CreateMappers()
         {
             return new[]
             {
-                _testMapDefinition = CreateTestMap<TestResponseIntercept1, TestResponseIntercept2>()
+                _testMapDefinition = TestMapDefinition.CreateTestMap<TestResponseIntercept1, TestResponseIntercept2>()
             };
         }
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            _testSubject = new MapperInterceptConverter<TestResponseIntercept1, TestResponseIntercept2>(Mapper!);
+            _mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<ICoreScopeProvider>(), new VoidLogger<UmbracoMapper>());
+            _testSubject = new MapperInterceptConverter<TestResponseIntercept1, TestResponseIntercept2>(_mapper);
         }
 
         [TestCase(TestName = "ConvertAsync returns null if it is not a converter for the given argument")]

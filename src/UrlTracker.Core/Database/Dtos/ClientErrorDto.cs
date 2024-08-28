@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using NPoco;
 using Umbraco.Cms.Infrastructure.Persistence.DatabaseAnnotations;
 
@@ -7,7 +8,8 @@ namespace UrlTracker.Core.Database.Dtos
     [TableName(Defaults.DatabaseSchema.Tables.ClientError)]
     [PrimaryKey("id")]
     [ExplicitColumns]
-    public class ClientErrorDto
+    [ExcludeFromCodeCoverage]
+    internal class ClientErrorDto
     {
         [Column("id")]
         [PrimaryKeyColumn]

@@ -13,7 +13,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
         protected Redirect CreateRedirectToBase()
         {
             var result = CreateRedirectBase();
-            result.SourceUrl = "/dolor/sit";
+            result.Source = new UrlSourceStrategy("/dolor/sit");
 
             return result;
         }
@@ -21,7 +21,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
         protected Redirect CreateRedirectToUrl(string url)
         {
             var result = CreateRedirectToBase();
-            result.TargetUrl = url;
+            result.Target = new UrlTargetStrategy(url);
 
             return result;
         }
@@ -29,16 +29,15 @@ namespace UrlTracker.IntegrationTests.Redirecting
         protected Redirect CreateRedirectToContent(IPublishedContent content)
         {
             var result = CreateRedirectToBase();
-            result.TargetNode = content;
+            result.Target = new ContentPageTargetStrategy(content, null);
 
             return result;
         }
 
-        protected Redirect CreateRedirectWithCulture(string culture)
+        protected Redirect CreateRedirectWithCulture(IPublishedContent content, string culture)
         {
             var result = CreateRedirectToBase();
-            result.TargetUrl = "https://example.com/lorem/";
-            result.Culture = culture;
+            result.Target = new ContentPageTargetStrategy(content, culture);
 
             return result;
         }
@@ -110,8 +109,8 @@ namespace UrlTracker.IntegrationTests.Redirecting
         {
             // arrange
             var redirect = CreateRedirectBase();
-            redirect.SourceRegex = @"^[0-9]{6}\?lorem=(\w+)";
-            redirect.TargetUrl = "/$1";
+            redirect.Source = new RegexSourceStrategy(@"^[0-9]{6}\?lorem=(\w+)");
+            redirect.Target = new UrlTargetStrategy("/$1");
             await GetRedirectService().AddAsync(redirect);
             var client = WebsiteFactory.CreateStandardClient();
             const string targetPath = "ipsum";
@@ -154,7 +153,8 @@ namespace UrlTracker.IntegrationTests.Redirecting
         public async Task Redirect_CultureUpperCase_ReturnsGone()
         {
             // arrange
-            await GetRedirectService().AddAsync(CreateRedirectWithCulture("EN-US"));
+            var targetContent = GetDefaultRootNode().FirstChild(ServiceProvider.GetRequiredService<IVariationContextAccessor>())!;
+            await GetRedirectService().AddAsync(CreateRedirectWithCulture(targetContent ,"EN-US"));
 
             // act
             var response = await RequestDefaultUrlAsync();
@@ -170,7 +170,8 @@ namespace UrlTracker.IntegrationTests.Redirecting
         public async Task Redirect_CultureLowerCase_ReturnsGone()
         {
             // arrange
-            await GetRedirectService().AddAsync(CreateRedirectWithCulture("en-us"));
+            var targetContent = GetDefaultRootNode().FirstChild(ServiceProvider.GetRequiredService<IVariationContextAccessor>())!;
+            await GetRedirectService().AddAsync(CreateRedirectWithCulture(targetContent, "en-us"));
 
             // act
             var response = await RequestDefaultUrlAsync();

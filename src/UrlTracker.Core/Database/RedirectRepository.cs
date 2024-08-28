@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NPoco;
+using Org.BouncyCastle.Crypto;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Persistence.Querying;
 using Umbraco.Cms.Infrastructure.Persistence;
@@ -17,7 +17,6 @@ using UrlTracker.Core.Database.Dtos;
 using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Factories;
 using UrlTracker.Core.Database.Models;
-using UrlTracker.Core.Database.Models.Entities;
 
 namespace UrlTracker.Core.Database
 {
@@ -31,7 +30,7 @@ namespace UrlTracker.Core.Database
 
         #region Old Implementation
 
-        public async Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, OrderBy order, bool descending)
+        public async Task<RedirectEntityCollection> GetAsync(uint skip, uint take, string? query, RedirectFilters filters, bool descending)
         {
             var countQuery = Sql().SelectCount();
             countQuery = PopulateRedirectQuery(countQuery);
@@ -40,13 +39,7 @@ namespace UrlTracker.Core.Database
 
             var selectQuery = Sql().SelectAll();
             selectQuery = PopulateRedirectQuery(selectQuery);
-            Expression<Func<RedirectDto, object?>> orderParameter = order switch
-            {
-                OrderBy.Created => e => e.CreateDate,
-                OrderBy.Culture => e => e.Culture!,
-                _ => throw new ArgumentOutOfRangeException(nameof(order)),
-            };
-            selectQuery = selectQuery.OrderBy<RedirectDto>(descending, orderParameter);
+            selectQuery = selectQuery.OrderBy<RedirectDto>(descending, e => e.CreateDate);
 
             List<RedirectDto> records = await Database.SkipTakeAsync<RedirectDto>(skip, take, selectQuery);
             var redirects = records.Select(RedirectFactory.BuildEntity);
@@ -58,52 +51,51 @@ namespace UrlTracker.Core.Database
                 q = q.From<RedirectDto>();
                 if (query is not null)
                 {
-                    bool queryIsInt = int.TryParse(query, out var queryInt);
-                    q = q.Where<RedirectDto>(e => e.SourceUrl!.Contains(query)
-                                                      || e.SourceRegex!.Contains(query)
-                                                      || e.TargetUrl!.Contains(query)
-                                                      || e.Notes!.Contains(query)
-                                                      || (queryIsInt && (e.TargetNodeId == queryInt)));
+                    q = q.Where<RedirectDto>(e => e.SourceValue!.Contains(query)
+                                               || e.TargetValue!.Contains(query));
                 }
+
+                /* There are three options for redirect types:
+                 * - Only permanent
+                 * - Only temporary
+                 * - Both
+                 * 
+                 * NOTE: for now it's OK to just check if flag permanent is unequal to flag temporary.
+                 *    Should more options become available, this code needs to be updated.
+                 */
+
+                if (filters.Types.HasFlag(RedirectType.Temporary) != filters.Types.HasFlag(RedirectType.Permanent))
+                {
+                    if (filters.Types.HasFlag(RedirectType.Temporary))
+                    {
+                        q = q.Where<RedirectDto>(e => e.Permanent == false);
+                    }
+
+                    if (filters.Types.HasFlag(RedirectType.Permanent))
+                    {
+                        q = q.Where<RedirectDto>(e => e.Permanent == true);
+                    }
+                }
+
+                if (filters.SourceTypes?.Any() is true)
+                {
+                    q = q.WhereIn<RedirectDto>(e => e.SourceStrategy, filters.SourceTypes);
+                }
+
+                q = q.Where<RedirectDto>(e => e.Advanced == filters.Advanced);
 
                 return q;
             }
         }
 
-        /*
-         * ToDo: The original code only gets entries from the database where the rootnodeid and the culture intercept those
-         *      that are found in the domain provider, so that's what we keep doing here. This doesn't make any sense to me,
-         *      because the incoming url doesn't make any claims about culture yet.
-         *      It only makes sense once you actually redirect. When you redirect, you'll want to redirect to a particular domain
-         *      that may be bound to a culture. By selecting a root node id and a culture, one can select the right domain to
-         *      redirect to, while also preserving the freedom to change the culture and domains on each node. That would prevent
-         *      the url tracker from redirecting to an old domain.
-         *      
-         *      The new approach does intercepting in a specific order:
-         *       - First attempt to intercept on a set of urls and paths
-         *       - At last attempt to intercept by regex (at this point, the domain shouldn't matter anymore)
-         *       
-         * Bonus: It would be awesome if somebody changes an existing domain, that we insert all required redirects to redirect
-         *      the old domain to the new one
-         */
-        public async Task<IReadOnlyCollection<IRedirect>> GetAsync(IEnumerable<string> urlsAndPaths, int? rootNodeId = null, string? culture = null)
+        public async Task<IReadOnlyCollection<IRedirect>> GetAsync(IEnumerable<string> urlsAndPaths)
         {
             // get base query
             var query = Sql()
                 .SelectAll()
                 .From<RedirectDto>()
-                .Where<RedirectDto>(entry => urlsAndPaths.Contains(entry.SourceUrl));
-
-            if (rootNodeId.HasValue)
-            {
-                // intercept on root node id if it has been given. Rows without root node id should also be returned
-                query = query.Where<RedirectDto>(entry => entry.TargetRootNodeId == rootNodeId || entry.TargetRootNodeId == null);
-            }
-            if (!string.IsNullOrWhiteSpace(culture))
-            {
-                // intercept on culture if it has been given. Rows without culture should also be returned
-                query = query.Where<RedirectDto>(entry => entry.Culture == culture || entry.Culture == null);
-            }
+                .Where<RedirectDto>(entry => entry.SourceStrategy == Defaults.DatabaseSchema.RedirectSourceStrategies.Url)
+                .Where<RedirectDto>(entry => urlsAndPaths.Contains(entry.SourceValue));
 
             query = query.OrderBy<RedirectDto>(true, e => e.Force, e => e.CreateDate);
 
@@ -114,7 +106,7 @@ namespace UrlTracker.Core.Database
 
         public Task<IReadOnlyCollection<IRedirect>> GetWithRegexAsync()
         {
-            var query = AmbientScope.SqlContext.Query<IRedirect>().Where(e => e.SourceRegex != null && e.SourceRegex != "");
+            var query = AmbientScope.SqlContext.Query<IRedirect>().Where(e => e.SourceStrategy == Defaults.DatabaseSchema.RedirectSourceStrategies.RegularExpression);
             var entities = Get(query);
 
             return Task.FromResult<IReadOnlyCollection<IRedirect>>(entities.ToList());
@@ -135,7 +127,6 @@ namespace UrlTracker.Core.Database
         protected override IEnumerable<IRedirect> PerformGetAll(params int[]? ids)
         {
             var sql = GetBaseQuery(false);
-
             if (ids?.Any() is true) sql.WhereIn<RedirectDto>(e => e.Id, ids);
 
             var dtos = Database.Fetch<RedirectDto>(sql);
@@ -200,6 +191,16 @@ namespace UrlTracker.Core.Database
                 $"DELETE FROM {Defaults.DatabaseSchema.Tables.Redirect} WHERE id = @id"
             };
             return list;
+        }
+
+        public void DeleteBulk(IRedirect[] redirects)
+        {
+            var ids = redirects.Select(r => r.Id).ToList();
+            var deleteQuery = Sql().Delete()
+                                            .From<RedirectDto>()
+                                            .WhereIn<RedirectDto>(e => e.Id, ids);
+
+            Database.Execute(deleteQuery);
         }
     }
 }

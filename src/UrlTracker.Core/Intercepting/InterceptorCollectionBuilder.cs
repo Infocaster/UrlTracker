@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Composing;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
+using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Intercepting
 {
@@ -26,7 +26,7 @@ namespace UrlTracker.Core.Intercepting
             _lastChance = lastChance;
         }
 
-        public async ValueTask<ICachableIntercept> InterceptAsync(Url url, IReadOnlyInterceptContext context)
+        public async ValueTask<ICachableIntercept> InterceptAsync(Url url, IInterceptContext context)
         {
             foreach (var interceptor in this)
             {

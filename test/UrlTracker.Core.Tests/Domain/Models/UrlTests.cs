@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Tests.Domain.Models
 {

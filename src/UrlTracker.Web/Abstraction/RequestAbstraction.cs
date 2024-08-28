@@ -13,6 +13,7 @@ namespace UrlTracker.Web.Abstraction
         }
     }
 
+    [ExcludeFromCodeCoverage]
     public static class RequestExtensions
     {
         public static Uri? GetReferrer(this HttpRequest request, IRequestAbstraction abstraction)

@@ -1,0 +1,7 @@
+import { RecommendationSortType } from '@/enums/sortType';
+
+export interface IRecommendationFilterRequestBase {
+  OrderBy: RecommendationSortType;
+  Desc?: boolean;
+  Types?: string[];
+}

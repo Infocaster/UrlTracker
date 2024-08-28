@@ -16,8 +16,8 @@ namespace UrlTracker.IntegrationTests.Redirecting
         {
             var redirect = CreateRedirectBase();
             redirect.Force = force;
-            redirect.TargetUrl = _defaultTargetUrl;
-            redirect.SourceUrl = sourceUrl;
+            redirect.Target = new UrlTargetStrategy(_defaultTargetUrl);
+            redirect.Source = new UrlSourceStrategy(sourceUrl);
 
             return redirect;
         }
@@ -43,7 +43,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
             // arrange
             string defaultSourceUrl = DefaultSourceUrl;
             var firstRedirect = CreateRedirect(false, defaultSourceUrl);
-            firstRedirect.TargetUrl = "http://urltracker.ic";
+            firstRedirect.Target = new UrlTargetStrategy("http://urltracker.ic");
             await GetRedirectService().AddAsync(firstRedirect);
             await GetRedirectService().AddAsync(CreateRedirect(true, defaultSourceUrl));
 

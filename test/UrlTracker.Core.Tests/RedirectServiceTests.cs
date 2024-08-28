@@ -4,44 +4,58 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Umbraco.Cms.Core.Mapping;
-using UrlTracker.Core.Database.Models.Entities;
+using Umbraco.Cms.Core.Scoping;
+using UrlTracker.Core.Database;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Models;
-using UrlTracker.Resources.Testing;
+using UrlTracker.Core.Validation;
+using UrlTracker.Resources.Testing.Logging;
+using UrlTracker.Resources.Testing.Mocks;
+using UrlTracker.Resources.Testing.Objects;
 
 namespace UrlTracker.Core.Tests
 {
-    public partial class RedirectServiceTests : TestBase
+    public partial class RedirectServiceTests
     {
+        private Mock<IRedirectRepository> _redirectRepositoryMock;
+        private UmbracoMapper _mapper;
+        private Mock<IValidationHelper> _validationHelperMock;
+        private ScopeProviderMock _scopeProviderMock;
         private RedirectService? _testSubject;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            _testSubject = new RedirectService(RedirectRepository,
-                                               Mapper!,
-                                               ValidationHelper,
-                                               ScopeProviderMock!.Provider);
+            _redirectRepositoryMock = new Mock<IRedirectRepository>();
+            _mapper = new UmbracoMapper(new MapDefinitionCollection(CreateMappers), Mock.Of<ICoreScopeProvider>(), new VoidLogger<UmbracoMapper>());
+            _validationHelperMock = new Mock<IValidationHelper>();
+            _scopeProviderMock = new ScopeProviderMock();
+            _testSubject = new RedirectService(_redirectRepositoryMock.Object,
+                                               _mapper,
+                                               _validationHelperMock.Object,
+                                               _scopeProviderMock.Provider);
         }
 
-        protected override ICollection<IMapDefinition> CreateMappers()
+        private ICollection<IMapDefinition> CreateMappers()
         {
             return new IMapDefinition[]
             {
-                CreateTestMap<Core.Database.Entities.RedirectEntityCollection, RedirectCollection>(RedirectCollection.Create(Enumerable.Empty<Redirect>())),
-                CreateTestMap<Redirect, IRedirect>(new RedirectEntity(default, default, default, default, default, default, default, default, default, default)),
-                CreateTestMap<IRedirect, Redirect>(new Redirect())
+                TestMapDefinition.CreateTestMap<Core.Database.Entities.RedirectEntityCollection, RedirectCollection>(RedirectCollection.Create(Enumerable.Empty<Redirect>())),
+                TestMapDefinition.CreateTestMap<Redirect, IRedirect>(new RedirectEntity(default, default, default, default, default!, default!)),
+                TestMapDefinition.CreateTestMap<IRedirect, Redirect>(new Redirect())
             };
         }
 
         private Exception SetupValidationFails()
         {
             var exception = new Exception();
-            ValidationHelperMock!.Setup(obj => obj.EnsureValidObject(It.IsAny<Redirect>())).Throws(exception);
+            _validationHelperMock!.Setup(obj => obj.EnsureValidObject(It.IsAny<Redirect>())).Throws(exception);
             return exception;
         }
 
         private void SetupValidationSuccessful()
         {
-            ValidationHelperMock!.Setup(obj => obj.EnsureValidObject(It.IsAny<Redirect>())).Verifiable();
+            _validationHelperMock!.Setup(obj => obj.EnsureValidObject(It.IsAny<Redirect>())).Verifiable();
         }
 
         private static void AssertArgumentNullException(AsyncTestDelegate code, string expectedParamName)
@@ -65,7 +79,7 @@ namespace UrlTracker.Core.Tests
         private void AssertValidationNoExceptions(AsyncTestDelegate code)
         {
             Assert.DoesNotThrowAsync(code);
-            ValidationHelperMock!.Verify();
+            _validationHelperMock!.Verify();
         }
     }
 }

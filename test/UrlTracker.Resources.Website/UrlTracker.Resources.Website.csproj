@@ -8,9 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="App_Plugins\**">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <AssemblyAttribute Include="System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="35.5.0" />
+    <PackageReference Include="Clean" Version="3.1.4" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-    <PackageReference Include="Umbraco.Cms" Version="10.5.1" />
-    <PackageReference Include="uSync" Version="10.2.1" />
+    <PackageReference Include="Umbraco.Cms" Version="10.8.5" />
   </ItemGroup>
 
   <Import Project="..\..\src\UrlTracker.Backoffice.UI\build\UrlTracker.Backoffice.UI.targets" />
@@ -27,12 +35,6 @@
 
   <PropertyGroup>
     <CopyRazorGenerateFilesToPublishDirectory>true</CopyRazorGenerateFilesToPublishDirectory>
-  </PropertyGroup>
-
-  <!-- Set this to true if ModelsBuilder mode is not InMemoryAuto-->
-  <PropertyGroup>
-    <RazorCompileOnBuild>false</RazorCompileOnBuild>
-    <RazorCompileOnPublish>false</RazorCompileOnPublish>
   </PropertyGroup>
 
 </Project>
