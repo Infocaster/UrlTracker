@@ -4,16 +4,9 @@
     <Title>URL Tracker Backoffice Notifications</Title>
     <Description>This package contains notification handlers for the URL Tracker to handle Umbraco content notifications</Description>
     <RootNamespace>UrlTracker.Backoffice.Notifications</RootNamespace>
-    <PackageReleaseNotes>2 new features, 3 bugfixes, 3 other changes
+    <PackageReleaseNotes>1 change
 
-- Fix failing migration with long URLs
-- Fix sorting direction when sorting by URL
-- Fix alignment of elements in safari browsers
-- Add notifications when creating, updating and deleting redirects
-- Add button to all recommendations on landingpage
-- Remove image and technical file recommendations from the landingpage
-- Remove option to create redirects from image and technical file recommendations
-- Common redirects are no longer displayed on the advanced redirect page</PackageReleaseNotes>
+- Marked as feature complete</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
