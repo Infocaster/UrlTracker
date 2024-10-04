@@ -9,21 +9,15 @@ namespace UrlTracker.IntegrationTests.Redirecting
     public class ForceTests : RedirectTestBase
     {
         private string DefaultSourceUrl
-        {
-            get
-            {
-                IPublishedContent defaultRootNode = GetDefaultRootNode();
-                return defaultRootNode.FirstChild(ServiceProvider.GetRequiredService<IVariationContextAccessor>())!
-                                           .Url(ServiceProvider.GetRequiredService<IPublishedUrlProvider>(), mode: UrlMode.Absolute);
-            }
-        }
+            => GetDefaultRootNode().FirstChild(ServiceProvider.GetRequiredService<IVariationContextAccessor>())!
+                                   .Url(ServiceProvider.GetRequiredService<IPublishedUrlProvider>(), mode: UrlMode.Absolute);
 
         private Redirect CreateRedirect(bool force, string sourceUrl)
         {
             var redirect = CreateRedirectBase();
             redirect.Force = force;
-            redirect.TargetUrl = _defaultTargetUrl;
-            redirect.SourceUrl = sourceUrl;
+            redirect.Target = new UrlTargetStrategy(_defaultTargetUrl);
+            redirect.Source = new UrlSourceStrategy(sourceUrl);
 
             return redirect;
         }
@@ -49,7 +43,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
             // arrange
             string defaultSourceUrl = DefaultSourceUrl;
             var firstRedirect = CreateRedirect(false, defaultSourceUrl);
-            firstRedirect.TargetUrl = "http://urltracker.ic";
+            firstRedirect.Target = new UrlTargetStrategy("http://urltracker.ic");
             await GetRedirectService().AddAsync(firstRedirect);
             await GetRedirectService().AddAsync(CreateRedirect(true, defaultSourceUrl));
 

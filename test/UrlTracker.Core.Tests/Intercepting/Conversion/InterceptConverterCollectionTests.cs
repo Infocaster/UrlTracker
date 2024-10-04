@@ -4,17 +4,19 @@ using Moq;
 using NUnit.Framework;
 using UrlTracker.Core.Intercepting.Conversion;
 using UrlTracker.Core.Intercepting.Models;
-using UrlTracker.Resources.Testing;
 
 namespace UrlTracker.Core.Tests.Intercepting.Conversion
 {
-    public class InterceptConverterCollectionTests : TestBase
+    public class InterceptConverterCollectionTests
     {
+        private Mock<IInterceptConverter> _interceptConverterMock;
         private InterceptConverterCollection? _testSubject;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            _testSubject = new InterceptConverterCollection(() => new List<IInterceptConverter> { InterceptConverter });
+            _interceptConverterMock = new Mock<IInterceptConverter>();
+            _testSubject = new InterceptConverterCollection(() => new List<IInterceptConverter> { _interceptConverterMock.Object });
         }
 
         public static IEnumerable<TestCaseData> TestCases()
@@ -37,7 +39,7 @@ namespace UrlTracker.Core.Tests.Intercepting.Conversion
         public async Task ConvertAsync_NormalFlow_ReturnsIntercept(ICachableIntercept input, IIntercept output, IIntercept expected)
         {
             // arrange
-            InterceptConverterMock!.Setup(obj => obj.ConvertAsync(input))
+            _interceptConverterMock!.Setup(obj => obj.ConvertAsync(input))
                                   .ReturnsAsync(output);
 
             // act

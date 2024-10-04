@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using UrlTracker.Core.Database;
 using UrlTracker.Core.Database.Entities;
-using UrlTracker.Core.Domain.Models;
 using UrlTracker.Core.Intercepting.Models;
+using UrlTracker.Core.Models;
 using ILogger = UrlTracker.Core.Logging.ILogger<UrlTracker.Core.Intercepting.NoLongerExistsInterceptor>;
 
 namespace UrlTracker.Core.Intercepting
@@ -25,17 +25,12 @@ namespace UrlTracker.Core.Intercepting
             _logger = logger;
         }
 
-        public async ValueTask<ICachableIntercept?> InterceptAsync(Url url, IReadOnlyInterceptContext context)
+        public async ValueTask<ICachableIntercept?> InterceptAsync(Url url, IInterceptContext context)
         {
             var urls = _staticUrlProviders.GetUrls(url);
 
-            var rootNodeId = context.GetRootNode();
-            var culture = context.GetCulture();
-
-            _logger.LogParameters(culture, rootNodeId, urls.ToList());
-
             var results = await _clientErrorRepository.GetNoLongerExistsAsync(urls);
-            _logger.LogResults<NoLongerExistsInterceptor>(results.Count);
+            _logger.LogResults(typeof(NoLongerExistsInterceptor), results.Count);
 
             return GetBestResult(results);
         }

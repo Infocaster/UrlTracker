@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Intercepting
 {

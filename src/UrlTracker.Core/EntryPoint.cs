@@ -3,20 +3,21 @@ using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Extensions;
 using UrlTracker.Core.Abstractions;
-using UrlTracker.Core.Configuration;
+using UrlTracker.Core.Classification;
 using UrlTracker.Core.Configuration.Models;
 using UrlTracker.Core.Database;
+using UrlTracker.Core.Database.Entities;
 using UrlTracker.Core.Database.Mappers;
 using UrlTracker.Core.Database.Migrations;
-using UrlTracker.Core.Database.Models.Entities;
-using UrlTracker.Core.Domain;
 using UrlTracker.Core.Intercepting;
 using UrlTracker.Core.Intercepting.Conversion;
 using UrlTracker.Core.Intercepting.Preprocessing;
 using UrlTracker.Core.Logging;
 using UrlTracker.Core.Map;
 using UrlTracker.Core.Models;
+using UrlTracker.Core.Notifications;
 using UrlTracker.Core.Validation;
+using UrlTracker.Modules.Options;
 
 namespace UrlTracker.Core
 {
@@ -38,29 +39,36 @@ namespace UrlTracker.Core
                    .ComposeUrlTrackerCoreMaps()
                    .ComposeUrlTrackerCoreAbstractions()
                    .ComposeDefaultInterceptors()
-                   .ComposeDefaultInterceptPreprocessors()
-                   .ComposeDefaultInterceptConverters();
-
-            builder.Services.AddSingleton<IDomainProvider, DomainProvider>();
+                   .ComposeDefaultInterceptConverters()
+                   .ComposeDefaultUrlClassifiers()
+                   .ComposeDefaultStrategyMaps();
 
             builder.Services.AddSingleton<IDefaultInterceptContextFactory, DefaultInterceptContextFactory>();
             builder.Services.AddSingleton<IIntermediateInterceptService, IntermediateInterceptService>();
             builder.Services.AddSingleton<IInterceptService, InterceptService>();
             builder.Services.AddSingleton<IRedirectService, RedirectService>();
             builder.Services.AddSingleton<IClientErrorService, ClientErrorService>();
+            builder.Services.AddSingleton<IRedactionScoreService, RedactionScoreService>();
+            builder.Services.AddSingleton<IRecommendationService, RecommendationService>();
             builder.Services.AddSingleton<IRedirectRepository, RedirectRepository>();
             builder.Services.AddSingleton<IReferrerRepository, ReferrerRepository>();
+            builder.Services.AddSingleton<IRedactionScoreRepository, RedactionScoreRepository>();
+            builder.Services.AddSingleton<IRecommendationRepository, RecommendationRepository>();
 
             builder.Services.AddSingleton<IClientErrorRepository, ClientErrorRepository>();
             builder.Services.AddSingleton<IValidationHelper, ValidationHelper>();
             builder.Services.AddSingleton<IMigrationPlanFactory, MigrationPlanFactory>();
+            builder.Services.Decorate<IRedirectRepository, DecoratorRedirectRepositoryNotifications>();
 
             builder.Services.AddTransient(typeof(ILogger<>), typeof(Logger<>));
 
+            builder.Services.AddSingleton<IStrategyMapCollection>(factory => factory.GetRequiredService<StrategyMapCollection>());
             builder.Services.AddSingleton<IStaticUrlProviderCollection>(factory => factory.GetRequiredService<StaticUrlProviderCollection>());
-            builder.Services.AddSingleton<IInterceptPreprocessorCollection>(factory => factory.GetRequiredService<InterceptPreprocessorCollection>());
             builder.Services.AddSingleton<IInterceptorCollection>(factory => factory.GetRequiredService<InterceptorCollection>());
             builder.Services.AddSingleton<IInterceptConverterCollection>(factory => factory.GetRequiredService<InterceptConverterCollection>());
+            builder.Services.AddSingleton<IUrlClassifierStrategyCollection>(factory => factory.GetRequiredService<UrlClassifierStrategyCollection>());
+
+            builder.Services.AddUrlTrackerModule("Core services");
 
             return builder;
         }
@@ -68,14 +76,27 @@ namespace UrlTracker.Core
         public static InterceptorCollectionBuilder? Interceptors(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<InterceptorCollectionBuilder>();
 
-        public static InterceptPreprocessorCollectionBuilder? InterceptPreprocessors(this IUmbracoBuilder builder)
-            => builder.WithCollectionBuilder<InterceptPreprocessorCollectionBuilder>();
-
         public static StaticUrlProviderCollectionBuilder? StaticUrlProviders(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<StaticUrlProviderCollectionBuilder>();
 
         public static InterceptConverterCollectionBuilder? InterceptConverters(this IUmbracoBuilder builder)
             => builder.WithCollectionBuilder<InterceptConverterCollectionBuilder>();
+
+        public static StrategyMapCollectionBuilder? StrategyMaps(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<StrategyMapCollectionBuilder>();
+
+        public static UrlClassifierStrategyCollectionBuilder? UrlClassifiers(this IUmbracoBuilder builder)
+            => builder.WithCollectionBuilder<UrlClassifierStrategyCollectionBuilder>();
+
+        public static IUmbracoBuilder ComposeDefaultStrategyMaps(this IUmbracoBuilder builder)
+        {
+            builder.StrategyMaps()!
+                .Append<UrlSourceStrategyMap>()
+                .Append<RegexSourceStrategyMap>()
+                .Append<UrlTargetStrategyMap>()
+                .Append<ContentPageTargetStrategyMap>();
+            return builder;
+        }
 
         public static IUmbracoBuilder ComposeDefaultInterceptors(this IUmbracoBuilder builder)
         {
@@ -91,10 +112,15 @@ namespace UrlTracker.Core
             return builder;
         }
 
-        public static IUmbracoBuilder ComposeDefaultInterceptPreprocessors(this IUmbracoBuilder builder)
+        public static IUmbracoBuilder ComposeDefaultUrlClassifiers(this IUmbracoBuilder builder)
         {
-            builder.InterceptPreprocessors()!
-                .Append<DomainUrlPreprocessor>();
+            builder.UrlClassifiers()!
+                .Append<MediaUrlClassifierStrategy>()
+                .Append<TechnicalFileUrlClassifierStrategy>()
+                .Append<FileUrlClassifierStrategy>();
+
+            builder.Services.AddSingleton<IFallbackUrlClassifier, FallbackUrlClassifier>();
+
             return builder;
         }
 
@@ -117,7 +143,6 @@ namespace UrlTracker.Core
                             .Bind(builder.Config.GetSection(Defaults.Options.UrlTrackerSection))
                             .ValidateDataAnnotations();
 
-            builder.Services.ConfigureOptions<LegacyOptionsConfiguration>();
             return builder;
         }
 
@@ -131,7 +156,9 @@ namespace UrlTracker.Core
             builder.Mappers()!
                 .Add<RedirectMapper>()
                 .Add<ClientErrorMapper>()
-                .Add<ReferrerMapper>();
+                .Add<ReferrerMapper>()
+                .Add<RecommendationMapper>()
+                .Add<RedactionScoreMapper>();
 
             return builder;
         }

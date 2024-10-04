@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using UrlTracker.Core.Domain.Models;
-using UrlTracker.Resources.Testing;
+using UrlTracker.Core.Models;
 using UrlTracker.Resources.Testing.Mocks;
-using UrlTracker.Web.Processing;
+using UrlTracker.Web.Processing.Filtering;
 
 namespace UrlTracker.Web.Tests.Processing
 {
-    public class ConstantsClientErrorFilterTests : TestBase
+    public class ConstantsClientErrorFilterTests
     {
         private ConstantsClientErrorFilter? _testSubject;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
             _testSubject = new ConstantsClientErrorFilter();
         }
@@ -22,11 +22,11 @@ namespace UrlTracker.Web.Tests.Processing
         {
             // arrange
             const string url = "http://example.com/lorem";
-            HttpContextMock = new HttpContextMock(new Uri(url));
+            var httpContextMock = new HttpContextMock(new Uri(url));
 
             // act
-            HttpContextMock.SetupUrl(Url.Parse(url));
-            bool result = await _testSubject!.EvaluateCandidateAsync(HttpContextMock.Context);
+            httpContextMock.SetupUrl(Url.Parse(url));
+            bool result = await _testSubject!.EvaluateCandidateAsync(httpContextMock.Context);
 
             // assert
             Assert.That(result, Is.True);
@@ -37,11 +37,11 @@ namespace UrlTracker.Web.Tests.Processing
         {
             // arrange
             const string url = "http://example.com/favicon.ico";
-            HttpContextMock = new HttpContextMock(new Uri(url));
+            var httpContextMock = new HttpContextMock(new Uri(url));
 
             // act
-            HttpContextMock.SetupUrl(Url.Parse(url));
-            bool result = await _testSubject!.EvaluateCandidateAsync(HttpContextMock.Context);
+            httpContextMock.SetupUrl(Url.Parse(url));
+            bool result = await _testSubject!.EvaluateCandidateAsync(httpContextMock.Context);
 
             // assert
             Assert.That(result, Is.False);

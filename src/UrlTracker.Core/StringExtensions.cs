@@ -5,7 +5,7 @@
         // Introducing a method to mitigate what seems to be an umbraco bug.
         //    Umbraco returns culture codes in lowercase (for example: 'nl-nl')
         //    IContent accepts lowercase, IPublishedContent requires upper case characters (for example: 'nl-NL')
-        public static string? NormalizeCulture(this string input)
+        public static string? NormalizeCulture(this string? input)
         {
             if (input is null) return null;
             int index = input.IndexOf('-') + 1;

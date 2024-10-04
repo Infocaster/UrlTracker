@@ -11,7 +11,6 @@
 - Optimise performance</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Umbraco.Cms.Core" Version="13.0.0" />
     <PackageReference Include="Umbraco.Cms.Web.Common" Version="13.0.0" />
   </ItemGroup>

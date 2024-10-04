@@ -1,9 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Net;
 using Umbraco.Cms.Core.Mapping;
-using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Database.Entities;
-using UrlTracker.Core.Database.Models.Entities;
 using UrlTracker.Core.Models;
 
 namespace UrlTracker.Core.Map
@@ -11,11 +8,11 @@ namespace UrlTracker.Core.Map
     public class ServiceLayerMaps
         : IMapDefinition
     {
-        private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactory;
+        private readonly IStrategyMapCollection _strategyMapCollection;
 
-        public ServiceLayerMaps(IUmbracoContextFactoryAbstraction umbracoContextFactory)
+        public ServiceLayerMaps(IStrategyMapCollection strategyMapCollection)
         {
-            _umbracoContextFactory = umbracoContextFactory;
+            _strategyMapCollection = strategyMapCollection;
         }
 
         [ExcludeFromCodeCoverage]
@@ -29,7 +26,7 @@ namespace UrlTracker.Core.Map
                 (source, context) => Models.RedirectCollection.Create(context.MapEnumerable<IRedirect, Redirect>(source), source.Total));
 
             mapper.Define<Redirect, IRedirect>(
-                (source, context) => new RedirectEntity(source.Culture, source.TargetRootNode?.Id, source.TargetNode?.Id, source.TargetUrl, source.SourceUrl, source.SourceRegex, source.RetainQuery, (int)source.TargetStatusCode == (int)HttpStatusCode.Moved, source.Force, source.Notes),
+                (source, context) => new RedirectEntity(source.RetainQuery, source.Permanent, source.Force, source.Advanced, _strategyMapCollection.Map(source.Source), _strategyMapCollection.Map(source.Target)),
                 Map);
 
             mapper.Define<ClientError, IClientError>(
@@ -54,28 +51,24 @@ namespace UrlTracker.Core.Map
             target.CreateDate = source.Inserted;
         }
 
-        private static void Map(Redirect source, IRedirect target, MapperContext context)
+        private void Map(Redirect source, IRedirect target, MapperContext context)
         {
             target.CreateDate = source.Inserted;
             target.Id = source.Id ?? 0;
+            target.Key = source.Key ?? default;
         }
 
         private void Map(IRedirect source, Redirect target, MapperContext context)
         {
-            using var cref = _umbracoContextFactory.EnsureUmbracoContext();
-
             target.Inserted = source.CreateDate;
-            target.Notes = source.Notes;
-            target.Culture = source.Culture;
             target.Force = source.Force;
-            target.Id = source.Id == 0 ? null : source.Id;
+            target.Id = source.Id == default ? null : source.Id;
+            target.Key = source.Key == default ? null : source.Key;
             target.RetainQuery = source.RetainQuery;
-            target.SourceRegex = source.SourceRegex;
-            target.SourceUrl = source.SourceUrl;
-            target.TargetNode = source.TargetNodeId.HasValue ? cref.GetContentById(source.TargetNodeId.Value) : null;
-            target.TargetRootNode = source.TargetRootNodeId.HasValue ? cref.GetContentById(source.TargetRootNodeId.Value) : null;
-            target.TargetStatusCode = source.Permanent ? HttpStatusCode.Moved : HttpStatusCode.Redirect;
-            target.TargetUrl = source.TargetUrl;
+            target.Permanent = source.Permanent;
+            target.Advanced = source.Advanced;
+            target.Source = _strategyMapCollection.Map<ISourceStrategy>(source.Source);
+            target.Target = _strategyMapCollection.Map<ITargetStrategy>(source.Target);
         }
     }
 }

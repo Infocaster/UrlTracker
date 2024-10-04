@@ -1,0 +1,89 @@
+parameters:
+- name: websiteName
+  type: string
+- name: dropName
+  type: string
+- name: dropFolder
+  type: string
+- name: environment
+  type: string
+- name: stageName
+  type: string
+- name: deploymentPath
+  type: string
+- name: variableGroup
+  type: string
+
+jobs:
+- deployment: 'prepare${{ parameters.environment }}'
+  displayName: 'Create and deploy to machines on ${{ parameters.environment }}'
+  environment:
+    name: ${{ parameters.environment }}
+    resourceType: VirtualMachine
+  variables:
+  - group: ${{ parameters.variableGroup }}
+  - name: physicalPath
+    value: '${{ parameters.deploymentPath }}\${{ parameters.websiteName }}'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - checkout: none
+        - download: current
+          artifact: ${{ parameters.dropName }}
+          displayName: Download website artifact
+        - task: FileTransform@2
+          displayName: Transform web.config
+          inputs:
+            folderPath: '${{ parameters.dropFolder }}'
+            xmlTransformationRules: '-transform **\*.${{ parameters.stageName }}.config -xml **\*.config'
+            jsonTargetFiles: '**\appsettings.${{ parameters.stageName }}.json'
+        - task: IISWebAppManagementOnMachineGroup@0
+          displayName: 'Create or update IIS website'
+          inputs:
+            IISDeploymentType: 'IISWebsite'
+            ActionIISWebsite: 'CreateOrUpdateWebsite'
+            WebsiteName: '${{ parameters.websiteName }}'
+            WebsitePhysicalPath: '$(physicalPath)'
+            WebsitePhysicalPathAuth: 'WebsiteUserPassThrough'
+            CreateOrUpdateAppPoolForWebsite: true
+            AppPoolNameForWebsite: '${{ parameters.websiteName }}'
+            DotNetVersionForWebsite: 'No Managed Code'
+            PipeLineModeForWebsite: 'Integrated'
+            AppPoolIdentityForWebsite: 'ApplicationPoolIdentity'
+            AddBinding: true
+            Bindings: |
+                {
+                    bindings:[
+                        {
+                            "protocol":"http",
+                            "ipAddress":"",
+                            "hostname":"$(HostName)",
+                            "port":"80",
+                            "sslThumbprint":"",
+                            "sniFlag":false
+                        }
+                    ]
+                }
+
+        - task: IISWebAppManagementOnMachineGroup@0
+          displayName: 'Stop application pool'
+          inputs:
+            IISDeploymentType: 'IISApplicationPool'
+            ActionIISApplicationPool: 'StopAppPool'
+            StartStopRecycleAppPoolName: '${{ parameters.websiteName }}'
+
+        - task: IISWebAppDeploymentOnMachineGroup@0
+          displayName: 'Deploy to IIS'
+          inputs:
+            WebsiteName: '${{ parameters.websiteName }}'
+            Package: '${{ parameters.dropFolder }}'
+            takeAppOfflineFlag: true
+            RemoveAdditionalFilesFlag: true
+
+        - task: IISWebAppManagementOnMachineGroup@0
+          displayName: 'Start application pool'
+          inputs:
+            IISDeploymentType: 'IISApplicationPool'
+            ActionIISApplicationPool: 'StartAppPool'
+            StartStopRecycleAppPoolName: '${{ parameters.websiteName }}'

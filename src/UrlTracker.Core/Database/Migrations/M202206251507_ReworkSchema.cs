@@ -10,7 +10,7 @@ namespace UrlTracker.Core.Database.Migrations
     [PrimaryKey("id")]
     [ExplicitColumns]
     [ExcludeFromCodeCoverage]
-    public class M202206251507_Rework_RedirectDto
+    internal class M202206251507_Rework_RedirectDto
     {
         public const string TableName = "urltrackerRedirect";
 

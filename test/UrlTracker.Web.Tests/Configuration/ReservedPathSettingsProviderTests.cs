@@ -1,24 +1,28 @@
-﻿using NUnit.Framework;
-using UrlTracker.Resources.Testing;
+﻿using Microsoft.Extensions.Options;
+using NUnit.Framework;
+using Umbraco.Cms.Core.Configuration.Models;
 using UrlTracker.Web.Configuration;
 
 namespace UrlTracker.Web.Tests.Configuration
 {
-    public class ReservedPathSettingsProviderTests : TestBase
+    public class ReservedPathSettingsProviderTests
     {
+        private IOptions<GlobalSettings>? _globalSettings;
         private ReservedPathSettingsProvider? _testSubject;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            _testSubject = new ReservedPathSettingsProvider(GlobalSettings!);
+            _globalSettings = Options.Create<GlobalSettings>(new GlobalSettings());
+            _testSubject = new ReservedPathSettingsProvider(_globalSettings);
         }
 
         [TestCase(TestName = "Value returns reserved paths")]
         public void Value_NormalFlow_ReturnsReservedPaths()
         {
             // arrange
-            GlobalSettings!.Value.ReservedPaths = "/lorem,/ipsum";
-            GlobalSettings.Value.ReservedUrls = "/dolor,/sit";
+            _globalSettings!.Value.ReservedPaths = "/lorem,/ipsum";
+            _globalSettings.Value.ReservedUrls = "/dolor,/sit";
 
             // act
             var result = _testSubject!.Paths;

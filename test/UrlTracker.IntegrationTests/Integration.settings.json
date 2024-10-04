@@ -11,40 +11,38 @@
   },
   "Umbraco": {
     "CMS": {
-      "Unattended": {
-        "UpgradeUnattended": true,
-        "InstallUnattended": true,
-        "UnattendedUserName": "Test",
-        "UnattendedUserEmail": "test@test.nl",
-        "UnattendedUserPassword": "1234567890"
-      },
-      "Hosting": {
-        "Debug": true
-      },
-      "Content": {
-        "ContentVersionCleanupPolicy": {
-          "EnableCleanup": true
+        "Unattended": {
+            "UpgradeUnattended": true,
+            "InstallUnattended": true,
+            "UnattendedUserName": "Test",
+            "UnattendedUserEmail": "test@test.nl",
+            "UnattendedUserPassword": "1234567890"
+        },
+        "Hosting": {
+            "Debug": true
+        },
+        "Content": {
+            "ContentVersionCleanupPolicy": {
+                "EnableCleanup": true
+            }
+        },
+        "Global": {
+            "Id": "2fa8c982-7c9f-41d4-abb4-35c1ace9ef55"
+        },
+        "ModelsBuilder": {
+            "ModelsMode": "Nothing"
+        },
+        "RequestHandler": {
+            "AddTrailingSlash": true
+        },
+        "Examine": {
+            "LuceneDirectoryFactory": "TempFileSystemDirectoryFactory"
         }
-      },
-      "Global": {
-        "Id": "2fa8c982-7c9f-41d4-abb4-35c1ace9ef55"
-      },
-      "ModelsBuilder": {
-        "ModelsMode": "Nothing"
-      },
-      "Examine": {
-        "LuceneDirectoryFactory": "TempFileSystemDirectoryFactory"
-      }
-    }
-  },
-  "uSync": {
-    "Settings": {
-      "ImportAtStartup": "All"
     }
   },
   "UrlTracker": {
     "HasDomainOnChildNode": false,
-    "AppendPortNumber": true,
+    "AppendPortNumber": false,
     "Enable": true,
     "Backoffice": {
       "Notifications": {

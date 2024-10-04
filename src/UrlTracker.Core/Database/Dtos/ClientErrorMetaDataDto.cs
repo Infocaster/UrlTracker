@@ -5,7 +5,7 @@ using NPoco;
 namespace UrlTracker.Core.Database.Dtos
 {
     [ExcludeFromCodeCoverage]
-    public class ClientErrorMetaDataDto
+    internal class ClientErrorMetaDataDto
     {
         [Column(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences)]
         public int? TotalOccurrances { get; set; }

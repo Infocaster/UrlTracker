@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Http;
-using UrlTracker.Core.Domain.Models;
+using UrlTracker.Core.Models;
 
 namespace UrlTracker.Web
 {

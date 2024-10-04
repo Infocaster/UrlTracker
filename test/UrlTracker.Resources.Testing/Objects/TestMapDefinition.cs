@@ -11,4 +11,10 @@ namespace UrlTracker.Resources.Testing.Objects
             mapper.Define<TFrom, TTo>((source, context) => To!);
         }
     }
+
+    public static class TestMapDefinition
+    {
+        public static TestMapDefinition<TIn, TOut> CreateTestMap<TIn, TOut>(TOut? value = default)
+            => new() { To = value };
+    }
 }

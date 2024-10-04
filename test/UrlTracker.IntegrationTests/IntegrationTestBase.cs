@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Polly;
-using Polly.Extensions.Http;
 using UrlTracker.IntegrationTests.Utils;
 
 namespace UrlTracker.IntegrationTests

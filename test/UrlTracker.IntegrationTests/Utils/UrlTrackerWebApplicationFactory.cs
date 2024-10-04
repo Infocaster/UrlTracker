@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Umbraco.Cms.Web.Common.Authorization;
+using UrlTracker.Middleware.Background;
 using UrlTracker.Resources.Website;
 
 namespace UrlTracker.IntegrationTests.Utils
@@ -34,14 +38,44 @@ namespace UrlTracker.IntegrationTests.Utils
                     new KeyValuePair<string, string>("ConnectionStrings:umbracoDbDSN_ProviderName", "Microsoft.Data.Sqlite")
                 });
             });
+
+            builder.ConfigureServices(ConfigureServices);
+        }
+
+        private void ConfigureServices(IServiceCollection obj)
+        {
+            obj.AddSingleton<IAuthorizationHandler, TestAuthorizationHandler>();
+            obj.AddAuthorization(options =>
+            {
+                options.AddPolicy(AuthorizationPolicies.BackOfficeAccess, policy =>
+                {
+                    policy.Requirements.Clear();
+                    policy.AddRequirements(new TestRequirement());
+                });
+            });
+
+            obj.RemoveAll(s => s.ServiceType == typeof(IClientErrorProcessorQueue));
+            obj.AddSingleton<IClientErrorProcessorQueue, QueuelessClientErrorHandler>();
+
+
+            var settings = new Umbraco.Cms.Infrastructure.PublishedCache.PublishedSnapshotServiceOptions
+            {
+                IgnoreLocalDb = true
+            };
+            obj.AddSingleton(settings);
         }
 
         public HttpClient CreateStandardClient()
-            => CreateClient(new WebApplicationFactoryClientOptions
+        {
+            HttpClient client = CreateClient(new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = false,
-                BaseAddress = new Uri("http://urltracker.ic")
+                BaseAddress = new Uri("http://localhost"),
             });
+
+            client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Chrome", "123.0.0.0"));
+            return client;
+        }
 
         protected override void Dispose(bool disposing)
         {

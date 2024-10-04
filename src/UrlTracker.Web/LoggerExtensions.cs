@@ -6,27 +6,24 @@ using UrlTracker.Core.Models;
 namespace UrlTracker.Web
 {
     [ExcludeFromCodeCoverage]
-    internal static class LoggerExtensions
+    internal static partial class LoggerExtensions
     {
-        public static void LogUrlTrackerDisabled(this ILogger logger)
-            => logger.LogDebug(new EventId(2001), "Url tracker is disabled by config");
+        [LoggerMessage(2009, LogLevel.Debug, "Intercept cancelled: {reason}, {redirect}")]
+        public static partial void LogInterceptCancelled(this ILogger logger, string reason, Redirect redirect);
 
-        public static void LogInterceptCancelled(this ILogger logger, string reason, Redirect redirect)
-            => logger.LogDebug(new EventId(2009), "Intercept cancelled: {reason}, {redirect}", reason, redirect.Id);
+        [LoggerMessage(2010, LogLevel.Information, "Redirect request to: {targetUrl}")]
+        public static partial void LogRequestRedirected(this ILogger logger, string targetUrl);
 
-        public static void LogRequestRedirected(this ILogger logger, string targetUrl)
-            => logger.LogInformation(new EventId(2010), "Redirect request to: {targetUrl}", targetUrl);
+        [LoggerMessage(2011, LogLevel.Debug, "Filter incoming url with {source}")]
+        public static partial void LogStart(this ILogger logger, Type source);
 
-        public static void LogStart<T>(this ILogger logger)
-            => logger.LogDebug(new EventId(2011), "Filter incoming url with {source}", typeof(T));
+        [LoggerMessage(2012, LogLevel.Debug, "Incoming url is reserved by umbraco settings.")]
+        public static partial void LogPathIsReserved(this ILogger logger);
 
-        public static void LogPathIsReserved(this ILogger logger)
-            => logger.LogDebug(new EventId(2012), "Incoming url is reserved by umbraco settings.");
+        [LoggerMessage(2013, LogLevel.Information, "Response converted to 410")]
+        public static partial void LogRequestConvertedToGone(this ILogger logger);
 
-        public static void LogRequestConvertedToGone(this ILogger logger)
-            => logger.LogInformation(new EventId(2013), "Response converted to 410");
-
-        public static void LogLastChance(this ILogger logger, Type interceptType)
-            => logger.LogWarning(new EventId(2014), "Last chance handler invoked for intercept of type {interceptType}. Did you forget to register a handler?", interceptType);
+        [LoggerMessage(2014, LogLevel.Warning, "Last chance handler invoked for intercept of type {interceptType}. Did you forget to register a handler?")]
+        public static partial void LogLastChance(this ILogger logger, Type interceptType);
     }
 }

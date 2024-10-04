@@ -2,19 +2,22 @@
 using Moq;
 using NUnit.Framework;
 using UrlTracker.Core.Intercepting.Models;
-using UrlTracker.Resources.Testing;
 using UrlTracker.Resources.Testing.Logging;
 using UrlTracker.Web.Processing;
+using UrlTracker.Web.Processing.Handling;
 
 namespace UrlTracker.Web.Tests.Processing
 {
-    public class ResponseInterceptHandlerCollectionTests : TestBase
+    public class ResponseInterceptHandlerCollectionTests
     {
+        private Mock<ISpecificResponseInterceptHandler> _responseInterceptHandlerMock;
         private ResponseInterceptHandlerCollection? _testSubject;
 
-        public override void SetUp()
+        [SetUp]
+        public void SetUp()
         {
-            _testSubject = new ResponseInterceptHandlerCollection(() => new List<ISpecificResponseInterceptHandler> { ResponseInterceptHandler }, new LastChanceResponseInterceptHandler(new VoidLogger<LastChanceResponseInterceptHandler>()));
+            _responseInterceptHandlerMock = new Mock<ISpecificResponseInterceptHandler>();
+            _testSubject = new ResponseInterceptHandlerCollection(() => new List<ISpecificResponseInterceptHandler> { _responseInterceptHandlerMock.Object }, new LastChanceResponseInterceptHandler(new VoidLogger<LastChanceResponseInterceptHandler>()));
         }
 
         [TestCase(true, TestName = "Get returns handler if it can handle the intercept")]
@@ -23,7 +26,7 @@ namespace UrlTracker.Web.Tests.Processing
         {
             // arrange
             var input = Mock.Of<IIntercept>();
-            ResponseInterceptHandlerMock!.Setup(obj => obj.CanHandle(input))
+            _responseInterceptHandlerMock!.Setup(obj => obj.CanHandle(input))
                 .Returns(canHandle)
                 .Verifiable();
 
@@ -31,8 +34,8 @@ namespace UrlTracker.Web.Tests.Processing
             var result = _testSubject!.Get(input);
 
             // assert
-            ResponseInterceptHandlerMock.Verify();
-            ResponseInterceptHandlerMock.VerifyNoOtherCalls();
+            _responseInterceptHandlerMock.Verify();
+            _responseInterceptHandlerMock.VerifyNoOtherCalls();
             Assert.That(result is LastChanceResponseInterceptHandler, Is.Not.EqualTo(canHandle));
         }
     }
