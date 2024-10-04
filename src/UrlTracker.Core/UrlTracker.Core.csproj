@@ -4,11 +4,18 @@
     <Title>URL Tracker Core</Title>
     <Description>This package contains the core services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Core</RootNamespace>
-    <PackageReleaseNotes>1 new feature, 1 bugfix, 1 other change
+    <PackageReleaseNotes>7 new features, 1 bugfix, 2 other changes
 
-- Fix stale caches on loadbalanced environments
-- (Experimental) Add active cache
-- Optimise performance</PackageReleaseNotes>
+- Fix database filling up when running for a long time
+- New spectacular UI
+- New, more intuitive, redirect editing experience
+- New presentation for issues: "Not Founds" is replaced with "Recommendations"
+- A more clever sorting order for issues
+- Standard and advanced redirects are separated into their own area
+- Added notifications for developers to listen for changes in redirects
+- Statistics for all issues: how often does it occur and where does it originate from?
+- Improved performance in the backoffice on larger datasets
+- Included the global blocklist extension by default</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Infrastructure" Version="13.0.0" />
