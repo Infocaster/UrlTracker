@@ -35,8 +35,15 @@ namespace UrlTracker.Backoffice.UI.Controllers
                 return BadRequest(ModelState);
             }
 
-            var result = await _requestHandler.ImportCSVAsync(request);
-            return Ok(result);
+            try
+            {
+                var result = await _requestHandler.ImportCSVAsync(request);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 

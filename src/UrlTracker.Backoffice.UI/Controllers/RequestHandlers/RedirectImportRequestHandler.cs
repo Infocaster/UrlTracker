@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using NUglify;
 using Org.BouncyCastle.Asn1.X509;
 using Umbraco.Cms.Core.Mapping;
@@ -30,21 +31,66 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         private readonly IScopeProvider _scopeProvider;
         private readonly IRedirectService _redirectService;
         private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactoryAbstraction;
+        private readonly ILogger<RedirectImportRequestHandler> _logger;
+        private const string _defaultDelimiter = ",";
 
         public RedirectImportRequestHandler(
             IScopeProvider scopeProvider,
             IRedirectService redirectService,
-            IUmbracoContextFactoryAbstraction umbracoContextFactoryAbstraction)
+            IUmbracoContextFactoryAbstraction umbracoContextFactoryAbstraction,
+            ILogger<RedirectImportRequestHandler> logger)
         {
             _scopeProvider = scopeProvider;
             _redirectService = redirectService;
             _umbracoContextFactoryAbstraction = umbracoContextFactoryAbstraction;
+            _logger = logger;
         }
 
         public async Task<int> ImportCSVAsync(ImportRedirectRequest request)
         {
-            using StreamReader sr = new(request.Redirects.OpenReadStream());
-            using CsvReader cr = new(sr, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";" });
+            var stream = request.Redirects.OpenReadStream();
+            string delimiter;
+            
+            // Peek at the first line to determine delimiter
+            using (var reader = new StreamReader(stream, leaveOpen: true))
+            {
+                var firstLine = await reader.ReadLineAsync();
+                delimiter = GetPreferredDelimiter(firstLine);
+            }
+            
+            // Reset the stream position to be able to read it again
+            stream.Seek(0, SeekOrigin.Begin);
+            using var sr = new StreamReader(stream);
+
+            using CsvReader cr = new(sr,
+                new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    Delimiter = delimiter,
+                    HasHeaderRecord = true,
+                    MissingFieldFound = args =>
+                    {
+                        var headers = args.HeaderNames != null ? string.Join(", ", args.HeaderNames) : "unknown";
+                        var message =
+                            $"Missing field '{headers}' at index {args.Index} on row {args.Context.Parser.RawRow}";
+                        _logger.LogWarning("[MissingFieldFound] Index {Index}: {HeaderNames}", args.Index,
+                            string.Join(", ", args.HeaderNames ?? []));
+                        throw new CsvHelperException(args.Context, message);
+                    },
+                    BadDataFound = args =>
+                    {
+                        var message = $"Bad data found: '{args.Field}' in record: '{args.RawRecord}'";
+                        _logger.LogWarning($"[BadDataFound] RawRecord: {args.RawRecord}");
+                        throw new CsvHelperException(args.Context, message);
+                    },
+                    ReadingExceptionOccurred = args =>
+                    {
+                        _logger.LogWarning(args.Exception, "[ReadingException] Problem reading import file.");
+                        return false; // Return true to suppress, false to rethrow
+                    },
+                    HeaderValidated = null,
+                    IgnoreBlankLines = true,
+                    TrimOptions = TrimOptions.Trim
+                });
 
             // As preparation for later:
             //    Using the headers, we can determine which import strategy to use to import all records appropriately
@@ -52,29 +98,44 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             cr.ReadHeader();
             var headerRecord = cr.HeaderRecord;
 
-            var records = cr.GetRecordsAsync<CsvRedirect>();
-            int amountOfRedirects = 0;
+            if (headerRecord == null || headerRecord.Length == 0)
+            {
+                throw new InvalidOperationException("No headers found in the CSV.");
+            }
+            
+            int numberOfRedirects = 0;
 
             using var scope = _scopeProvider.CreateScope();
-            await foreach (var record in records)
+            
+            while (await cr.ReadAsync())
             {
                 try
                 {
+                    var record = cr.GetRecord<CsvRedirect>();
+
+                    // Skip the record as we were unable to read it
+                    if (record == null)
+                    {
+                        throw new CsvHelperException(cr.Context,
+                            $"Problem reading row {cr.Context.Parser.Row}: {cr.Context.Parser.RawRecord}");
+                    }
+
                     var redirect = CreateRedirectFromCsv(record);
                     await _redirectService.AddAsync(redirect);
 
-                    amountOfRedirects++;
+                    numberOfRedirects++;
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
                     // Enrich exception with a wrapper that explains which redirect caused the error
-                    throw new InvalidOperationException($"An error occurred while importing redirect on line {amountOfRedirects + 2}. See inner exception for more details.", e);
+                    throw new CsvHelperException(cr.Context,
+                        $"An error occurred while importing redirect on line {numberOfRedirects + 2}. See inner exception for more details.");
                 }
             }
 
             scope.Complete();
 
-            return amountOfRedirects;
+            return numberOfRedirects;
         }
 
         public async Task<Stream> ExportAsLegacyCSVAsync()
@@ -126,14 +187,14 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
 
             MemoryStream result = new();
             using StreamWriter sw = new(result, leaveOpen: true);
-            using CsvWriter cw = new(sw, new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ";", NewLine = Environment.NewLine });
+            using CsvWriter cw = new(sw,
+                new CsvConfiguration(CultureInfo.InvariantCulture) { Delimiter = ",", NewLine = Environment.NewLine });
 
             cw.WriteHeader<CsvRedirect>();
             await cw.NextRecordAsync().ConfigureAwait(false);
             await cw.WriteRecordsAsync<CsvRedirect>(csvRedirects).ConfigureAwait(false);
 
             await cw.FlushAsync().ConfigureAwait(false);
-            string? csvContent = sw.ToString();
 
             result.Position = 0;
 
@@ -143,7 +204,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
         private CsvRedirect CreateCsvRow(Redirect redirect)
         {
             /* NOTE: export does not support redirects by extensions
-             * 
+             *
              * This mapping device only supports exports using core source and target types.
              * That's because the import and export functions are not to be changed in the initial update.
              * This mapping logic needs to be re-evaluated once the new export feature is built.
@@ -164,7 +225,7 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             /* NOTE: sqewed translations
              * Content redirects no longer rely on a root node. The root node will therefore never be populated.
              * This is only for backwards compatibility with the old import/export model
-             * 
+             *
              * ALSO NOTE: it is possible that the content no longer exists.
              * rows that are generated by such redirects will cause errors during import.
              * The mapper is not responsible for what makes it into the file
@@ -220,13 +281,30 @@ namespace UrlTracker.Backoffice.UI.Controllers.RequestHandlers
             }
 
             var advanced
-                 = result.Source is RegexSourceStrategy
-                || result.Force is true
-                || result.RetainQuery is false;
+                = result.Source is RegexSourceStrategy
+                  || result.Force is true
+                  || result.RetainQuery is false;
 
             result.Advanced = advanced;
 
             return result;
+        }
+
+        /// <summary>
+        /// Determines the delimiter used in the given line of text.
+        /// The method identifies whether the delimiter is a comma or a semicolon based on their occurrence in the line.
+        /// Returns comma by default if both delimiters have the same count or if the input line is empty.
+        /// </summary>
+        /// <param name="line">The input line of text to analyze for delimiter detection.</param>
+        /// <returns>A string representing the detected delimiter e.g. either "," or ";".</returns>
+        private string GetPreferredDelimiter(string? line)
+        {
+            if (string.IsNullOrEmpty(line)) return _defaultDelimiter;
+
+            int countCommas(string? str) => str.Count(c => c == ',');
+            int countSemicolons(string? str) => str.Count(c => c == ';');
+
+            return countSemicolons(line) > countCommas(line) ? ";" : _defaultDelimiter;
         }
     }
 }
