@@ -1,7 +1,7 @@
-import { Axios } from 'axios';
+import axios from 'axios';
 import Cookies from 'js-cookie';
 
-export const axiosInstance = new Axios({
+export const axiosInstance = axios.create({
   transformResponse: [
     (data) => {
       try {
