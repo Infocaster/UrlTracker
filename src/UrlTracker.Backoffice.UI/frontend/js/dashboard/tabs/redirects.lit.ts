@@ -226,8 +226,12 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
   };
 
   private onImportRedirects = async (e: CustomEvent<File>) => {
-    await this.redirectImportService!.import(e.detail);
-    this.notificationsService.success('Redirects imported', 'The redirects have been successfully imported');
+    try {
+      await this.redirectImportService!.import(e.detail);
+      this.notificationsService.success('Redirects imported', 'The redirects have been successfully imported');
+    } catch (error) {
+      this.notificationsService.error('Redirects import failed', 'The redirects have not been imported');
+    }
     this.search();
   };
 
