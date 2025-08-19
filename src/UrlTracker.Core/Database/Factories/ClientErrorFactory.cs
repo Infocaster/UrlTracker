@@ -86,7 +86,7 @@ namespace UrlTracker.Core.Database.Factories
         {
             var entity = new ClientErrorMetaData
             {
-                TotalOccurrances = dto.TotalOccurrances,
+                TotalOccurrences = dto.TotalOccurrences,
                 MostCommonReferrer = dto.MostCommonReferrer,
                 MostRecentOccurrance = dto.MostRecentOccurrance,
                 ClientError = dto.ClientError

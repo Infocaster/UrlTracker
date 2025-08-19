@@ -22,7 +22,7 @@ namespace UrlTracker.Core.Models
             {
                 LatestOccurrence = metaData.MostRecentOccurrance ?? default;
                 MostCommonReferrer = metaData.MostCommonReferrer;
-                Occurrences = metaData.TotalOccurrances ?? default;
+                Occurrences = metaData.TotalOccurrences ?? default;
             }
         }
 

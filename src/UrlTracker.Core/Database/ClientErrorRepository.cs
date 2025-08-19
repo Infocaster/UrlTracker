@@ -66,31 +66,34 @@ namespace UrlTracker.Core.Database
             }
 
             Task<int> totalRecordsTask = Database.ExecuteScalarAsync<int>(countQuery);
-
+            
             var aggregateQuery = Sql()
                 .Select<ClientError2ReferrerDto>(e => e.ClientError)
-                .AndSelectCount(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences)
-                .AndSelectMax<ClientError2ReferrerDto>(Defaults.DatabaseSchema.AggregateColumns.MostRecentOccurrence, null, e => e.CreateDate)
+                .AndSelectCount(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences) 
+                .AndSelectMax<ClientError2ReferrerDto>(Defaults.DatabaseSchema.AggregateColumns.MostRecentOccurrence,null,e => e.CreateDate)
                 .From<ClientError2ReferrerDto>()
-                .GroupBy<ClientError2ReferrerDto>(e => e.ClientError)
-                ;
-
+                .GroupBy<ClientError2ReferrerDto>(e => e.ClientError);
+            
             var selectQuery = Sql()
-                .Select<ClientErrorDto>("c")
+                .Select<ClientErrorDto>("c")  // main table columns
+                .AndSelect("cr." + SqlSyntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences))
+                .AndSelect("cr." + SqlSyntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.MostRecentOccurrence))
                 .From<ClientErrorDto>("c")
-                .LeftJoin(aggregateQuery, "cr").On<ClientError2ReferrerDto, ClientErrorDto>((l, r) => l.ClientError == r.Id, "cr", "c")
+                .LeftJoin(aggregateQuery, "cr")
+                .On<ClientError2ReferrerDto, ClientErrorDto>((l, r) => l.ClientError == r.Id, "cr", "c")
                 .Where<ClientErrorDto>(e => e.Ignored == false, "c");
+            
             if (query != null)
             {
                 selectQuery.Where<ClientErrorDto>(e => e.Url.Contains(query), "c");
             }
-
+            
             string orderParameter;
             switch (order)
             {
                 case OrderBy.LastOccurrence:
-                case OrderBy.Created: orderParameter = SqlSyntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.MostRecentOccurrence); break;
-                case OrderBy.Occurrences: orderParameter = SqlSyntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences); break;
+                case OrderBy.Created: orderParameter = "cr." + SqlSyntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.MostRecentOccurrence); break;
+                case OrderBy.Occurrences: orderParameter = "cr." + SqlSyntax.GetQuotedColumnName(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences); break;
                 default: throw new ArgumentOutOfRangeException(nameof(order));
             }
 

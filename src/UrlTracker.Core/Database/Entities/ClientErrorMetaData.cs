@@ -6,7 +6,7 @@ namespace UrlTracker.Core.Database.Entities
     {
         string MostCommonReferrer { get; }
         DateTime? MostRecentOccurrance { get; }
-        int? TotalOccurrances { get; }
+        int? TotalOccurrences { get; }
         int ClientError { get; }
     }
     public class ClientErrorMetaData
@@ -16,7 +16,7 @@ namespace UrlTracker.Core.Database.Entities
 
         public DateTime? MostRecentOccurrance { get; set; }
 
-        public int? TotalOccurrances { get; set; }
+        public int? TotalOccurrences { get; set; }
 
         public int ClientError { get; set; }
     }

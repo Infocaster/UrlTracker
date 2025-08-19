@@ -19,7 +19,7 @@ namespace UrlTracker.Core
 
             public static class AggregateColumns
             {
-                public const string TotalOccurrences = "totalOccurrances";
+                public const string TotalOccurrences = "totalOccurrences";
                 public const string MostRecentOccurrence = "mostRecentOccurrence";
                 public const string MostCommonReferrer = "mostCommonReferrer";
             }

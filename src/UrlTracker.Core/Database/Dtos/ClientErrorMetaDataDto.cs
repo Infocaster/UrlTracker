@@ -8,7 +8,7 @@ namespace UrlTracker.Core.Database.Dtos
     public class ClientErrorMetaDataDto
     {
         [Column(Defaults.DatabaseSchema.AggregateColumns.TotalOccurrences)]
-        public int? TotalOccurrances { get; set; }
+        public int? TotalOccurrences { get; set; }
 
         [Column(Defaults.DatabaseSchema.AggregateColumns.MostCommonReferrer)]
         public string MostCommonReferrer { get; set; }
