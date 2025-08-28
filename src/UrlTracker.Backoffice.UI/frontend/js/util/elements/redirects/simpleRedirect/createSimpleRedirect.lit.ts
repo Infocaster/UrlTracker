@@ -114,7 +114,6 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
       ></urltracker-redirect-incoming-url>
 
       <urltracker-redirect-outgoing-url
-        class="border-bottom"
         .outgoingStrategy=${this.redirect.target.strategy}
         .outgoingUrl=${this.redirect.target.value}
         @input=${this.onOutgoingUrlInput}
