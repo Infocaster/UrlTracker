@@ -95,6 +95,7 @@ export class UrlTrackerDashboardContent extends LitElement {
         label: labels[index] ? labels[index] : titles[index],
         template: item.template,
         alias: item.alias,
+        showQuickCreate: item.showQuickCreate,
       }));
 
       this.tabs = result;
@@ -139,17 +140,19 @@ export class UrlTrackerDashboardContent extends LitElement {
                 >`,
             )}
           </uui-tab-group>
-          <uui-button
-            class="new-redirect"
-            style=""
-            look="primary"
-            color="positive"
-            label="Basic"
-            @click="${this._openSidebar}"
-          >
-            <uui-icon name="add"></uui-icon>
-            New redirect
-          </uui-button>
+          ${this.activeTab?.showQuickCreate
+            ? html`<uui-button
+                class="new-redirect"
+                style=""
+                look="primary"
+                color="positive"
+                label="Basic"
+                @click="${this._openSidebar}"
+              >
+                <uui-icon name="add"></uui-icon>
+                New redirect
+              </uui-button>`
+            : nothing}
         </div>`;
       } else {
         tabsOrNothing = nothing;

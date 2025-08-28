@@ -1,9 +1,9 @@
 import { html } from 'lit';
 import tabStrategy, { createTabStrategy } from './tab';
 
-tabStrategy.push(createTabStrategy('dashboard', html`<urltracker-landing-tab></urltracker-landing-tab>`));
+tabStrategy.push(createTabStrategy('dashboard', html`<urltracker-landing-tab></urltracker-landing-tab>`, true));
 tabStrategy.push(
-  createTabStrategy('recommendations', html`<urltracker-recommendations-tab></urltracker-recommendations-tab>`),
+  createTabStrategy('recommendations', html`<urltracker-recommendations-tab></urltracker-recommendations-tab>`, true),
 );
 tabStrategy.push(createTabStrategy('redirects', html`<urltracker-redirect-tab></urltracker-redirect-tab>`));
 tabStrategy.push(
