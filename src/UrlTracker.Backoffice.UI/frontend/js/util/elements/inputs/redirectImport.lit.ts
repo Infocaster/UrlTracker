@@ -13,6 +13,9 @@ export class UrlTrackerRedirectImport extends LitElement {
   @property({ type: String })
   public header?: string;
 
+  @property({ type: Boolean, reflect: true })
+  public loading?: boolean = false;
+
   @state()
   private _headerText: string = '';
 
@@ -50,13 +53,24 @@ export class UrlTrackerRedirectImport extends LitElement {
     return html`<div class="body">
       <p>
         Drop a csv file in the box below to import redirects.
-        <button @click=${this.handleDownloadTemplate}
-          >You can download a template here <uui-icon name="icon-help-alt"></uui-icon
-        ></button>
+        <button aria-label="download import template" @click=${this.handleDownloadTemplate}></button>
+          You can download a template here <uui-icon name="icon-help-alt"></uui-icon>
+        </button>
       </p>
-      <uui-file-dropzone id="browse-dropzone" label="Drag / drop a file here" accept="csv" @change=${this.handleChange}>
-        Drag / drop a file here
-      </uui-file-dropzone>
+	  ${
+      this.loading
+        ? html`<div class="loader-container">
+            <uui-loader-circle id="loader" style="font-size: 3em"></uui-loader-circle>
+          </div>`
+        : html`<uui-file-dropzone
+            id="browse-dropzone"
+            label="Drag / drop a file here"
+            accept="csv"
+            @change=${this.handleChange}
+          >
+            Drag / drop a file here
+          </uui-file-dropzone>`
+    }
     </div>`;
   }
 
@@ -98,7 +112,7 @@ export class UrlTrackerRedirectImport extends LitElement {
 
       /* Corrects inability to style clickable input types in iOS */
       -webkit-appearance: none;
-      
+
       cursor: pointer;
     }
 
@@ -122,6 +136,12 @@ export class UrlTrackerRedirectImport extends LitElement {
       gap: 0.5rem;
       justify-content: center;
       box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.25);
+    }
+
+    .loader-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   `;
 }

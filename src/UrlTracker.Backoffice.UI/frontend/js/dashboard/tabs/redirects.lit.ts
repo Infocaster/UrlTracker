@@ -1,7 +1,12 @@
 import { IEditorService, editorServiceContext } from '@/context/editorservice.context';
+import {
+  IUmbracoNotificationsService,
+  umbracoNotificationsServiceContext,
+} from '@/context/notificationsservice.context';
 import { redirectImportServiceContext } from '@/context/redirectimportservice.context';
 import { REDIRECTTYPE_SORT_TYPE, RedirectSortType } from '@/enums/sortType';
 import { IRedirectImportService } from '@/services/redirectimport.service';
+import { LoadingStatus } from '@/types/loadingStatus';
 import { DropdownChangeEvent, IDropdownValue } from '@/util/elements/inputs/dropdown.lit';
 import { consume, provide } from '@lit/context';
 import { LitElement, PropertyValueMap, css, html, nothing } from 'lit';
@@ -23,19 +28,16 @@ import '../../util/elements/inputs/redirectImport.lit';
 import '../../util/elements/redirectActions.lit';
 import '../../util/elements/resultlist.lit';
 import '../../util/elements/resultlistitem.lit';
-import variableResource from '../../util/tools/variableresource.service';
 import { ensureExists, ensureServiceExists } from '../../util/tools/existancecheck';
+import variableResource from '../../util/tools/variableresource.service';
 import { UrlTrackerNotificationWrapper } from '../notifications/notifications.mixin';
+import { createInspectRedirectEditor } from '../sidebars/inspectRedirect/inspectredirect';
+import { createEditRedirectOptions, createNewRedirectOptions } from '../sidebars/simpleRedirect/manageredirect';
 import './redirects/redirectitem.lit';
+import './redirects/redirectitemSkeleton.lit';
 import './redirects/redirectsSearch.lit';
-import {
-  IUmbracoNotificationsService,
-  umbracoNotificationsServiceContext,
-} from '@/context/notificationsservice.context';
 import { IRedirectViewContext, redirectViewContext } from './redirects/redirectview.context';
 import { ISourceStrategies } from './redirects/source/source.constants';
-import { createEditRedirectOptions, createNewRedirectOptions } from '../sidebars/simpleRedirect/manageredirect';
-import { createInspectRedirectEditor } from '../sidebars/inspectRedirect/inspectredirect';
 
 @customElement('urltracker-redirect-tab')
 export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElement) {
@@ -75,6 +77,21 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
 
   @state()
   private selectedItems: number[] = [];
+
+  @state()
+  private exportState: LoadingStatus = undefined;
+
+  @state()
+  private deleteSelectionState: LoadingStatus = undefined;
+
+  @state()
+  private convertSelectionState: LoadingStatus = undefined;
+
+  @state()
+  private importRedirectLoading = false;
+
+  @state()
+  private deleteRedirectLoadingIds: Array<number> = [];
 
   private get redirectTypes(): string[] | undefined {
     if (this.viewContext.advanced) {
@@ -215,22 +232,38 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
   };
 
   private onDeleteRedirect = async (e: CustomEvent<IRedirectResponse>) => {
-    await this.redirectService?.delete(e.detail.id);
-    this.notificationsService.success('Redirect deleted', 'The redirect has been successfully deleted');
-    this.search();
+    this.deleteRedirectLoadingIds.push(e.detail.id);
+    this.requestUpdate();
+
+    try {
+      await this.redirectService?.delete(e.detail.id);
+      this.notificationsService.success('Redirect deleted', 'The redirect has been successfully deleted');
+      this.search();
+    } finally {
+      this.deleteRedirectLoadingIds = this.deleteRedirectLoadingIds.filter((id) => id !== e.detail.id);
+      this.requestUpdate();
+    }
   };
 
   private onExportRedirects = async (_: any) => {
-    await this.redirectImportService?.export();
-    this.notificationsService.success('Redirects exported', 'Check your downloads to find the exported redirects');
+    this.exportState = 'waiting';
+    try {
+      await this.redirectImportService?.export();
+      this.notificationsService.success('Redirects exported', 'Check your downloads to find the exported redirects');
+    } finally {
+      this.exportState = undefined;
+    }
   };
 
   private onImportRedirects = async (e: CustomEvent<File>) => {
+    this.importRedirectLoading = true;
     try {
       await this.redirectImportService!.import(e.detail);
       this.notificationsService.success('Redirects imported', 'The redirects have been successfully imported');
     } catch (error) {
       this.notificationsService.error('Redirects import failed', 'The redirects have not been imported');
+    } finally {
+      this.importRedirectLoading = false;
     }
     this.search();
   };
@@ -262,32 +295,47 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
   };
 
   private onConvertSelection = async (_: any) => {
-    const selectedRedirects =
-      this.redirectCollection?.results.filter((r) => this.selectedItems.some((i) => i === r.id)) || [];
-    const bulkToUpdate = selectedRedirects.map((r) => {
-      const { id: _, key: __, additionalData: ___, createDate: ____, updateDate: _____, ...data } = r;
-      return {
-        id: r.id,
-        data: data,
-      };
-    });
-    await redirectService.updateBulk(bulkToUpdate);
-    this.notificationsService.success(
-      'Redirects converted to permanent',
-      'The selected redirects have been successfully converted to permanent',
-    );
-    this.selectedItems = [];
-    this.search();
+    this.convertSelectionState = 'waiting';
+    try {
+      const selectedRedirects =
+        this.redirectCollection?.results.filter((r) => this.selectedItems.some((i) => i === r.id)) || [];
+      const bulkToUpdate = selectedRedirects.map((r) => {
+        const { id: _, key: __, additionalData: ___, createDate: ____, updateDate: _____, ...data } = r;
+        return {
+          id: r.id,
+          data: data,
+        };
+      });
+      await redirectService.updateBulk(bulkToUpdate);
+      this.notificationsService.success(
+        'Redirects converted to permanent',
+        'The selected redirects have been successfully converted to permanent',
+      );
+      this.selectedItems = [];
+      this.search();
+
+      this.convertSelectionState = undefined;
+    } catch {
+      this.convertSelectionState = 'failed';
+    }
   };
 
   private onDeleteSelection = async (_: any) => {
-    const selectedRedirects =
-      this.redirectCollection?.results.filter((r) => this.selectedItems.some((i) => i === r.id)) || [];
-    const bulkToDelete = selectedRedirects.map((r) => r.id);
-    await redirectService.deleteBulk(bulkToDelete);
-    this.notificationsService.success('Redirects deleted', 'The selected redirects have been successfully deleted');
-    this.selectedItems = [];
-    this.search();
+    this.deleteSelectionState = 'waiting';
+
+    try {
+      const selectedRedirects =
+        this.redirectCollection?.results.filter((r) => this.selectedItems.some((i) => i === r.id)) || [];
+      const bulkToDelete = selectedRedirects.map((r) => r.id);
+      await redirectService.deleteBulk(bulkToDelete);
+      this.notificationsService.success('Redirects deleted', 'The selected redirects have been successfully deleted');
+      this.selectedItems = [];
+      this.search();
+
+      this.deleteSelectionState = undefined;
+    } catch {
+      this.deleteSelectionState = 'failed';
+    }
   };
 
   connectedCallback(): void {
@@ -307,10 +355,10 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
         @select-all=${this.onSelectAll}
         @clear-selection=${this.onClearSelection}
       >
-        <uui-button look="secondary" @click=${this.onConvertSelection}>
+        <uui-button look="secondary" .state="${this.convertSelectionState}" @click=${this.onConvertSelection}>
           <uui-icon name="lock"></uui-icon> Convert to permanent redirect
         </uui-button>
-        <uui-button look="secondary" @click=${this.onDeleteSelection}>
+        <uui-button look="secondary" .state="${this.deleteSelectionState}" @click=${this.onDeleteSelection}>
           <uui-icon name="delete"></uui-icon>
           Delete
         </uui-button>
@@ -319,14 +367,22 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
   }
 
   private renderRedirects(): unknown {
+    if (this.loading) {
+      return html`<urltracker-redirect-item-skeleton></urltracker-redirect-item-skeleton>
+        <urltracker-redirect-item-skeleton></urltracker-redirect-item-skeleton>
+        <urltracker-redirect-item-skeleton></urltracker-redirect-item-skeleton> `;
+    }
+
     if (!this.redirectCollection?.results) return nothing;
+
     return repeat(
       this.redirectCollection.results,
       (redirect) => redirect.id,
       (r) =>
-        html`<urltracker-redirect-item
+        html` <urltracker-redirect-item
           .item=${r}
           .isSelected=${this.selectedItems.some((i) => i === r.id)}
+          .deleteRedirectLoading=${this.deleteRedirectLoadingIds.includes(r.id)}
           @selected=${this.onSelectItem}
           @deselected=${this.onDeselectItem}
           @inspect=${this.onInspect}
@@ -350,16 +406,25 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
     `;
   }
 
+  protected renderExport(): unknown {
+    if (this.exportState === 'waiting') {
+      return html`<uui-menu-item label="Exporting redirects">
+        <uui-loader-circle slot="icon"></uui-loader-circle
+      ></uui-menu-item>`;
+    } else {
+      return html`<uui-menu-item label="Export redirects" @click-label=${this.onExportRedirects}>
+        <uui-icon slot="icon" name="download"></uui-icon>
+      </uui-menu-item>`;
+    }
+  }
+
   protected renderInternal(): unknown {
     return html`
       <div class="grid-root">
         ${this.renderFilters()} ${this.renderBulkActions()}
 
         <div class="results">
-          <urltracker-result-list
-            .loading=${!!this.loading}
-            .header=${`Results (${this.redirectCollection ? this.redirectCollection.total : 0})`}
-          >
+          <urltracker-result-list .header=${`Results (${this.redirectCollection ? this.redirectCollection.total : 0})`}>
             ${this.renderRedirects()}
           </urltracker-result-list>
 
@@ -376,13 +441,12 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(LitElem
             <uui-menu-item label="New redirect" @click-label=${this.onAddRedirect}>
               <uui-icon slot="icon" name="add"></uui-icon>
             </uui-menu-item>
-            <uui-menu-item label="Export redirects" @click-label=${this.onExportRedirects}>
-              <uui-icon slot="icon" name="download"></uui-icon>
-            </uui-menu-item>
+            ${this.renderExport()}
           </urltracker-redirect-actions>
           <urltracker-redirect-import
             @import=${this.onImportRedirects}
             @download-template=${this.onDownloadImportTemplate}
+            .loading="${this.importRedirectLoading}"
           ></urltracker-redirect-import>
         </div>
       </div>

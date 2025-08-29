@@ -2,7 +2,7 @@ import { toReadableDateOnly } from '@/util/functions/dateformatter';
 import { ensureServiceExists } from '@/util/tools/existancecheck';
 import { ContextConsumer } from '@lit/context';
 import { css, html, nothing } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { ILocalizationService, localizationServiceContext } from '../../../context/localizationservice.context';
 import { IRecommendationResponse, recommendationContext } from '../../../context/recommendationitem.context';
@@ -21,6 +21,9 @@ const RecommendationListItem = UrlTrackerSelectableResultListItem<IRecommendatio
 
 @customElement('urltracker-recommendation-item')
 export class UrlTrackerRecommendationItem extends RecommendationListItem {
+  @property({ type: Boolean, reflect: true })
+  public ignoreRecommendationLoading: boolean = false;
+
   @state()
   private recommendationTagText = '';
 
@@ -197,6 +200,12 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   }
 
   private renderIgnore(): unknown {
+    if (this.ignoreRecommendationLoading) {
+      return html`<button class="action-button" disabled>
+        <uui-loader-circle id="loader"></uui-loader-circle>
+        ${this.actionIgnoreText}
+      </button>`;
+    }
     return html`<button class="action-button" @click=${this.handleIgnoreRecommendation}>
       <uui-icon name="icon-navigation-right" class="icon-before"></uui-icon>${this.actionIgnoreText}
     </button>`;

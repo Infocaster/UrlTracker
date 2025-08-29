@@ -10,12 +10,13 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ManageRedirectScope } from './scope';
 
-import '../../../util/elements/redirects/simpleRedirect/createSimpleRedirect.lit';
-import { redirectServiceContext } from '@/context/redirectservice.context';
 import {
   IUmbracoNotificationsService,
   umbracoNotificationsServiceContext,
 } from '@/context/notificationsservice.context';
+import { redirectServiceContext } from '@/context/redirectservice.context';
+import { LoadingStatus } from '@/types/loadingStatus';
+import '../../../util/elements/redirects/simpleRedirect/createSimpleRedirect.lit';
 
 export const ContentElementTag = 'urltracker-sidebar-simple-redirect';
 
@@ -89,6 +90,9 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
     advanced: false,
   };
 
+  @state()
+  private saveLoading: LoadingStatus = undefined;
+
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
@@ -107,19 +111,25 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   }
 
   async save() {
-    let response: IRedirectResponse;
-    if (this.scope.model.id) {
-      response = await this.redirectService.update(this.scope.model.id, this.redirectData);
-      this.notificationService.success('Redirect updated', 'The redirect has been successfully updated');
-    } else {
-      response = await this.redirectService.create({
-        ...this.redirectData,
-        solvedRecommendation: this.$scope?.model.solvedRecommendation,
-      });
-      this.notificationService.success('Redirect created', 'The redirect has been successfully created');
-    }
+    this.saveLoading = 'waiting';
+    try {
+      let response: IRedirectResponse;
+      if (this.scope.model.id) {
+        response = await this.redirectService.update(this.scope.model.id, this.redirectData);
+        this.notificationService.success('Redirect updated', 'The redirect has been successfully updated');
+      } else {
+        response = await this.redirectService.create({
+          ...this.redirectData,
+          solvedRecommendation: this.$scope?.model.solvedRecommendation,
+        });
+        this.notificationService.success('Redirect created', 'The redirect has been successfully created');
+      }
 
-    this.scope.model.submit(response);
+      this.scope.model.submit(response);
+      this.saveLoading = 'success';
+    } catch {
+      this.saveLoading = 'failed';
+    }
   }
 
   close() {
@@ -138,7 +148,7 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
       </div>
       <div class="footer">
         <uui-button look="default" color="default" @click=${this.close}>Cancel</uui-button>
-        <uui-button look="primary" color="positive" @click=${this.save}>Save</uui-button>
+        <uui-button look="primary" .state=${this.saveLoading} color="positive" @click=${this.save}>Save</uui-button>
       </div>`;
   }
 

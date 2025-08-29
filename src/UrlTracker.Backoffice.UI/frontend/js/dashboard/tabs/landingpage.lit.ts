@@ -29,6 +29,7 @@ import {
 } from '../sidebars/explainRecommendations/explainRecommendations.lit';
 import { createNewRedirectOptions } from '../sidebars/simpleRedirect/manageredirect';
 import './redirects/redirectitem.lit';
+import './redirects/redirectitemSkeleton.lit';
 import { ISourceStrategies } from './redirects/source/source.constants';
 import { ITargetStrategies } from './redirects/target/target.constants';
 
@@ -244,7 +245,14 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
   };
 
   private renderRecommendations(): unknown {
+    if (this.loading) {
+      return html`<urltracker-recommendation-item-skeleton></urltracker-recommendation-item-skeleton>
+        <urltracker-recommendation-item-skeleton></urltracker-recommendation-item-skeleton>
+        <urltracker-recommendation-item-skeleton></urltracker-recommendation-item-skeleton> `;
+    }
+
     if (!this.recommendationCollection?.results) return nothing;
+
     return repeat(
       this.recommendationCollection.results,
       (recommendation) => recommendation.id,
@@ -285,7 +293,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
     return html`
       <div class="grid-root">
         <div class="results">
-          <urltracker-result-list .loading=${!!this.loading} .header=${this.topRecommendationsLabel}>
+          <urltracker-result-list .header=${this.topRecommendationsLabel}>
             ${this.renderRecommendations()}
           </urltracker-result-list>
           ${this.renderRedirectButton()}

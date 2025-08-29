@@ -1,16 +1,16 @@
+import { toReadableDate } from '@/util/functions/dateformatter';
+import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
 import { consume } from '@lit/context';
 import { css, html, nothing } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { ILocalizationService, localizationServiceContext } from '../../../context/localizationservice.context';
 import { redirectContext } from '../../../context/redirectitem.context';
 import { IRedirectResponse } from '../../../services/redirect.service';
 import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';
+import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
 import sourceStrategyResolver from './source/source.strategy';
 import targetStrategyResolver from './target/target.strategy';
-import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
-import { ifDefined } from 'lit/directives/if-defined.js';
-import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
-import { toReadableDate } from '@/util/functions/dateformatter';
 
 const RedirectListItem = UrlTrackerSelectableResultListItem<IRedirectResponse>(redirectContext);
 
@@ -18,6 +18,9 @@ const RedirectListItem = UrlTrackerSelectableResultListItem<IRedirectResponse>(r
 export class UrlTrackerRedirectItem extends RedirectListItem {
   @consume({ context: localizationServiceContext })
   private localizationService?: ILocalizationService;
+
+  @property({ type: Boolean, reflect: true })
+  public deleteRedirectLoading: boolean = false;
 
   @state()
   private redirectToText?: string;
@@ -84,6 +87,19 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
     return targetStrategyResolver.getStrategy(this.item).getTemplate();
   }
 
+  private renderDelete(): unknown {
+    if (this.deleteRedirectLoading) {
+      return html`<button class="action-button" disabled>
+        <uui-loader-circle id="loader"></uui-loader-circle>
+        Delete
+      </button>`;
+    } else {
+      return html`<button class="action-button" @click=${this.handleDelete}>
+        <uui-icon name="delete" class="icon-before"></uui-icon>Delete
+      </button>`;
+    }
+  }
+
   protected renderBody(): unknown {
     return html`
       <div class="body">
@@ -93,9 +109,7 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
           <button class="action-button" @click=${this.handleEdit}>
             <uui-icon name="edit" class="icon-before"></uui-icon>Edit
           </button>
-          <button class="action-button" @click=${this.handleDelete}>
-            <uui-icon name="delete" class="icon-before"></uui-icon>Delete
-          </button>
+          ${this.renderDelete()}
         </uui-button-group>
         <div class="createdate">${this.createDateText}: ${toReadableDate(this.item.createDate)}</div>
       </div>

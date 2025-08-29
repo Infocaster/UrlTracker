@@ -12,8 +12,13 @@ import { ensureExists, ensureServiceExists } from '../../util/tools/existanceche
 import { UrlTrackerNotificationWrapper } from '../notifications/notifications.mixin';
 
 import { IEditorService, editorServiceContext } from '@/context/editorservice.context';
+import {
+  IUmbracoNotificationsService,
+  umbracoNotificationsServiceContext,
+} from '@/context/notificationsservice.context';
 import { redirectServiceContext } from '@/context/redirectservice.context';
 import { IRedirectData, IRedirectResponse, IRedirectService } from '@/services/redirect.service';
+import { LoadingStatus } from '@/types/loadingStatus';
 import variableresourceService from '@/util/tools/variableresource.service';
 import { consume, provide } from '@lit/context';
 import { ifDefined } from 'lit/directives/if-defined.js';
@@ -22,21 +27,18 @@ import { IChangeManager, changeManagerContext } from '../../context/changemanage
 import { recommendationServiceContext } from '../../context/recommendationservice.context';
 import { RECOMMENDATION_SORT_TYPE, RecommendationSortType } from '../../enums/sortType';
 import { DropdownChangeEvent, IDropdownValue } from '../../util/elements/inputs/dropdown.lit';
+import { createAnalyseRecommendationEditor } from '../sidebars/analyseRecommendation/analyserecommendation';
 import {
   IRecommendationAction,
   RECCOMENDATION_ACTIONS,
 } from '../sidebars/explainRecommendations/explainRecommendations.lit';
+import { createExplainRecommendationsEditor } from '../sidebars/explainRecommendations/explainrecommendations';
+import { createNewRedirectOptions } from '../sidebars/simpleRedirect/manageredirect';
 import './recommendations/recommendationSearch.lit';
 import './recommendations/recommendationitem.lit';
+import './recommendations/recommendationitemSkeleton.lit';
 import { ISourceStrategies } from './redirects/source/source.constants';
 import { ITargetStrategies } from './redirects/target/target.constants';
-import {
-  IUmbracoNotificationsService,
-  umbracoNotificationsServiceContext,
-} from '@/context/notificationsservice.context';
-import { createNewRedirectOptions } from '../sidebars/simpleRedirect/manageredirect';
-import { createAnalyseRecommendationEditor } from '../sidebars/analyseRecommendation/analyserecommendation';
-import { createExplainRecommendationsEditor } from '../sidebars/explainRecommendations/explainrecommendations';
 
 @customElement('urltracker-recommendations-tab')
 export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(LitElement, 'recommendations') {
@@ -70,6 +72,12 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
   @state()
   private selectedItems: number[] = [];
+
+  @state()
+  private ignoreRecommendationLoadingIds: Array<number> = [];
+
+  @state()
+  private ignoreSelectionState: LoadingStatus = undefined;
 
   private query = '';
   private selectedType: RecommendationSortType = RECOMMENDATION_SORT_TYPE.IMPORTANCE;
@@ -177,17 +185,24 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   };
 
   private handleIgnore = async (event: CustomEvent<IRecommendationResponse>) => {
-    await this._recommendationsService!.update(event.detail.id, {
-      recommendationStrategy: event.detail.strategy,
-      ignore: true,
-    });
+    this.ignoreRecommendationLoadingIds.push(event.detail.id);
+    this.requestUpdate();
+    try {
+      await this._recommendationsService!.update(event.detail.id, {
+        recommendationStrategy: event.detail.strategy,
+        ignore: true,
+      });
 
-    this.notificationsService.success(
-      'Recommendation ignored',
-      'The recommendation has been removed from the overview',
-    );
+      this.notificationsService.success(
+        'Recommendation ignored',
+        'The recommendation has been removed from the overview',
+      );
 
-    this.search();
+      await this.search();
+    } finally {
+      this.ignoreRecommendationLoadingIds = this.ignoreRecommendationLoadingIds.filter((id) => id !== event.detail.id);
+      this.requestUpdate();
+    }
   };
 
   private openNewRedirectPanel(data: IRedirectData, solvedRecommendation?: number) {
@@ -290,28 +305,42 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
   };
 
   private onIgnoreSelection = async (_: any) => {
-    const selectedRecommendations =
-      this.recommendationCollection?.results.filter((r) => this.selectedItems.some((i) => i === r.id)) || [];
-    const bulkToUpdate: IRecommendationUpdateBulkRequest = selectedRecommendations.map((r) => {
-      return {
-        id: r.id,
-        data: {
-          recommendationStrategy: r.strategy,
-          ignore: true,
-        },
-      };
-    });
-    await recommendationService.updateBulk(bulkToUpdate);
-    this.notificationsService.success(
-      'Recommendations ignored',
-      'All selected recommendations have been removed from the overview',
-    );
-    this.selectedItems = [];
-    this.search();
+    this.ignoreSelectionState = 'waiting';
+    try {
+      const selectedRecommendations =
+        this.recommendationCollection?.results.filter((r) => this.selectedItems.some((i) => i === r.id)) || [];
+      const bulkToUpdate: IRecommendationUpdateBulkRequest = selectedRecommendations.map((r) => {
+        return {
+          id: r.id,
+          data: {
+            recommendationStrategy: r.strategy,
+            ignore: true,
+          },
+        };
+      });
+      await recommendationService.updateBulk(bulkToUpdate);
+      this.notificationsService.success(
+        'Recommendations ignored',
+        'All selected recommendations have been removed from the overview',
+      );
+      this.selectedItems = [];
+      this.search();
+
+      this.ignoreSelectionState = undefined;
+    } catch {
+      this.ignoreSelectionState = 'failed';
+    }
   };
 
   private renderRecommendations(): unknown {
+    if (this.loading) {
+      return html`<urltracker-recommendation-item-skeleton></urltracker-recommendation-item-skeleton>
+        <urltracker-recommendation-item-skeleton></urltracker-recommendation-item-skeleton>
+        <urltracker-recommendation-item-skeleton></urltracker-recommendation-item-skeleton> `;
+    }
+
     if (!this.recommendationCollection?.results) return nothing;
+
     return repeat(
       this.recommendationCollection.results,
       (recommendation) => recommendation.id,
@@ -319,6 +348,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
         html`<urltracker-recommendation-item
           .item=${r}
           .isSelected=${this.selectedItems.some((i) => i === r.id)}
+          .ignoreRecommendationLoading=${this.ignoreRecommendationLoadingIds.includes(r.id)}
           @selected=${this.onSelectItem}
           @deselected=${this.onDeselectItem}
           @explain=${this.onExplain}
@@ -349,7 +379,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
         @select-all=${this.onSelectAll}
         @clear-selection=${this.onClearSelection}
       >
-        <uui-button look="secondary" @click=${this.onIgnoreSelection}>
+        <uui-button look="secondary" .state="${this.ignoreSelectionState}" @click=${this.onIgnoreSelection}>
           <uui-icon name="delete"></uui-icon>
           Ignore
         </uui-button>
@@ -375,10 +405,8 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     return html`
       <div class="grid-root">
         ${this.renderFilters()} ${this.renderBulkActions()}
-
         <div class="results">
           <urltracker-result-list
-            .loading=${!!this.loading}
             .header=${`Results (${this.recommendationCollection ? this.recommendationCollection.total : 0})`}
           >
             ${this.renderRecommendations()}
