@@ -15,9 +15,10 @@ namespace UrlTracker.IntegrationTests
         }
 
         [SetUp]
-        public virtual void Setup()
+        public virtual async Task SetupAsync()
         {
             WebsiteFactory = CreateApplicationFactory();
+            await WebsiteFactory.StartAsync();
             Scope = WebsiteFactory.Services.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
         }
 

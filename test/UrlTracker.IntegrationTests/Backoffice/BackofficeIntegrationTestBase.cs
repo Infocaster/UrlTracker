@@ -12,7 +12,7 @@ namespace UrlTracker.IntegrationTests.Backoffice
         protected async Task<T?> DeserializeResponseAsync<T>(HttpResponseMessage response)
         {
             var body = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<T>(body.Substring(6));
+            return JsonConvert.DeserializeObject<T>(body);
         }
     }
 }

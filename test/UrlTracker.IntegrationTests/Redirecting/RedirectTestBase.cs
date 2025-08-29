@@ -13,11 +13,12 @@ namespace UrlTracker.IntegrationTests.Redirecting
         protected const string _defaultTargetUrl = "https://example.com/";
         protected const HttpStatusCode _defaultRedirectCode = HttpStatusCode.Redirect;
         protected const bool _defaultPermanent = _defaultRedirectCode != HttpStatusCode.Redirect;
-        protected IUmbracoContext UmbracoContext => ContextReference.UmbracoContext;
-        private UmbracoContextReference ContextReference { get; set; } = null!;
+        protected IUmbracoContext UmbracoContext => ServiceProvider.GetRequiredService<IUmbracoContextAccessor>().GetRequiredUmbracoContext();
 
         protected Redirect CreateRedirectBase()
         {
+            using var _ = ServiceProvider.GetRequiredService<IUmbracoContextFactory>().EnsureUmbracoContext();
+
             return new Redirect
             {
                 Force = false,
@@ -27,19 +28,6 @@ namespace UrlTracker.IntegrationTests.Redirecting
             };
         }
 
-        public override void Setup()
-        {
-            base.Setup();
-            var umbracoContextFactory = ServiceProvider.GetRequiredService<IUmbracoContextFactory>();
-
-            ContextReference = umbracoContextFactory.EnsureUmbracoContext();
-        }
-
-        public override void TearDown()
-        {
-            ContextReference.Dispose();
-            base.TearDown();
-        }
         protected IPublishedContent GetDefaultRootNode() => UmbracoContext.Content!.GetAtRoot().First();
         protected IRedirectService GetRedirectService() => ServiceProvider.GetRequiredService<IRedirectService>();
     }

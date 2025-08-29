@@ -10,7 +10,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Recommendation
 {
     public abstract class RecommendationTestBase : BackofficeIntegrationTestBase
     {
-        protected const string _endpointBase = "/umbraco/backoffice/urltracker/recommendations";
+        protected const string _endpointBase = "/umbraco/management/api/v1/UrlTracker/Recommendations";
 
         protected IRedactionScoreService GetRedactionScoreService()
         {

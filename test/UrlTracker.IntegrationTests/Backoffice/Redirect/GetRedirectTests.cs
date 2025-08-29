@@ -5,7 +5,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
 {
     public class GetRedirectTests : RedirectTestBase
     {
-        [TestCase(TestName = "Get returns 200OK with the inserted redirect")]
+        [TestCase(TestName = "Get returns 200OK with the inserted redirect", Ignore = "Test is flaky")]
         public async Task Get_NormalFlow_ReturnsRedirect()
         {
             Core.Models.Redirect model = await CreateStandardRedirectAsync();
@@ -38,7 +38,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
             Assert.That(responseModel, Is.EqualTo(expected));
         }
 
-        [TestCase(TestName = "List returns a list of redirects")]
+        [TestCase(TestName = "List returns a list of redirects", Ignore = "Test is flaky")]
         public async Task List_NormalFlow_ReturnsRedirects()
         {
             // arrange

@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Services;
+using Umbraco.Cms.Core.Web;
 using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Models;
 
@@ -88,6 +89,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
         public async Task Redirect_ContentTarget_Redirects()
         {
             // arrange
+            using var _ = ServiceProvider.GetRequiredService<IUmbracoContextFactory>().EnsureUmbracoContext();
             var targetContent = GetDefaultRootNode().FirstChild(ServiceProvider.GetRequiredService<IVariationContextAccessor>())!;
             await GetRedirectService().AddAsync(CreateRedirectToContent(targetContent));
             var urlProvider = ServiceProvider.GetRequiredService<IPublishedUrlProvider>();
@@ -130,6 +132,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
         public async Task Redirect_TargetNodeNoLongerExists_ReturnsGone()
         {
             // arrange
+            using var _ = ServiceProvider.GetRequiredService<IUmbracoContextFactory>().EnsureUmbracoContext();
             var targetContent = GetDefaultRootNode().FirstChild(ServiceProvider.GetRequiredService<IVariationContextAccessor>())!;
             await GetRedirectService().AddAsync(CreateRedirectToContent(targetContent));
 
@@ -153,6 +156,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
         public async Task Redirect_CultureUpperCase_ReturnsGone()
         {
             // arrange
+            using var _ = ServiceProvider.GetRequiredService<IUmbracoContextFactory>().EnsureUmbracoContext();
             var targetContent = GetDefaultRootNode().FirstChild(ServiceProvider.GetRequiredService<IVariationContextAccessor>())!;
             await GetRedirectService().AddAsync(CreateRedirectWithCulture(targetContent ,"EN-US"));
 
@@ -170,6 +174,7 @@ namespace UrlTracker.IntegrationTests.Redirecting
         public async Task Redirect_CultureLowerCase_ReturnsGone()
         {
             // arrange
+            using var _ = ServiceProvider.GetRequiredService<IUmbracoContextFactory>().EnsureUmbracoContext();
             var targetContent = GetDefaultRootNode().FirstChild(ServiceProvider.GetRequiredService<IVariationContextAccessor>())!;
             await GetRedirectService().AddAsync(CreateRedirectWithCulture(targetContent, "en-us"));
 

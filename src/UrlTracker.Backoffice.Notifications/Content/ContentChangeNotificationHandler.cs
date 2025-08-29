@@ -10,7 +10,10 @@ using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Events;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Notifications;
+using Umbraco.Cms.Core.PublishedCache;
 using Umbraco.Cms.Core.Routing;
+using Umbraco.Cms.Core.Services.Navigation;
+using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Infrastructure.Scoping;
 using Umbraco.Extensions;
 using UrlTracker.Backoffice.Notifications.Options;
@@ -40,6 +43,8 @@ namespace UrlTracker.Backoffice.Notifications.Content
         private readonly IContentValueReaderFactory _contentValueReaderFactory;
         private readonly IPublishedUrlProvider _publishedUrlProvider;
         private readonly IVariationContextAccessor _variationContextAccessor;
+        private readonly IDocumentNavigationQueryService _navigationQueryService;
+        private readonly IPublishedContentStatusFilteringService _publishedStatusFilteringService;
         private readonly ILogger<ContentChangeNotificationHandler> _logger;
         private const string _moveRedirectsKey = "ic:MoveRedirects";
         private const string _renameRedirectsKey = "ic:RenameRedirects";
@@ -53,6 +58,8 @@ namespace UrlTracker.Backoffice.Notifications.Content
                                                 IContentValueReaderFactory contentValueReaderFactory,
                                                 IPublishedUrlProvider publishedUrlProvider,
                                                 IVariationContextAccessor variationContextAccessor,
+                                                IDocumentNavigationQueryService navigationQueryService,
+                                                IPublishedContentStatusFilteringService publishedStatusFilteringService,
                                                 ILogger<ContentChangeNotificationHandler> logger)
         {
             _umbracoContextFactory = umbracoContextFactory;
@@ -63,6 +70,8 @@ namespace UrlTracker.Backoffice.Notifications.Content
             _contentValueReaderFactory = contentValueReaderFactory;
             _publishedUrlProvider = publishedUrlProvider;
             _variationContextAccessor = variationContextAccessor;
+            _navigationQueryService = navigationQueryService;
+            _publishedStatusFilteringService = publishedStatusFilteringService;
             _logger = logger;
         }
 
@@ -96,7 +105,6 @@ namespace UrlTracker.Backoffice.Notifications.Content
                             valueReader.GetValue(Constants.Conventions.Content.UrlName) == valueReader.GetValue(content, Constants.Conventions.Content.UrlName)) continue;
 
                         // this entity has changed, so a new redirect for it and its descendants must be created
-                        var root = content.Root()!;
                         foreach (var item in content.Descendants(_variationContextAccessor, valueReader.GetCulture()).Prepend(content))
                         {
                             redirects.Add(CreateRedirect(item, valueReader.GetCulture()));
@@ -154,16 +162,16 @@ namespace UrlTracker.Backoffice.Notifications.Content
                     var newParent = cref.GetContentById(moveInfo.NewParentId);
                     if (newParent is null) continue;
 
-                    var newRoot = newParent.Root();
+                    var newRoot = newParent.Root(_navigationQueryService, _publishedStatusFilteringService);
                     if (newRoot is null) continue;
 
-                    foreach (var item in DescendantsAndSelfForAllCultures(content))
+                    foreach (var item in DescendantsAndSelfForAllCultures(content, cref))
                     {
                         List<string?> cultures = GetCulturesFromContent(item);
 
                         // make sure to only consider cultures for which a change is actually noticable.
                         //    That is: if a node that can be routed moves to a node that also can be routed.
-                        foreach (var c in cultures.Where(c => newParent.AncestorsOrSelf().All(i => i.IsPublished(c)) && item.AncestorsOrSelf().All(i => i.IsPublished(c))))
+                        foreach (var c in cultures.Where(c => newParent.AncestorsOrSelf(_navigationQueryService, _publishedStatusFilteringService).All(i => i.IsPublished(c)) && item.AncestorsOrSelf(_navigationQueryService, _publishedStatusFilteringService).All(i => i.IsPublished(c))))
                         {
                             // Notice that the old IPublishedContent item is used here. This may seem questionable,
                             //    but it's acceptable, since only the id of the published content item will be saved.
@@ -256,9 +264,18 @@ namespace UrlTracker.Backoffice.Notifications.Content
             return configurationValue.Enable && notifcationsOptionsValue.Enable;
         }
 
-        private static IEnumerable<IPublishedContent> DescendantsAndSelfForAllCultures(IPublishedContent content)
+        private IEnumerable<IPublishedContent> DescendantsAndSelfForAllCultures(IPublishedContent content, IUmbracoContextReferenceAbstraction contentCache)
         {
-            return content.AsEnumerableOfOne().Concat(content.ChildrenForAllCultures?.SelectMany(child => DescendantsAndSelfForAllCultures(child)) ?? Enumerable.Empty<IPublishedContent>());
+            var children = _navigationQueryService.TryGetChildrenKeys(content.Key, out var childrenKeys)
+                ? GetChildrenAsPublishedContent(childrenKeys, contentCache)
+                : [];
+
+            return content
+                .AsEnumerableOfOne()
+                .Concat(children.SelectMany(child => DescendantsAndSelfForAllCultures(child, contentCache)));
         }
+
+        private static IEnumerable<IPublishedContent> GetChildrenAsPublishedContent(IEnumerable<Guid> childrenKeys, IUmbracoContextReferenceAbstraction contentCache)
+            => childrenKeys.Select(contentCache.GetContentById).WhereNotNull();
     }
 }

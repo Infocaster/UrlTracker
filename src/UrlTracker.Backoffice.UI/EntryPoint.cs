@@ -5,6 +5,7 @@ using Umbraco.Cms.Core.Notifications;
 using Umbraco.Extensions;
 using UrlTracker.Backoffice.UI.Controllers;
 using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
+using UrlTracker.Backoffice.UI.Controllers.Swagger;
 using UrlTracker.Backoffice.UI.Notifications;
 using UrlTracker.Backoffice.UI.UserNotifications;
 using UrlTracker.Modules.Options;
@@ -28,11 +29,7 @@ namespace UrlTracker.Backoffice.UI
         /// <returns>The umbraco dependency collection builder after all services are added</returns>
         public static IUmbracoBuilder ComposeUrlTrackerBackoffice(this IUmbracoBuilder builder)
         {
-            builder.AddDashboard<UrlTrackerDashboard>();
             builder.AddDefaultUrlTrackerNotifications();
-
-            builder.ManifestFilters()
-                .Append<UrlTrackerManifestFilter>();
 
             builder.AddNotificationHandler<ServerVariablesParsingNotification, ServerVariablesNotificationHandler>();
             builder.AddNotificationHandler<ServingRedirectsNotification, PreloadRedirectTargetNotificationHandler>();
@@ -53,6 +50,8 @@ namespace UrlTracker.Backoffice.UI
                     manager.FeatureProviders.Add(new UrlTrackerControllerFeatureProvider());
                 });
             });
+
+            builder.Services.ConfigureOptions<UrlTrackerSwaggerGenOptions>();
 
             builder.Services.AddUrlTrackerModule("Backoffice user interface");
 

@@ -9,9 +9,8 @@
 - Add support for importing traditional csv formatted files</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Polly" Version="8.4.0" />
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="13.0.0" />
-    <PackageReference Include="Umbraco.Cms.Web.BackOffice" Version="13.0.0" />
+    <PackageReference Include="Polly" Version="8.6.3" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="16.1.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Modules\UrlTracker.Modules.csproj" />

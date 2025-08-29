@@ -9,8 +9,8 @@
 - Add support for importing traditional csv formatted files</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Core" Version="13.0.0" />
-    <PackageReference Include="Umbraco.Cms.Web.Common" Version="13.0.0" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="16.1.1" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="16.1.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />

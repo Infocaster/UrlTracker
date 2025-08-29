@@ -9,14 +9,14 @@ namespace UrlTracker.Backoffice.UI.Controllers
     {
         private readonly static Type[] _controllers = new[]
         {
-            typeof(RedirectTargetController),
-            typeof(RedirectsController),
-            typeof(RecommendationsController),
-            typeof(RecommendationAnalysisController),
-            typeof(NotificationsController),
-            typeof(RedirectImportController),
-            typeof(LandingPageController),
-            typeof(ScoringController)
+            typeof(UrlTrackerRedirectTargetController),
+            typeof(UrlTrackerRedirectsController),
+            typeof(UrlTrackerRecommendationsController),
+            typeof(UrlTrackerRecommendationAnalysisController),
+            typeof(UrlTrackerNotificationsController),
+            typeof(UrlTrackerRedirectImportController),
+            typeof(UrlTrackerLandingPageController),
+            typeof(UrlTrackerScoringController)
         };
 
         protected override bool IsController(TypeInfo typeInfo)

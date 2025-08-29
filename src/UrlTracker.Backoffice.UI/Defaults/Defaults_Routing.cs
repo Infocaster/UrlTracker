@@ -14,6 +14,11 @@
             public const string Area = "UrlTracker";
 
             /// <summary>
+            /// The unique alias used to identify the swagger document for the URL Tracker
+            /// </summary>
+            public const string SwaggerApi = "url-tracker";
+
+            /// <summary>
             /// The controller area. Adds an area segment to endpoint urls
             /// </summary>
             public const string Route = "Umbraco/Backoffice/"+Area+"/[controller]";

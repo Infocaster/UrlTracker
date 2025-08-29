@@ -1,0 +1,19 @@
+{
+    "$schema": "../../umbraco-package-schema.json",
+    "name": "Auto Login",
+    "allowPublicAccess": true,
+    "extensions": [
+      {
+        "type": "authProvider",
+        "alias": "Infocaster.AuthProvider.Auto",
+        "name": "Auto Login",
+        "forProviderName": "Umbraco.AutoLogin",
+        "meta": {
+          "label": "Auto login",
+          "behavior": {
+            "autoRedirect": true
+          }
+        }
+      }
+    ]
+  }

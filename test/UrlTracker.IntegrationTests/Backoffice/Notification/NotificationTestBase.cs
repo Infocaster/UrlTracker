@@ -9,6 +9,6 @@ namespace UrlTracker.IntegrationTests.Backoffice.Notification
     public abstract class NotificationTestBase
         : BackofficeIntegrationTestBase
     {
-        protected const string _endpointBase = "/umbraco/backoffice/urltracker/notifications";
+        protected const string _endpointBase = "/umbraco/management/api/v1/UrlTracker/Notifications";
     }
 }

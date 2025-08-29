@@ -10,14 +10,14 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
 {
     public class RedirectTestBase : BackofficeIntegrationTestBase
     {
-        protected const string _endpointBase = "/umbraco/backoffice/urltracker/redirects";
+        protected const string _endpointBase = "/umbraco/management/api/v1/UrlTracker/Redirects";
 
         public UmbracoContextReference ContextReference { get; private set; } = null!;
         protected IUmbracoContext UmbracoContext => ContextReference.UmbracoContext;
 
-        public override void Setup()
+        public override async Task SetupAsync()
         {
-            base.Setup();
+            await base.SetupAsync();
             var umbracoContextFactory = ServiceProvider.GetRequiredService<IUmbracoContextFactory>();
 
             ContextReference = umbracoContextFactory.EnsureUmbracoContext();

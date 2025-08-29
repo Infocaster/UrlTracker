@@ -1,13 +1,13 @@
 trigger:
   branches:
     include:
-    - v13/main
-    - v13/develop
-    - v13/release/*
-    - v13/hotfix
+    - v16/main
+    - v16/develop
+    - v16/release/*
+    - v16/hotfix
   tags:
     include:
-    - 13.*
+    - 16.*
 
 pool:
   name: Default
@@ -72,10 +72,10 @@ stages:
         customCommand: 'run build'
 
     - task: UseDotNet@2
-      displayName: 'Use .NET 8'
+      displayName: 'Use .NET 9'
       inputs:
         packageType: 'sdk'
-        version: '8.x'
+        version: '9.x'
         includePreviewVersions: false
 
     - task: DotNetCoreCLI@2
@@ -220,18 +220,19 @@ stages:
         custom: nuget
         arguments: 'push $(packageGlob) -s https://api.nuget.org/v3/index.json --api-key $(NuGetApiKey)'
 
-- ${{ if eq(parameters.deployWebsite, true) }}:
-  - stage: testing
-    displayName: Deploy to testing
-    dependsOn: build
-    condition: succeeded()
-    jobs:
-    - template: 'azure-pipelines-deploy-iis.yml'
-      parameters:
-        websiteName: 'urltracker13'
-        dropFolder: '$(pipeline.workspace)/drop-website/UrlTracker.Resources.Website.zip'
-        environment: 'Testing'
-        stageName: 'Testing'
-        deploymentPath: $(TestPhysicalPath)
-        dropName: 'drop-website'
-        variableGroup: 'urltracker-testing-13'
+# Website is not ready yet for hosting. Reënable when testing environment works
+# - ${{ if eq(parameters.deployWebsite, true) }}:
+#   - stage: testing
+#     displayName: Deploy to testing
+#     dependsOn: build
+#     condition: succeeded()
+#     jobs:
+#     - template: 'azure-pipelines-deploy-iis.yml'
+#       parameters:
+#         websiteName: 'urltracker16'
+#         dropFolder: '$(pipeline.workspace)/drop-website/UrlTracker.Resources.Website.zip'
+#         environment: 'Testing'
+#         stageName: 'Testing'
+#         deploymentPath: $(TestPhysicalPath)
+#         dropName: 'drop-website'
+#         variableGroup: 'urltracker-testing-16'
