@@ -37,8 +37,53 @@
     <key alias="advancedredirectswelcomebody">In addition to the standard redirects, this page shows
       you all redirects with advanced configuration options.</key>
   </area>
-  <area alias="urltrackerGeneral">
+  <area alias="urlTrackerGeneral">
     <key alias="loading">Loading...</key>
+    <key alias="no-data">No data available</key>
+    <key alias="close">Close</key>
+    <key alias="example-usage">Example usage:</key>
+    <key alias="yes">Yes</key>
+    <key alias="no">No</key>
+    <key alias="permanent">Permanent</key>
+    <key alias="cancel">Cancel</key>
+    <key alias="created-at">Created at</key>
+    <key alias="new-redirect">New redirect</key>
+    <key alias="localization-service-required">localization service is not defined, but is required by this element</key>
+    <key alias="save">Save</key>
+    <key alias="edit">Edit</key>
+    <key alias="delete">Delete</key>
+    <key alias="content-not-found">Content item could not be found</key>
+    <key alias="redirect-required">A redirect is required to use this element, but no redirect was provided</key>
+    <key alias="redirect-updated">Redirect updated</key>
+    <key alias="redirect-updated-message">The redirect has been successfully updated</key>
+    <key alias="redirect-created">Redirect created</key>
+    <key alias="redirect-created-message">The redirect has been successfully created</key>
+    <key alias="recommendation-ignored">Recommendation ignored</key>
+    <key alias="recommendation-ignored-message">The recommendation has been removed from the overview</key>
+    <key alias="redirect-deleted">Redirect deleted</key>
+    <key alias="redirect-deleted-message">The redirect has been successfully deleted</key>
+    <key alias="redirects-exported">Redirects exported</key>
+    <key alias="redirects-exported-message">Check your downloads to find the exported redirects</key>
+    <key alias="template-downloaded">Template downloaded</key>
+    <key alias="template-downloaded-message">Check your downloads to find the template</key>
+    <key alias="edit-redirect">Edit</key>
+    <key alias="all">All</key>
+    <key alias="most-recently-updated">Most recently updated</key>
+    <key alias="url">Url</key>
+    <key alias="importance">Importance</key>
+    <key alias="temporary">Temporary</key>
+    <key alias="redirects-converted">Redirects converted</key>
+    <key alias="redirects-converted-message">The selected redirects have been converted</key>
+    <key alias="redirects-deleted-multiple">Redirects deleted</key>
+    <key alias="redirects-deleted-multiple-message">The selected redirects have been deleted</key>
+    <key alias="redirects-imported">Redirects imported</key>
+    <key alias="redirects-imported-message">The redirects have been imported successfully</key>
+    <key alias="ignore">Ignore</key>
+    <key alias="order-by">Order by</key>
+    <key alias="results">Results</key>
+    <key alias="recommendations-ignored">Recommendations ignored</key>
+    <key alias="recommendations-ignored-message">All selected recommendations have been removed from the overview</key>
+    <key alias="type">Type</key>
   </area>
   <area alias="urlTrackerDashboardLanding">
     <key alias="statisticLabel">pages returned a 404 response last week</key>
@@ -69,6 +114,8 @@
     <key alias="header">Actions</key>
     <key alias="new">New redirect</key>
     <key alias="export">Export redirects</key>
+    <key alias="exporting">Exporting redirects</key>
+    <key alias="convert-to-permanent">Convert to permanent redirect</key>
   </area>
   <area alias="urlTrackerRedirectUpload">
     <key alias="header">Import</key>
@@ -140,5 +187,42 @@
   </area>
   <area alias="urlTrackerRecommendationFilter">
     <key alias="search-placeholder">Type to search...</key>
+  </area>
+  <area alias="urlTrackerAnalyseRecommendation">
+    <key alias="history">History (last 20 days)</key>
+    <key alias="referrers">Most common referrers</key>
+  </area>
+  <area alias="urlTrackerExplainRecommendation">
+    <key alias="create">Create a temporary redirect</key>
+	<key alias="temporary-redirect-description">
+          A temporary redirect will redirect users to a different page, but will also tell
+          google and other search engines that the content on this URL will be back later. Use this option if content is
+          only temporarily moved to a different URL.
+	</key>
+    <key alias="campaign">You run a campaign but it’s momentarily suspended and will be continued next month or year</key>
+    <key alias="apply">Apply this recommendation</key>
+    <key alias="create-permanent">Create a permanent redirect</key>
+    <key alias="create-permanent-description">
+          A permanent redirect will redirect users to a different page, but will also tell
+          google and other search engines that the current URL is no longer relevant. Use this option if content is
+          moved to a different URL forever.
+        </key>
+    <key alias="blogs">You used to post your blogs on /news, but they are now found below /blogs</key>
+    <key alias="image">You rely on an image in a social media post, but the image no longer exists or has moved</key>
+    <key alias="ignore">Ignore this</key>
+    <key alias="ignore-description">
+          Sometimes a url might pop up in here that you simply cannot do anything with. In that
+          case, you can ignore the recommendation and it will be permanently removed from the overview.
+	</key>
+  </area>
+  <area alias="urlTrackerChart">
+    <key alias="first-occurance">First occurance</key>
+    <key alias="last-occurance">Last occurance</key>
+    <key alias="average-per-day">Average per day</key>
+    <key alias="trend">Trend</key>
+    <key alias="occurances-per-day">Occurances per day</key>
+  </area>
+  <area alias="urlTrackerErrors">
+    <key alias="alias-required">An alias is required when using this element, but none was provided.</key>
   </area>
 </language>

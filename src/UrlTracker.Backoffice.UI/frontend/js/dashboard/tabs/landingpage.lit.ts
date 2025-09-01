@@ -17,6 +17,7 @@ import { IRedirectData, IRedirectResponse, IRedirectService } from '@/services/r
 import { ensureServiceExists } from '@/util/tools/existancecheck';
 import variableresourceService from '@/util/tools/variableresource.service';
 import { consume } from '@lit/context';
+import { Task } from '@lit/task';
 import { LitElement, PropertyValueMap, css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
@@ -32,6 +33,12 @@ import './redirects/redirectitem.lit';
 import './redirects/redirectitemSkeleton.lit';
 import { ISourceStrategies } from './redirects/source/source.constants';
 import { ITargetStrategies } from './redirects/target/target.constants';
+
+type Translations = {
+  newRedirect: string;
+  recommendationIgnored: string;
+  recommendationIgnoredMessage: string;
+};
 
 @customElement('urltracker-landing-tab')
 export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitElement, 'landingpage') {
@@ -71,6 +78,33 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
 
   @state()
   private redirectLabel?: string;
+
+  @state()
+  private translationTaskKey: number = 0;
+
+  @state()
+  private translations: Partial<Translations> = {};
+
+  private _translationTask = new Task(this, {
+    task: async (): Promise<Partial<Translations>> => {
+      const [newRedirect, recommendationIgnored, recommendationIgnoredMessage] = await Promise.all([
+        this.localizationService?.localize('urlTrackerGeneral_new-redirect'),
+        this.localizationService?.localize('urlTrackerGeneral_recommendation-ignored'),
+        this.localizationService?.localize('urlTrackerGeneral_recommendation-ignored-message'),
+      ]);
+
+      const translations: Partial<Translations> = {
+        newRedirect,
+        recommendationIgnored,
+        recommendationIgnoredMessage,
+      };
+
+      this.translations = translations;
+
+      return translations;
+    },
+    args: () => [this.translationTaskKey],
+  });
 
   protected async firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): Promise<void> {
     super.firstUpdated(_changedProperties);
@@ -173,8 +207,8 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
       ignore: true,
     });
     this.notificationsService.success(
-      'Recommendation ignored',
-      'The recommendation has been removed from the overview',
+      this.translations.recommendationIgnored || 'Recommendation ignored',
+      this.translations.recommendationIgnoredMessage || 'The recommendation has been removed from the overview',
     );
 
     await this.search();
@@ -182,7 +216,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(LitEleme
 
   private openNewRedirectPanel(data: IRedirectData, solvedRecommendation?: number) {
     const options = createNewRedirectOptions({
-      title: 'New redirect',
+      title: this.translations.newRedirect || 'New redirect',
       submit: this.submitNewRedirectPanel,
       close: this.closePanel,
       data: data,

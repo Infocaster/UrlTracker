@@ -15,13 +15,21 @@ import { LitElement, css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import recommendationTypeStrategyResolver from '../../tabs/recommendations/recommendationType/recommendation.strategy';
 
+import { cardWithClickableHeader } from '@/dashboard/tabs/styles';
+import { Task } from '@lit/task';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import './historyChart.lit';
 import './referrersChart.lit';
-import { ifDefined } from 'lit/directives/if-defined.js';
-import { cardWithClickableHeader } from '@/dashboard/tabs/styles';
 import { AnalyseRecommendationScope } from './scope';
 
 export const ContentElementTag = 'urltracker-sidebar-analyse-recommendation';
+
+type Translations = {
+  close: string;
+  lastTwentyDays: string;
+  referrers: string;
+  noData: string;
+};
 
 @customElement(ContentElementTag)
 export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
@@ -62,6 +70,9 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
 
   @state()
   private recommendationTypeDescription?: string;
+
+  @state()
+  private translationTaskKey: number = 0;
 
   private renderRecommendationType(): unknown {
     if (!this.recommendationTypeText) return nothing;
@@ -108,35 +119,57 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
     this.scope.model.close();
   }
 
-  protected renderHistoryChart() {
-    if (!this.history?.dailyOccurances?.length) return html`<i>No data available</i>`;
+  protected renderHistoryChart(noDataText: string) {
+    if (!this.history?.dailyOccurances?.length) return html`<i>${noDataText}</i>`;
     return html` <urltracker-history-chart .history=${this.history}></urltracker-history-chart> `;
   }
 
-  protected renderReferrersChart() {
-    if (!this.referrers?.length) return html`<i>No data available</i>`;
+  protected renderReferrersChart(noDataText: string) {
+    if (!this.referrers?.length) return html`<i>${noDataText}</i>`;
     return html` <urltracker-referrers-chart .referrers=${this.referrers}></urltracker-referrers-chart> `;
   }
 
+  private _translationTask = new Task(this, {
+    task: async (): Promise<Partial<Translations>> => {
+      const [close, lastTwentyDays, referrers, noData] = await Promise.all([
+        this.localizationService?.localize('urlTrackerGeneral_close'),
+        this.localizationService?.localize('urlTrackerAnalyseRecommendation_history'),
+        this.localizationService?.localize('urlTrackerAnalyseRecommendation_referrers'),
+        this.localizationService?.localize('urlTrackerGeneral_no-data'),
+      ]);
+      return {
+        close,
+        lastTwentyDays,
+        referrers,
+        noData,
+      };
+    },
+    args: () => [this.translationTaskKey],
+  });
+
   protected render() {
-    return html`
-      <div class="header">
-        <h2>${this.renderRecommendationType()}</h2>
-        <span>${this._subText}</span>
-      </div>
-      <div class="main">
-        <uui-box>
-          <p>${this.recommendationTypeDescription}</p>
-          <h6>History (last 20 days)</h6>
-          ${this.renderHistoryChart()}
-          <h6>Most common referrers</h6>
-          ${this.renderReferrersChart()}
-        </uui-box>
-      </div>
-      <div class="footer">
-        <uui-button look="default" color="default" @click=${this.close}>Close</uui-button>
-      </div>
-    `;
+    return this._translationTask.render({
+      complete: (translations: Partial<Translations>) => {
+        return html`
+          <div class="header">
+            <h2>${this.renderRecommendationType()}</h2>
+            <span>${this._subText}</span>
+          </div>
+          <div class="main">
+            <uui-box>
+              <p>${this.recommendationTypeDescription}</p>
+              <h6>${translations.lastTwentyDays}</h6>
+              ${this.renderHistoryChart(translations.noData ?? 'No Data')}
+              <h6>${translations.referrers}</h6>
+              ${this.renderReferrersChart(translations.noData ?? 'No Data')}
+            </uui-box>
+          </div>
+          <div class="footer">
+            <uui-button look="default" color="default" @click=${this.close}>${translations.close}</uui-button>
+          </div>
+        `;
+      },
+    });
   }
 
   static styles = [

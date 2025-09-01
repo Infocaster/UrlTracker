@@ -1,11 +1,13 @@
+import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
 import { scopeContext } from '@/context/scope.context';
+import { IRecommendationTypeStrategies } from '@/dashboard/tabs/recommendations/recommendationType/recommendationType.constant';
 import { ensureExists } from '@/util/tools/existancecheck';
 import { consume } from '@lit/context';
+import { Task } from '@lit/task';
 import { LitElement, css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { ExplainRecommendationsScope } from './scope';
-import { IRecommendationTypeStrategies } from '@/dashboard/tabs/recommendations/recommendationType/recommendationType.constant';
 import variableResource from '../../../util/tools/variableresource.service';
+import { ExplainRecommendationsScope } from './scope';
 
 export const ContentElementTag = 'urltracker-sidebar-inspect-recommendations';
 
@@ -17,10 +19,28 @@ export const RECCOMENDATION_ACTIONS = {
 
 export type IRecommendationAction = (typeof RECCOMENDATION_ACTIONS)[keyof typeof RECCOMENDATION_ACTIONS];
 
+type Translations = {
+  create: string;
+  temporaryRedirectDescription: string;
+  campaign: string;
+  apply: string;
+  createPermanent: string;
+  createPermanentDescription: string;
+  blogs: string;
+  image: string;
+  ignore: string;
+  ignoreDescription: string;
+  exampleUsage: string;
+  close: string;
+};
+
 @customElement(ContentElementTag)
 export class UrlTrackerSidebarRecommendations extends LitElement {
   @consume({ context: scopeContext })
   private $scope?: ExplainRecommendationsScope;
+
+  @consume({ context: localizationServiceContext })
+  private localizationService?: ILocalizationService;
 
   @property({ attribute: false })
   get scope() {
@@ -30,6 +50,12 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
 
   @state()
   private _headerText = '';
+
+  @state()
+  private translationTaskKey: number = 0;
+
+  @state()
+  private translations: Partial<Translations> = {};
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
@@ -54,21 +80,69 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
     return true;
   }
 
+  private _translationTask = new Task(this, {
+    task: async (): Promise<Partial<Translations>> => {
+      const [
+        create,
+        temporaryRedirectDescription,
+        campaign,
+        apply,
+        createPermanent,
+        createPermanentDescription,
+        blogs,
+        image,
+        ignore,
+        ignoreDescription,
+        exampleUsage,
+        close,
+      ] = await Promise.all([
+        this.localizationService?.localize('urlTrackerExplainRecommendation_create'),
+        this.localizationService?.localize('urlTrackerExplainRecommendation_temporary-redirect-description'),
+        this.localizationService?.localize('urlTrackerExplainRecommendation_campaign'),
+        this.localizationService?.localize('urlTrackerExplainRecommendation_apply'),
+        this.localizationService?.localize('urlTrackerExplainRecommendation_create-permanent'),
+        this.localizationService?.localize('urlTrackerExplainRecommendation_create-permanent-description'),
+        this.localizationService?.localize('urlTrackerExplainRecommendation_blogs'),
+        this.localizationService?.localize('urlTrackerExplainRecommendation_image'),
+        this.localizationService?.localize('urlTrackerExplainRecommendation_ignore'),
+        this.localizationService?.localize('urlTrackerExplainRecommendation_ignore-description'),
+        this.localizationService?.localize('urlTrackerGeneral_example-usage'),
+        this.localizationService?.localize('urlTrackerGeneral_close'),
+      ]);
+
+      const translations: Partial<Translations> = {
+        create,
+        temporaryRedirectDescription,
+        campaign,
+        apply,
+        createPermanent,
+        createPermanentDescription,
+        blogs,
+        image,
+        ignore,
+        ignoreDescription,
+        exampleUsage,
+        close,
+      };
+
+      this.translations = translations;
+
+      return translations;
+    },
+    args: () => [this.translationTaskKey],
+  });
+
   private renderTemporaryRedirect() {
     if (!this.canShowRedirectOptions()) return nothing;
     return html`
-      <uui-box headline="Create a temporary redirect">
-        <p>
-          A temporary redirect will redirect users to a different page, but will also tell google and other search
-          engines that the content on this URL will be back later. Use this option if content is only temporarily moved
-          to a different URL.
-        </p>
-        <span>Example usage:</span>
+      <uui-box .headline="${this.translations.create}">
+        <p>${this.translations.temporaryRedirectDescription}</p>
+        <span>${this.translations.exampleUsage}</span>
         <ul>
-          <li>You run a campaign but it’s momentarily suspended and will be continued next month or year</li>
+          <li>${this.translations.campaign}</li>
         </ul>
         <uui-button look="primary" @click=${() => this.save(RECCOMENDATION_ACTIONS.MAKE_TEMPORARY)}
-          >Apply this recommendation</uui-button
+          >${this.translations.apply}</uui-button
         >
       </uui-box>
     `;
@@ -77,19 +151,15 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
   private renderPermanentRedirect() {
     if (!this.canShowRedirectOptions()) return nothing;
     return html`
-      <uui-box headline="Create a permanent redirect">
-        <p>
-          A permanent redirect will redirect users to a different page, but will also tell google and other search
-          engines that the current URL is no longer relevant. Use this option if content is moved to a different URL
-          forever.
-        </p>
-        <span>Example usage:</span>
+      <uui-box .headline="${this.translations.createPermanent}">
+        <p>${this.translations.createPermanentDescription}</p>
+        <span>${this.translations.exampleUsage}</span>
         <ul>
-          <li>You used to post your blogs on /news, but they are now found below /blogs</li>
-          <li>You rely on an image in a social media post, but the image no longer exists or has moved</li>
+          <li>${this.translations.blogs}</li>
+          <li>${this.translations.image}</li>
         </ul>
         <uui-button look="primary" @click=${() => this.save(RECCOMENDATION_ACTIONS.MAKE_PERMANENT)}
-          >Apply this recommendation</uui-button
+          >${this.translations.apply}</uui-button
         >
       </uui-box>
     `;
@@ -97,26 +167,27 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
 
   private renderIgnore() {
     return html`
-      <uui-box headline="Ignore this">
-        <p>
-          Sometimes a url might pop up in here that you simply cannot do anything with. In that case, you can ignore the
-          recommendation and it will be permanently removed from the overview.
-        </p>
+      <uui-box .headline="${this.translations.ignore}">
+        <p>${this.translations.ignoreDescription}</p>
         <uui-button look="primary" @click=${() => this.save(RECCOMENDATION_ACTIONS.IGNORE)}
-          >Apply this recommendation</uui-button
+          >${this.translations.apply}</uui-button
         >
       </uui-box>
     `;
   }
 
   protected render() {
-    return html`
-      <div class="header">${this._headerText}</div>
-      <div class="main">${this.renderTemporaryRedirect()} ${this.renderPermanentRedirect()} ${this.renderIgnore()}</div>
-      <div class="footer">
-        <uui-button look="default" color="default" @click=${this.close}>Close</uui-button>
-      </div>
-    `;
+    return this._translationTask.render({
+      complete: () => html`
+        <div class="header">${this._headerText}</div>
+        <div class="main">
+          ${this.renderTemporaryRedirect()} ${this.renderPermanentRedirect()} ${this.renderIgnore()}
+        </div>
+        <div class="footer">
+          <uui-button look="default" color="default" @click=${this.close}>${this.translations.close}</uui-button>
+        </div>
+      `,
+    });
   }
 
   static styles = css`

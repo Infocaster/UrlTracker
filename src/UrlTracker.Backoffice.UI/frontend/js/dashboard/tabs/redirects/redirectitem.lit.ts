@@ -1,6 +1,7 @@
 import { toReadableDate } from '@/util/functions/dateformatter';
 import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
 import { consume } from '@lit/context';
+import { Task } from '@lit/task';
 import { css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
@@ -13,6 +14,12 @@ import sourceStrategyResolver from './source/source.strategy';
 import targetStrategyResolver from './target/target.strategy';
 
 const RedirectListItem = UrlTrackerSelectableResultListItem<IRedirectResponse>(redirectContext);
+
+type Translations = {
+  edit: string;
+  delete: string;
+  redirectRequired: string;
+};
 
 @customElement('urltracker-redirect-item')
 export class UrlTrackerRedirectItem extends RedirectListItem {
@@ -29,16 +36,46 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
   private createDateText?: string;
 
   @state()
+  private translationTaskKey: number = 0;
+
+  @state()
+  private translations: Partial<Translations> = {};
+
+  @state()
   private redirectSourceText?: string;
 
   @state()
   private sourceIsError: boolean = false;
 
+  private _translationTask = new Task(this, {
+    task: async (): Promise<Partial<Translations>> => {
+      const [edit, deleteText, redirectRequired] = await Promise.all([
+        this.localizationService?.localize('urlTrackerGeneral_edit'),
+        this.localizationService?.localize('urlTrackerGeneral_delete'),
+        this.localizationService?.localize('urlTrackerGeneral_redirect-required'),
+      ]);
+
+      const translations: Partial<Translations> = {
+        edit,
+        delete: deleteText,
+        redirectRequired,
+      };
+
+      this.translations = translations;
+
+      return translations;
+    },
+    args: () => [this.translationTaskKey],
+  });
+
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
     ensureServiceExists(this.localizationService, 'localizationService');
-    ensureExists(this.item, 'A redirect is required to use this element, but no redirect was provided');
+    ensureExists(
+      this.item,
+      this.translations.redirectRequired || 'A redirect is required to use this element, but no redirect was provided',
+    );
 
     const [redirectToText, createDateText] = await this.localizationService.localizeMany([
       'urlTrackerRedirectTarget_redirectto',
@@ -91,29 +128,33 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
     if (this.deleteRedirectLoading) {
       return html`<button class="action-button" disabled>
         <uui-loader-circle id="loader"></uui-loader-circle>
-        Delete
+        ${this.translations.delete}
       </button>`;
     } else {
       return html`<button class="action-button" @click=${this.handleDelete}>
-        <uui-icon name="delete" class="icon-before"></uui-icon>Delete
+        <uui-icon name="delete" class="icon-before"></uui-icon>${this.translations.delete}
       </button>`;
     }
   }
 
   protected renderBody(): unknown {
-    return html`
-      <div class="body">
-        ${this.renderSource()}
-        <div class="target">${this.redirectToText}: ${this.renderTarget()}</div>
-        <uui-button-group class="actions">
-          <button class="action-button" @click=${this.handleEdit}>
-            <uui-icon name="edit" class="icon-before"></uui-icon>Edit
-          </button>
-          ${this.renderDelete()}
-        </uui-button-group>
-        <div class="createdate">${this.createDateText}: ${toReadableDate(this.item.createDate)}</div>
-      </div>
-    `;
+    return this._translationTask.render({
+      complete: () => {
+        return html`
+          <div class="body">
+            ${this.renderSource()}
+            <div class="target">${this.redirectToText}: ${this.renderTarget()}</div>
+            <uui-button-group class="actions">
+              <button class="action-button" @click=${this.handleEdit}>
+                <uui-icon name="edit" class="icon-before"></uui-icon>${this.translations.edit}
+              </button>
+              ${this.renderDelete()}
+            </uui-button-group>
+            <div class="createdate">${this.createDateText}: ${toReadableDate(this.item.createDate)}</div>
+          </div>
+        `;
+      },
+    });
   }
 
   static styles = [

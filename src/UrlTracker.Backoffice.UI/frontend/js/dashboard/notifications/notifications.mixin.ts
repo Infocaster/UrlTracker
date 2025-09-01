@@ -64,7 +64,7 @@ export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructo
 
       const notifications = response;
 
-      const translations = await Promise.all([
+      const [titleTranslations, bodyTranslations] = await Promise.all([
         // localize all titles and descriptions
         localizationService.localizeMany(notifications.map((n) => n.translatableTitleComponent)),
         localizationService.localizeMany(notifications.map((n) => n.translatableBodyComponent)),
@@ -73,8 +73,8 @@ export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructo
       const normalizedNotifications = {
         notifications: notifications.map<ITranslatedNotification>((n, i) => ({
           id: n.id,
-          title: localizationService.tokenReplace(translations[0][i], n.titleArguments),
-          body: localizationService.tokenReplace(translations[1][i], n.bodyArguments),
+          title: localizationService.tokenReplace(titleTranslations[i], n.titleArguments),
+          body: localizationService.tokenReplace(bodyTranslations[i], n.bodyArguments),
         })),
       };
 

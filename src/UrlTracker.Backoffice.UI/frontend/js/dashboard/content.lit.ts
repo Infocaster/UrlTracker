@@ -7,6 +7,7 @@ import { redirectServiceContext } from '@/context/redirectservice.context';
 import { IRedirectService } from '@/services/redirect.service';
 import { ensureServiceExists } from '@/util/tools/existancecheck';
 import { consume, provide } from '@lit/context';
+import { Task } from '@lit/task';
 import { LitElement, css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { localizationServiceContext } from '../context/localizationservice.context';
@@ -15,6 +16,11 @@ import { ILocalizationService } from '../umbraco/localization.service';
 import './footer/footer.lit';
 import { createNewRedirectOptions } from './sidebars/simpleRedirect/manageredirect';
 import tabStrategy, { ITab, TabStrategyCollection } from './tab';
+
+type Translations = {
+  newRedirect: string;
+  localizationServiceRequired: string;
+};
 
 @customElement('urltracker-dashboard-content')
 export class UrlTrackerDashboardContent extends LitElement {
@@ -56,10 +62,35 @@ export class UrlTrackerDashboardContent extends LitElement {
   @state()
   public loading: number;
 
+  @state()
+  private translationTaskKey: number = 0;
+
+  @state()
+  private translations: Partial<Translations> = {};
+
   private tabStrategyCollection: TabStrategyCollection = tabStrategy;
 
   @consume({ context: localizationServiceContext })
   public localizationService?: ILocalizationService;
+
+  private _translationTask = new Task(this, {
+    task: async (): Promise<Partial<Translations>> => {
+      const [newRedirect, localizationServiceRequired] = await Promise.all([
+        this.localizationService?.localize('urlTrackerGeneral_new-redirect'),
+        this.localizationService?.localize('urlTrackerGeneral_localization-service-required'),
+      ]);
+
+      const translations: Partial<Translations> = {
+        newRedirect,
+        localizationServiceRequired,
+      };
+
+      this.translations = translations;
+
+      return translations;
+    },
+    args: () => [this.translationTaskKey],
+  });
 
   constructor() {
     super();
@@ -81,7 +112,10 @@ export class UrlTrackerDashboardContent extends LitElement {
     this.loading++;
     try {
       if (!this.localizationService)
-        throw new Error('localization service is not defined, but is required by this element');
+        throw new Error(
+          this.translations.localizationServiceRequired ||
+            'localization service is not defined, but is required by this element',
+        );
 
       const titleAliases = this.tabStrategyCollection.map((item) => item.nameKey);
       const labelAliases = this.tabStrategyCollection.map((item) => item.labelKey);
@@ -110,7 +144,7 @@ export class UrlTrackerDashboardContent extends LitElement {
 
   private _openSidebar(_: Event) {
     const options = createNewRedirectOptions({
-      title: 'New redirect',
+      title: this.translations.newRedirect || 'New redirect',
       submit: this.closePanel,
       close: this.closePanel,
       advanced: this.activeTab?.alias === 'advancedRedirects',
@@ -150,7 +184,7 @@ export class UrlTrackerDashboardContent extends LitElement {
                 @click="${this._openSidebar}"
               >
                 <uui-icon name="add"></uui-icon>
-                New redirect
+                ${this.translations.newRedirect}
               </uui-button>`
             : nothing}
         </div>`;

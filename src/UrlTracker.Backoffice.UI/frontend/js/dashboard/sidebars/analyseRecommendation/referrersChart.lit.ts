@@ -1,5 +1,6 @@
 import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
 import { IRecommendationReferrerResponse } from '@/services/recommendationanalysis.service';
+import { ensureServiceExists } from '@/util/tools/existancecheck';
 import { consume } from '@lit/context';
 import { Chart } from 'chart.js';
 import { LitElement, PropertyValueMap, css, html } from 'lit';
@@ -22,8 +23,12 @@ export class UrlTrackerReferrersChart extends LitElement {
     return str.length > n ? str.slice(0, n - 1) + '&hellip;' : str;
   };
 
-  private init() {
+  private async init() {
     const data = this.referrers;
+
+    ensureServiceExists(this.localizationService, 'localizationService');
+
+    const label = await this.localizationService.localize('urlTrackerChart_occurances-per-day');
 
     const chart = new Chart(this.chartRef.value!, {
       type: 'bar',
@@ -58,7 +63,7 @@ export class UrlTrackerReferrersChart extends LitElement {
         labels: data.map((row) => this.truncate(`${row.ReferrerOccurances} - ${row.ReferrerUrl}`)),
         datasets: [
           {
-            label: 'Occurances per day',
+            label: label,
             data: data.map((row) => row.ReferrerOccurances),
             backgroundColor: '#1B264F',
             maxBarThickness: 25,
@@ -70,7 +75,7 @@ export class UrlTrackerReferrersChart extends LitElement {
     (chart.canvas.parentNode as HTMLDivElement).style.height = `${data.length * 20 + 20}px`;
   }
 
-  protected firstUpdated(_changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>): void {
+  protected firstUpdated(_changedProperties: PropertyValueMap<unknown> | Map<PropertyKey, unknown>): void {
     super.firstUpdated(_changedProperties);
     this.init();
   }

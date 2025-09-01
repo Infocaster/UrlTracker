@@ -4,12 +4,21 @@ import { IRedirectResponse } from '@/services/redirect.service';
 import { toReadableDate } from '@/util/functions/dateformatter';
 import { ensureExists } from '@/util/tools/existancecheck';
 import { consume } from '@lit/context';
+import { Task } from '@lit/task';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { InspectRedirectScope } from './scope';
 import sourceStrategyResolver from '../../tabs/redirects/source/source.strategy';
+import { InspectRedirectScope } from './scope';
 
 export const ContentElementTag = 'urltracker-sidebar-inspect-redirect';
+
+type Translations = {
+  permanent: string;
+  yes: string;
+  no: string;
+  createdAt: string;
+  cancel: string;
+};
 
 @customElement(ContentElementTag)
 export class UrlTrackerSidebarInspectRedirect extends LitElement {
@@ -31,6 +40,37 @@ export class UrlTrackerSidebarInspectRedirect extends LitElement {
   @state()
   private _headerText = 'Inspect Redirect';
 
+  @state()
+  private translationTaskKey: number = 0;
+
+  @state()
+  private translations: Partial<Translations> = {};
+
+  private _translationTask = new Task(this, {
+    task: async (): Promise<Partial<Translations>> => {
+      const [permanent, yes, no, createdAt, cancel] = await Promise.all([
+        this._localizationService?.localize('urlTrackerGeneral_permanent'),
+        this._localizationService?.localize('urlTrackerGeneral_yes'),
+        this._localizationService?.localize('urlTrackerGeneral_no'),
+        this._localizationService?.localize('urlTrackerGeneral_created-at'),
+        this._localizationService?.localize('urlTrackerGeneral_cancel'),
+      ]);
+
+      const translations: Partial<Translations> = {
+        permanent,
+        yes,
+        no,
+        createdAt,
+        cancel,
+      };
+
+      this.translations = translations;
+
+      return translations;
+    },
+    args: () => [this.translationTaskKey],
+  });
+
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
     this.data = this.scope.model.redirect;
@@ -45,27 +85,31 @@ export class UrlTrackerSidebarInspectRedirect extends LitElement {
   }
 
   protected render() {
-    return html`<div class="header">${this._headerText}</div>
-      <div class="main">
-        <uui-box>
-          <div class="item">
-            <dt>Permanent</dt>
-            <dd>${this.data.permanent ? 'Yes' : 'No'}</dd>
-          </div>
-          <div class="item">
-            <dt>Created at</dt>
-            <dd>${toReadableDate(this.data.createDate)}</dd>
-          </div>
-          <!-- updateDate is not persisted yet in the database -->
-          <!-- <div class="item">
+    return this._translationTask.render({
+      complete: () => {
+        return html`<div class="header">${this._headerText}</div>
+          <div class="main">
+            <uui-box>
+              <div class="item">
+                <dt>${this.translations.permanent}</dt>
+                <dd>${this.data.permanent ? this.translations.yes : this.translations.no}</dd>
+              </div>
+              <div class="item">
+                <dt>${this.translations.createdAt}</dt>
+                <dd>${toReadableDate(this.data.createDate)}</dd>
+              </div>
+              <!-- updateDate is not persisted yet in the database -->
+              <!-- <div class="item">
                 <dt>Last updated on</dt>
                 <dd>${toReadableDate(this.data.updateDate)}</dd>
               </div> -->
-        </uui-box>
-      </div>
-      <div class="footer">
-        <uui-button look="default" color="default" @click=${this.close}>Cancel</uui-button>
-      </div>`;
+            </uui-box>
+          </div>
+          <div class="footer">
+            <uui-button look="default" color="default" @click=${this.close}>${this.translations.cancel}</uui-button>
+          </div>`;
+      },
+    });
   }
 
   static styles = css`

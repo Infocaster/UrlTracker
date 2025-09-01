@@ -6,6 +6,7 @@ import { IRedirectData, IRedirectResponse, IRedirectService } from '@/services/r
 import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
 import variableresourceService from '@/util/tools/variableresource.service';
 import { consume } from '@lit/context';
+import { Task } from '@lit/task';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ManageRedirectScope } from './scope';
@@ -19,6 +20,15 @@ import { LoadingStatus } from '@/types/loadingStatus';
 import '../../../util/elements/redirects/simpleRedirect/createSimpleRedirect.lit';
 
 export const ContentElementTag = 'urltracker-sidebar-simple-redirect';
+
+type Translations = {
+  cancel: string;
+  save: string;
+  redirectUpdated: string;
+  redirectUpdatedMessage: string;
+  redirectCreated: string;
+  redirectCreatedMessage: string;
+};
 
 @customElement(ContentElementTag)
 export class UrlTrackerSidebarSimpleRedirect extends LitElement {
@@ -75,6 +85,12 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   private headerText = '';
 
   @state()
+  private translationTaskKey: number = 0;
+
+  @state()
+  private translations: Partial<Translations> = {};
+
+  @state()
   private redirectData: IRedirectData = {
     source: {
       strategy: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').url,
@@ -92,6 +108,34 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
 
   @state()
   private saveLoading: LoadingStatus = undefined;
+
+  private _translationTask = new Task(this, {
+    task: async (): Promise<Partial<Translations>> => {
+      const [cancel, save, redirectUpdated, redirectUpdatedMessage, redirectCreated, redirectCreatedMessage] =
+        await Promise.all([
+          this._localizationService?.localize('urlTrackerGeneral_cancel'),
+          this._localizationService?.localize('urlTrackerGeneral_save'),
+          this._localizationService?.localize('urlTrackerGeneral_redirect-updated'),
+          this._localizationService?.localize('urlTrackerGeneral_redirect-updated-message'),
+          this._localizationService?.localize('urlTrackerGeneral_redirect-created'),
+          this._localizationService?.localize('urlTrackerGeneral_redirect-created-message'),
+        ]);
+
+      const translations: Partial<Translations> = {
+        cancel,
+        save,
+        redirectUpdated,
+        redirectUpdatedMessage,
+        redirectCreated,
+        redirectCreatedMessage,
+      };
+
+      this.translations = translations;
+
+      return translations;
+    },
+    args: () => [this.translationTaskKey],
+  });
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
@@ -116,13 +160,19 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
       let response: IRedirectResponse;
       if (this.scope.model.id) {
         response = await this.redirectService.update(this.scope.model.id, this.redirectData);
-        this.notificationService.success('Redirect updated', 'The redirect has been successfully updated');
+        this.notificationService.success(
+          this.translations.redirectUpdated || 'Redirect updated',
+          this.translations.redirectUpdatedMessage || 'The redirect has been successfully updated',
+        );
       } else {
         response = await this.redirectService.create({
           ...this.redirectData,
           solvedRecommendation: this.$scope?.model.solvedRecommendation,
         });
-        this.notificationService.success('Redirect created', 'The redirect has been successfully created');
+        this.notificationService.success(
+          this.translations.redirectCreated || 'Redirect created',
+          this.translations.redirectCreatedMessage || 'The redirect has been successfully created',
+        );
       }
 
       this.scope.model.submit(response);
@@ -147,8 +197,10 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
         ></urltracker-create-simple-redirect>
       </div>
       <div class="footer">
-        <uui-button look="default" color="default" @click=${this.close}>Cancel</uui-button>
-        <uui-button look="primary" .state=${this.saveLoading} color="positive" @click=${this.save}>Save</uui-button>
+        <uui-button look="default" color="default" @click=${this.close}>${this.translations.cancel}</uui-button>
+        <uui-button look="primary" .state=${this.saveLoading} color="positive" @click=${this.save}
+          >${this.translations.save}</uui-button
+        >
       </div>`;
   }
 

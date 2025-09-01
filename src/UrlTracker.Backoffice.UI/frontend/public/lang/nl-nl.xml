@@ -1,4 +1,54 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8"  <area alias="advancedredirectswelcomebody">Bovenop de standaard redirects, laat deze pagina ook
+      de redirects zien met geavanceerde instellingen.</key>
+  </area>
+  <area alias="urlTrackerGeneral">
+    <key alias="loading">Laden...</key>
+    <key alias="no-data">Geen gegevens beschikbaar</key>
+    <key alias="close">Sluiten</key>
+    <key alias="example-usage">Voorbeeld gebruik:</key>
+    <key alias="yes">Ja</key>
+    <key alias="no">Nee</key>
+    <key alias="permanent">Permanent</key>
+    <key alias="cancel">Annuleren</key>
+    <key alias="created-at">Aangemaakt op</key>
+    <key alias="new-redirect">Nieuwe redirect</key>
+    <key alias="localization-service-required">localization service is niet gedefinieerd, maar is vereist voor dit element</key>
+    <key alias="save">Opslaan</key>
+    <key alias="edit">Bewerken</key>
+    <key alias="delete">Verwijderen</key>
+    <key alias="content-not-found">Content item kon niet worden gevonden</key>
+    <key alias="redirect-required">Een redirect is vereist om dit element te gebruiken, maar er is geen redirect opgegeven</key>
+    <key alias="redirect-updated">Redirect bijgewerkt</key>
+    <key alias="redirect-updated-message">De redirect is succesvol bijgewerkt</key>
+    <key alias="redirect-created">Redirect aangemaakt</key>
+    <key alias="redirect-created-message">De redirect is succesvol aangemaakt</key>
+    <key alias="recommendation-ignored">Advies genegeerd</key>
+    <key alias="recommendation-ignored-message">Het advies is verwijderd uit het overzicht</key>
+    <key alias="redirect-deleted">Redirect verwijderd</key>
+    <key alias="redirect-deleted-message">De redirect is succesvol verwijderd</key>
+    <key alias="redirects-exported">Redirects geëxporteerd</key>
+    <key alias="redirects-exported-message">Controleer je downloads om de geëxporteerde redirects te vinden</key>
+    <key alias="template-downloaded">Template gedownload</key>
+    <key alias="template-downloaded-message">Controleer je downloads om de template te vinden</key>
+    <key alias="edit-redirect">Bewerken</key>
+    <key alias="all">Alle</key>
+    <key alias="most-recently-updated">Meest recent bijgewerkt</key>
+    <key alias="url">Url</key>
+    <key alias="importance">Belangrijkheid</key>
+    <key alias="temporary">Tijdelijk</key>
+    <key alias="redirects-converted">Redirects geconverteerd</key>
+    <key alias="redirects-converted-message">De geselecteerde redirects zijn geconverteerd</key>
+    <key alias="redirects-deleted-multiple">Redirects verwijderd</key>
+    <key alias="redirects-deleted-multiple-message">De geselecteerde redirects zijn verwijderd</key>
+    <key alias="redirects-imported">Redirects geïmporteerd</key>
+    <key alias="redirects-imported-message">De redirects zijn succesvol geïmporteerd</key>
+    <key alias="ignore">Negeren</key>
+    <key alias="order-by">Sorteren op</key>
+    <key alias="results">Resultaten</key>
+    <key alias="recommendations-ignored">Adviezen genegeerd</key>
+    <key alias="recommendations-ignored-message">Alle geselecteerde adviezen zijn verwijderd uit het overzicht</key>
+    <key alias="type">Type</key>
+  </area>alone="yes"?>
 <language alias="nl" intName="Dutch (NL)" localName="Nederlands (NL)" lcid="" culture="nl-NL">
   <area alias="dashboardTabs">
     <key alias="UrlTracker">URL Tracker</key>
@@ -8,13 +58,13 @@
     <key alias="urlTrackerSettingsTree">URL Tracker instellingen</key>
   </area>
   <area alias="urlTrackerDashboardTabs">
-    <key alias="overview">Overzicht</key>
+    <key alias="dashboard">Dashboard</key>
     <key alias="recommendations">Adviezen</key>
     <key alias="redirects">Redirects</key>
     <key alias="advancedRedirects">Geavanceerde redirects</key>
   </area>
   <area alias="urlTrackerDashboardTabLabels">
-    <key alias="overview">Overzicht</key>
+    <key alias="dashboard">Dashboard</key>
     <key alias="recommendations">Adviezen</key>
     <key alias="redirects">Redirects</key>
     <key alias="advancedRedirects">Geavanceerde redirects</key>
@@ -69,6 +119,8 @@
     <key alias="header">Acties</key>
     <key alias="new">Nieuwe redirect</key>
     <key alias="export">Redirects exporteren</key>
+    <key alias="exporting">Redirects exporteren</key>
+    <key alias="convert-to-permanent">Converteren naar permanente redirect</key>
   </area>
   <area alias="urlTrackerRedirectUpload">
     <key alias="header">Importeren</key>
@@ -103,7 +155,7 @@
       Maak een redirect aan om de gebruikers door te sturen naar een pagina die wél bestaat.
     </key>
     <key alias="technicalFile">Technisch bestand kan niet gevonden worden</key>
-    <key alias="technicalFile">
+    <key alias="technicalFiledescription">
       Deze regel geeft aan dat een technisch bestand niet gevonden kan worden. De gevolgen hiervan
       zijn afhankelijk van het soort bestand.
       Neem contact op met je systeem beheerder en vraag om instructies wat je hier mee kunt doen.
@@ -142,5 +194,42 @@
   </area>
   <area alias="urlTrackerRecommendationFilter">
     <key alias="search-placeholder">Typ om te zoeken...</key>
+  </area>
+  <area alias="urlTrackerAnalyseRecommendation">
+    <key alias="history">Geschiedenis (laatste 20 dagen)</key>
+    <key alias="referrers">Meest voorkomende verwijzers</key>
+  </area>
+  <area alias="urlTrackerExplainRecommendation">
+    <key alias="create">Maak een tijdelijke redirect</key>
+	<key alias="temporary-redirect-description">
+          Een tijdelijke redirect stuurt gebruikers door naar een andere pagina, maar vertelt
+          google en andere zoekmachines ook dat de content op deze URL later weer terug zal komen. Gebruik deze optie als content
+          alleen tijdelijk naar een andere URL is verplaatst.
+	</key>
+    <key alias="campaign">Je voert een campagne maar deze is tijdelijk stopgezet en wordt volgende maand of jaar voortgezet</key>
+    <key alias="apply">Pas dit advies toe</key>
+    <key alias="create-permanent">Maak een permanente redirect</key>
+    <key alias="create-permanent-description">
+          Een permanente redirect stuurt gebruikers door naar een andere pagina, maar vertelt
+          google en andere zoekmachines ook dat de huidige URL niet langer relevant is. Gebruik deze optie als content
+          voor altijd naar een andere URL is verplaatst.
+        </key>
+    <key alias="blogs">Je postte vroeger je blogs op /news, maar ze zijn nu te vinden onder /blogs</key>
+    <key alias="image">Je vertrouwt op een afbeelding in een social media post, maar de afbeelding bestaat niet meer of is verplaatst</key>
+    <key alias="ignore">Negeer dit</key>
+    <key alias="ignore-description">
+          Soms komt er een url voor die je simpelweg niets mee kunt doen. In dat
+          geval kun je het advies negeren en het wordt permanent verwijderd uit het overzicht.
+	</key>
+  </area>
+  <area alias="urlTrackerChart">
+    <key alias="first-occurance">Eerste voorkomen</key>
+    <key alias="last-occurance">Laatste voorkomen</key>
+    <key alias="average-per-day">Gemiddelde per dag</key>
+    <key alias="trend">Trend</key>
+    <key alias="occurances-per-day">Voorkomens per dag</key>
+  </area>
+  <area alias="urlTrackerErrors">
+    <key alias="alias-required">Een alias is vereist bij het gebruik van dit element, maar er is geen opgegeven.</key>
   </area>
 </language>
