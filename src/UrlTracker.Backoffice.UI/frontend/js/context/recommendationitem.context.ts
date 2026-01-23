@@ -1,5 +1,5 @@
 import { createContext } from '@lit/context';
-import type { IRecommendationResponse } from '../services/recommendation.service';
-export type { IRecommendationResponse } from '../services/recommendation.service';
+import type { RecommendationResponse } from '../../../api-client/types.gen';
+export type { RecommendationResponse } from '../../../api-client/types.gen';
 export const recommendationKey = 'recommendation';
-export const recommendationContext = createContext<IRecommendationResponse>(recommendationKey);
+export const recommendationContext = createContext<RecommendationResponse>(recommendationKey);

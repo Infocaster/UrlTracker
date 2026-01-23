@@ -1,8 +1,9 @@
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 @customElement('urltracker-bulk-actions')
-export class UrlTrackerBulkActions extends LitElement {
+export class UrlTrackerBulkActions extends UmbElementMixin(LitElement) {
   @property({ type: Number })
   public selectedCount: number = 0;
 

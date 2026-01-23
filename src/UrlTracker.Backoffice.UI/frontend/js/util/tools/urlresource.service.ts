@@ -1,6 +1,4 @@
-﻿import variableResource, { IVariableResource } from './variableresource.service';
-
-export interface IUrlResource {
+﻿export interface IUrlResource {
   getController(controller: string): IControllerUrlResource;
 }
 
@@ -18,10 +16,14 @@ export interface IControllerUrlResource {
 }
 
 export class UrlResource implements IUrlResource {
-  constructor(private _variableResource: IVariableResource) {}
+  constructor() {}
 
   public getController(controller: string): IControllerUrlResource {
-    return new ControllerUrlResource(this._variableResource.get(controller, this.isControllerDefinition));
+    // Create a mock controller definition for the given controller name
+    const mockControllerDef: IControllerDefinition = {
+      base: `/umbraco/management/api/v1/url-tracker/${controller.toLowerCase()}`,
+    };
+    return new ControllerUrlResource(mockControllerDef);
   }
 
   private isControllerDefinition = (obj: unknown): obj is IControllerDefinition => {
@@ -132,4 +134,4 @@ class ControllerUrlResource implements IControllerUrlResource {
   }
 }
 
-export default new UrlResource(variableResource);
+export default new UrlResource();

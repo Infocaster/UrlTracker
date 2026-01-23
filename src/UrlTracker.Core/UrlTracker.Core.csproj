@@ -4,9 +4,9 @@
     <Title>URL Tracker Core</Title>
     <Description>This package contains the core services for the URL Tracker. Useful for package development.</Description>
     <RootNamespace>UrlTracker.Core</RootNamespace>
-    <PackageReleaseNotes>1 new feature
+    <PackageReleaseNotes>1 change
 
-- Add support for importing traditional csv formatted files</PackageReleaseNotes>
+- Update to Umbraco 16</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Infrastructure" Version="16.1.1" />

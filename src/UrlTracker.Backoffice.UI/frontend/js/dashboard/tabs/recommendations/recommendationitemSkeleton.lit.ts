@@ -1,11 +1,11 @@
 import { css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { IRecommendationResponse, recommendationContext } from '../../../context/recommendationitem.context';
+import { RecommendationResponse } from '../../../context/recommendationitem.context';
 import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';
 import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
 import './recommendationTag/recommendationTag.lit';
 
-const RecommendationListItem = UrlTrackerSelectableResultListItem<IRecommendationResponse>(recommendationContext);
+const RecommendationListItem = UrlTrackerSelectableResultListItem<RecommendationResponse>();
 
 @customElement('urltracker-recommendation-item-skeleton')
 export class UrlTrackerRecommendationItemSkeleton extends RecommendationListItem {

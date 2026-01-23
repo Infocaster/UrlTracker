@@ -1,20 +1,7 @@
 import '@oddbird/popover-polyfill';
 import './dashboard';
-import {
-  ngAnalyseRecommendationSidebar,
-  ngInspectRecommendationsSidebar,
-  ngInspectRedirectSidebar,
-  ngSimpleRedirectSidebar,
-  ngUrltrackerDashboard,
-} from './dashboard/directive';
+
 import './dashboard/main.lit';
-import './dashboard/notifications/notification.lit';
-import './dashboard/tabs/landingpage.lit';
-import './dashboard/tabs/recommendations.lit';
-import './dashboard/tabs/recommendations/recommendationType';
-import './dashboard/tabs/redirects.lit';
-import './dashboard/tabs/redirects/source';
-import './dashboard/tabs/redirects/target';
 
 import { TabBuilder } from './util/tools/builder/tabBuilder';
 
@@ -22,12 +9,27 @@ window.URL_TRACKER = {
   TabBuilder: new TabBuilder(),
 };
 
-//@ts-ignore global angular import works, but typescript fails to recognize it
-const module = angular.module('umbraco');
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { css, html } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
-// directives
-module.directive(ngUrltrackerDashboard.alias, ngUrltrackerDashboard);
-module.directive(ngSimpleRedirectSidebar.alias, ngSimpleRedirectSidebar);
-module.directive(ngInspectRedirectSidebar.alias, ngInspectRedirectSidebar);
-module.directive(ngInspectRecommendationsSidebar.alias, ngInspectRecommendationsSidebar);
-module.directive(ngAnalyseRecommendationSidebar.alias, ngAnalyseRecommendationSidebar);
+import './dashboard/tabs/recommendations/recommendationType/index.ts';
+import './dashboard/tabs/redirects/source/index.ts';
+import './dashboard/tabs/redirects/target/index.ts';
+
+@customElement('url-tracker')
+export default class UrlTracker extends UmbLitElement {
+  constructor() {
+    super();
+  }
+
+  render() {
+    return html` <urltracker-dashboard></urltracker-dashboard> `;
+  }
+
+  static styles = css`
+    :host {
+      height: 100%;
+    }
+  `;
+}

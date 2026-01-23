@@ -1,42 +1,24 @@
-import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
-import { IRecommendationHistoryResponse } from '@/services/recommendationanalysis.service';
 import { toReadableDate } from '@/util/functions/dateformatter';
-import { ensureServiceExists } from '@/util/tools/existancecheck';
-import { consume } from '@lit/context';
-import { Task } from '@lit/task';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import Chart from 'chart.js/auto';
 import { LitElement, PropertyValueMap, css, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
+import type { RecommendationHistory } from '../../../../../api-client/types.gen';
 
 export const ContentElementTag = 'urltracker-history-chart';
 
-type Translations = {
-  firstOccurance: string;
-  lastOccurance: string;
-  averagePerDay: string;
-  trend: string;
-};
-
 @customElement(ContentElementTag)
-export class UrlTrackerHistoryChart extends LitElement {
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
-
+export class UrlTrackerHistoryChart extends UmbElementMixin(LitElement) {
   @property({ attribute: false, type: Object })
-  private history!: IRecommendationHistoryResponse;
-
-  @state()
-  private translationTaskKey: number = 0;
+  private history!: RecommendationHistory;
 
   private chartRef: Ref<HTMLCanvasElement> = createRef();
 
   private async init() {
     const data = this.history.dailyOccurances;
 
-    ensureServiceExists(this.localizationService, 'localizationService');
-
-    const label = await this.localizationService.localize('urlTrackerChart_occurances-per-day');
+    const label = this.localize.term('urlTrackerChart_occurances-per-day');
 
     new Chart(this.chartRef.value!, {
       type: 'bar',
@@ -78,54 +60,38 @@ export class UrlTrackerHistoryChart extends LitElement {
     this.init();
   }
 
-  private _translationTask = new Task(this, {
-    task: async (): Promise<Partial<Translations>> => {
-      const [firstOccurance, lastOccurance, averagePerDay, trend] = await Promise.all([
-        this.localizationService?.localize('urlTrackerChart_first-occurance'),
-        this.localizationService?.localize('urlTrackerChart_last-occurance'),
-        this.localizationService?.localize('urlTrackerChart_average-per-day'),
-        this.localizationService?.localize('urlTrackerChart_trend'),
-      ]);
-      return {
-        firstOccurance,
-        lastOccurance,
-        averagePerDay,
-        trend,
-      };
-    },
-    args: () => [this.translationTaskKey],
-  });
-
   protected render() {
-    return this._translationTask.render({
-      complete: (translations: Partial<Translations>) => {
-        return html`
-          <div class="history-chart">
-            <div class="chart-container">
-              <canvas ${ref(this.chartRef)}></canvas>
-            </div>
-            <div class="history-chart-legend">
-              <div class="item">
-                <dt>${translations.firstOccurance}</dt>
-                <dd>${toReadableDate(new Date(this.history.firstOccurance))}</dd>
-              </div>
-              <div class="item">
-                <dt>${translations.lastOccurance}</dt>
-                <dd>${toReadableDate(new Date(this.history.lastOccurance))}</dd>
-              </div>
-              <div class="item">
-                <dt>${translations.averagePerDay}</dt>
-                <dd>${this.history.averagePerDay}</dd>
-              </div>
-              <div class="item">
-                <dt>${translations.trend}</dt>
-                <dd>${this.history.trend}</dd>
-              </div>
-            </div>
+    return html`
+      <div class="history-chart">
+        <div class="chart-container">
+          <canvas ${ref(this.chartRef)}></canvas>
+        </div>
+        <div class="history-chart-legend">
+          <div class="item">
+            <dt>
+              <umb-localize key="urlTrackerChart_first-occurance">First occurance</umb-localize>
+            </dt>
+            <dd>${toReadableDate(new Date(this.history.firstOccurance))}</dd>
           </div>
-        `;
-      },
-    });
+          <div class="item">
+            <dt><umb-localize key="urlTrackerChart_last-occurance">Last occurance</umb-localize></dt>
+            <dd>${toReadableDate(new Date(this.history.lastOccurance))}</dd>
+          </div>
+          <div class="item">
+            <dt>
+              <umb-localize key="urlTrackerChart_average-per-day">Average per day</umb-localize>
+            </dt>
+            <dd>${this.history.averagePerDay}</dd>
+          </div>
+          <div class="item">
+            <dt>
+              <umb-localize key="urlTrackerChart_trend">Trend</umb-localize>
+            </dt>
+            <dd>${this.history.trend}</dd>
+          </div>
+        </div>
+      </div>
+    `;
   }
 
   static styles = css`

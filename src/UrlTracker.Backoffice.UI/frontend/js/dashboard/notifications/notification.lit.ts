@@ -1,9 +1,10 @@
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ITranslatedNotification } from './notification';
 
 @customElement('urltracker-notification-collection')
-export class UrlTrackerNotificationCollection extends LitElement {
+export class UrlTrackerNotificationCollection extends UmbElementMixin(LitElement) {
   @property({ type: Array })
   public notifications: Array<ITranslatedNotification> = [];
 

@@ -1,5 +1,5 @@
 import { createContext } from '@lit/context';
-import type { IRedirectResponse } from '../services/redirect.service';
-export type { IRedirectResponse } from '../services/redirect.service';
+import type { RedirectResponse } from '../../../api-client/types.gen';
+export type { RedirectResponse } from '../../../api-client/types.gen';
 export const redirectKey = 'redirect';
-export const redirectContext = createContext<IRedirectResponse>(redirectKey);
+export const redirectContext = createContext<RedirectResponse>(redirectKey);

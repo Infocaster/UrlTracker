@@ -1,13 +1,17 @@
-import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
 import { ContextConsumer } from '@lit/context';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
+import { umbHttpClient } from '@umbraco-cms/backoffice/http-client';
+import { tryExecute } from '@umbraco-cms/backoffice/resources';
 import { html, nothing } from 'lit';
-import { ILocalizationService, localizationServiceContext } from '../../context/localizationservice.context';
+import { getUmbracoManagementApiV1UrlTrackerNotificationsByAlias } from '../../../../api-client';
+import type { Client } from '../../../../api-client/client/types.gen';
 import { INotificationService, notificationServiceContext } from '../../context/notificationservice.context';
 import { LitElementConstructor } from '../../util/tools/litelementconstructor';
 import { ITranslatedNotification, ITranslatedNotificationCollection } from './notification';
+import './notification.lit';
 
 export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructor>(Base: TBase, alias?: string) {
-  return class NotificationWrapper extends Base {
+  return class NotificationWrapper extends UmbElementMixin(Base) {
     private _alias = alias;
     protected set alias(newAlias: string) {
       this._alias = newAlias;
@@ -25,16 +29,9 @@ export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructo
     private _notificationServiceConsumer = new ContextConsumer(this, {
       context: notificationServiceContext,
     });
-    private _localizationServiceConsumer = new ContextConsumer(this, {
-      context: localizationServiceContext,
-    });
 
     protected get notificationService(): INotificationService | undefined {
       return this._notificationServiceConsumer.value;
-    }
-
-    protected get localizationService(): ILocalizationService | undefined {
-      return this._localizationServiceConsumer.value;
     }
 
     private async onNotificationClosed(event: CustomEvent<ITranslatedNotification>) {
@@ -50,31 +47,48 @@ export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructo
     }
 
     protected async updateNotifications(alias: string): Promise<void> {
-      const notificationService = this.notificationService;
-      const localizationService = this.localizationService;
-
-      ensureServiceExists(notificationService, 'notification service');
-      ensureServiceExists(localizationService, 'localization service');
-
-      const response = await notificationService.GetNotifications(alias);
-      if (!response) {
+      const response = await tryExecute(
+        this,
+        getUmbracoManagementApiV1UrlTrackerNotificationsByAlias({
+          client: umbHttpClient as unknown as Client,
+          path: {
+            alias: alias,
+          },
+        }),
+      );
+      if (!response || !response.data || response.data.length === 0) {
         this.notifications = undefined;
         return;
       }
 
-      const notifications = response;
+      const notifications = response.data;
 
-      const [titleTranslations, bodyTranslations] = await Promise.all([
-        // localize all titles and descriptions
-        localizationService.localizeMany(notifications.map((n) => n.translatableTitleComponent)),
-        localizationService.localizeMany(notifications.map((n) => n.translatableBodyComponent)),
-      ]);
+      //TODO: check token replace
+      //   const [titleTranslations, bodyTranslations] = await Promise.all([
+      //     // localize all titles and descriptions
+      //     localizationService.localizeMany(notifications.map((n) => n.translatableTitleComponent)),
+      //     localizationService.localizeMany(notifications.map((n) => n.translatableBodyComponent)),
+      //   ]);
+
+      //   const normalizedNotifications = {
+      //     notifications: notifications.map<ITranslatedNotification>((n, i) => ({
+      //       id: n.id,
+      //       title: localizationService.tokenReplace(titleTranslations[i], n.titleArguments),
+      //       body: localizationService.tokenReplace(bodyTranslations[i], n.bodyArguments),
+      //     })),
+      //   };
+
+      const titleTranslations = notifications
+        .map((n) => n.translatableTitleComponent)
+        .map((t) => this.localize.term(t));
+
+      const bodyTranslations = notifications.map((n) => n.translatableBodyComponent).map((t) => this.localize.term(t));
 
       const normalizedNotifications = {
         notifications: notifications.map<ITranslatedNotification>((n, i) => ({
           id: n.id,
-          title: localizationService.tokenReplace(titleTranslations[i], n.titleArguments),
-          body: localizationService.tokenReplace(bodyTranslations[i], n.bodyArguments),
+          title: titleTranslations[i],
+          body: bodyTranslations[i],
         })),
       };
 
@@ -86,12 +100,12 @@ export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructo
       }
 
       this.notifications = normalizedNotifications;
+      this.requestUpdate();
     }
 
     connectedCallback(): void {
       super.connectedCallback();
-      ensureExists(this._alias, 'An alias is required when using this element, but none was provided.');
-      this.updateNotifications(this._alias);
+      this.updateNotifications(this._alias!);
     }
 
     protected renderInternal(): unknown {

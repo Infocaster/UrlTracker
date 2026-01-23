@@ -4,9 +4,9 @@
     <Title>UrlTracker Global Block List</Title>
     <Description>The global block list provides an extra filter for the URL Tracker that retrieves a global list from GitHub and adds it as a filter.</Description>
     <RootNamespace>UrlTracker.GlobalBlocklist</RootNamespace>
-    <PackageReleaseNotes>1 new feature
+    <PackageReleaseNotes>1 change
 
-- Add support for importing traditional csv formatted files</PackageReleaseNotes>
+- Update to Umbraco 16</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Polly" Version="8.6.3" />

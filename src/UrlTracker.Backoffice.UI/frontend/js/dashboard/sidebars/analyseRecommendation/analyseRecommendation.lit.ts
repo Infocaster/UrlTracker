@@ -1,66 +1,50 @@
-import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
-import {
-  IRecommendationsAnalysisService,
-  recommendationsAnalysisServiceContext,
-} from '@/context/recommendationsanalysis.context';
-import { scopeContext } from '@/context/scope.context';
-import { IRecommendationResponse } from '@/services/recommendation.service';
-import {
-  IRecommendationHistoryResponse,
-  IRecommendationReferrerResponse,
-} from '@/services/recommendationanalysis.service';
-import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
-import { consume } from '@lit/context';
-import { LitElement, css, html, nothing } from 'lit';
+import { css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import recommendationTypeStrategyResolver from '../../tabs/recommendations/recommendationType/recommendation.strategy';
 
 import { cardWithClickableHeader } from '@/dashboard/tabs/styles';
-import { Task } from '@lit/task';
+import { umbHttpClient } from '@umbraco-cms/backoffice/http-client';
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { UmbModalContext, UmbModalExtensionElement } from '@umbraco-cms/backoffice/modal';
+import { tryExecute } from '@umbraco-cms/backoffice/resources';
 import { ifDefined } from 'lit/directives/if-defined.js';
+import type { Client } from '../../../../../api-client/client/types.gen';
+import {
+  getUmbracoManagementApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistory,
+  getUmbracoManagementApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrers,
+} from '../../../../../api-client/sdk.gen';
+import { RecommendationHistory, RecommendationResponse, ReferrerResponse } from '../../../../../api-client/types.gen';
+import {
+  UrlTrackerAnalyseRecommendationModalData,
+  UrlTrackerAnalyseRecommendationModalValue,
+} from '../analyseRecommendation-modal.token';
 import './historyChart.lit';
 import './referrersChart.lit';
-import { AnalyseRecommendationScope } from './scope';
 
 export const ContentElementTag = 'urltracker-sidebar-analyse-recommendation';
 
-type Translations = {
-  close: string;
-  lastTwentyDays: string;
-  referrers: string;
-  noData: string;
-};
-
 @customElement(ContentElementTag)
-export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
+export class UrlTrackerSidebarAnalyseRecommendation
+  extends UmbLitElement
+  implements
+    UmbModalExtensionElement<UrlTrackerAnalyseRecommendationModalData, UrlTrackerAnalyseRecommendationModalValue>
+{
   private recommendationTypeStrategy = recommendationTypeStrategyResolver;
 
-  @consume({ context: recommendationsAnalysisServiceContext })
-  private recommendationsAnalysisService?: IRecommendationsAnalysisService;
-
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
-
-  @consume({ context: scopeContext })
-  private $scope?: AnalyseRecommendationScope;
+  @property({ attribute: false })
+  modalContext?: UmbModalContext<UrlTrackerAnalyseRecommendationModalData, UrlTrackerAnalyseRecommendationModalValue>;
 
   @property({ attribute: false })
-  get scope() {
-    ensureExists(this.$scope, 'scope');
-    return this.$scope;
-  }
-
-  @state()
-  private data!: IRecommendationResponse;
+  data?: UrlTrackerAnalyseRecommendationModalData;
 
   @state()
   private _subText = '';
 
   @state()
-  private referrers: IRecommendationReferrerResponse | null = null;
+  private referrers: ReferrerResponse[] | undefined = undefined;
 
   @state()
-  private history: IRecommendationHistoryResponse | null = null;
+  private history: RecommendationHistory | undefined = undefined;
 
   @state()
   private recommendationTypeText?: string;
@@ -70,9 +54,6 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
 
   @state()
   private recommendationTypeDescription?: string;
-
-  @state()
-  private translationTaskKey: number = 0;
 
   private renderRecommendationType(): unknown {
     if (!this.recommendationTypeText) return nothing;
@@ -88,88 +69,93 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    ensureServiceExists(this.recommendationsAnalysisService, 'recommendationsAnalysisService');
-    ensureServiceExists(this.localizationService, 'localizationService');
+    const referrersPromise = tryExecute(
+      this,
+      getUmbracoManagementApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrers({
+        client: umbHttpClient as unknown as Client,
+        path: {
+          recommendationId: this.data?.recommendation?.id!,
+        },
+      }),
+    );
 
-    this.data = this.scope.model.recommendation;
-    this._subText = this.scope.model.recommendation.url ?? '';
+    const historyPromise = tryExecute(
+      this,
+      getUmbracoManagementApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistory({
+        client: umbHttpClient as unknown as Client,
+        path: {
+          recommendationId: this.data?.recommendation?.id!,
+        },
+      }),
+    );
 
-    const referrersPromise = this.recommendationsAnalysisService.getReferrers(this.data.id);
-    const historyPromise = this.recommendationsAnalysisService.getHistory(this.data.id, {});
+    //
 
     const [referrers, history] = await Promise.all([referrersPromise, historyPromise]).catch((error) => {
-      throw new Error(`Failed to fetch referrers and history for recommendation ${this.data.id}: ${error}`);
+      throw new Error(
+        `Failed to fetch referrers and history for recommendation ${this.data?.recommendation?.id}: ${error}`,
+      );
     });
 
-    this.referrers = referrers;
-    this.history = history;
+    this.referrers = referrers.data;
+    this.history = history.data;
 
-    const sourceStrategy = recommendationTypeStrategyResolver.getStrategy({ recommendation: this.data, element: this });
+    const sourceStrategy = recommendationTypeStrategyResolver.getStrategy({
+      recommendation: this.data?.recommendation! as unknown as RecommendationResponse,
+      element: this,
+    });
     if (sourceStrategy) {
       this.recommendationTypeText = await sourceStrategy.getTitle();
       this.recommendationTypeDescription = await sourceStrategy.getDescription();
       this.recommendationTypeIsError = false;
     } else {
-      this.recommendationTypeText = await this.localizationService.localize('urlTrackerRecommendationType_unknown');
+      this.recommendationTypeText = this.localize.term('urlTrackerRecommendationType_unknown');
       this.recommendationTypeIsError = true;
     }
   }
 
   close() {
-    this.scope.model.close();
+    this.modalContext?.reject();
   }
 
-  protected renderHistoryChart(noDataText: string) {
-    if (!this.history?.dailyOccurances?.length) return html`<i>${noDataText}</i>`;
+  protected renderHistoryChart() {
+    if (!this.history?.dailyOccurances?.length)
+      return html`<i><umb-localize key="urlTrackerGeneral_no-data">No data</umb-localize></i>`;
     return html` <urltracker-history-chart .history=${this.history}></urltracker-history-chart> `;
   }
 
-  protected renderReferrersChart(noDataText: string) {
-    if (!this.referrers?.length) return html`<i>${noDataText}</i>`;
+  protected renderReferrersChart() {
+    if (!this.referrers?.length)
+      return html`<i><umb-localize key="urlTrackerGeneral_no-data">No data</umb-localize></i>`;
     return html` <urltracker-referrers-chart .referrers=${this.referrers}></urltracker-referrers-chart> `;
   }
 
-  private _translationTask = new Task(this, {
-    task: async (): Promise<Partial<Translations>> => {
-      const [close, lastTwentyDays, referrers, noData] = await Promise.all([
-        this.localizationService?.localize('urlTrackerGeneral_close'),
-        this.localizationService?.localize('urlTrackerAnalyseRecommendation_history'),
-        this.localizationService?.localize('urlTrackerAnalyseRecommendation_referrers'),
-        this.localizationService?.localize('urlTrackerGeneral_no-data'),
-      ]);
-      return {
-        close,
-        lastTwentyDays,
-        referrers,
-        noData,
-      };
-    },
-    args: () => [this.translationTaskKey],
-  });
-
   protected render() {
-    return this._translationTask.render({
-      complete: (translations: Partial<Translations>) => {
-        return html`
-          <div class="header">
-            <h2>${this.renderRecommendationType()}</h2>
-            <span>${this._subText}</span>
-          </div>
-          <div class="main">
-            <uui-box>
-              <p>${this.recommendationTypeDescription}</p>
-              <h6>${translations.lastTwentyDays}</h6>
-              ${this.renderHistoryChart(translations.noData ?? 'No Data')}
-              <h6>${translations.referrers}</h6>
-              ${this.renderReferrersChart(translations.noData ?? 'No Data')}
-            </uui-box>
-          </div>
-          <div class="footer">
-            <uui-button look="default" color="default" @click=${this.close}>${translations.close}</uui-button>
-          </div>
-        `;
-      },
-    });
+    return html`
+      <div class="header">
+        <h2>${this.renderRecommendationType()}</h2>
+        <span>${this._subText}</span>
+      </div>
+      <div class="main">
+        <uui-box>
+          <p>${this.recommendationTypeDescription}</p>
+          <h6>
+            <umb-localize key="urlTrackerGeneral_history"> Last 20 days </umb-localize>
+          </h6>
+
+          ${this.renderHistoryChart()}
+          <h6>
+            <umb-localize key="urlTrackerAnalyseRecommendation_referrers">Referrers</umb-localize>
+          </h6>
+          ${this.renderReferrersChart()}
+        </uui-box>
+      </div>
+      <div class="footer">
+        <uui-button look="default" color="default" @click=${this.close}>
+          <umb-localize key="urlTrackerGeneral_close">Close</umb-localize>
+        </uui-button>
+      </div>
+    `;
   }
 
   static styles = [
@@ -242,3 +228,5 @@ export class UrlTrackerSidebarAnalyseRecommendation extends LitElement {
     `,
   ];
 }
+
+export const element = UrlTrackerSidebarAnalyseRecommendation;

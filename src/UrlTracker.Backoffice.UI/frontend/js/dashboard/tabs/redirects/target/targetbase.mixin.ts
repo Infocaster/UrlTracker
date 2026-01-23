@@ -1,11 +1,11 @@
 import { ContextConsumer } from '@lit/context';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { css, html, nothing } from 'lit';
-import { ILocalizationService, localizationServiceContext } from '../../../../context/localizationservice.context';
-import { IRedirectResponse, redirectContext } from '../../../../context/redirectitem.context';
+import { RedirectResponse, redirectContext } from '../../../../context/redirectitem.context';
 import { LitElementConstructor } from '../../../../util/tools/litelementconstructor';
 
 export function UrlTrackerRedirectTarget<TBase extends LitElementConstructor>(Base: TBase, typeKey: string) {
-  return class RedirectTarget extends Base {
+  return class RedirectTarget extends UmbElementMixin(Base) {
     private _typeString?: string;
     private get typeString(): string | undefined {
       return this._typeString;
@@ -15,25 +15,18 @@ export function UrlTrackerRedirectTarget<TBase extends LitElementConstructor>(Ba
       this.requestUpdate('typeString');
     }
 
-    private _localizationServiceConsumer = new ContextConsumer(this, {
-      context: localizationServiceContext,
-    });
-    protected get localizationService(): ILocalizationService | undefined {
-      return this._localizationServiceConsumer.value;
-    }
-
     private _redirectConsumer = new ContextConsumer(this, {
       context: redirectContext,
     });
 
-    protected get redirect(): IRedirectResponse | undefined {
+    protected get redirect(): RedirectResponse | undefined {
       return this._redirectConsumer.value;
     }
 
     async connectedCallback(): Promise<void> {
       super.connectedCallback();
 
-      this.typeString = await this.localizationService?.localize(typeKey);
+      this.typeString = this.localize.term(typeKey);
     }
 
     protected renderBody(): unknown {

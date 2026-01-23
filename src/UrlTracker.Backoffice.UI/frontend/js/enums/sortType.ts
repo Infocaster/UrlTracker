@@ -1,7 +1,7 @@
 export const RECOMMENDATION_SORT_TYPE = {
-  IMPORTANCE: 0,
-  MOST_RECENTLY_UPDATED: 1,
-  URL: 2,
+  IMPORTANCE: 'Importance',
+  MOST_RECENTLY_UPDATED: 'MostRecentlyUpdated',
+  URL: 'Url',
 } as const;
 
 export type RecommendationSortType = (typeof RECOMMENDATION_SORT_TYPE)[keyof typeof RECOMMENDATION_SORT_TYPE];

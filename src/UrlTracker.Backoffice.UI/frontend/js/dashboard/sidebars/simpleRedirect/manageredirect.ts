@@ -1,5 +1,5 @@
-import { IRedirectData, IRedirectResponse } from '@/services/redirect.service';
 import { ICancelSubmitEditor, ICustomEditor } from '@/umbraco/editor.service';
+import type { RedirectRequest, RedirectResponse } from '../../../../../api-client/types.gen';
 
 export interface IManageRedirectModel {
   advanced: boolean;
@@ -9,16 +9,16 @@ export interface IManageRedirectModel {
 
 export interface ICreateRedirectModel {
   solvedRecommendation?: number;
-  data?: IRedirectData;
+  data?: RedirectRequest;
 }
 
 export interface IUpdateRedirectModel {
   id: number;
-  data: IRedirectData;
+  data: RedirectRequest;
 }
 
 export type ManageRedirectEditor = ICustomEditor &
-  ICancelSubmitEditor<IRedirectResponse> &
+  ICancelSubmitEditor<RedirectResponse> &
   IManageRedirectModel &
   ICreateRedirectModel & { id?: number };
 
@@ -28,7 +28,7 @@ const editorBase: ICustomEditor = {
 };
 
 export function createNewRedirectOptions(
-  model: IManageRedirectModel & ICreateRedirectModel & ICancelSubmitEditor<IRedirectResponse>,
+  model: IManageRedirectModel & ICreateRedirectModel & ICancelSubmitEditor<RedirectResponse>,
 ): ManageRedirectEditor {
   return {
     ...editorBase,
@@ -37,7 +37,7 @@ export function createNewRedirectOptions(
 }
 
 export function createEditRedirectOptions(
-  model: IManageRedirectModel & IUpdateRedirectModel & ICancelSubmitEditor<IRedirectResponse>,
+  model: IManageRedirectModel & IUpdateRedirectModel & ICancelSubmitEditor<RedirectResponse>,
 ): ManageRedirectEditor {
   return {
     ...editorBase,

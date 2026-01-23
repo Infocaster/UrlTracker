@@ -1,5 +1,8 @@
 import { html } from 'lit';
 import tabStrategy, { createTabStrategy } from './tab';
+import './tabs/landingpage.lit';
+import './tabs/recommendations.lit';
+import './tabs/redirects.lit';
 
 tabStrategy.push(createTabStrategy('dashboard', html`<urltracker-landing-tab></urltracker-landing-tab>`, true));
 tabStrategy.push(

@@ -1,13 +1,13 @@
-import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
-import { scopeContext } from '@/context/scope.context';
 import { IRecommendationTypeStrategies } from '@/dashboard/tabs/recommendations/recommendationType/recommendationType.constant';
-import { ensureExists } from '@/util/tools/existancecheck';
-import { consume } from '@lit/context';
-import { Task } from '@lit/task';
-import { LitElement, css, html, nothing } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { UmbModalContext, UmbModalExtensionElement } from '@umbraco-cms/backoffice/modal';
+import { css, html, nothing } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import variableResource from '../../../util/tools/variableresource.service';
-import { ExplainRecommendationsScope } from './scope';
+import {
+  UrlTrackerExplainRecommendationModalData,
+  UrlTrackerExplainRecommendationModalValue,
+} from '../explainRecommendation-modal.token';
 
 export const ContentElementTag = 'urltracker-sidebar-inspect-recommendations';
 
@@ -19,60 +19,31 @@ export const RECCOMENDATION_ACTIONS = {
 
 export type IRecommendationAction = (typeof RECCOMENDATION_ACTIONS)[keyof typeof RECCOMENDATION_ACTIONS];
 
-type Translations = {
-  create: string;
-  temporaryRedirectDescription: string;
-  campaign: string;
-  apply: string;
-  createPermanent: string;
-  createPermanentDescription: string;
-  blogs: string;
-  image: string;
-  ignore: string;
-  ignoreDescription: string;
-  exampleUsage: string;
-  close: string;
-};
-
 @customElement(ContentElementTag)
-export class UrlTrackerSidebarRecommendations extends LitElement {
-  @consume({ context: scopeContext })
-  private $scope?: ExplainRecommendationsScope;
-
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
+export class UrlTrackerSidebarRecommendations
+  extends UmbLitElement
+  implements
+    UmbModalExtensionElement<UrlTrackerExplainRecommendationModalData, UrlTrackerExplainRecommendationModalValue>
+{
+  @property({ attribute: false })
+  modalContext?: UmbModalContext<UrlTrackerExplainRecommendationModalData, UrlTrackerExplainRecommendationModalValue>;
 
   @property({ attribute: false })
-  get scope() {
-    ensureExists(this.$scope, 'scope');
-    return this.$scope;
-  }
-
-  @state()
-  private _headerText = '';
-
-  @state()
-  private translationTaskKey: number = 0;
-
-  @state()
-  private translations: Partial<Translations> = {};
-
-  async connectedCallback(): Promise<void> {
-    super.connectedCallback();
-    this._headerText = 'Recommendations for: ' + this.$scope?.model.recommendation.url;
-  }
+  data?: UrlTrackerExplainRecommendationModalData;
 
   save(action: IRecommendationAction = RECCOMENDATION_ACTIONS.IGNORE) {
-    this.scope.model.submit(action);
+    this.modalContext?.setValue({ type: action });
+    this.modalContext?.submit();
   }
 
   close() {
-    this.scope.model.close();
+    this.modalContext?.reject();
   }
 
   private canShowRedirectOptions(): boolean {
     const strategyTypes = variableResource.get<IRecommendationTypeStrategies>('recommendationTypeStrategies');
-    const currentType = this.scope.model.recommendation.strategy;
+    // const currentType = this.explainRecommendationsScope.model.recommendation.strategy;
+    const currentType = strategyTypes.file;
     if (currentType === strategyTypes.image || currentType === strategyTypes.technicalFile) {
       return false;
     }
@@ -80,69 +51,29 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
     return true;
   }
 
-  private _translationTask = new Task(this, {
-    task: async (): Promise<Partial<Translations>> => {
-      const [
-        create,
-        temporaryRedirectDescription,
-        campaign,
-        apply,
-        createPermanent,
-        createPermanentDescription,
-        blogs,
-        image,
-        ignore,
-        ignoreDescription,
-        exampleUsage,
-        close,
-      ] = await Promise.all([
-        this.localizationService?.localize('urlTrackerExplainRecommendation_create'),
-        this.localizationService?.localize('urlTrackerExplainRecommendation_temporary-redirect-description'),
-        this.localizationService?.localize('urlTrackerExplainRecommendation_campaign'),
-        this.localizationService?.localize('urlTrackerExplainRecommendation_apply'),
-        this.localizationService?.localize('urlTrackerExplainRecommendation_create-permanent'),
-        this.localizationService?.localize('urlTrackerExplainRecommendation_create-permanent-description'),
-        this.localizationService?.localize('urlTrackerExplainRecommendation_blogs'),
-        this.localizationService?.localize('urlTrackerExplainRecommendation_image'),
-        this.localizationService?.localize('urlTrackerExplainRecommendation_ignore'),
-        this.localizationService?.localize('urlTrackerExplainRecommendation_ignore-description'),
-        this.localizationService?.localize('urlTrackerGeneral_example-usage'),
-        this.localizationService?.localize('urlTrackerGeneral_close'),
-      ]);
-
-      const translations: Partial<Translations> = {
-        create,
-        temporaryRedirectDescription,
-        campaign,
-        apply,
-        createPermanent,
-        createPermanentDescription,
-        blogs,
-        image,
-        ignore,
-        ignoreDescription,
-        exampleUsage,
-        close,
-      };
-
-      this.translations = translations;
-
-      return translations;
-    },
-    args: () => [this.translationTaskKey],
-  });
-
   private renderTemporaryRedirect() {
     if (!this.canShowRedirectOptions()) return nothing;
     return html`
-      <uui-box .headline="${this.translations.create}">
-        <p>${this.translations.temporaryRedirectDescription}</p>
-        <span>${this.translations.exampleUsage}</span>
+      <uui-box .headline="${this.localize.term('urlTrackerExplainRecommendation_create')}">
+        <p>
+          <umb-localize key="urlTrackerExplainRecommendation_temporary-redirect-description">
+            A temporary redirect will redirect users to a different page, but will also tell google and other search
+            engines that the content on this URL will be back later. Use this option if content is only temporarily
+            moved to a different URL.
+          </umb-localize>
+        </p>
+        <span>
+          <umb-localize key="urlTrackerGeneral_example-usage">Example usage</umb-localize>
+        </span>
         <ul>
-          <li>${this.translations.campaign}</li>
+          <li>
+            <umb-localize key="urlTrackerExplainRecommendation_campaign"
+              >You run a campaign but it’s momentarily suspended and will be continued next month or year</umb-localize
+            >
+          </li>
         </ul>
         <uui-button look="primary" @click=${() => this.save(RECCOMENDATION_ACTIONS.MAKE_TEMPORARY)}
-          >${this.translations.apply}</uui-button
+          ><umb-localize key="urlTrackerExplainRecommendation_apply">Apply</umb-localize></uui-button
         >
       </uui-box>
     `;
@@ -151,15 +82,31 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
   private renderPermanentRedirect() {
     if (!this.canShowRedirectOptions()) return nothing;
     return html`
-      <uui-box .headline="${this.translations.createPermanent}">
-        <p>${this.translations.createPermanentDescription}</p>
-        <span>${this.translations.exampleUsage}</span>
+      <uui-box .headline="${this.localize.term('urlTrackerExplainRecommendation_create-permanent')}">
+        <p>
+          <umb-localize key="urlTrackerExplainRecommendation_create-permanent-description">
+            A permanent redirect will redirect users to a different page, but will also tell google and other search
+            engines that the current URL is no longer relevant. Use this option if content is moved to a different URL
+            forever.
+          </umb-localize>
+        </p>
+        <span>
+          <umb-localize key="urlTrackerGeneral_example-usage">Example usage</umb-localize>
+        </span>
         <ul>
-          <li>${this.translations.blogs}</li>
-          <li>${this.translations.image}</li>
+          <li>
+            <umb-localize key="urlTrackerExplainRecommendation_blogs"
+              >You used to post your blogs on /news, but they are now found below /blogs</umb-localize
+            >
+          </li>
+          <li>
+            <umb-localize key="urlTrackerExplainRecommendation_image"
+              >You rely on an image in a social media post, but the image no longer exists or has moved</umb-localize
+            >
+          </li>
         </ul>
         <uui-button look="primary" @click=${() => this.save(RECCOMENDATION_ACTIONS.MAKE_PERMANENT)}
-          >${this.translations.apply}</uui-button
+          ><umb-localize key="urlTrackerExplainRecommendation_apply">Apply</umb-localize></uui-button
         >
       </uui-box>
     `;
@@ -167,27 +114,32 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
 
   private renderIgnore() {
     return html`
-      <uui-box .headline="${this.translations.ignore}">
-        <p>${this.translations.ignoreDescription}</p>
+      <uui-box .headline="${this.localize.term('urlTrackerExplainRecommendation_ignore')}">
+        <p>
+          <umb-localize key="urlTrackerExplainRecommendation_ignore-description">
+            Sometimes a url might pop up in here that you simply cannot do anything with. In that case, you can ignore
+            the recommendation and it will be permanently removed from the overview.
+          </umb-localize>
+        </p>
         <uui-button look="primary" @click=${() => this.save(RECCOMENDATION_ACTIONS.IGNORE)}
-          >${this.translations.apply}</uui-button
+          ><umb-localize key="urlTrackerExplainRecommendation_apply">Apply</umb-localize></uui-button
         >
       </uui-box>
     `;
   }
 
   protected render() {
-    return this._translationTask.render({
-      complete: () => html`
-        <div class="header">${this._headerText}</div>
-        <div class="main">
-          ${this.renderTemporaryRedirect()} ${this.renderPermanentRedirect()} ${this.renderIgnore()}
-        </div>
-        <div class="footer">
-          <uui-button look="default" color="default" @click=${this.close}>${this.translations.close}</uui-button>
-        </div>
-      `,
-    });
+    return html`
+      <div class="header">
+        ${this.localize.term('urlTrackerExplainRecommendation_header') + this.data?.recommendation.url}
+      </div>
+      <div class="main">${this.renderTemporaryRedirect()} ${this.renderPermanentRedirect()} ${this.renderIgnore()}</div>
+      <div class="footer">
+        <uui-button look="default" color="default" @click=${this.close}>
+          <umb-localize key="urlTrackerGeneral_close">Close</umb-localize>
+        </uui-button>
+      </div>
+    `;
   }
 
   static styles = css`
@@ -238,3 +190,5 @@ export class UrlTrackerSidebarRecommendations extends LitElement {
     }
   `;
 }
+
+export const element = UrlTrackerSidebarRecommendations;

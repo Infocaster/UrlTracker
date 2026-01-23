@@ -1,21 +1,16 @@
-import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
-import { IRecommendationReferrerResponse } from '@/services/recommendationanalysis.service';
-import { ensureServiceExists } from '@/util/tools/existancecheck';
-import { consume } from '@lit/context';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { Chart } from 'chart.js';
 import { LitElement, PropertyValueMap, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
+import type { ReferrerResponse } from '../../../../../api-client/types.gen';
 
 export const ContentElementTag = 'urltracker-referrers-chart';
 
 @customElement(ContentElementTag)
-export class UrlTrackerReferrersChart extends LitElement {
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
-
+export class UrlTrackerReferrersChart extends UmbElementMixin(LitElement) {
   @property({ type: Array })
-  private referrers!: IRecommendationReferrerResponse;
+  private referrers!: ReferrerResponse[];
 
   private chartRef: Ref<HTMLCanvasElement> = createRef();
 
@@ -26,9 +21,7 @@ export class UrlTrackerReferrersChart extends LitElement {
   private async init() {
     const data = this.referrers;
 
-    ensureServiceExists(this.localizationService, 'localizationService');
-
-    const label = await this.localizationService.localize('urlTrackerChart_occurances-per-day');
+    const label = this.localize.term('urlTrackerChart_occurances-per-day');
 
     const chart = new Chart(this.chartRef.value!, {
       type: 'bar',
@@ -60,11 +53,11 @@ export class UrlTrackerReferrersChart extends LitElement {
         },
       },
       data: {
-        labels: data.map((row) => this.truncate(`${row.ReferrerOccurances} - ${row.ReferrerUrl}`)),
+        labels: data.map((row) => this.truncate(`${row.referrerOccurances} - ${row.referrerUrl}`)),
         datasets: [
           {
             label: label,
-            data: data.map((row) => row.ReferrerOccurances),
+            data: data.map((row) => row.referrerOccurances),
             backgroundColor: '#1B264F',
             maxBarThickness: 25,
           },

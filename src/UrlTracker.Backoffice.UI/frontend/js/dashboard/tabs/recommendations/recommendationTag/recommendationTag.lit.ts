@@ -1,14 +1,9 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { consume } from '@lit/context';
-import { ILocalizationService, localizationServiceContext } from '../../../../context/localizationservice.context';
 import { styleMap } from 'lit/directives/style-map.js';
 
 @customElement('urltracker-recommendation-tag')
 export class UrlTrackerRecommendationTag extends LitElement {
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
-
   @property({ type: String })
   color: string = '';
 
@@ -17,8 +12,6 @@ export class UrlTrackerRecommendationTag extends LitElement {
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-
-    if (!this.localizationService) throw new Error('This element requires the localization service');
   }
 
   protected render(): unknown {

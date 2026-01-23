@@ -10,7 +10,8 @@ trigger:
     - 16.*
 
 pool:
-  name: Default
+  name: "Azure Pipelines"
+  vmImage: windows-latest
 
 parameters:
 - name: deployWebsite
@@ -46,16 +47,22 @@ stages:
       fetchDepth: 0
       clean: true
 
-    - task: GitVersion@5
-      displayName: GitVersion
+    - task: gitversion-setup@4.2.0
+      displayName: Install GitVersion
+      inputs:
+        versionSpec: 6.x
+
+    - task: gitversion-execute@4.2.0
+      displayName: Determine Version
+      name: version_step
       inputs:
         configFilePath: GitVersion.yml
         updateAssemblyInfo: true
 
     - task: NodeTool@0
-      displayName: 'Use node 20.x'
+      displayName: 'Use node 22.x'
       inputs:
-        versionSpec: '20.x'
+        versionSpec: '22.x'
 
     - task: Npm@1
       displayName: 'Install front end packages'
@@ -83,7 +90,7 @@ stages:
       inputs:
         command: 'build'
         projects: 'UrlTracker.sln'
-        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion)'
+        arguments: '--configuration $(BuildConfiguration) -p:Version=$(version_step.semVer)'
 
     - task: DotNetCoreCLI@2
       displayName: 'Run tests'
@@ -95,7 +102,7 @@ stages:
           test/UrlTracker.IntegrationTests/UrlTracker.IntegrationTests.csproj
           test/UrlTracker.Middleware.Tests/UrlTracker.Middleware.Tests.csproj
           test/UrlTracker.Web.Tests/UrlTracker.Web.Tests.csproj
-        arguments: '--configuration $(BuildConfiguration) -p:Version=$(GitVersion.NuGetVersion) --collect "XPlat Code Coverage" --no-build'
+        arguments: '--configuration $(BuildConfiguration) -p:Version=$(version_step.semVer) --collect "XPlat Code Coverage" --no-build'
 
     # - task: PublishCodeCoverageResults@2
     #   displayName: 'Publish code coverage results'
@@ -123,7 +130,7 @@ stages:
         configurationToPack: $(BuildConfiguration)
         nobuild: true
         versioningScheme: byEnvVar
-        versionEnvVar: GitVersion.NuGetVersion
+        versionEnvVar: version_step.semVer
         verbosityPack: Normal
         packDirectory: '$(Build.ArtifactStagingDirectory)/packages'
 
@@ -141,7 +148,7 @@ stages:
           command: publish
           publishWebProjects: false
           projects: test/**/UrlTracker.Resources.Website.csproj
-          arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/website -p:Version=$(GitVersion.NuGetVersion) --no-build'
+          arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)/website -p:Version=$(version_step.semVer) --no-build'
       
       - task: PublishBuildArtifacts@1
         displayName: 'Publish website artifacts'

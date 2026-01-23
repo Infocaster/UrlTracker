@@ -1,97 +1,65 @@
-import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
-import { scopeContext } from '@/context/scope.context';
 import { ISourceStrategies } from '@/dashboard/tabs/redirects/source/source.constants';
 import { ITargetStrategies } from '@/dashboard/tabs/redirects/target/target.constants';
-import { IRedirectData, IRedirectResponse, IRedirectService } from '@/services/redirect.service';
-import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
-import variableresourceService from '@/util/tools/variableresource.service';
-import { consume } from '@lit/context';
-import { Task } from '@lit/task';
-import { LitElement, css, html } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
-import { ManageRedirectScope } from './scope';
 
-import {
-  IUmbracoNotificationsService,
-  umbracoNotificationsServiceContext,
-} from '@/context/notificationsservice.context';
-import { redirectServiceContext } from '@/context/redirectservice.context';
+import variableresourceService from '@/util/tools/variableresource.service';
+import { provide } from '@lit/context';
+import { css, html } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+
 import { LoadingStatus } from '@/types/loadingStatus';
+import { umbHttpClient } from '@umbraco-cms/backoffice/http-client';
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { UmbModalContext, UmbModalExtensionElement } from '@umbraco-cms/backoffice/modal';
+import { UMB_NOTIFICATION_CONTEXT } from '@umbraco-cms/backoffice/notification';
+import { tryExecute } from '@umbraco-cms/backoffice/resources';
+import type { Client } from '../../../../../api-client/client/types.gen';
+import {
+  postUmbracoManagementApiV1UrlTrackerRedirects,
+  postUmbracoManagementApiV1UrlTrackerRedirectsByRedirectId,
+} from '../../../../../api-client/sdk.gen';
+import { CreateRedirectRequest, RedirectRequest } from '../../../../../api-client/types.gen';
+import { ITargetService, redirectTargetServiceContext } from '../../../context/redirecttargetservice.context';
+import targetService from '../../../dashboard/tabs/redirects/target/target.service';
 import '../../../util/elements/redirects/simpleRedirect/createSimpleRedirect.lit';
+import { UrlTrackerSimpleRedirectModalData, UrlTrackerSimpleRedirectModalValue } from '../simpleRedirect-modal.token';
 
 export const ContentElementTag = 'urltracker-sidebar-simple-redirect';
 
-type Translations = {
-  cancel: string;
-  save: string;
-  redirectUpdated: string;
-  redirectUpdatedMessage: string;
-  redirectCreated: string;
-  redirectCreatedMessage: string;
-};
-
 @customElement(ContentElementTag)
-export class UrlTrackerSidebarSimpleRedirect extends LitElement {
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
-
-  @consume({ context: redirectServiceContext })
-  private _redirectService?: IRedirectService | undefined;
-  public get redirectService(): IRedirectService {
-    ensureServiceExists(this._redirectService, 'redirectService');
-    return this._redirectService;
-  }
-  public set redirectService(value: IRedirectService | undefined) {
-    this._redirectService = value;
-  }
-
-  @consume({ context: umbracoNotificationsServiceContext })
-  private _notificationService?: IUmbracoNotificationsService | undefined;
-  public get notificationService(): IUmbracoNotificationsService {
-    ensureServiceExists(this._notificationService, 'notificationService');
-    return this._notificationService;
-  }
-  public set notificationService(value: IUmbracoNotificationsService | undefined) {
-    this._notificationService = value;
-  }
-
-  @consume({ context: scopeContext })
-  private $scope?: ManageRedirectScope;
+export class UrlTrackerSidebarSimpleRedirect
+  extends UmbLitElement
+  implements UmbModalExtensionElement<UrlTrackerSimpleRedirectModalData, UrlTrackerSimpleRedirectModalValue>
+{
+  @provide({ context: redirectTargetServiceContext })
+  redirectTargetService: ITargetService = targetService;
 
   @property({ attribute: false })
-  get scope() {
-    ensureExists(this.$scope, 'scope');
-    return this.$scope;
-  }
+  modalContext?: UmbModalContext<UrlTrackerSimpleRedirectModalData, UrlTrackerSimpleRedirectModalValue>;
+
+  @property({ attribute: false })
+  data?: UrlTrackerSimpleRedirectModalData;
+
+  #notificationContext?: typeof UMB_NOTIFICATION_CONTEXT.TYPE;
 
   @property({ attribute: false })
   get advancedView() {
-    ensureExists(this.$scope, 'scope');
-    return this.scope.model.advanced;
+    return !!this.data?.advanced;
   }
 
   get sourceEditable(): boolean {
-    ensureExists(this.$scope, 'scope');
-    return this.scope.model.sourceEditable;
+    return !!this.data?.sourceEditable;
   }
 
   @property({ attribute: false })
   get redirect() {
-    ensureExists(this.$scope, 'scope');
-    return this.scope.model.data;
+    return this.data?.data;
   }
 
   @state()
   private headerText = '';
 
   @state()
-  private translationTaskKey: number = 0;
-
-  @state()
-  private translations: Partial<Translations> = {};
-
-  @state()
-  private redirectData: IRedirectData = {
+  private redirectData: RedirectRequest = {
     source: {
       strategy: variableresourceService.get<ISourceStrategies>('redirectSourceStrategies').url,
       value: '',
@@ -109,38 +77,10 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
   @state()
   private saveLoading: LoadingStatus = undefined;
 
-  private _translationTask = new Task(this, {
-    task: async (): Promise<Partial<Translations>> => {
-      const [cancel, save, redirectUpdated, redirectUpdatedMessage, redirectCreated, redirectCreatedMessage] =
-        await Promise.all([
-          this._localizationService?.localize('urlTrackerGeneral_cancel'),
-          this._localizationService?.localize('urlTrackerGeneral_save'),
-          this._localizationService?.localize('urlTrackerGeneral_redirect-updated'),
-          this._localizationService?.localize('urlTrackerGeneral_redirect-updated-message'),
-          this._localizationService?.localize('urlTrackerGeneral_redirect-created'),
-          this._localizationService?.localize('urlTrackerGeneral_redirect-created-message'),
-        ]);
-
-      const translations: Partial<Translations> = {
-        cancel,
-        save,
-        redirectUpdated,
-        redirectUpdatedMessage,
-        redirectCreated,
-        redirectCreatedMessage,
-      };
-
-      this.translations = translations;
-
-      return translations;
-    },
-    args: () => [this.translationTaskKey],
-  });
-
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    this.headerText = this.scope.model.title;
+    this.headerText = this.data?.title || '';
 
     if (this.redirect) {
       this.redirectData = {
@@ -154,36 +94,81 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
     }
   }
 
+  get saveDisabled() {
+    if (this.saveLoading === 'waiting') return true;
+    return !this.redirectData.target.value;
+  }
+
   async save() {
     this.saveLoading = 'waiting';
+    let response: any;
     try {
-      let response: IRedirectResponse;
-      if (this.scope.model.id) {
-        response = await this.redirectService.update(this.scope.model.id, this.redirectData);
-        this.notificationService.success(
-          this.translations.redirectUpdated || 'Redirect updated',
-          this.translations.redirectUpdatedMessage || 'The redirect has been successfully updated',
+      if (this.data?.id) {
+        const result = await tryExecute(
+          this,
+          postUmbracoManagementApiV1UrlTrackerRedirectsByRedirectId({
+            client: umbHttpClient as unknown as Client,
+            path: {
+              redirectId: this.data.id,
+            },
+            body: {
+              source: this.redirectData.source,
+              target: this.redirectData.target,
+              permanent: this.redirectData.permanent,
+              retainQuery: this.redirectData.retainQuery,
+              force: this.redirectData.force,
+              advanced: this.redirectData.advanced,
+            } as RedirectRequest,
+          }),
         );
-      } else {
-        response = await this.redirectService.create({
-          ...this.redirectData,
-          solvedRecommendation: this.$scope?.model.solvedRecommendation,
+        response = result.data;
+
+        this.#notificationContext?.peek('positive', {
+          data: {
+            headline: this.localize.term('urlTrackerGeneral_redirect-updated') || 'Redirect updated',
+            message:
+              this.localize.term('urlTrackerGeneral_redirect-updated-message') ||
+              'The redirect has been successfully updated',
+          },
         });
-        this.notificationService.success(
-          this.translations.redirectCreated || 'Redirect created',
-          this.translations.redirectCreatedMessage || 'The redirect has been successfully created',
+      } else {
+        const result = await tryExecute(
+          this,
+          postUmbracoManagementApiV1UrlTrackerRedirects({
+            client: umbHttpClient as unknown as Client,
+            body: {
+              source: this.redirectData.source,
+              target: this.redirectData.target,
+              permanent: this.redirectData.permanent,
+              retainQuery: this.redirectData.retainQuery,
+              force: this.redirectData.force,
+              advanced: this.redirectData.advanced,
+              solvedRecommendation: this.data?.solvedRecommendation,
+            } as CreateRedirectRequest,
+          }),
         );
+        response = result.data;
+
+        this.#notificationContext?.peek('positive', {
+          data: {
+            headline: this.localize.term('urlTrackerGeneral_redirect-created') || 'Redirect created',
+            message:
+              this.localize.term('urlTrackerGeneral_redirect-created-message') ||
+              'The redirect has been successfully created',
+          },
+        });
       }
 
-      this.scope.model.submit(response);
       this.saveLoading = 'success';
-    } catch {
+      this.modalContext?.setValue({ response: response });
+      this.modalContext?.submit();
+    } catch (error) {
       this.saveLoading = 'failed';
     }
   }
 
   close() {
-    this.scope.model.close();
+    this.modalContext?.reject();
   }
 
   protected render() {
@@ -193,14 +178,25 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
           .advancedView=${this.advancedView}
           .sourceEditable=${this.sourceEditable}
           .redirect=${this.redirectData}
-          @update=${({ detail }: { detail: IRedirectData }) => (this.redirectData = detail)}
+          @update=${({ detail }: { detail: RedirectRequest }) => {
+            this.redirectData = detail;
+            this.requestUpdate();
+          }}
         ></urltracker-create-simple-redirect>
       </div>
       <div class="footer">
-        <uui-button look="default" color="default" @click=${this.close}>${this.translations.cancel}</uui-button>
-        <uui-button look="primary" .state=${this.saveLoading} color="positive" @click=${this.save}
-          >${this.translations.save}</uui-button
+        <uui-button look="default" color="default" @click=${this.close}>
+          <umb-localize key="urlTrackerGeneral_cancel">Cancel</umb-localize>
+        </uui-button>
+        <uui-button
+          look="primary"
+          .disabled=${this.saveDisabled}
+          .state=${this.saveLoading}
+          color="positive"
+          @click=${this.save}
         >
+          <umb-localize key="urlTrackerGeneral_save">Save</umb-localize>
+        </uui-button>
       </div>`;
   }
 
@@ -236,3 +232,5 @@ export class UrlTrackerSidebarSimpleRedirect extends LitElement {
     }
   `;
 }
+
+export const element = UrlTrackerSidebarSimpleRedirect;

@@ -1,15 +1,10 @@
-import { consume } from '@lit/context';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { UUIFileDropzoneEvent } from '@umbraco-ui/uui-file-dropzone';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { localizationServiceContext } from '../../../context/localizationservice.context';
-import { ILocalizationService } from '../../../umbraco/localization.service';
 
 @customElement('urltracker-redirect-import')
-export class UrlTrackerRedirectImport extends LitElement {
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
-
+export class UrlTrackerRedirectImport extends UmbElementMixin(LitElement) {
   @property({ type: String })
   public header?: string;
 
@@ -20,7 +15,7 @@ export class UrlTrackerRedirectImport extends LitElement {
   private _headerText: string = '';
 
   private _localizeHeaderText = async () => {
-    const translatedText = await this._localizationService?.localize('urlTrackerRedirectUpload_header');
+    const translatedText = this.localize.term('urlTrackerRedirectUpload_header');
 
     if (this.header) {
       this._headerText = `${this.header}`;

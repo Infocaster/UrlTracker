@@ -10,7 +10,7 @@ export interface IContentTargetResponse {
 }
 
 export interface IContentTargetRequest {
-  id: number;
+  id: string;
   culture?: string;
 }
 

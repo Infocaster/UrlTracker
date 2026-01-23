@@ -1,11 +1,13 @@
 import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
-import { IPaginationRequestBase } from '../../../services/models/paginationrequestbase';
-import { ensureExists } from '../../tools/existancecheck';
 import { DropdownChangeEvent, IDropdownValue, UrlTrackerDropdown } from './dropdown.lit';
 import './pageselect.lit';
 import { UrlTrackerPageSelect, UrlTrackerPageSelectEvent } from './pageselect.lit';
+interface IPaginationRequestBase {
+  page: number;
+  pageSize: number;
+}
 export class PaginationEvent extends Event {
   static event = 'change';
   constructor(
@@ -62,19 +64,15 @@ export class UrlTrackerPagination extends LitElement {
     const pageSizeKey = formData.get('pageSize')?.toString();
     const pageSizeChoice = this.pageSizes.find((ps) => ps.key === pageSizeKey);
 
-    ensureExists(pageSizeChoice, 'The page size must be one of the available options');
-
     return {
       page: page ? parseInt(page) - 1 : 0,
-      pageSize: pageSizeChoice.value as number,
+      pageSize: (pageSizeChoice?.value as number) ?? 10,
     };
   }
   public set value(val: IPaginationRequestBase) {
-    ensureExists(this.paginationRef.value);
-    ensureExists(this.dropdownRef.value);
     const oldVal = this.value;
-    this.paginationRef.value.value = val.page + 1;
-    this.dropdownRef.value.value = (this.pageSizes.find((el) => el.value === val.pageSize) ?? this.pageSizes[0]).key;
+    this.paginationRef.value!.value = val.page + 1;
+    this.dropdownRef.value!.value = (this.pageSizes.find((el) => el.value === val.pageSize) ?? this.pageSizes[0]).key;
     this.requestUpdate('value', oldVal);
   }
   private get totalPages(): number {
@@ -86,8 +84,7 @@ export class UrlTrackerPagination extends LitElement {
   };
   private onPageSizeChange = (e: Event) => {
     if (!(e instanceof DropdownChangeEvent)) return;
-    ensureExists(this.paginationRef.value);
-    this.paginationRef.value.value = 1;
+    this.paginationRef.value!.value = 1;
     this.requestUpdate('totalPages');
     this.dispatchEvent(new PaginationEvent(this.value));
   };

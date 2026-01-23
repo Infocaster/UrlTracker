@@ -1,47 +1,24 @@
 import { IEditorService, editorServiceContext } from '@/context/editorservice.context';
-import {
-  IUmbracoNotificationsService,
-  umbracoNotificationsServiceContext,
-} from '@/context/notificationsservice.context';
-import { redirectServiceContext } from '@/context/redirectservice.context';
-import { IRedirectService } from '@/services/redirect.service';
-import { ensureServiceExists } from '@/util/tools/existancecheck';
 import { consume, provide } from '@lit/context';
-import { Task } from '@lit/task';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
+import { umbOpenModal } from '@umbraco-cms/backoffice/modal';
+import { UMB_NOTIFICATION_CONTEXT } from '@umbraco-cms/backoffice/notification';
 import { LitElement, css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { localizationServiceContext } from '../context/localizationservice.context';
 import { tabContext } from '../context/tabcontext.context';
-import { ILocalizationService } from '../umbraco/localization.service';
 import './footer/footer.lit';
-import { createNewRedirectOptions } from './sidebars/simpleRedirect/manageredirect';
+import { URL_TRACKER_SIMPLE_REDIRECT_MODAL } from './sidebars/simpleRedirect-modal.token';
 import tabStrategy, { ITab, TabStrategyCollection } from './tab';
 
-type Translations = {
-  newRedirect: string;
-  localizationServiceRequired: string;
-};
-
 @customElement('urltracker-dashboard-content')
-export class UrlTrackerDashboardContent extends LitElement {
+export class UrlTrackerDashboardContent extends UmbElementMixin(LitElement) {
   @provide({ context: tabContext })
   private _tabs?: Array<ITab>;
 
   @consume({ context: editorServiceContext })
   private editorService?: IEditorService<any>;
 
-  @consume({ context: redirectServiceContext })
-  private _redirectService?: IRedirectService;
-
-  @consume({ context: umbracoNotificationsServiceContext })
-  private _notificationsService?: IUmbracoNotificationsService | undefined;
-  public get notificationsService(): IUmbracoNotificationsService {
-    ensureServiceExists(this._notificationsService, 'notificationsService');
-    return this._notificationsService;
-  }
-  public set notificationsService(value: IUmbracoNotificationsService | undefined) {
-    this._notificationsService = value;
-  }
+  #notificationContext?: typeof UMB_NOTIFICATION_CONTEXT.TYPE;
 
   @state()
   set tabs(tabs: Array<ITab> | undefined) {
@@ -62,39 +39,16 @@ export class UrlTrackerDashboardContent extends LitElement {
   @state()
   public loading: number;
 
-  @state()
-  private translationTaskKey: number = 0;
-
-  @state()
-  private translations: Partial<Translations> = {};
-
   private tabStrategyCollection: TabStrategyCollection = tabStrategy;
-
-  @consume({ context: localizationServiceContext })
-  public localizationService?: ILocalizationService;
-
-  private _translationTask = new Task(this, {
-    task: async (): Promise<Partial<Translations>> => {
-      const [newRedirect, localizationServiceRequired] = await Promise.all([
-        this.localizationService?.localize('urlTrackerGeneral_new-redirect'),
-        this.localizationService?.localize('urlTrackerGeneral_localization-service-required'),
-      ]);
-
-      const translations: Partial<Translations> = {
-        newRedirect,
-        localizationServiceRequired,
-      };
-
-      this.translations = translations;
-
-      return translations;
-    },
-    args: () => [this.translationTaskKey],
-  });
 
   constructor() {
     super();
+
+    this.consumeContext(UMB_NOTIFICATION_CONTEXT, (context) => {
+      this.#notificationContext = context;
+    });
     this.loading = 0;
+
     window.addEventListener('url-tracker-open-tab', ((evt: CustomEvent) => {
       if (!this.tabs) return;
       const tab = this.tabs.find((item) => item.alias === evt.detail.alias);
@@ -107,22 +61,13 @@ export class UrlTrackerDashboardContent extends LitElement {
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    ensureServiceExists(this._redirectService, 'redirect service');
-
     this.loading++;
     try {
-      if (!this.localizationService)
-        throw new Error(
-          this.translations.localizationServiceRequired ||
-            'localization service is not defined, but is required by this element',
-        );
-
       const titleAliases = this.tabStrategyCollection.map((item) => item.nameKey);
       const labelAliases = this.tabStrategyCollection.map((item) => item.labelKey);
 
-      const titlePromise = this.localizationService.localizeMany(titleAliases);
-      const labels = await this.localizationService.localizeMany(labelAliases);
-      const titles = await titlePromise;
+      const titles = titleAliases.map((alias) => this.localize.term(alias));
+      const labels = labelAliases.map((alias) => this.localize.term(alias));
 
       const result: Array<ITab> = this.tabStrategyCollection.map((item, index) => ({
         name: titles[index],
@@ -138,20 +83,18 @@ export class UrlTrackerDashboardContent extends LitElement {
     }
   }
 
-  closePanel = () => {
-    this.editorService!.close();
-  };
+  closePanel = () => {};
 
-  private _openSidebar(_: Event) {
-    const options = createNewRedirectOptions({
-      title: this.translations.newRedirect || 'New redirect',
-      submit: this.closePanel,
-      close: this.closePanel,
-      advanced: this.activeTab?.alias === 'advancedRedirects',
-      sourceEditable: true,
-    });
-
-    this.editorService!.open(options);
+  private async _openSidebar(_: Event) {
+    await umbOpenModal(this, URL_TRACKER_SIMPLE_REDIRECT_MODAL, {
+      data: {
+        title: this.localize.term('urlTrackerGeneral_new-redirect') || 'New redirect',
+        advanced: this.activeTab?.alias === 'advancedRedirects',
+        sourceEditable: true,
+      },
+    })
+      .then(() => undefined)
+      .catch(() => undefined);
   }
 
   render() {
@@ -184,7 +127,7 @@ export class UrlTrackerDashboardContent extends LitElement {
                 @click="${this._openSidebar}"
               >
                 <uui-icon name="add"></uui-icon>
-                ${this.translations.newRedirect}
+                <umb-localize key="urlTrackerGeneral_new-redirect">New redirect</umb-localize>
               </uui-button>`
             : nothing}
         </div>`;
@@ -208,6 +151,9 @@ export class UrlTrackerDashboardContent extends LitElement {
   }
 
   static styles = css`
+    :host {
+      height: 100%;
+    }
     [popover] {
       position: fixed;
       z-index: 2147483647;
@@ -239,12 +185,9 @@ export class UrlTrackerDashboardContent extends LitElement {
     }
 
     .dashboard {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      padding-top: 70px;
+      display: block;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
     }
     .dashboard-content {
@@ -265,6 +208,7 @@ export class UrlTrackerDashboardContent extends LitElement {
       gap: 1rem;
       padding-left: 1rem;
       padding-right: 1rem;
+      width: 100%;
     }
     .dashboard-body {
       flex: 1;

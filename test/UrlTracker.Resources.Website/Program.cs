@@ -10,7 +10,6 @@ WebApplication app = builder.Build();
 
 await app.BootUmbracoAsync();
 
-
 app.UseUmbraco()
     .WithMiddleware(u =>
     {

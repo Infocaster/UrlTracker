@@ -1,115 +1,73 @@
-import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
-import { scopeContext } from '@/context/scope.context';
-import { IRedirectResponse } from '@/services/redirect.service';
 import { toReadableDate } from '@/util/functions/dateformatter';
-import { ensureExists } from '@/util/tools/existancecheck';
-import { consume } from '@lit/context';
-import { Task } from '@lit/task';
-import { LitElement, css, html } from 'lit';
+import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
+import { UmbModalContext, UmbModalExtensionElement } from '@umbraco-cms/backoffice/modal';
+import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import type { RedirectResponse } from '../../../../../api-client/types.gen';
 import sourceStrategyResolver from '../../tabs/redirects/source/source.strategy';
-import { InspectRedirectScope } from './scope';
+import {
+  UrlTrackerInspectRedirectModalData,
+  UrlTrackerInspectRedirectModalValue,
+} from '../inspectRedirect-modal.token';
 
 export const ContentElementTag = 'urltracker-sidebar-inspect-redirect';
 
-type Translations = {
-  permanent: string;
-  yes: string;
-  no: string;
-  createdAt: string;
-  cancel: string;
-};
-
 @customElement(ContentElementTag)
-export class UrlTrackerSidebarInspectRedirect extends LitElement {
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
-
-  @consume({ context: scopeContext })
-  private $scope?: InspectRedirectScope;
-
-  @property({ attribute: false })
-  get scope() {
-    ensureExists(this.$scope, 'scope');
-    return this.$scope;
-  }
-
-  @state()
-  private data!: IRedirectResponse;
-
+export class UrlTrackerSidebarInspectRedirect
+  extends UmbLitElement
+  implements UmbModalExtensionElement<UrlTrackerInspectRedirectModalData, UrlTrackerInspectRedirectModalValue>
+{
   @state()
   private _headerText = 'Inspect Redirect';
 
-  @state()
-  private translationTaskKey: number = 0;
+  @property({ attribute: false })
+  modalContext?: UmbModalContext<UrlTrackerInspectRedirectModalData, UrlTrackerInspectRedirectModalValue>;
 
-  @state()
-  private translations: Partial<Translations> = {};
-
-  private _translationTask = new Task(this, {
-    task: async (): Promise<Partial<Translations>> => {
-      const [permanent, yes, no, createdAt, cancel] = await Promise.all([
-        this._localizationService?.localize('urlTrackerGeneral_permanent'),
-        this._localizationService?.localize('urlTrackerGeneral_yes'),
-        this._localizationService?.localize('urlTrackerGeneral_no'),
-        this._localizationService?.localize('urlTrackerGeneral_created-at'),
-        this._localizationService?.localize('urlTrackerGeneral_cancel'),
-      ]);
-
-      const translations: Partial<Translations> = {
-        permanent,
-        yes,
-        no,
-        createdAt,
-        cancel,
-      };
-
-      this.translations = translations;
-
-      return translations;
-    },
-    args: () => [this.translationTaskKey],
-  });
+  @property({ attribute: false })
+  data?: UrlTrackerInspectRedirectModalData;
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    this.data = this.scope.model.redirect;
 
-    const sourceStrategy = sourceStrategyResolver.getStrategy({ redirect: this.data, element: this });
+    const sourceStrategy = sourceStrategyResolver.getStrategy({
+      redirect: this.data?.redirect! as unknown as RedirectResponse,
+      element: this,
+    });
 
     if (sourceStrategy) this._headerText = await sourceStrategy.getTitle();
   }
 
   close() {
-    this.scope.model.close();
+    this.modalContext?.reject();
   }
 
   protected render() {
-    return this._translationTask.render({
-      complete: () => {
-        return html`<div class="header">${this._headerText}</div>
-          <div class="main">
-            <uui-box>
-              <div class="item">
-                <dt>${this.translations.permanent}</dt>
-                <dd>${this.data.permanent ? this.translations.yes : this.translations.no}</dd>
-              </div>
-              <div class="item">
-                <dt>${this.translations.createdAt}</dt>
-                <dd>${toReadableDate(this.data.createDate)}</dd>
-              </div>
-              <!-- updateDate is not persisted yet in the database -->
-              <!-- <div class="item">
-                <dt>Last updated on</dt>
-                <dd>${toReadableDate(this.data.updateDate)}</dd>
-              </div> -->
-            </uui-box>
+    return html`<div class="header">${this._headerText}</div>
+      <div class="main">
+        <uui-box>
+          <div class="item">
+            <dt>
+              <umb-localize key="urlTrackerGeneral_permanent">Permanent</umb-localize>
+            </dt>
+            <dd>
+              ${this.data?.redirect?.permanent
+                ? this.localize.term('urlTrackerGeneral_yes')
+                : this.localize.term('urlTrackerGeneral_no')}
+            </dd>
           </div>
-          <div class="footer">
-            <uui-button look="default" color="default" @click=${this.close}>${this.translations.cancel}</uui-button>
-          </div>`;
-      },
-    });
+          <div class="item">
+            <dt>
+              <umb-localize key="urlTrackerGeneral_created-at">Created at</umb-localize>
+            </dt>
+            <dd>${toReadableDate(new Date(this.data?.redirect?.createDate!))}</dd>
+          </div>
+        </uui-box>
+      </div>
+      <div class="footer">
+        <uui-button look="default" color="default" @click=${this.close}>
+          <umb-localize key="urlTrackerGeneral_cancel">Cancel</umb-localize>
+        </uui-button>
+      </div>`;
   }
 
   static styles = css`
@@ -152,3 +110,5 @@ export class UrlTrackerSidebarInspectRedirect extends LitElement {
     }
   `;
 }
+
+export const element = UrlTrackerSidebarInspectRedirect;

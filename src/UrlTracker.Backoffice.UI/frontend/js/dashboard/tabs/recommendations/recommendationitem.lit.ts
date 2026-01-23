@@ -1,11 +1,8 @@
 import { toReadableDateOnly } from '@/util/functions/dateformatter';
-import { ensureServiceExists } from '@/util/tools/existancecheck';
-import { ContextConsumer } from '@lit/context';
 import { css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { ILocalizationService, localizationServiceContext } from '../../../context/localizationservice.context';
-import { IRecommendationResponse, recommendationContext } from '../../../context/recommendationitem.context';
+import { RecommendationResponse } from '../../../../../api-client';
 import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';
 import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
 import {
@@ -17,7 +14,7 @@ import {
 import './recommendationTag/recommendationTag.lit';
 import recommendationTypeStrategyResolver from './recommendationType/recommendation.strategy';
 
-const RecommendationListItem = UrlTrackerSelectableResultListItem<IRecommendationResponse>(recommendationContext);
+const RecommendationListItem = UrlTrackerSelectableResultListItem<RecommendationResponse>();
 
 @customElement('urltracker-recommendation-item')
 export class UrlTrackerRecommendationItem extends RecommendationListItem {
@@ -57,21 +54,11 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   @state()
   private isTechnicalFileRecommendation: boolean = false;
 
-  //   @consume({ context: localizationServiceContext })
-  //   private localizationService?: ILocalizationService;
-  private _localizationServiceConsumer = new ContextConsumer(this, {
-    context: localizationServiceContext,
-  });
-  protected get localizationService(): ILocalizationService | undefined {
-    return this._localizationServiceConsumer.value;
-  }
-
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-    ensureServiceExists(this.localizationService, 'localizationService');
 
     if (this.item) {
-      this.recommendationType = calculateRecommendationType(this.item.score);
+      this.recommendationType = calculateRecommendationType(this.item.variableScore);
       this.tagText(this.recommendationType);
     }
     this.localizeActionsText();
@@ -81,24 +68,20 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
     this.localizeActionIgnoreText();
 
     const sourceStrategy = recommendationTypeStrategyResolver.getStrategy({ recommendation: this.item, element: this });
+
     if (sourceStrategy) {
-      this.recommendationTypeText = await sourceStrategy.getTitle();
+      this.recommendationTypeText = this.localize.term(sourceStrategy.typeKey);
       this.recommendationTypeIsError = false;
 
-      if (
-        this.recommendationTypeText === (await this.localizationService.localize('urlTrackerRecommendationType_image'))
-      ) {
+      if (this.recommendationTypeText === this.localize.term('urlTrackerRecommendationType_image')) {
         this.isImageRecommendation = true;
       }
 
-      if (
-        this.recommendationTypeText ===
-        (await this.localizationService.localize('urlTrackerRecommendationType_technicalFile'))
-      ) {
+      if (this.recommendationTypeText === this.localize.term('urlTrackerRecommendationType_technicalFile')) {
         this.isTechnicalFileRecommendation = true;
       }
     } else {
-      this.recommendationTypeText = await this.localizationService.localize('urlTrackerRecommendationType_unknown');
+      this.recommendationTypeText = this.localize.term('urlTrackerRecommendationType_unknown');
       this.recommendationTypeIsError = true;
     }
   }
@@ -124,32 +107,32 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
   }
 
   private async localizeActionsText(): Promise<void> {
-    const actionsText = await this.localizationService?.localize('urlTrackerRecommendationItem_actions');
+    const actionsText = this.localize.term('urlTrackerRecommendationItem_actions');
     this.actionsText = actionsText ?? '';
   }
 
   private async localizeActionTemporaryText(): Promise<void> {
-    const temporaryText = await this.localizationService?.localize('urlTrackerRecommendationItem_action-temporary');
+    const temporaryText = this.localize.term('urlTrackerRecommendationItem_action-temporary');
     this.actionTemporaryText = temporaryText ?? '';
   }
 
   private async localizeActionPermanentText(): Promise<void> {
-    const permanentText = await this.localizationService?.localize('urlTrackerRecommendationItem_action-permanent');
+    const permanentText = this.localize.term('urlTrackerRecommendationItem_action-permanent');
     this.actionPermanentText = permanentText ?? '';
   }
 
   private async localizeActionIgnoreText(): Promise<void> {
-    const ignoreText = await this.localizationService?.localize('urlTrackerRecommendationItem_action-ignore');
+    const ignoreText = this.localize.term('urlTrackerRecommendationItem_action-ignore');
     this.actionIgnoreText = ignoreText ?? '';
   }
 
   private async localizeDatesText(): Promise<void> {
-    const datesText = await this.localizationService?.localize('urlTrackerRecommendationItem_dates');
+    const datesText = this.localize.term('urlTrackerRecommendationItem_dates');
     this.occurranceDatesText = datesText;
   }
 
   private async tagText(importance: RecommendationTypes): Promise<void> {
-    const text = await this.localizationService?.localize(`urlTrackerRecommendationImportance_${importance}`);
+    const text = this.localize.term(`urlTrackerRecommendationImportance_${importance}`);
     this.recommendationTagText = text ?? '';
   }
 
@@ -201,10 +184,7 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
 
   private renderIgnore(): unknown {
     if (this.ignoreRecommendationLoading) {
-      return html`<button class="action-button" disabled>
-        <uui-loader-circle id="loader"></uui-loader-circle>
-        ${this.actionIgnoreText}
-      </button>`;
+      return html`<uui-loader-circle id="loader"></uui-loader-circle>`;
     }
     return html`<button class="action-button" @click=${this.handleIgnoreRecommendation}>
       <uui-icon name="icon-navigation-right" class="icon-before"></uui-icon>${this.actionIgnoreText}
@@ -223,8 +203,8 @@ export class UrlTrackerRecommendationItem extends RecommendationListItem {
           ${this.renderTemporaryRedirect()} ${this.renderPermanentRedirect()} ${this.renderIgnore()}
         </div>
         <div class="dates">
-          ${this.occurranceDatesText}: ${toReadableDateOnly(this.item.createdate)} -
-          ${toReadableDateOnly(this.item.updatedate)}
+          ${this.occurranceDatesText}: ${toReadableDateOnly(new Date(this.item.createDate))} -
+          ${toReadableDateOnly(new Date(this.item.updateDate))}
         </div>
       </div>
     `;

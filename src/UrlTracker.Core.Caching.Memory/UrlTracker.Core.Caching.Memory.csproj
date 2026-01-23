@@ -4,9 +4,9 @@
     <Title>URL Tracker Core Memory Cache</Title>
     <Description>This package contains an in-memory cache layer for the core services of the URL Tracker</Description>
     <RootNamespace>UrlTracker.Core.Caching.Memory</RootNamespace>
-    <PackageReleaseNotes>1 new feature
+    <PackageReleaseNotes>1 change
 
-- Add support for importing traditional csv formatted files</PackageReleaseNotes>
+- Update to Umbraco 16</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Umbraco.Cms.Core" Version="16.1.1" />

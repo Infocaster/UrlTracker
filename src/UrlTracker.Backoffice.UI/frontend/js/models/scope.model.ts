@@ -1,15 +1,18 @@
 import { ICustomEditor } from '@/umbraco/editor.service';
 
-export interface IScope extends angular.IScope {
+export interface IScope {
   $parent: IParentScope;
   model: ICustomEditor;
+  [key: string]: any;
 }
 
-interface IParentScope extends angular.IScope {
-  //   model: {
-  //     config: {
-  //       projectCode: string;
-  //       projectName: string;
-  //     };
-  //   };
+interface IParentScope {
+  model: {
+    config: {
+      projectCode: string;
+      projectName: string;
+    };
+  };
+
+  [key: string]: any;
 }

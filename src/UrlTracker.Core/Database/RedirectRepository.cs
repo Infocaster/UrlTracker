@@ -8,6 +8,7 @@ using NPoco;
 using Org.BouncyCastle.Crypto;
 using Umbraco.Cms.Core.Cache;
 using Umbraco.Cms.Core.Persistence.Querying;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Infrastructure.Persistence;
 using Umbraco.Cms.Infrastructure.Persistence.Querying;
 using Umbraco.Cms.Infrastructure.Persistence.Repositories.Implement;
@@ -24,9 +25,13 @@ namespace UrlTracker.Core.Database
     public class RedirectRepository
         : EntityRepositoryBase<int, IRedirect>, IRedirectRepository
     {
-        public RedirectRepository(IScopeAccessor scopeAccessor, AppCaches appCaches, ILogger<EntityRepositoryBase<int, IRedirect>> logger)
+        private readonly IIdKeyMap _idKeyMap;
+
+        public RedirectRepository(IScopeAccessor scopeAccessor, AppCaches appCaches, ILogger<EntityRepositoryBase<int, IRedirect>> logger, IIdKeyMap idKeyMap)
             : base(scopeAccessor, appCaches, logger)
-        { }
+        {
+            _idKeyMap = idKeyMap;
+        }
 
         #region Old Implementation
 
@@ -42,7 +47,7 @@ namespace UrlTracker.Core.Database
             selectQuery = selectQuery.OrderBy<RedirectDto>(descending, e => e.CreateDate);
 
             List<RedirectDto> records = await Database.SkipTakeAsync<RedirectDto>(skip, take, selectQuery);
-            var redirects = records.Select(RedirectFactory.BuildEntity);
+            var redirects = records.Select(dto => RedirectFactory.BuildEntity(dto, _idKeyMap));
 
             return RedirectEntityCollection.Create(redirects, await totalRecordsTask);
 
@@ -101,7 +106,7 @@ namespace UrlTracker.Core.Database
 
             // return entries as redirects
             var entries = await Database.FetchAsync<RedirectDto>(query).ConfigureAwait(false);
-            return entries.Select(RedirectFactory.BuildEntity).ToList();
+            return entries.Select(dto => RedirectFactory.BuildEntity(dto, _idKeyMap)).ToList();
         }
 
         public Task<IReadOnlyCollection<IRedirect>> GetWithRegexAsync()
@@ -121,7 +126,7 @@ namespace UrlTracker.Core.Database
             var dto = Database.Fetch<RedirectDto>(sql.SelectTop(1)).FirstOrDefault();
             if (dto is null) return null;
 
-            return RedirectFactory.BuildEntity(dto);
+            return RedirectFactory.BuildEntity(dto, _idKeyMap);
         }
 
         protected override IEnumerable<IRedirect> PerformGetAll(params int[]? ids)
@@ -130,7 +135,7 @@ namespace UrlTracker.Core.Database
             if (ids?.Any() is true) sql.WhereIn<RedirectDto>(e => e.Id, ids);
 
             var dtos = Database.Fetch<RedirectDto>(sql);
-            return dtos.Select(RedirectFactory.BuildEntity);
+            return dtos.Select(dto => RedirectFactory.BuildEntity(dto, _idKeyMap));
         }
 
         protected override IEnumerable<IRedirect> PerformGetByQuery(IQuery<IRedirect> query)
@@ -142,7 +147,7 @@ namespace UrlTracker.Core.Database
 
             var dtos = Database.Fetch<RedirectDto>(sql);
 
-            return dtos.Select(RedirectFactory.BuildEntity);
+            return dtos.Select(dto => RedirectFactory.BuildEntity(dto, _idKeyMap));
         }
 
         protected override void PersistNewItem(IRedirect entity)

@@ -5,9 +5,9 @@
     <Description>This package adds a backoffice interface for URL Tracker management</Description>
     <RootNamespace>UrlTracker.Backoffice.UI</RootNamespace>
     <StaticWebAssetBasePath>App_Plugins/UrlTracker</StaticWebAssetBasePath>
-    <PackageReleaseNotes>1 new feature
+    <PackageReleaseNotes>1 change
 
-- Add support for importing traditional csv formatted files</PackageReleaseNotes>
+- Update to Umbraco 16</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="UrlTracker.IntegrationTests" />
@@ -17,9 +17,11 @@
     <Content Remove="package-lock.json" />
     <Content Remove="package.json" />
     <Content Remove="tsconfig.json" />
+    <Content Remove="frontend/**" />
     <None Include="package-lock.json" />
     <None Include="package.json" />
     <None Include="tsconfig.json" />
+	<None Include="frontend/public/umbraco-package.json" />
   </ItemGroup>
   <ItemGroup>
     <SupportedPlatform Include="browser" />

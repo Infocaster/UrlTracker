@@ -1,6 +1,6 @@
 export interface IIconHelper {
-  getAllIcons(): angular.IPromise<IIcon[]>;
-  getIcon(iconName: string): angular.IPromise<IIcon | undefined>;
+  getAllIcons(): Promise<IIcon[]>;
+  getIcon(iconName: string): Promise<IIcon | undefined>;
 }
 
 export interface IIcon {

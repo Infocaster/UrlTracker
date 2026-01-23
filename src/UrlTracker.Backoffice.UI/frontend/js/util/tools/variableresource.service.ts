@@ -1,28 +1,16 @@
-interface IUmbracoGlobals {
-  Sys: IUmbracoGlobalsSys;
-}
-
-interface IUmbracoGlobalsSys {
-  ServerVariables: IUmbracoServerVariables;
-}
-
-interface IUmbracoServerVariables {
-  urlTracker: IUrlTrackerServerVariables;
-}
-
-interface IUrlTrackerServerVariables {
-  [key: string]: unknown;
-}
-
-declare const Umbraco: IUmbracoGlobals;
+import UmbServerVariableContext, { ServerVariables } from '@/context/servervariables.context';
 
 export interface IVariableResource {
-  get<T>(key: string, validator?: (obj: unknown) => obj is T): T;
+  get<T>(key: keyof Partial<ServerVariables>, validator?: (obj: unknown) => obj is T): T;
 }
 
 class VariableResource implements IVariableResource {
-  get<T>(key: string, validator?: (obj: unknown) => obj is T): T {
-    const result = Umbraco.Sys.ServerVariables.urlTracker[key];
+  get<T>(key: keyof Partial<ServerVariables>, validator?: (obj: unknown) => obj is T): T {
+    const serverVariablesContext = new UmbServerVariableContext();
+
+    const value = serverVariablesContext.serverVariables.getValue();
+
+    const result = value[key] as unknown;
 
     if (validator && !validator(result)) throw new Error('variable is not of the right type');
 

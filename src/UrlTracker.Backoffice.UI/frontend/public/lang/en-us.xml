@@ -84,6 +84,8 @@
     <key alias="recommendations-ignored">Recommendations ignored</key>
     <key alias="recommendations-ignored-message">All selected recommendations have been removed from the overview</key>
     <key alias="type">Type</key>
+    <key alias="choose">Choose</key>
+    <key alias="remove">Remove</key>
   </area>
   <area alias="urlTrackerDashboardLanding">
     <key alias="statisticLabel">pages returned a 404 response last week</key>
@@ -184,6 +186,10 @@
     <key alias="incoming-url-info">Enter the URL which should be redirected from</key>
     <key alias="outgoing-url">Outgoing URL</key>
     <key alias="outgoing-url-info">Select where the URL should redirect to</key>
+    <key alias="force">Force</key>
+    <key alias="force-description">Enabling this feature will apply this redirect on the incoming URL, even if content exists on the incoming URL.</key>
+
+
   </area>
   <area alias="urlTrackerRecommendationFilter">
     <key alias="search-placeholder">Type to search...</key>
@@ -209,6 +215,7 @@
         </key>
     <key alias="blogs">You used to post your blogs on /news, but they are now found below /blogs</key>
     <key alias="image">You rely on an image in a social media post, but the image no longer exists or has moved</key>
+    <key alias="header">Recommendations for: </key>
     <key alias="ignore">Ignore this</key>
     <key alias="ignore-description">
           Sometimes a url might pop up in here that you simply cannot do anything with. In that

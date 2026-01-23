@@ -1,0 +1,40 @@
+{
+  "$schema": "../../umbraco-package-schema.json",
+  "name": "Urltracker",
+  "version": "16.0.0",
+  "extensions": [
+    {
+      "type": "dashboard",
+      "alias": "Urltracker",
+      "name": "Urltracker",
+      "js": "/App_Plugins/UrlTracker/index.js",
+      "meta": {
+        "label": "Url Tracker",
+        "pathname": "urltracker"
+      }
+    },
+    {
+      "type": "backofficeEntryPoint",
+      "alias": "Urltracker.EntryPoint",
+      "js": "/App_Plugins/UrlTracker/umbEntrypoint.js"
+    },
+    {
+      "type": "localization",
+      "alias": "Urltracker.Localize.En",
+      "name": "English",
+      "meta": {
+        "culture": "en"
+      },
+      "js": "/App_Plugins/UrlTracker/lang/en-us.js"
+    },
+    {
+      "type": "localization",
+      "alias": "Urltracker.Localize.Nl",
+      "name": "Dutch",
+      "meta": {
+        "culture": "nl"
+      },
+      "js": "/App_Plugins/UrlTracker/lang/nl-nl.js"
+    }
+  ]
+}

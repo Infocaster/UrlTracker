@@ -1,6 +1,6 @@
-import { IRedirectData } from '@/services/redirect.service';
 import { LitElement, PropertyValueMap, css, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import type { RedirectRequest } from '../../../../../../api-client/types.gen';
 import './redirectForce.lit';
 import './redirectIncomingUrl.lit';
 import './redirectOutgoingUrl.lit';
@@ -11,7 +11,7 @@ import { ITypeButton } from './simpleRedirectTypeProvider';
 @customElement('urltracker-create-simple-redirect')
 export class UrlTrackerCreateSimpleRedirect extends LitElement {
   @property({ type: Object })
-  public redirect!: IRedirectData;
+  public redirect!: RedirectRequest;
 
   @property({ type: Boolean })
   public advancedView = false;
@@ -60,7 +60,7 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
     this.redirect.advanced = this.advancedView;
   }
 
-  private updateRedirect = () =>
+  private updateRedirect = () => {
     this.dispatchEvent(
       new CustomEvent('update', {
         detail: this.redirect,
@@ -68,6 +68,7 @@ export class UrlTrackerCreateSimpleRedirect extends LitElement {
         composed: true,
       }),
     );
+  };
 
   protected renderPreserveQuerystring(): unknown {
     if (!this.advancedView) {

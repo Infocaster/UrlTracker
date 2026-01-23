@@ -1,6 +1,5 @@
 import { LitElement, css, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { ensureExists } from '../../tools/existancecheck';
 import { repeat } from 'lit/directives/repeat.js';
 
 export interface IDropdownValue {
@@ -72,10 +71,7 @@ export class UrlTrackerDropdown extends LitElement {
     const key = event.target.value;
     const choice = this.options?.find((o) => o.key === key);
 
-    ensureExists(
-      choice,
-      'It is mandatory that the chosen option exists. This is an indication that something is wrong internally.',
-    );
+    if (!choice) return;
 
     if (choice.key === this.value) return;
 

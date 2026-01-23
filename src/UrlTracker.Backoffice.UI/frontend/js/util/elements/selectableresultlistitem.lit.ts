@@ -1,16 +1,12 @@
-import { ContextProvider, createContext } from '@lit/context';
 import { UUIBooleanInputEvent } from '@umbraco-ui/uui-boolean-input';
 import { css, html, nothing } from 'lit';
 import { UrlTrackerResultListItem } from './resultlistitem.lit';
 
-export function UrlTrackerSelectableResultListItem<T extends Record<string, any>>(
-  context: ReturnType<typeof createContext<T>>,
-) {
+export function UrlTrackerSelectableResultListItem<T extends Record<string, any>>() {
   return class SelectableResultListItem extends UrlTrackerResultListItem {
     private _item: T = {} as T;
     private _isSelected: boolean = false;
     private _selectable: boolean = true;
-    private _itemProvider = new ContextProvider(this, { context: context });
 
     public get item(): T {
       return this._item;
@@ -18,7 +14,6 @@ export function UrlTrackerSelectableResultListItem<T extends Record<string, any>
 
     public set item(value: T) {
       this._item = value;
-      this._itemProvider.setValue(value);
       this.requestUpdate('item');
     }
 

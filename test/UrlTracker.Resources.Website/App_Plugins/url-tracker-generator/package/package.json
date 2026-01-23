@@ -1,0 +1,20 @@
+{
+  "name": "client",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "watch": "vite build --watch"
+  },
+  "dependencies": {
+    "lit": "^3.3.1"
+  },
+  "devDependencies": {
+    "@umbraco-cms/backoffice": "^16.0.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.7"
+  }
+}

@@ -6,7 +6,3 @@
     Umbraco: any;
   }
 }
-
-declare module 'angular' {
-  typeof import('angular');
-}

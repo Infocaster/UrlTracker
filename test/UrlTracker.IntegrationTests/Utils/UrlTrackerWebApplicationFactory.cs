@@ -75,6 +75,8 @@ namespace UrlTracker.IntegrationTests.Utils
                 [
                     new("ConnectionStrings:umbracoDbDSN", _inMemoryConnectionString),
                     new("ConnectionStrings:umbracoDbDSN_ProviderName", "Microsoft.Data.Sqlite")
+                  /*  new("ConnectionStrings:umbracoDbDSN", "Server=.;Database=urltracker-13-new;encrypt=false"),
+                    new("ConnectionStrings:umbracoDbDSN_ProviderName", "Microsoft.Data.SqlClient")*/
                 ]);
             });
 

@@ -1,14 +1,13 @@
+import { consume } from '@lit/context';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { LitElement, css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { IDashboardFooter } from './footer';
-import { ILocalizationService } from '../../umbraco/localization.service';
-import { IVersionProvider } from '../../util/tools/versionprovider.service';
-import { consume } from '@lit/context';
 import { versionProviderContext } from '../../context/versionprovider.context';
-import { localizationServiceContext } from '../../context/localizationservice.context';
+import { IVersionProvider } from '../../util/tools/versionprovider.service';
+import { IDashboardFooter } from './footer';
 
 @customElement('urltracker-dashboard-footer')
-export class DashboardFooter extends LitElement {
+export class DashboardFooter extends UmbElementMixin(LitElement) {
   static styles = css`
     .url-tracker__footer {
       background-color: white;
@@ -87,37 +86,30 @@ export class DashboardFooter extends LitElement {
   @consume({ context: versionProviderContext })
   private versionProvider?: IVersionProvider;
 
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
-
   private initModel = () => {
-    this.localizationService
-      ?.localizeMany([
-        'urlTrackerDashboardFooter_featurelabel',
-        'urlTrackerDashboardFooter_buglabel',
-        'urlTrackerDashboardFooter_wikilabel',
-      ])
-      .then((result) => {
-        this.model = {
-          version: this.versionProvider ? this.versionProvider.version : '',
-          links: [
-            {
-              url: 'https://github.com/Infocaster/UrlTracker/discussions',
-              title: result[0],
-              target: '_blank',
-            },
-            {
-              url: 'https://github.com/Infocaster/UrlTracker/issues',
-              title: result[1],
-              target: '_blank',
-            },
-            {
-              url: 'https://github.com/Infocaster/UrlTracker/wiki',
-              title: result[2],
-              target: '_blank',
-            },
-          ],
-        };
-      });
+    const featureLabel = this.localize.term('urlTrackerDashboardFooter_featurelabel') || 'Request Feature';
+    const bugLabel = this.localize.term('urlTrackerDashboardFooter_buglabel') || 'Report Bug';
+    const wikiLabel = this.localize.term('urlTrackerDashboardFooter_wikilabel') || 'Documentation';
+
+    this.model = {
+      version: this.versionProvider ? this.versionProvider.version : '',
+      links: [
+        {
+          url: 'https://github.com/Infocaster/UrlTracker/discussions',
+          title: featureLabel,
+          target: '_blank',
+        },
+        {
+          url: 'https://github.com/Infocaster/UrlTracker/issues',
+          title: bugLabel,
+          target: '_blank',
+        },
+        {
+          url: 'https://github.com/Infocaster/UrlTracker/wiki',
+          title: wikiLabel,
+          target: '_blank',
+        },
+      ],
+    };
   };
 }

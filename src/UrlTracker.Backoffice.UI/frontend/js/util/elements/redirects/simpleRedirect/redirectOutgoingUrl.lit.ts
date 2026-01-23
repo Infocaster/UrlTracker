@@ -1,81 +1,80 @@
-import { IEditorService, editorServiceContext } from '@/context/editorservice.context';
-import { ILocalizationService, localizationServiceContext } from '@/context/localizationservice.context';
-import { ITargetService, redirectTargetServiceContext } from '@/context/redirecttargetservice.context';
 import { ITargetStrategies } from '@/dashboard/tabs/redirects/target/target.constants';
-import { IContentTargetResponse } from '@/dashboard/tabs/redirects/target/target.service';
-import { IContent } from '@/umbraco/editor.service';
+import { colors } from '@/dashboard/tabs/styles';
 import { debounce } from '@/util/functions/debounce';
 import variableresourceService from '@/util/tools/variableresource.service';
-import { consume } from '@lit/context';
+import {
+  UMB_DOCUMENT_PICKER_MODAL,
+  UmbDocumentDetailRepository,
+  UmbDocumentItemModel,
+  UmbDocumentItemRepository,
+  UmbDocumentTreeRepository,
+  UmbDocumentUrlRepository,
+} from '@umbraco-cms/backoffice/document';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
+import { umbHttpClient } from '@umbraco-cms/backoffice/http-client';
+import { umbOpenModal } from '@umbraco-cms/backoffice/modal';
+import { tryExecute } from '@umbraco-cms/backoffice/resources';
 import { UUIInputEvent } from '@umbraco-ui/uui-input';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit/directives/if-defined.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 import { repeat } from 'lit/directives/repeat.js';
+import {
+  ContentTargetResponse,
+  getUmbracoManagementApiV1UrlTrackerRedirectTargetContent,
+} from '../../../../../../api-client';
+import type { Client } from '../../../../../../api-client/client/types.gen';
 import './simpleRedirectTypeProvider';
 import { ITypeButton } from './simpleRedirectTypeProvider';
-import { ifDefined } from 'lit/directives/if-defined.js';
-import { colors } from '@/dashboard/tabs/styles';
-import { ensureServiceExists } from '@/util/tools/existancecheck';
 
 @customElement('urltracker-redirect-outgoing-url')
-export class UrlTrackerRedirectOutgoingUrl extends LitElement {
+export class UrlTrackerRedirectOutgoingUrl extends UmbElementMixin(LitElement) {
   @property({ type: String })
-  private outgoingUrl: string = '';
+  private outgoingUrl = '';
 
   @property({ type: String })
-  private outgoingStrategy: string = 'url';
+  private outgoingStrategy = 'url';
 
   @state()
-  private _headerText: string = '';
+  private _headerText = '';
 
   @state()
-  private _infoText: string = '';
+  private _infoText = '';
 
-  @state()
-  private _removeButtonText: string = '';
-
-  @state()
-  private _selectButtonText: string = '';
-
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
-  private get localizationService(): ILocalizationService {
-    ensureServiceExists(this._localizationService, 'localization service');
-    return this._localizationService;
-  }
-
-  @consume({ context: editorServiceContext })
-  private editorService?: IEditorService<any>;
-
-  @consume({ context: redirectTargetServiceContext })
-  private redirectTargetService?: ITargetService;
+  @property({ type: Array })
+  selection: Array<UmbDocumentItemModel> = [];
 
   private inputRef: Ref<HTMLInputElement> = createRef();
 
+  #documentTreeRepository = new UmbDocumentTreeRepository(this);
+  #documentItemRepository = new UmbDocumentItemRepository(this);
+  #documentUrlRepository = new UmbDocumentUrlRepository(this);
+  #documentDetailRepository = new UmbDocumentDetailRepository(this);
+
   public _typeButtons = [
     {
-      label: 'urlTrackerRedirectTarget_content',
+      label: this.localize.term('urlTrackerRedirectTarget_content'),
       labelFallback: 'Content',
       value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content,
       placeholder: 'link to content placeholder',
     },
     // {
-    //   label: "urlTrackerRedirectTarget_media",
+    //   label: this.localize.term('urlTrackerRedirectTarget_media'),
     //   labelFallback: "Media",
     //   value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').media,
     //   placeholder: "link to media placeholder",
     // },
     {
-      label: 'urlTrackerRedirectTarget_url',
+      label: this.localize.term('urlTrackerRedirectTarget_url'),
       labelFallback: 'URL',
       value: variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url,
       placeholder: 'https://example.com/',
     },
   ] as ITypeButton[];
 
-  private contentItem: (IContentTargetResponse & { id: number }) | undefined = undefined;
-  private url: string = '';
+  private contentItem: (ContentTargetResponse & { id: string }) | undefined = undefined;
+  private url = '';
 
   @state()
   private _selectedType: ITypeButton = this._typeButtons[0];
@@ -86,7 +85,6 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     this._localizeHeaderText();
     this._localizeInfoText();
     this._localizeButtonLabels();
-    this._localizeContentStrategyLabels();
 
     this._selectedType =
       this._typeButtons.find((item) => item.value === this.outgoingStrategy) ??
@@ -96,23 +94,35 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
 
     switch (this.outgoingStrategy) {
       case variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').content:
-        // eslint-disable-next-line no-case-declarations
-        const [id, culture] = this.outgoingUrl.split(';');
-        // eslint-disable-next-line no-case-declarations
-        const intId = Number.parseInt(id, 10);
+        if (this.outgoingUrl) {
+          try {
+            // Legacy support: if it's in "id;culture" format
+            const [id, culture] = this.outgoingUrl.split(';');
 
-        if (!isNaN(intId)) {
-          const content = await this.redirectTargetService!.Content({
-            id: Number.parseInt(id, 10),
-            culture: culture,
-          });
+            const { data } = await tryExecute(
+              this,
+              getUmbracoManagementApiV1UrlTrackerRedirectTargetContent({
+                client: umbHttpClient as unknown as Client,
+                query: {
+                  Id: id,
+                  Culture: culture,
+                },
+              }),
+            );
 
-          this.contentItem = {
-            ...content,
-            id: Number.parseInt(id, 10),
-          };
+            if (!data) throw new Error('Content item could not be found');
+
+            this.contentItem = {
+              id: id,
+              name: data.name,
+              icon: data.icon,
+              url: data.url,
+              iconColor: data.iconColor,
+            };
+          } catch (error) {
+            console.warn('Failed to load existing content:', error);
+          }
         }
-
         this.requestUpdate();
         break;
       case variableresourceService.get<ITargetStrategies>('redirectTargetStrategies').url:
@@ -122,26 +132,19 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
   }
 
   private _localizeHeaderText = async () => {
-    const text = await this.localizationService.localize('urlTrackerNewRedirect_outgoing-url');
+    const text = this.localize.term('urlTrackerNewRedirect_outgoing-url');
 
     this._headerText = text ?? 'Outgoing URL fallback';
   };
 
   private _localizeInfoText = async () => {
-    const text = await this.localizationService.localize('urlTrackerNewRedirect_outgoing-url-info');
+    const text = this.localize.term('urlTrackerNewRedirect_outgoing-url-info');
 
     this._infoText = text ?? 'Select where the URL should redirect to';
   };
 
-  private _localizeContentStrategyLabels = async () => {
-    const [select, remove] = await this.localizationService.localizeMany(['general_choose', 'general_remove']);
-
-    this._selectButtonText = select ?? 'Choose';
-    this._removeButtonText = remove ?? 'Remove';
-  };
-
   private _localizeButtonLabels = async () => {
-    const labels = await this._localizationService?.localizeMany(this._typeButtons.map((item) => item.label));
+    const labels = await this._typeButtons.map((item) => this.localize.term(item.label));
 
     this._typeButtons = this._typeButtons.map((item, index) => ({
       ...item,
@@ -149,38 +152,106 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
     }));
   };
 
-  private openContentPicker = () => {
-    this.editorService?.contentPicker({
-      multiPicker: false,
-      submit: this.submitContentPicker,
-      close: () => this.editorService?.close(),
+  private openContentPicker = async () => {
+    const modalContext = await umbOpenModal(this, UMB_DOCUMENT_PICKER_MODAL, {
+      data: {
+        multiple: false,
+        hideTreeRoot: true,
+        treeAlias: 'Umb.Tree.Document',
+        pickableFilter: (treeItem: UmbDocumentItemModel) => {
+          return treeItem.unique !== null && treeItem.unique !== undefined;
+        },
+      },
     });
+
+    const result = modalContext.selection.filter((item) => item !== null);
+
+    if (!result) return console.warn('No result from content picker modal');
+
+    if (result && result.length > 0) {
+      await this.submitContentPicker(result);
+    }
   };
 
-  private submitContentPicker = async (model: { selection: IContent[] }) => {
-    this.editorService?.close();
+  async #requestDocumentItem(unique: string) {
+    if (!unique) throw new Error('Could not open permissions modal, no unique was provided');
 
-    if (model.selection.length === 0) return;
+    const { data } = await this.#documentItemRepository.requestItems([unique]);
 
-    const selectedItem = model.selection[0];
-    const newTarget = await this.redirectTargetService?.Content({ id: selectedItem.id });
-    if (!newTarget) {
+    const documentItem = data?.[0];
+    if (!documentItem) throw new Error('No document item found');
+    return documentItem;
+  }
+
+  async #requestDocumentUrl(unique: string) {
+    if (!unique) throw new Error('Could not open permissions modal, no unique was provided');
+
+    const { data } = await this.#documentUrlRepository.requestItems([unique]);
+
+    const documentItem = data?.[0];
+    if (!documentItem) throw new Error('No document item found');
+    return documentItem;
+  }
+
+  private submitContentPicker = async (selection: string[]) => {
+    console.log(selection);
+    if (!selection || selection.length === 0) {
       this.contentItem = undefined;
+      this.onContentUpdate();
       return;
     }
 
-    this.contentItem = {
-      id: selectedItem.id,
-      ...newTarget,
-    };
-    this.onContentUpdate();
-    this.requestUpdate();
+    const selectedUniqueKey = selection[0]; // This is the GUID
+
+    try {
+      // Get document item details
+      const documentItem = await this.#requestDocumentItem(selectedUniqueKey);
+
+      if (!documentItem) {
+        console.warn('No document item found for:', selectedUniqueKey);
+        this.contentItem = undefined;
+        this.onContentUpdate();
+        return;
+      }
+
+      // Update selection for UI
+      this.selection = [documentItem];
+      if (!umbHttpClient) throw new Error('No HTTP client available');
+      const { data } = await tryExecute(
+        this,
+        getUmbracoManagementApiV1UrlTrackerRedirectTargetContent({
+          client: umbHttpClient as unknown as Client,
+          query: {
+            Id: selectedUniqueKey,
+          },
+        }),
+      );
+
+      if (!data) throw new Error('Content item could not be found');
+
+      const targetInfo = data;
+
+      this.contentItem = {
+        id: selectedUniqueKey, // Use the GUID as the ID
+        name: documentItem.name || '',
+        icon: targetInfo?.icon || 'icon-document',
+        url: targetInfo?.url || '',
+        iconColor: targetInfo?.iconColor || '',
+      };
+
+      this.onContentUpdate();
+      this.requestUpdate();
+    } catch (error) {
+      console.error('Error in submitContentPicker:', error);
+      this.contentItem = undefined;
+      this.onContentUpdate();
+    }
   };
 
   private onContentUpdate = () => {
     this.dispatchEvent(
       new CustomEvent('input', {
-        detail: this.contentItem?.id,
+        detail: this.contentItem?.id, // Send the GUID instead of numeric ID
         bubbles: true,
         composed: false,
       }),
@@ -224,6 +295,8 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
 
   private onDeleteContent = () => {
     this.contentItem = undefined;
+    this.selection = [];
+    this.onContentUpdate();
     this.requestUpdate();
   };
 
@@ -245,7 +318,9 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
               class=${ifDefined(this.contentItem.iconColor)}
             ></uui-icon>
             <uui-action-bar slot="actions">
-              <uui-button label="Remove" @click=${this.onDeleteContent}> ${this._removeButtonText} </uui-button>
+              <uui-button label="Remove" @click=${this.onDeleteContent}
+                ><umb-localize key="urlTrackerGeneral_remove">Remove</umb-localize></uui-button
+              >
             </uui-action-bar>
           </uui-ref-node-document-type>
         `;
@@ -253,7 +328,7 @@ export class UrlTrackerRedirectOutgoingUrl extends LitElement {
 
       return html`
         <uui-button class="w-100" look="placeholder" label="Select" @click=${this.openContentPicker}>
-          ${this._selectButtonText}
+          <umb-localize key="urlTrackerGeneral_choose">Choose</umb-localize>
         </uui-button>
       `;
     }

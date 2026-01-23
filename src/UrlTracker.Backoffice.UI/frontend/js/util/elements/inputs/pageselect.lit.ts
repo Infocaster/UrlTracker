@@ -1,4 +1,4 @@
-import { ensureExists } from '@/util/tools/existancecheck';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { UUIPaginationElement } from '@umbraco-ui/uui-pagination';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
@@ -16,7 +16,7 @@ export class UrlTrackerPageSelectEvent extends Event {
 }
 
 @customElement('urltracker-pageselect')
-export class UrlTrackerPageSelect extends LitElement {
+export class UrlTrackerPageSelect extends UmbElementMixin(LitElement) {
   static formAssociated = true;
 
   constructor() {
@@ -54,11 +54,7 @@ export class UrlTrackerPageSelect extends LitElement {
   }
 
   _onChange = (_: Event) => {
-    ensureExists(
-      this.paginationRef.value,
-      'A reference to the pagination element is required before changes can properly be tracked',
-    );
-    const newValue = this.paginationRef.value.current;
+    const newValue = this.paginationRef.value?.current ?? 1;
 
     if (newValue === this.value) return;
 

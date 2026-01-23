@@ -1,14 +1,15 @@
 import { LitElement } from 'lit';
-import { IRecommendationResponse } from '../../../../services/recommendation.service';
+import { RecommendationResponse } from '../../../../../../api-client';
 import { UnsafeStrategyResolver } from '../../../../util/tools/strategy/strategyresolver';
 
 export interface IRecommendationTypeStrategy {
-  getTitle(): Promise<string>;
-  getDescription(): Promise<string>;
+  getTitle(): string;
+  getDescription(): string;
+  typeKey: string;
 }
 
 export interface IRecommendationTypeStrategyFactoryParameters {
-  recommendation: IRecommendationResponse;
+  recommendation: RecommendationResponse;
   element: LitElement;
 }
 

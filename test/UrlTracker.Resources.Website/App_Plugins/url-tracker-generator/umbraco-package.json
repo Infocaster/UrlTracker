@@ -1,0 +1,22 @@
+{
+  "$schema": "../../umbraco-package-schema.json",
+  "name": "Urltracker-generator",
+  "version": "16.0.0",
+  "extensions": [
+    {
+      "type": "dashboard",
+      "alias": "Urltracker-generator",
+      "name": "Urltracker generator",
+      "js": "/App_Plugins/url-tracker-generator/package/wwwroot/client.js",
+      "meta": {
+        "label": "Url Tracker generator",
+        "pathname": "urltracker-generator"
+      }
+    },
+    {
+      "type": "backofficeEntryPoint",
+      "alias": "Urltracker-generator.EntryPoint",
+      "js": "/App_Plugins/url-tracker-generator/umbEntrypoint.js"
+    }
+  ]
+}

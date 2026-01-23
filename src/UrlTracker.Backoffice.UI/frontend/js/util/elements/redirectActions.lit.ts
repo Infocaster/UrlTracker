@@ -1,14 +1,9 @@
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { LitElement, css, html } from 'lit';
-import { ILocalizationService } from '../../umbraco/localization.service';
-import { consume } from '@lit/context';
-import { localizationServiceContext } from '../../context/localizationservice.context';
 import { customElement, property, state } from 'lit/decorators.js';
 
 @customElement('urltracker-redirect-actions')
-export class UrlTrackerRedirectActions extends LitElement {
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
-
+export class UrlTrackerRedirectActions extends UmbElementMixin(LitElement) {
   @property({ type: Boolean })
   public loading: boolean = false;
 
@@ -28,7 +23,7 @@ export class UrlTrackerRedirectActions extends LitElement {
   }
 
   private _localizeHeaderText = async () => {
-    const translatedText = await this._localizationService?.localize('urlTrackerRedirectActions_header');
+    const translatedText = this.localize.term('urlTrackerRedirectActions_header');
 
     // If custom property provided
     // Else if use translated header
@@ -43,7 +38,7 @@ export class UrlTrackerRedirectActions extends LitElement {
   };
 
   private _localizeLoadingText = async () => {
-    this._loadingText = await this._localizationService?.localize('urltrackergeneral_loading');
+    this._loadingText = this.localize.term('urltrackerGeneral_loading');
   };
 
   private renderBody(): unknown {

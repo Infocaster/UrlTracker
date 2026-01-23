@@ -4,9 +4,9 @@
     <Title>URL Tracker Backoffice Notifications</Title>
     <Description>This package contains notification handlers for the URL Tracker to handle Umbraco content notifications</Description>
     <RootNamespace>UrlTracker.Backoffice.Notifications</RootNamespace>
-    <PackageReleaseNotes>1 new feature
+    <PackageReleaseNotes>1 change
 
-- Add support for importing traditional csv formatted files</PackageReleaseNotes>
+- Update to Umbraco 16</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />

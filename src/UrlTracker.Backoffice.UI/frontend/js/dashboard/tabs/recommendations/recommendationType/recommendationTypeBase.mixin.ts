@@ -1,34 +1,30 @@
-import { ContextConsumer } from '@lit/context';
-import { ILocalizationService, localizationServiceContext } from '../../../../context/localizationservice.context';
 import { ReactiveControllerHost } from 'lit';
 import { IRecommendationTypeStrategy } from './recommendation.strategy';
 
 type HostElement = ReactiveControllerHost & HTMLElement;
 
 export class UrlTrackerRecommendationType implements IRecommendationTypeStrategy {
-  private _localizationServiceConsumer;
-
   constructor(
     base: HostElement,
     private _typeKey: string,
     private _typeDescriptionKey: string,
-  ) {
-    this._localizationServiceConsumer = new ContextConsumer(base, {
-      context: localizationServiceContext,
-    });
+  ) {}
+
+  public get typeKey(): string {
+    return this._typeKey;
   }
 
-  async getTitle(): Promise<string> {
-    const typeString = await this.localizationService?.localize(this._typeKey);
+  public getTitle(): string {
+    const typeString = 'typestring';
+    //FIXME: localize
+    // const typeString = await this.localizationService?.localize(this._typeKey);
     return typeString ?? this._typeKey;
   }
 
-  async getDescription(): Promise<string> {
-    const result = await this.localizationService?.localize(this._typeDescriptionKey);
+  public getDescription(): string {
+    const result = 'fallback';
+    //FIXME: localize
+    // const result = await this.localizationService?.localize(this._typeDescriptionKey);
     return result ?? this._typeDescriptionKey;
-  }
-
-  protected get localizationService(): ILocalizationService | undefined {
-    return this._localizationServiceConsumer.value;
   }
 }

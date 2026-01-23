@@ -1,31 +1,18 @@
 import { toReadableDate } from '@/util/functions/dateformatter';
-import { ensureExists, ensureServiceExists } from '@/util/tools/existancecheck';
-import { consume } from '@lit/context';
-import { Task } from '@lit/task';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { ILocalizationService, localizationServiceContext } from '../../../context/localizationservice.context';
-import { redirectContext } from '../../../context/redirectitem.context';
-import { IRedirectResponse } from '../../../services/redirect.service';
+import type { RedirectResponse } from '../../../../../api-client/types.gen';
 import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';
 import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
 import sourceStrategyResolver from './source/source.strategy';
 import targetStrategyResolver from './target/target.strategy';
 
-const RedirectListItem = UrlTrackerSelectableResultListItem<IRedirectResponse>(redirectContext);
-
-type Translations = {
-  edit: string;
-  delete: string;
-  redirectRequired: string;
-};
+const RedirectListItem = UrlTrackerSelectableResultListItem<RedirectResponse>();
 
 @customElement('urltracker-redirect-item')
-export class UrlTrackerRedirectItem extends RedirectListItem {
-  @consume({ context: localizationServiceContext })
-  private localizationService?: ILocalizationService;
-
+export class UrlTrackerRedirectItem extends UmbElementMixin(RedirectListItem) {
   @property({ type: Boolean, reflect: true })
   public deleteRedirectLoading: boolean = false;
 
@@ -36,60 +23,23 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
   private createDateText?: string;
 
   @state()
-  private translationTaskKey: number = 0;
-
-  @state()
-  private translations: Partial<Translations> = {};
-
-  @state()
   private redirectSourceText?: string;
 
   @state()
   private sourceIsError: boolean = false;
 
-  private _translationTask = new Task(this, {
-    task: async (): Promise<Partial<Translations>> => {
-      const [edit, deleteText, redirectRequired] = await Promise.all([
-        this.localizationService?.localize('urlTrackerGeneral_edit'),
-        this.localizationService?.localize('urlTrackerGeneral_delete'),
-        this.localizationService?.localize('urlTrackerGeneral_redirect-required'),
-      ]);
-
-      const translations: Partial<Translations> = {
-        edit,
-        delete: deleteText,
-        redirectRequired,
-      };
-
-      this.translations = translations;
-
-      return translations;
-    },
-    args: () => [this.translationTaskKey],
-  });
-
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
-    ensureServiceExists(this.localizationService, 'localizationService');
-    ensureExists(
-      this.item,
-      this.translations.redirectRequired || 'A redirect is required to use this element, but no redirect was provided',
-    );
-
-    const [redirectToText, createDateText] = await this.localizationService.localizeMany([
-      'urlTrackerRedirectTarget_redirectto',
-      'urlTrackerRedirectTarget_redirectdate',
-    ]);
-    this.redirectToText = redirectToText;
-    this.createDateText = createDateText;
+    this.redirectToText = this.localize.term('urlTrackerRedirectTarget_redirectto');
+    this.createDateText = this.localize.term('urlTrackerRedirectTarget_redirectdate');
 
     const sourceStrategy = sourceStrategyResolver.getStrategy({ redirect: this.item, element: this });
     if (sourceStrategy) {
       this.redirectSourceText = await sourceStrategy.getTitle();
       this.sourceIsError = false;
     } else {
-      this.redirectSourceText = await this.localizationService.localize('urlTrackerRedirectSource_unknown');
+      this.redirectSourceText = this.localize.term('urlTrackerRedirectSource_unknown');
       this.sourceIsError = true;
     }
   }
@@ -121,40 +71,38 @@ export class UrlTrackerRedirectItem extends RedirectListItem {
 
   private renderTarget(): unknown {
     if (!this.item) return nothing;
-    return targetStrategyResolver.getStrategy(this.item).getTemplate();
+    return targetStrategyResolver.getStrategy(this.item as any).getTemplate();
   }
 
   private renderDelete(): unknown {
     if (this.deleteRedirectLoading) {
       return html`<button class="action-button" disabled>
         <uui-loader-circle id="loader"></uui-loader-circle>
-        ${this.translations.delete}
+        <umb-localize key="urlTrackerGeneral_delete"></umb-localize>
       </button>`;
     } else {
       return html`<button class="action-button" @click=${this.handleDelete}>
-        <uui-icon name="delete" class="icon-before"></uui-icon>${this.translations.delete}
+        <uui-icon name="delete" class="icon-before"></uui-icon
+        ><umb-localize key="urlTrackerGeneral_delete">Delete</umb-localize>
       </button>`;
     }
   }
 
   protected renderBody(): unknown {
-    return this._translationTask.render({
-      complete: () => {
-        return html`
-          <div class="body">
-            ${this.renderSource()}
-            <div class="target">${this.redirectToText}: ${this.renderTarget()}</div>
-            <uui-button-group class="actions">
-              <button class="action-button" @click=${this.handleEdit}>
-                <uui-icon name="edit" class="icon-before"></uui-icon>${this.translations.edit}
-              </button>
-              ${this.renderDelete()}
-            </uui-button-group>
-            <div class="createdate">${this.createDateText}: ${toReadableDate(this.item.createDate)}</div>
-          </div>
-        `;
-      },
-    });
+    return html`
+      <div class="body">
+        ${this.renderSource()}
+        <div class="target">${this.redirectToText}: ${this.renderTarget()}</div>
+        <uui-button-group class="actions">
+          <button class="action-button" @click=${this.handleEdit}>
+            <uui-icon name="edit" class="icon-before"></uui-icon>
+            <umb-localize key="urlTrackerGeneral_edit">Edit</umb-localize>
+          </button>
+          ${this.renderDelete()}
+        </uui-button-group>
+        <div class="createdate">${this.createDateText}: ${toReadableDate(new Date(this.item.createDate))}</div>
+      </div>
+    `;
   }
 
   static styles = [

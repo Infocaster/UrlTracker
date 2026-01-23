@@ -1,20 +1,46 @@
-import { html } from 'lit';
-import { IRedirectResponse } from '../../../../../services/redirect.service';
+import { provide } from '@lit/context';
+import { html, LitElement } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import type { RedirectResponse } from '../../../../../../../api-client/types.gen';
+import { redirectContext } from '../../../../../context/redirectitem.context';
 import { IVariableResource } from '../../../../../util/tools/variableresource.service';
 import { ITargetStrategies } from '../target.constants';
 import { IRedirectTargetStrategy, IRedirectTargetStrategyFactory } from '../target.strategy';
 import './urltarget.lit';
 
+@customElement('urltracker-redirect-target-url-wrapper')
+export class UrlTrackerRedirectTargetUrlWrapper extends LitElement {
+  @property({ type: Object })
+  redirect?: RedirectResponse;
+
+  @state()
+  @provide({ context: redirectContext })
+  private _providedRedirect?: RedirectResponse;
+
+  protected willUpdate(changedProperties: Map<string | number | symbol, unknown>): void {
+    super.willUpdate(changedProperties);
+    if (changedProperties.has('redirect')) {
+      this._providedRedirect = this.redirect;
+    }
+  }
+
+  protected render() {
+    return html`<urltracker-redirect-target-url></urltracker-redirect-target-url>`;
+  }
+}
+
 export class UrlTargetStrategyFactory implements IRedirectTargetStrategyFactory {
   constructor(private variableResource: IVariableResource) {}
 
-  getStrategy(redirect: IRedirectResponse): IRedirectTargetStrategy | undefined {
+  getStrategy(redirect: RedirectResponse): IRedirectTargetStrategy | undefined {
     const key = this.variableResource.get<ITargetStrategies>('redirectTargetStrategies').url;
 
     if (redirect.target.strategy === key) {
       return {
         getTemplate() {
-          return html`<urltracker-redirect-target-url></urltracker-redirect-target-url>`;
+          return html`<urltracker-redirect-target-url-wrapper
+            .redirect=${redirect}
+          ></urltracker-redirect-target-url-wrapper>`;
         },
       };
     }

@@ -1,14 +1,14 @@
 import { LitElement } from 'lit';
-import { IRedirectResponse } from '../../../../services/redirect.service';
+import type { RedirectResponse } from '../../../../../../api-client/types.gen';
 import { UnsafeStrategyResolver } from '../../../../util/tools/strategy/strategyresolver';
 
 export interface IRedirectSourceStrategyFactoryParameters {
-  redirect: IRedirectResponse;
+  redirect: RedirectResponse;
   element: LitElement;
 }
 
 export interface IRedirectSourceStrategy {
-  getTitle(): Promise<string>;
+  getTitle(): string;
 }
 
 export interface IRedirectSourceStrategyFactory {

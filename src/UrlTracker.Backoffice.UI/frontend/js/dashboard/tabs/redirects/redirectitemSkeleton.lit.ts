@@ -1,11 +1,10 @@
 import { css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { redirectContext } from '../../../context/redirectitem.context';
-import { IRedirectResponse } from '../../../services/redirect.service';
+import type { RedirectResponse } from '../../../../../api-client/types.gen';
 import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';
 import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
 
-const RedirectListItem = UrlTrackerSelectableResultListItem<IRedirectResponse>(redirectContext);
+const RedirectListItem = UrlTrackerSelectableResultListItem<RedirectResponse>();
 
 @customElement('urltracker-redirect-item-skeleton')
 export class UrlTrackerRedirectItemSkeleton extends RedirectListItem {

@@ -1,8 +1,9 @@
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
 @customElement('urltracker-result-list-item')
-export class UrlTrackerResultListItem extends LitElement {
+export class UrlTrackerResultListItem extends UmbElementMixin(LitElement) {
   protected render(): unknown {
     return html`<slot></slot>`;
   }

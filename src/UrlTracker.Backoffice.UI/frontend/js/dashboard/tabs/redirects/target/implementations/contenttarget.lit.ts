@@ -1,22 +1,24 @@
-import { IRedirectResponse } from '@/services/redirect.service';
+import { colors } from '@/dashboard/tabs/styles';
 import { consume } from '@lit/context';
+import { umbHttpClient } from '@umbraco-cms/backoffice/http-client';
+import { tryExecute } from '@umbraco-cms/backoffice/resources';
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { IChangeManager, changeManagerContext } from '../../../../../context/changemanager.context';
-import { IEditorService, editorServiceContext } from '../../../../../context/editorservice.context';
-import { ITargetService, redirectTargetServiceContext } from '../../../../../context/redirecttargetservice.context';
-import { ensureServiceExists } from '../../../../../util/tools/existancecheck';
-import { IContentTargetResponse } from '../target.service';
-import { UrlTrackerRedirectTarget } from '../targetbase.mixin';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { colors } from '@/dashboard/tabs/styles';
+import {
+  ContentTargetResponse,
+  getUmbracoManagementApiV1UrlTrackerRedirectTargetContent,
+} from '../../../../../../../api-client';
+import type { Client } from '../../../../../../../api-client/client/types.gen';
+import { IChangeManager, changeManagerContext } from '../../../../../context/changemanager.context';
+import { UrlTrackerRedirectTarget } from '../targetbase.mixin';
 
 export class ContentUpdateEvent extends Event {
   static event = 'content-update';
 
   constructor(
     public contentId: string,
-    public contentItem: IContentTargetResponse,
+    public contentItem: ContentTargetResponse,
     eventInitDict?: EventInit,
   ) {
     super(ContentUpdateEvent.event, {
@@ -31,23 +33,17 @@ const baseType = UrlTrackerRedirectTarget(LitElement, 'urlTrackerRedirectTarget_
 
 @customElement('urltracker-redirect-target-content')
 export class UrlTrackerContentRedirectTarget extends baseType {
-  @consume({ context: redirectTargetServiceContext })
-  private redirectTargetService?: ITargetService;
-
-  @consume({ context: editorServiceContext })
-  private editorService?: IEditorService<IRedirectResponse>;
-
   @consume({ context: changeManagerContext })
   private changeManager?: IChangeManager;
 
   @state()
-  private contentItem?: IContentTargetResponse;
+  private contentItem?: ContentTargetResponse;
 
   @state()
   private contentId?: string;
 
   @state()
-  private loading: number = 0;
+  private loading = 0;
 
   @state()
   private errorText?: string;
@@ -55,27 +51,15 @@ export class UrlTrackerContentRedirectTarget extends baseType {
   async connectedCallback(): Promise<void> {
     await super.connectedCallback();
 
-    ensureServiceExists(this.changeManager, 'changeManager');
-    this.changeManager.element.addEventListener(ContentUpdateEvent.event, this.onContentUpdate);
+    this.changeManager?.element.addEventListener(ContentUpdateEvent.event, this.onContentUpdate);
 
-    if (this.redirect && 'content' in this.redirect.additionalData) {
-      this.errorText = undefined;
-      this.contentItem = this.redirect.additionalData.content as IContentTargetResponse;
-      if (!this.contentItem) {
-        this.errorText = await this.localizationService?.localize('urlTrackerRedirectTarget_contenterror');
-      }
-      const [id] = this.redirect.target.value.split(';');
-      this.contentId = id;
-    } else {
-      await this.init();
-    }
+    await this.init();
   }
 
   disconnectedCallback(): void {
     super.disconnectedCallback();
 
-    ensureServiceExists(this.changeManager, 'changeManager');
-    this.changeManager.element.removeEventListener(ContentUpdateEvent.event, this.onContentUpdate);
+    this.changeManager?.element.removeEventListener(ContentUpdateEvent.event, this.onContentUpdate);
   }
 
   private onContentUpdate = (e: Event) => {
@@ -86,21 +70,32 @@ export class UrlTrackerContentRedirectTarget extends baseType {
   };
 
   private async init(): Promise<void> {
-    ensureServiceExists(this.redirectTargetService, 'redirect target resource');
-    ensureServiceExists(this.redirect, 'redirect');
-
     this.loading++;
     this.errorText = undefined;
+
     try {
+      if (!this.redirect) throw new Error('No redirect available');
+      if (!umbHttpClient) throw new Error('No HTTP client available');
+
       const [id, culture] = this.redirect.target.value.split(';');
 
-      this.contentItem = await this.redirectTargetService.Content({
-        id: Number.parseInt(id),
-        culture: culture,
-      });
+      const { data } = await tryExecute(
+        this,
+        getUmbracoManagementApiV1UrlTrackerRedirectTargetContent({
+          client: umbHttpClient as unknown as Client,
+          query: {
+            Id: id,
+            Culture: culture,
+          },
+        }),
+      );
+
+      if (!data) throw new Error('Content item could not be found');
+
+      this.contentItem = data;
       this.contentId = id;
-    } catch {
-      this.errorText = await this.localizationService?.localize('urlTrackerRedirectTarget_contenterror');
+    } catch (error) {
+      this.errorText = this.localize.term('urlTrackerRedirectTarget_contenterror');
     } finally {
       this.loading--;
     }
@@ -108,24 +103,22 @@ export class UrlTrackerContentRedirectTarget extends baseType {
 
   private onClick = (e: Event) => {
     e.stopImmediatePropagation();
-    ensureServiceExists(this.editorService, 'editor service');
 
     const onClose = async () => {
-      this.editorService!.close();
       await this.init();
       this.dispatchEvent(new ContentUpdateEvent(this.contentId!, this.contentItem!));
     };
 
-    this.editorService.contentEditor({
-      id: this.contentId!,
-      create: false,
-      submit: onClose,
-      close: onClose,
-      documentTypeAlias: '',
-      allowPublishAndClose: false,
-      allowSaveAndClose: false,
-      parentId: '',
-    });
+    // this.editorService.contentEditor({
+    //   id: this.contentId!,
+    //   create: false,
+    //   submit: onClose,
+    //   close: onClose,
+    //   documentTypeAlias: '',
+    //   allowPublishAndClose: false,
+    //   allowSaveAndClose: false,
+    //   parentId: '',
+    // });
   };
 
   protected renderBody(): unknown {

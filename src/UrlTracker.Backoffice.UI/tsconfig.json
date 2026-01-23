@@ -6,12 +6,16 @@
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
+    "types": [
+      "@umbraco-cms/backoffice/extension-types"
+    ],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+	"moduleDetection": "force",
     "noEmit": true,
 
     /* Linting */

@@ -1,12 +1,9 @@
-import { consume } from '@lit/context';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import { localizationServiceContext } from '../../../../context/localizationservice.context';
-import { ILocalizationService } from '../../../../umbraco/localization.service';
-import { ensureServiceExists } from '@/util/tools/existancecheck';
 
 @customElement('urltracker-redirect-permanent')
-export class UrlTrackerRedirectPermanent extends LitElement {
+export class UrlTrackerRedirectPermanent extends UmbElementMixin(LitElement) {
   @property({ type: Boolean })
   public isPermanent: boolean = false;
 
@@ -22,13 +19,6 @@ export class UrlTrackerRedirectPermanent extends LitElement {
   @state()
   private _temporaryLabel: string = '';
 
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
-  private get localizationService(): ILocalizationService {
-    ensureServiceExists(this._localizationService, 'Localization service');
-    return this._localizationService;
-  }
-
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
 
@@ -36,18 +26,11 @@ export class UrlTrackerRedirectPermanent extends LitElement {
   }
 
   private _localizeLabels = async () => {
-    const [permanent, temporary, title, description] = await this.localizationService.localizeMany([
-      'urlTrackerNewRedirect_permanent-permanent-label',
-      'urlTrackerNewRedirect_permanent-temporary-label',
-      'urlTrackerNewRedirect_permanent',
-      'urlTrackerNewRedirect_permanent-info',
-    ]);
-
-    this._permanentLabel = permanent ?? 'Permanent (301)';
-    this._temporaryLabel = temporary ?? 'Temporary (302)';
-    this._headerText = title ?? 'Permanent';
+    this._permanentLabel = this.localize.term('urlTrackerNewRedirect_permanent-permanent-label') ?? 'Permanent (301)';
+    this._temporaryLabel = this.localize.term('urlTrackerNewRedirect_permanent-temporary-label') ?? 'Temporary (302)';
+    this._headerText = this.localize.term('urlTrackerNewRedirect_permanent') ?? 'Permanent';
     this._infoText =
-      description ??
+      this.localize.term('urlTrackerNewRedirect_permanent-info') ??
       'Select whether or not the redirect is permanent. Permanent redirects cannot be changed afterwards.';
   };
 

@@ -1,21 +1,16 @@
 import { ISourceStrategies } from '@/dashboard/tabs/redirects/source/source.constants';
 import { debounce } from '@/util/functions/debounce';
 import variableresourceService from '@/util/tools/variableresource.service';
-import { consume } from '@lit/context';
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui-input';
 import { LitElement, css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 import { repeat } from 'lit/directives/repeat.js';
-import { localizationServiceContext } from '../../../../context/localizationservice.context';
-import { ILocalizationService } from '../../../../umbraco/localization.service';
 import { ITypeButton } from './simpleRedirectTypeProvider';
 
 @customElement('urltracker-redirect-incoming-url')
-export class UrlTrackerRedirectIncomingUrl extends LitElement {
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
-
+export class UrlTrackerRedirectIncomingUrl extends UmbElementMixin(LitElement) {
   @property({ type: String })
   private incomingUrl: string = '';
 
@@ -70,19 +65,19 @@ export class UrlTrackerRedirectIncomingUrl extends LitElement {
   }
 
   private _localizeHeaderText = async () => {
-    const text = await this._localizationService?.localize('urlTrackerNewRedirect_incoming-url');
+    const text = this.localize.term('urlTrackerNewRedirect_incoming-url');
 
     this._headerText = text ?? '';
   };
 
   private _localizeInfoText = async () => {
-    const text = await this._localizationService?.localize('urlTrackerNewRedirect_incoming-url-info');
+    const text = this.localize.term('urlTrackerNewRedirect_incoming-url-info');
 
     this._infoText = text ?? '';
   };
 
   private _localizeButtonLabels = async () => {
-    const labels = await this._localizationService?.localizeMany(this._typeButtons.map((item) => item.label));
+    const labels = this._typeButtons.map((item) => item.label).map((label) => this.localize.term(label));
 
     this._typeButtons = this._typeButtons.map((item, index) => ({
       ...item,

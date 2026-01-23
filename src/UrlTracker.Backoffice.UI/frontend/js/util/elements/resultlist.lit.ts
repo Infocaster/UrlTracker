@@ -1,26 +1,21 @@
+import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { LitElement, css, html } from 'lit';
-import { ILocalizationService } from '../../umbraco/localization.service';
-import { consume } from '@lit/context';
-import { localizationServiceContext } from '../../context/localizationservice.context';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 
 @customElement('urltracker-result-list')
-export class UrlTrackerResultList extends LitElement {
-  @consume({ context: localizationServiceContext })
-  private _localizationService?: ILocalizationService;
-
+export class UrlTrackerResultList extends UmbElementMixin(LitElement) {
   @property({ type: Boolean })
   public loading: boolean = false;
 
   @property({ type: String })
   public header?: string;
 
-  private _loadingText?: string;
+  @state()
+  private _loadingText = '';
 
   async connectedCallback(): Promise<void> {
     super.connectedCallback();
-
-    this._loadingText = await this._localizationService?.localize('urltrackerGeneral_loading');
+    this._loadingText = this.localize?.term('urltrackerGeneral_loading') || 'Loading...';
   }
 
   private renderBody(): unknown {

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Umbraco.Cms.Core.Services;
 using UrlTracker.Core.Database.Dtos;
 using UrlTracker.Core.Database.Entities;
 
@@ -7,7 +8,7 @@ namespace UrlTracker.Core.Database.Factories
     [ExcludeFromCodeCoverage]
     internal static class RedirectFactory
     {
-        internal static IRedirect BuildEntity(RedirectDto dto)
+        internal static IRedirect BuildEntity(RedirectDto dto, IIdKeyMap idKeyMap)
         {
             var entity = new RedirectEntity(dto.RetainQuery, dto.Permanent, dto.Force, dto.Advanced, new EntityStrategy(dto.SourceStrategy, dto.SourceValue), new EntityStrategy(dto.TargetStrategy, dto.TargetValue));
             try
@@ -17,6 +18,7 @@ namespace UrlTracker.Core.Database.Factories
                 entity.CreateDate = dto.CreateDate;
                 entity.Id = dto.Id;
                 entity.Key = dto.Key;
+                entity.MigrateContentTarget(idKeyMap);
 
                 entity.ResetDirtyProperties(false);
                 return entity;
