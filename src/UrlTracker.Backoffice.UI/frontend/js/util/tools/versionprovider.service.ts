@@ -9,7 +9,7 @@ export class VersionProvider implements IVersionProvider {
 
   get version(): string {
     // Return a placeholder version - in a real implementation this would be fetched from the server
-    return '16.0.0';
+    return '17.0.0';
   }
 }
 

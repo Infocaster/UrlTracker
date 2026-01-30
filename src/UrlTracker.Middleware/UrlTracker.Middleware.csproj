@@ -4,13 +4,13 @@
     <Title>URL Tracker Middleware</Title>
     <Description>This package contains middleware to perform redirects and to register client errors with the URL Tracker</Description>
     <RootNamespace>UrlTracker.Middleware</RootNamespace>
-    <PackageReleaseNotes>1 change
+        <PackageReleaseNotes>1 change
 
-- Update to Umbraco 16</PackageReleaseNotes>
+- Update to Umbraco 17</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Core" Version="16.1.1" />
-    <PackageReference Include="Umbraco.Cms.Web.Common" Version="16.1.1" />
+    <PackageReference Include="Umbraco.Cms.Core" Version="17.1.0" />
+    <PackageReference Include="Umbraco.Cms.Web.Common" Version="17.1.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />

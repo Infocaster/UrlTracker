@@ -4,6 +4,7 @@ using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Web;
 using UrlTracker.Core;
+using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Models;
 
 namespace UrlTracker.IntegrationTests.Redirecting
@@ -17,18 +18,18 @@ namespace UrlTracker.IntegrationTests.Redirecting
 
         protected Redirect CreateRedirectBase()
         {
-            using var _ = ServiceProvider.GetRequiredService<IUmbracoContextFactory>().EnsureUmbracoContext();
+            using var umbracoContext = ServiceProvider.GetRequiredService<IUmbracoContextFactoryAbstraction>().EnsureUmbracoContext();
 
             return new Redirect
             {
                 Force = false,
                 RetainQuery = false,
                 Permanent = _defaultPermanent,
-                Target = new ContentPageTargetStrategy(GetDefaultRootNode(), "en-US")
+                Target = new ContentPageTargetStrategy(GetDefaultRootNode(umbracoContext), "en-US")
             };
         }
 
-        protected IPublishedContent GetDefaultRootNode() => UmbracoContext.Content!.GetAtRoot().First();
+        protected IPublishedContent GetDefaultRootNode(IUmbracoContextReferenceAbstraction umbracoContext) => umbracoContext.GetContentAtRoot().First();
         protected IRedirectService GetRedirectService() => ServiceProvider.GetRequiredService<IRedirectService>();
     }
 }

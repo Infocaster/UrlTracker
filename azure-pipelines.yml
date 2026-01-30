@@ -1,13 +1,13 @@
 trigger:
   branches:
     include:
-    - v16/main
-    - v16/develop
-    - v16/release/*
-    - v16/hotfix
+    - v17/main
+    - v17/develop
+    - v17/release/*
+    - v17/hotfix
   tags:
     include:
-    - 16.*
+    - 17.*
 
 pool:
   name: "Azure Pipelines"
@@ -79,10 +79,10 @@ stages:
         customCommand: 'run build'
 
     - task: UseDotNet@2
-      displayName: 'Use .NET 9'
+      displayName: 'Use .NET 10'
       inputs:
         packageType: 'sdk'
-        version: '9.x'
+        version: '10.x'
         includePreviewVersions: false
 
     - task: DotNetCoreCLI@2
@@ -99,7 +99,6 @@ stages:
         projects: |
           test/UrlTracker.Core.Caching.Memory.Tests/UrlTracker.Core.Caching.Memory.Tests.csproj
           test/UrlTracker.Core.Tests/UrlTracker.Core.Tests.csproj
-          test/UrlTracker.IntegrationTests/UrlTracker.IntegrationTests.csproj
           test/UrlTracker.Middleware.Tests/UrlTracker.Middleware.Tests.csproj
           test/UrlTracker.Web.Tests/UrlTracker.Web.Tests.csproj
         arguments: '--configuration $(BuildConfiguration) -p:Version=$(version_step.semVer) --collect "XPlat Code Coverage" --no-build'

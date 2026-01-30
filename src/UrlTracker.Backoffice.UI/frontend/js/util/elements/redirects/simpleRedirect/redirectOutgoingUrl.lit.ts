@@ -233,7 +233,7 @@ export class UrlTrackerRedirectOutgoingUrl extends UmbElementMixin(LitElement) {
 
       this.contentItem = {
         id: selectedUniqueKey, // Use the GUID as the ID
-        name: documentItem.name || '',
+        name: documentItem.variants[0].name || '',
         icon: targetInfo?.icon || 'icon-document',
         url: targetInfo?.url || '',
         iconColor: targetInfo?.iconColor || '',

@@ -6,12 +6,12 @@
     <RootNamespace>UrlTracker.Backoffice.Notifications</RootNamespace>
     <PackageReleaseNotes>1 change
 
-- Update to Umbraco 16</PackageReleaseNotes>
+- Update to Umbraco 17</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Infrastructure" Version="16.1.1" />
+    <PackageReference Include="Umbraco.Cms.Infrastructure" Version="17.1.0" />
   </ItemGroup>
 </Project>

@@ -2,30 +2,31 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Routing;
 using Umbraco.Cms.Core.Web;
+using Umbraco.Cms.Infrastructure;
 using Umbraco.Extensions;
 
 namespace UrlTracker.Core.Abstractions
 {
     [ExcludeFromCodeCoverage]
-    internal class UmbracoContextFactoryAbstraction
+    internal class UmbracoContextFactoryAbstraction(
+        IUmbracoContextFactory umbracoContextFactory,
+        IPublishedUrlProvider urlProvider,
+        IServiceScopeFactory serviceScopeFactory)
         : IUmbracoContextFactoryAbstraction
     {
-        private readonly IUmbracoContextFactory _umbracoContextFactory;
-        private readonly IPublishedUrlProvider _urlProvider;
-
-        public UmbracoContextFactoryAbstraction(IUmbracoContextFactory umbracoContextFactory, IPublishedUrlProvider urlProvider)
-        {
-            _umbracoContextFactory = umbracoContextFactory;
-            _urlProvider = urlProvider;
-        }
+        private readonly IUmbracoContextFactory _umbracoContextFactory = umbracoContextFactory;
+        private readonly IPublishedUrlProvider _urlProvider = urlProvider;
+        private readonly IServiceScopeFactory _serviceScopeFactory = serviceScopeFactory;
 
         public IUmbracoContextReferenceAbstraction EnsureUmbracoContext()
         {
-            return new UmbracoContextReferenceAbstraction(_umbracoContextFactory.EnsureUmbracoContext(), _urlProvider);
+            var serviceScope = _serviceScopeFactory.CreateScope();
+            return new UmbracoContextReferenceAbstraction(_umbracoContextFactory.EnsureUmbracoContext(), _urlProvider, serviceScope);
         }
     }
 
@@ -35,16 +36,24 @@ namespace UrlTracker.Core.Abstractions
     {
         private readonly UmbracoContextReference _cref;
         private readonly IPublishedUrlProvider _urlProvider;
+        private readonly IServiceScope _serviceScope;
+        private readonly IPublishedContentQuery _publishedContentQuery;
 
-        public UmbracoContextReferenceAbstraction(UmbracoContextReference cref, IPublishedUrlProvider urlProvider)
+        public UmbracoContextReferenceAbstraction(
+            UmbracoContextReference cref,
+            IPublishedUrlProvider urlProvider,
+            IServiceScope serviceScope)
         {
             _cref = cref;
             _urlProvider = urlProvider;
+            _serviceScope = serviceScope;
+            _publishedContentQuery = _serviceScope.ServiceProvider.GetRequiredService<IPublishedContentQuery>();
         }
 
         public virtual void Dispose()
         {
             _cref.Dispose();
+            _serviceScope.Dispose();
             GC.SuppressFinalize(this);
         }
 
@@ -67,7 +76,7 @@ namespace UrlTracker.Core.Abstractions
 
         public IEnumerable<IPublishedContent> GetContentAtRoot()
         {
-            return _cref.UmbracoContext.Content?.GetAtRoot() ?? Enumerable.Empty<IPublishedContent>();
+            return _publishedContentQuery.ContentAtRoot();
         }
 
         public IPublishedContent? GetMediaById(int id)

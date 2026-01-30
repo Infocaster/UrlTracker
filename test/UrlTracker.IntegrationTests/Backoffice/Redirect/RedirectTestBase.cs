@@ -4,6 +4,7 @@ using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Web;
 using UrlTracker.Core;
+using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Models;
 
 namespace UrlTracker.IntegrationTests.Backoffice.Redirect
@@ -12,13 +13,12 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
     {
         protected const string _endpointBase = "/umbraco/management/api/v1/UrlTracker/Redirects";
 
-        public UmbracoContextReference ContextReference { get; private set; } = null!;
-        protected IUmbracoContext UmbracoContext => ContextReference.UmbracoContext;
+        public IUmbracoContextReferenceAbstraction ContextReference { get; private set; } = null!;
 
         public override async Task SetupAsync()
         {
             await base.SetupAsync();
-            var umbracoContextFactory = ServiceProvider.GetRequiredService<IUmbracoContextFactory>();
+            var umbracoContextFactory = ServiceProvider.GetRequiredService<IUmbracoContextFactoryAbstraction>();
 
             ContextReference = umbracoContextFactory.EnsureUmbracoContext();
         }
@@ -29,7 +29,7 @@ namespace UrlTracker.IntegrationTests.Backoffice.Redirect
             base.TearDown();
         }
 
-        protected IPublishedContent GetDefaultRootNode() => UmbracoContext.Content!.GetAtRoot().First();
+        protected IPublishedContent GetDefaultRootNode() => ContextReference.GetContentAtRoot().First();
         protected IRedirectService GetRedirectService() => ServiceProvider.GetRequiredService<IRedirectService>();
 
 

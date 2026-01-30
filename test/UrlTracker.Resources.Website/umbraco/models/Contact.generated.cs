@@ -65,13 +65,13 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[ImplementPropertyType("contactIntro")]
 		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString ContactIntro => this.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(_publishedValueFallback, "contactIntro");
 
-		///<summary>
-		/// Map Coordinates
-		///</summary>
-		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.1.1+7e82c25")]
-		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
-		[ImplementPropertyType("mapCoordinates")]
-		public virtual global::Bergmania.OpenStreetMap.Core.OpenStreetMapModel MapCoordinates => this.Value<global::Bergmania.OpenStreetMap.Core.OpenStreetMapModel>(_publishedValueFallback, "mapCoordinates");
+		/////<summary>
+		///// Map Coordinates
+		/////</summary>
+		//[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "16.1.1+7e82c25")]
+		//[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		//[ImplementPropertyType("mapCoordinates")]
+		//public virtual global::Bergmania.OpenStreetMap.Core.OpenStreetMapModel MapCoordinates => this.Value<global::Bergmania.OpenStreetMap.Core.OpenStreetMapModel>(_publishedValueFallback, "mapCoordinates");
 
 		///<summary>
 		/// Map Header

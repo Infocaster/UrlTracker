@@ -7,13 +7,13 @@
     <RootNamespace>UrlTracker.Web</RootNamespace>
     <PackageReleaseNotes>1 change
 
-- Update to Umbraco 16</PackageReleaseNotes>
+- Update to Umbraco 17</PackageReleaseNotes>
   </PropertyGroup>
   <!-- END Package properties -->
   <!-- External references -->
   <ItemGroup>
     <PackageReference Include="UAParser" Version="3.1.47" />
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="16.1.1" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="17.1.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Core\UrlTracker.Core.csproj" />

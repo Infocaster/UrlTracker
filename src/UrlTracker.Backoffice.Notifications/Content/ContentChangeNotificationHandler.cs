@@ -28,52 +28,38 @@ namespace UrlTracker.Backoffice.Notifications.Content
     /// <summary>
     /// A notification handler that creates redirects based on changes in content
     /// </summary>
+    /// <inheritdoc />
     [ExcludeFromCodeCoverage]
-    public class ContentChangeNotificationHandler
-    : INotificationAsyncHandler<ContentMovingNotification>,
-      INotificationAsyncHandler<ContentMovedNotification>,
-      INotificationAsyncHandler<ContentPublishingNotification>,
-      INotificationAsyncHandler<ContentPublishedNotification>
+    public class ContentChangeNotificationHandler(
+        IUmbracoContextFactoryAbstraction umbracoContextFactory,
+        IRedirectService redirectService,
+        IScopeProvider scopeProvider,
+        IOptionsMonitor<UrlTrackerSettings> configuration,
+        IOptionsMonitor<UrlTrackerNotificationsOptions> notificationsOptions,
+        IContentValueReaderFactory contentValueReaderFactory,
+        IPublishedUrlProvider publishedUrlProvider,
+        IVariationContextAccessor variationContextAccessor,
+        IDocumentNavigationQueryService navigationQueryService,
+        IPublishedContentStatusFilteringService publishedStatusFilteringService,
+        ILogger<ContentChangeNotificationHandler> logger)
+        : INotificationAsyncHandler<ContentMovingNotification>,
+          INotificationAsyncHandler<ContentMovedNotification>,
+          INotificationAsyncHandler<ContentPublishingNotification>,
+          INotificationAsyncHandler<ContentPublishedNotification>
     {
-        private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactory;
-        private readonly IRedirectService _redirectService;
-        private readonly IScopeProvider _scopeProvider;
-        private readonly IOptionsMonitor<UrlTrackerSettings> _configuration;
-        private readonly IOptionsMonitor<UrlTrackerNotificationsOptions> _notificationsOptions;
-        private readonly IContentValueReaderFactory _contentValueReaderFactory;
-        private readonly IPublishedUrlProvider _publishedUrlProvider;
-        private readonly IVariationContextAccessor _variationContextAccessor;
-        private readonly IDocumentNavigationQueryService _navigationQueryService;
-        private readonly IPublishedContentStatusFilteringService _publishedStatusFilteringService;
-        private readonly ILogger<ContentChangeNotificationHandler> _logger;
+        private readonly IUmbracoContextFactoryAbstraction _umbracoContextFactory = umbracoContextFactory;
+        private readonly IRedirectService _redirectService = redirectService;
+        private readonly IScopeProvider _scopeProvider = scopeProvider;
+        private readonly IOptionsMonitor<UrlTrackerSettings> _configuration = configuration;
+        private readonly IOptionsMonitor<UrlTrackerNotificationsOptions> _notificationsOptions = notificationsOptions;
+        private readonly IContentValueReaderFactory _contentValueReaderFactory = contentValueReaderFactory;
+        private readonly IPublishedUrlProvider _publishedUrlProvider = publishedUrlProvider;
+        private readonly IVariationContextAccessor _variationContextAccessor = variationContextAccessor;
+        private readonly IDocumentNavigationQueryService _navigationQueryService = navigationQueryService;
+        private readonly IPublishedContentStatusFilteringService _publishedStatusFilteringService = publishedStatusFilteringService;
+        private readonly ILogger<ContentChangeNotificationHandler> _logger = logger;
         private const string _moveRedirectsKey = "ic:MoveRedirects";
         private const string _renameRedirectsKey = "ic:RenameRedirects";
-
-        /// <inheritdoc />
-        public ContentChangeNotificationHandler(IUmbracoContextFactoryAbstraction umbracoContextFactory,
-                                                IRedirectService redirectService,
-                                                IScopeProvider scopeProvider,
-                                                IOptionsMonitor<UrlTrackerSettings> configuration,
-                                                IOptionsMonitor<UrlTrackerNotificationsOptions> notificationsOptions,
-                                                IContentValueReaderFactory contentValueReaderFactory,
-                                                IPublishedUrlProvider publishedUrlProvider,
-                                                IVariationContextAccessor variationContextAccessor,
-                                                IDocumentNavigationQueryService navigationQueryService,
-                                                IPublishedContentStatusFilteringService publishedStatusFilteringService,
-                                                ILogger<ContentChangeNotificationHandler> logger)
-        {
-            _umbracoContextFactory = umbracoContextFactory;
-            _redirectService = redirectService;
-            _scopeProvider = scopeProvider;
-            _configuration = configuration;
-            _notificationsOptions = notificationsOptions;
-            _contentValueReaderFactory = contentValueReaderFactory;
-            _publishedUrlProvider = publishedUrlProvider;
-            _variationContextAccessor = variationContextAccessor;
-            _navigationQueryService = navigationQueryService;
-            _publishedStatusFilteringService = publishedStatusFilteringService;
-            _logger = logger;
-        }
 
         /* For now the approach is to create working code.
          *     Event management needs to be fleshed out a lot better though.
@@ -105,7 +91,7 @@ namespace UrlTracker.Backoffice.Notifications.Content
                             valueReader.GetValue(Constants.Conventions.Content.UrlName) == valueReader.GetValue(content, Constants.Conventions.Content.UrlName)) continue;
 
                         // this entity has changed, so a new redirect for it and its descendants must be created
-                        foreach (var item in content.Descendants(_variationContextAccessor, valueReader.GetCulture()).Prepend(content))
+                        foreach (var item in content.Descendants(_navigationQueryService, _publishedStatusFilteringService, valueReader.GetCulture()).Prepend(content))
                         {
                             redirects.Add(CreateRedirect(item, valueReader.GetCulture()));
                         }

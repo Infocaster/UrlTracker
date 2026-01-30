@@ -2,7 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Routing;
+using Umbraco.Cms.Core.Services.Navigation;
 using Umbraco.Cms.Core.Web;
+using UrlTracker.Core.Abstractions;
 using UrlTracker.Core.Models;
 
 namespace UrlTracker.IntegrationTests.Redirecting
@@ -13,8 +15,10 @@ namespace UrlTracker.IntegrationTests.Redirecting
         {
             get
             {
-                using var _ = ServiceProvider.GetRequiredService<IUmbracoContextFactory>().EnsureUmbracoContext();
-                return GetDefaultRootNode().FirstChild(ServiceProvider.GetRequiredService<IVariationContextAccessor>())!
+                using var umbracoContext = ServiceProvider.GetRequiredService<IUmbracoContextFactoryAbstraction>().EnsureUmbracoContext();
+                return GetDefaultRootNode(umbracoContext).FirstChild(
+                    ServiceProvider.GetRequiredService<IDocumentNavigationQueryService>(),
+                    ServiceProvider.GetRequiredService<IPublishedContentStatusFilteringService>())!
                                            .Url(ServiceProvider.GetRequiredService<IPublishedUrlProvider>(), mode: UrlMode.Absolute);
             }
         }

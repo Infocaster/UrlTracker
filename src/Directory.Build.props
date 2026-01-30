@@ -1,6 +1,6 @@
 ﻿<Project>
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
@@ -13,7 +13,7 @@
     <Authors>Infocaster B.V.</Authors>
     <Product>URL Tracker</Product>
     <PackageTags>umbraco plugin package urltracker notfound redirect</PackageTags>
-    <Copyright>Copyright © Infocaster 2023</Copyright>
+    <Copyright>Copyright © Infocaster 2026</Copyright>
     <RepositoryUrl>https://github.com/Infocaster/UrlTracker</RepositoryUrl>
     <PackageProjectUrl>https://github.com/Infocaster/UrlTracker</PackageProjectUrl>
     <PackageIcon>infocaster_nuget_yellow.png</PackageIcon>
