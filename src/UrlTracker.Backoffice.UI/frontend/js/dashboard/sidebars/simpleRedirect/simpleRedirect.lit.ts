@@ -2,7 +2,6 @@ import { ISourceStrategies } from '@/dashboard/tabs/redirects/source/source.cons
 import { ITargetStrategies } from '@/dashboard/tabs/redirects/target/target.constants';
 
 import variableresourceService from '@/util/tools/variableresource.service';
-import { provide } from '@lit/context';
 import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 
@@ -18,8 +17,7 @@ import {
   postUmbracoManagementApiV1UrlTrackerRedirectsByRedirectId,
 } from '../../../../../api-client/sdk.gen';
 import { CreateRedirectRequest, RedirectRequest } from '../../../../../api-client/types.gen';
-import { ITargetService, redirectTargetServiceContext } from '../../../context/redirecttargetservice.context';
-import targetService from '../../../dashboard/tabs/redirects/target/target.service';
+
 import '../../../util/elements/redirects/simpleRedirect/createSimpleRedirect.lit';
 import { UrlTrackerSimpleRedirectModalData, UrlTrackerSimpleRedirectModalValue } from '../simpleRedirect-modal.token';
 
@@ -30,9 +28,6 @@ export class UrlTrackerSidebarSimpleRedirect
   extends UmbLitElement
   implements UmbModalExtensionElement<UrlTrackerSimpleRedirectModalData, UrlTrackerSimpleRedirectModalValue>
 {
-  @provide({ context: redirectTargetServiceContext })
-  redirectTargetService: ITargetService = targetService;
-
   @property({ attribute: false })
   modalContext?: UmbModalContext<UrlTrackerSimpleRedirectModalData, UrlTrackerSimpleRedirectModalValue>;
 
