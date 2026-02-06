@@ -18,4 +18,4 @@ branches:
     label: 'rc'
     regex: ^v16/release
 ignore:
-  sha: []
+  sha: [4d71999c318039694f207979521ed25574bf6176]
