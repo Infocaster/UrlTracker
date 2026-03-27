@@ -15,7 +15,7 @@
     "api:generate": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 openapi-ts"
   },
   "dependencies": {
-    "@hey-api/openapi-ts": "^0.85.2",
+    "@hey-api/openapi-ts": "^0.94.5",
     "@lit/context": "^1.1.1",
     "@lit/task": "^1.0.3",
     "@oddbird/popover-polyfill": "^0.4.3",
@@ -35,7 +35,7 @@
     "@types/qs": "^6.9.15",
     "@typescript-eslint/eslint-plugin": "^7.11.0",
     "@typescript-eslint/parser": "^7.11.0",
-    "@umbraco-cms/backoffice": "^17.1.0",
+    "@umbraco-cms/backoffice": "^17.3.0-rc3",
     "cross-env": "^10.1.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
