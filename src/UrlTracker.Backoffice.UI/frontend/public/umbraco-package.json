@@ -11,7 +11,13 @@
       "meta": {
         "label": "Url Tracker",
         "pathname": "urltracker"
-      }
+      },
+      "conditions": [
+        {
+          "alias": "Umb.Condition.SectionAlias",
+          "match": "Umb.Section.Content"
+        }
+      ]
     },
     {
       "type": "backofficeEntryPoint",
