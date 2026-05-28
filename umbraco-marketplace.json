@@ -19,9 +19,19 @@
         "Url": "https://infocaster.net",
         "ImageUrl": "https://github.com/InfocasterTechniek.png",
         "Description": "Let's make the internet brighter",
+        "SyncContributorsFromRepository": true,
         "Contributors": [
             {
                 "Name": "Dennis Heutinck"
+            },
+            {
+                "Name": "Ricky Broers"
+            },
+            {
+                "Name": "Mike Schepers"
+            },
+            {
+                "Name": "Daan Bakker"
             },
             {
                 "Name": "Erik Eelman"
@@ -34,6 +44,13 @@
             }
         ]
     },
+    "Screenshots":[
+        {"ImageUrl":"https://infocaster.net/media/b2xh0ier/urltrackernewdashboard.svg?rmode=pad&width=780&format=svg&v=1d9371616c110e0"},
+        {"ImageUrl":"https://infocaster.net/media/5zzpgull/newredirectpanelsvg.svg?rmode=max&height=500"},
+        {"ImageUrl":"https://media2.dev.to/dynamic/image/width=800%2Cheight=%2Cfit=scale-down%2Cgravity=auto%2Cformat=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fuoz7u43kd0hcjxju1u5u.png"}
+        ],
+    "PackagesByAuthor": ["Infocaster.Umbraco.DateFolders","IcomoonPicker"], 
     "IssueTrackerUrl": "https://github.com/Infocaster/UrlTracker/issues",
-    "DiscussionForumUrl": "https://github.com/Infocaster/UrlTracker/discussions"
+    "DiscussionForumUrl": "https://github.com/Infocaster/UrlTracker/discussions",
+    "DocumentationUrl": "https://github.com/Infocaster/UrlTracker/blob/v17/main/README.md"
 }
