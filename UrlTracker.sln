@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.32126.317
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11822.322 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{F454E566-AD84-43CA-85E0-657FF3B90FB3}"
 EndProject
@@ -38,6 +38,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution 
 		README-NUGET.md = README-NUGET.md
 		README.md = README.md
 		readme.txt = readme.txt
+		umbraco-marketplace-readme.md = umbraco-marketplace-readme.md
 		umbraco-marketplace.json = umbraco-marketplace.json
 	EndProjectSection
 EndProject
