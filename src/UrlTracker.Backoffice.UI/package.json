@@ -9,8 +9,8 @@
     "build:watch": "vite build --watch",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
-    "lint": "eslint . --ext .ts,.tsx",
-    "lint-fix": "eslint . --ext .ts,.tsx --fix",
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix",
     "format": "prettier --write .",
     "api:generate": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 openapi-ts"
   },
@@ -24,18 +24,18 @@
     "qs": "^6.15.3"
   },
   "devDependencies": {
-    "@hey-api/openapi-ts": "^0.0.0-next-20260729142554",
+    "@eslint/js": "^9.39.0",
+    "@hey-api/openapi-ts": "^0.99.0",
     "@types/js-cookie": "^3.0.6",
     "@types/qs": "^6.15.1",
-    "@typescript-eslint/eslint-plugin": "^7.11.0",
-    "@typescript-eslint/parser": "^7.11.0",
     "@umbraco-cms/backoffice": "^18.0.2",
     "cross-env": "^10.1.0",
-    "eslint": "^8.57.0",
+    "eslint": "^9.39.0",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-lit-a11y": "^4.1.2",
+    "eslint-plugin-lit-a11y": "^5.1.1",
     "prettier": "^3.9.6",
-    "typescript": "^7.0.2",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.0",
     "vite": "^8.2.0"
   }
 }
