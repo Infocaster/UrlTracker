@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Api.Common.Attributes;
+using Umbraco.Cms.Api.Common.Filters;
 using Umbraco.Cms.Api.Management.Controllers;
 using Umbraco.Cms.Api.Management.Routing;
+using Umbraco.Cms.Core;
 using UrlTracker.Backoffice.UI.Controllers.Models.Base;
 using UrlTracker.Backoffice.UI.Controllers.Models.Recommendations;
 using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
@@ -18,6 +20,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
     [VersionedApiBackOfficeRoute(Defaults.Routing.Area + "/Recommendations")]
     [ApiExplorerSettings(GroupName = "Recommendations")]
     [MapToApi(Defaults.Routing.SwaggerApi)]
+    [JsonOptionsName(Constants.JsonOptionsNames.BackOffice)]
     internal class UrlTrackerRecommendationsController : ManagementApiControllerBase
     {
         private readonly IRecommendationRequestHandler _requestHandler;

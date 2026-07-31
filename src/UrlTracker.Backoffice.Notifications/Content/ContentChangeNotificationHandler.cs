@@ -145,7 +145,7 @@ namespace UrlTracker.Backoffice.Notifications.Content
                     if (content is null) continue;
 
                     // Parent or root might also not be published yet.
-                    var newParent = cref.GetContentById(moveInfo.NewParentId);
+                    var newParent = moveInfo.NewParentKey.HasValue ? cref.GetContentById(moveInfo.NewParentKey.Value) : null;
                     if (newParent is null) continue;
 
                     var newRoot = newParent.Root(_navigationQueryService, _publishedStatusFilteringService);
@@ -256,8 +256,7 @@ namespace UrlTracker.Backoffice.Notifications.Content
                 ? GetChildrenAsPublishedContent(childrenKeys, contentCache)
                 : [];
 
-            return content
-                .AsEnumerableOfOne()
+            return Enumerable.Repeat(content, 1)
                 .Concat(children.SelectMany(child => DescendantsAndSelfForAllCultures(child, contentCache)));
         }
 

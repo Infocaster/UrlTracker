@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using NPoco;
 using Umbraco.Cms.Infrastructure.Migrations;
 using UrlTracker.Core.Database.Strategy;
@@ -6,7 +7,7 @@ using UrlTracker.Core.Database.Strategy;
 namespace UrlTracker.Core.Database.Migrations
 {
     [ExcludeFromCodeCoverage]
-    public class M202310111424_CultureUpdate : MigrationBase
+    public class M202310111424_CultureUpdate : AsyncMigrationBase
     {
         private IMigrationContext context;
         public M202310111424_CultureUpdate(IMigrationContext context) : base(context)
@@ -14,10 +15,10 @@ namespace UrlTracker.Core.Database.Migrations
             this.context = context;
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             var migrationStrategy = GetStrategy();
-            migrationStrategy.DoMigration();
+            return migrationStrategy.DoMigrationAsync();
         }
 
         IMigrationStrategy GetStrategy()

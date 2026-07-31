@@ -24,8 +24,13 @@ namespace UrlTracker.Core.Database
     internal class RedactionScoreRepository
         : EntityRepositoryBase<Guid, IRedactionScore>, IRedactionScoreRepository
     {
-        public RedactionScoreRepository(IScopeAccessor scopeAccessor, AppCaches appCaches, ILogger<RedactionScoreRepository> logger)
-            : base(scopeAccessor, appCaches, logger)
+        public RedactionScoreRepository(
+        IScopeAccessor scopeAccessor,
+        AppCaches appCaches,
+        ILogger<RedactionScoreRepository> logger,
+        IRepositoryCacheVersionService repositoryCacheVersionService,
+        ICacheSyncService cacheSyncService)
+            : base(scopeAccessor, appCaches, logger, repositoryCacheVersionService, cacheSyncService)
         { }
 
         public bool Exists(int id)

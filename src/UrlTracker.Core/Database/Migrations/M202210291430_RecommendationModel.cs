@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using NPoco.DatabaseTypes;
 using Umbraco.Cms.Infrastructure.Migrations;
 
@@ -7,7 +8,7 @@ namespace UrlTracker.Core.Database.Migrations
 {
     [ExcludeFromCodeCoverage]
     internal class M202210291430_RecommendationModel
-        : MigrationBase
+        : AsyncMigrationBase
     {
         internal const string _redirectTableName = "urltrackerRedirect";
         internal const string _oldSourceName = "sourceUrl";
@@ -22,10 +23,11 @@ namespace UrlTracker.Core.Database.Migrations
             : base(context)
         { }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             MigrateRedirects();
             CreateRecommendations();
+            return Task.CompletedTask;
         }
 
         private void CreateRecommendations()

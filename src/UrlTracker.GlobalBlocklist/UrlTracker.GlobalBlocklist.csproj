@@ -9,8 +9,8 @@
 - Update to Umbraco 17</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Polly" Version="8.6.5" />
-    <PackageReference Include="Umbraco.Cms.Web.Website" Version="17.1.0" />
+    <PackageReference Include="Polly" Version="8.7.0" />
+    <PackageReference Include="Umbraco.Cms.Web.Website" Version="18.0.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UrlTracker.Modules\UrlTracker.Modules.csproj" />

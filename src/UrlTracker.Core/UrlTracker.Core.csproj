@@ -9,7 +9,7 @@
 - Update to Umbraco 17</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Umbraco.Cms.Infrastructure" Version="17.1.0" />
+    <PackageReference Include="Umbraco.Cms.Infrastructure" Version="18.0.2" />
     <PackageReference Include="Scrutor" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>

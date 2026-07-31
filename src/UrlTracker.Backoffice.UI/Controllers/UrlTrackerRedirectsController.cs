@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Umbraco.Cms.Api.Common.Attributes;
+using Umbraco.Cms.Api.Common.Filters;
 using Umbraco.Cms.Api.Management.Controllers;
 using Umbraco.Cms.Api.Management.Routing;
+using Umbraco.Cms.Core;
 using UrlTracker.Backoffice.UI.Controllers.Models.Redirects;
 using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
 
@@ -19,6 +21,7 @@ namespace UrlTracker.Backoffice.UI.Controllers
     [VersionedApiBackOfficeRoute(Defaults.Routing.Area + "/Redirects")]
     [ApiExplorerSettings(GroupName = "Redirects")]
     [MapToApi(Defaults.Routing.SwaggerApi)]
+    [JsonOptionsName(Constants.JsonOptionsNames.BackOffice)]
     internal class UrlTrackerRedirectsController : ManagementApiControllerBase
     {
         private readonly IRedirectRequestHandler _redirectRequestHandler;

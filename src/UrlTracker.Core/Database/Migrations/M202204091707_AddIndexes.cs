@@ -1,11 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Umbraco.Cms.Infrastructure.Migrations;
 
 namespace UrlTracker.Core.Database.Migrations
 {
     [ExcludeFromCodeCoverage]
     internal class M202204091707_AddIndexes
-        : MigrationBase
+        : AsyncMigrationBase
     {
         private const string _indexName = "IX_" + _tableName + "_" + _cultureColumn + "_" + _oldUrlColumn + "_" + _redirectNodeIdColumn;
         private const string _tableName = "icUrlTracker";
@@ -17,7 +18,7 @@ namespace UrlTracker.Core.Database.Migrations
             : base(context)
         { }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             Logger.LogApplyMigration(nameof(M202204091707_AddIndexes));
 
@@ -40,6 +41,8 @@ namespace UrlTracker.Core.Database.Migrations
             {
                 Logger.LogSkipStep($"Create {_indexName}", "Index already exists");
             }
+            
+            return Task.CompletedTask;
         }
     }
 }

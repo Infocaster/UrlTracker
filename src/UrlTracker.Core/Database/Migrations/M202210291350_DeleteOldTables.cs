@@ -1,11 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Umbraco.Cms.Infrastructure.Migrations;
 
 namespace UrlTracker.Core.Database.Migrations
 {
     [ExcludeFromCodeCoverage]
     internal class M202210291350_DeleteOldTables
-        : MigrationBase
+        : AsyncMigrationBase
     {
         private const string _urlTrackerTable = "icUrlTracker";
         private const string _urlTrackerNotFoundTable = "icUrlTrackerIgnore404";
@@ -15,10 +16,11 @@ namespace UrlTracker.Core.Database.Migrations
         { }
 
         /// <inheritdoc />
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             DeleteTableIfExists(_urlTrackerTable);
             DeleteTableIfExists(_urlTrackerNotFoundTable);
+            return Task.CompletedTask;
         }
 
         private void DeleteTableIfExists(string tableName)

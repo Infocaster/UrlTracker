@@ -1,11 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Umbraco.Cms.Infrastructure.Migrations;
+using System.Threading.Tasks;
 
 namespace UrlTracker.Core.Database.Migrations
 {
     [ExcludeFromCodeCoverage]
     internal class M202111081155_UrlTracker
-        : MigrationBase
+        : AsyncMigrationBase
     {
         private const string _urlTrackerEntryTableName = "icUrlTracker";
         private const string _urlTrackerIgnore404TableName = "icUrlTrackerIgnore404";
@@ -14,7 +15,7 @@ namespace UrlTracker.Core.Database.Migrations
             : base(context)
         { }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             Logger.LogApplyMigration(nameof(M202111081155_UrlTracker));
 
@@ -37,6 +38,7 @@ namespace UrlTracker.Core.Database.Migrations
             {
                 Logger.LogSkipStep($"Create {_urlTrackerIgnore404TableName}", "Table already exists");
             }
+            return Task.CompletedTask;
         }
     }
 }

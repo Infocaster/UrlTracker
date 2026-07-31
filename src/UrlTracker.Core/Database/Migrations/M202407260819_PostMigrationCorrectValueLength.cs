@@ -12,7 +12,7 @@ namespace UrlTracker.Core.Database.Migrations
 {
     [ExcludeFromCodeCoverage]
     internal class M202407260819_PostMigrationCorrectValueLength
-        : MigrationBase
+        : AsyncMigrationBase
     {
         private const int _urlMaxLength = 2083;
         private const string _redirectTableName = "urltrackerRedirect";
@@ -24,15 +24,17 @@ namespace UrlTracker.Core.Database.Migrations
         {
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             // This migration is specifically for SQL Server, because Sqlite doesn't have explicit sizes
-            if (DatabaseType is SQLiteDatabaseType) return;
+            if (DatabaseType is SQLiteDatabaseType) return Task.CompletedTask;
 
             // In a previous version of the URL Tracker, there was an error that caused migrations to fail, because the strategy value columns were shortened
             // That migration is patched in this version, but additionally, we need to make sure that the columns are corrected for users who used the previous version and might now have the wrong column length
             Alter.Table(_redirectTableName).AlterColumn(_sourceValueColumn).AsString(_urlMaxLength).NotNullable().Do();
             Alter.Table(_redirectTableName).AlterColumn(_targetValueColumn).AsString(_urlMaxLength).NotNullable().Do();
+            
+            return Task.CompletedTask;
         }
     }
 }

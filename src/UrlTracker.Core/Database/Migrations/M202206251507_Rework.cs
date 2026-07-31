@@ -1,16 +1,17 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
 using Umbraco.Cms.Infrastructure.Migrations;
 
 namespace UrlTracker.Core.Database.Migrations
 {
     [ExcludeFromCodeCoverage]
     internal class M202206251507_Rework
-        : MigrationBase
+        : AsyncMigrationBase
     {
         public M202206251507_Rework(IMigrationContext context) : base(context)
         { }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             if (!TableExists(M202206251507_Rework_RedirectDto.TableName))
             {
@@ -31,6 +32,8 @@ namespace UrlTracker.Core.Database.Migrations
             {
                 Create.Table<M202206251507_Rework_ClientError2ReferrerDto>().Do();
             }
+
+            return Task.CompletedTask;
         }
     }
 }

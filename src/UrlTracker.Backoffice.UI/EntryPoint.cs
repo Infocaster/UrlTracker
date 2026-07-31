@@ -1,11 +1,13 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.DependencyInjection;
+using Umbraco.Cms.Api.Common.OpenApi;
+using Umbraco.Cms.Api.Management.OpenApi;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Notifications;
 using Umbraco.Extensions;
 using UrlTracker.Backoffice.UI.Controllers;
 using UrlTracker.Backoffice.UI.Controllers.RequestHandlers;
-using UrlTracker.Backoffice.UI.Controllers.Swagger;
 using UrlTracker.Backoffice.UI.Notifications;
 using UrlTracker.Backoffice.UI.UserNotifications;
 using UrlTracker.Modules.Options;
@@ -51,7 +53,10 @@ namespace UrlTracker.Backoffice.UI
                 });
             });
 
-            builder.Services.ConfigureOptions<UrlTrackerSwaggerGenOptions>();
+            builder.AddBackOfficeOpenApiDocument(Defaults.Routing.SwaggerApi, document => document
+                .WithTitle("URL Tracker Backoffice API")
+                .WithBackOfficeAuthentication()
+                .WithJsonOptions(Constants.JsonOptionsNames.BackOffice));
 
             builder.Services.AddUrlTrackerModule("Backoffice user interface");
 

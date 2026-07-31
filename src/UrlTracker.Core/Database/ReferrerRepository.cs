@@ -21,8 +21,13 @@ namespace UrlTracker.Core.Database
     public class ReferrerRepository
         : EntityRepositoryBase<int, IReferrer>, IReferrerRepository
     {
-        public ReferrerRepository(IScopeAccessor scopeAccessor, AppCaches appCaches, ILogger<EntityRepositoryBase<int, IReferrer>> logger)
-            : base(scopeAccessor, appCaches, logger)
+        public ReferrerRepository(
+            IScopeAccessor scopeAccessor,
+            AppCaches appCaches,
+            ILogger<ReferrerRepository> logger,
+            IRepositoryCacheVersionService repositoryCacheVersionService,
+            ICacheSyncService cacheSyncService)
+            : base(scopeAccessor, appCaches, logger, repositoryCacheVersionService, cacheSyncService)
         { }
 
         protected override Sql<ISqlContext> GetBaseQuery(bool isCount)

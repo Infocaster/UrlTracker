@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Options;
 using Umbraco.Cms.Web.Common.ApplicationBuilder;
 
@@ -19,6 +20,10 @@ namespace UrlTracker.Middleware
         { }
 
         /// <inheritdoc/>
+        public void OnPostMapEndpoints(IEndpointRouteBuilder endpoints)
+        { }
+
+        /// <inheritdoc/>
         public void OnPostPipeline(IApplicationBuilder app)
         {
             app.UseUrlTrackerRecommendationTracking()
@@ -26,7 +31,19 @@ namespace UrlTracker.Middleware
         }
 
         /// <inheritdoc/>
+        public void OnPostRouting(IApplicationBuilder app)
+        { }
+
+        /// <inheritdoc/>
+        public void OnPreMapEndpoints(IEndpointRouteBuilder endpoints)
+        { }
+
+        /// <inheritdoc/>
         public void OnPrePipeline(IApplicationBuilder app)
+        { }
+
+        /// <inheritdoc/>
+        public void OnPreRouting(IApplicationBuilder app)
         { }
     }
 

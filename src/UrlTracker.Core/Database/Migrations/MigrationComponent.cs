@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.Migrations;
@@ -13,7 +15,7 @@ namespace UrlTracker.Core.Database.Migrations
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class MigrationComponent
-        : IComponent
+        : IAsyncComponent
     {
         private readonly IScopeProvider _scopeProvider;
         private readonly IMigrationPlanExecutor _migrationPlanExecutor;
@@ -43,7 +45,7 @@ namespace UrlTracker.Core.Database.Migrations
         }
 
         /// <inheritdoc/>
-        public void Initialize()
+        public async Task InitializeAsync(bool isRestarting, CancellationToken cancellationToken)
         {
             if (_runtimeState.Level < RuntimeLevel.Run)
                 return;
@@ -53,12 +55,14 @@ namespace UrlTracker.Core.Database.Migrations
             if (migrationPlan is not null)
             {
                 var upgrader = new Upgrader(migrationPlan);
-                upgrader.Execute(_migrationPlanExecutor, _scopeProvider, _keyValueService);
+                await upgrader.ExecuteAsync(_migrationPlanExecutor, _scopeProvider, _keyValueService);
             }
         }
 
         /// <inheritdoc/>
-        public void Terminate()
-        { }
+        public Task TerminateAsync(bool isRestarting, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
     }
 }

@@ -27,8 +27,8 @@ namespace UrlTracker.Core.Database
     {
         private readonly IIdKeyMap _idKeyMap;
 
-        public RedirectRepository(IScopeAccessor scopeAccessor, AppCaches appCaches, ILogger<EntityRepositoryBase<int, IRedirect>> logger, IIdKeyMap idKeyMap)
-            : base(scopeAccessor, appCaches, logger)
+        public RedirectRepository(IScopeAccessor scopeAccessor, AppCaches appCaches, ILogger<RedirectRepository> logger, IRepositoryCacheVersionService repositoryCacheVersionService, ICacheSyncService cacheSyncService, IIdKeyMap idKeyMap)
+            : base(scopeAccessor, appCaches, logger, repositoryCacheVersionService, cacheSyncService)
         {
             _idKeyMap = idKeyMap;
         }

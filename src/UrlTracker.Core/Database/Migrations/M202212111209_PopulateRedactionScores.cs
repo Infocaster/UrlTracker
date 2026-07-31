@@ -8,7 +8,7 @@ using Umbraco.Cms.Infrastructure.Migrations;
 namespace UrlTracker.Core.Database.Migrations
 {
     internal class M202212111209_PopulateRedactionScores
-        : MigrationBase
+        : AsyncMigrationBase
     {
         private readonly IRedactionScoreService _redactionScoreService;
 
@@ -18,12 +18,13 @@ namespace UrlTracker.Core.Database.Migrations
             _redactionScoreService = redactionScoreService;
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             _redactionScoreService.CreateAndSave(Defaults.DatabaseSchema.RedactionScores.Media, 3, "Media file not found");
             _redactionScoreService.CreateAndSave(Defaults.DatabaseSchema.RedactionScores.TechnicalFile, 1, "Technical file not found");
             _redactionScoreService.CreateAndSave(Defaults.DatabaseSchema.RedactionScores.File, 2, "File not found");
             _redactionScoreService.CreateAndSave(Defaults.DatabaseSchema.RedactionScores.Page, 4, "Page not found");
+            return Task.CompletedTask;
         }
     }
 }

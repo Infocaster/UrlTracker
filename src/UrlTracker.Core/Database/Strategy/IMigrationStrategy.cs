@@ -8,6 +8,6 @@ namespace UrlTracker.Core.Database.Strategy
 {
     public interface IMigrationStrategy
     {
-        void DoMigration();
+        Task DoMigrationAsync();
     }
 }

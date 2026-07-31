@@ -9,7 +9,7 @@ using Umbraco.Extensions;
 namespace UrlTracker.Core.Database.Migrations
 {
     internal partial class M202407261301_AddAdvancedFlag
-        : MigrationBase
+        : AsyncMigrationBase
     {
         // REMINDER: Migration code is ALWAYS isolated. Do not reuse constants from shared code. Existing migrations should never change, unless they're broken.
         private const string _redirectTableName = "UrlTrackerRedirect";
@@ -21,7 +21,7 @@ namespace UrlTracker.Core.Database.Migrations
         {
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             AddColumn<RedirectDto>(_advancedFlagColumn);
 
@@ -36,6 +36,7 @@ namespace UrlTracker.Core.Database.Migrations
                     sql => sql.Where<RedirectDto>(e => e.RetainQuery == false));
 
             Database.Execute(query);
+            return Task.CompletedTask;
         }
     }
 }

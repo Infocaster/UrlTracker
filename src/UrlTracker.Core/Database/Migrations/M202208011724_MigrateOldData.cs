@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NPoco;
 using Umbraco.Cms.Infrastructure.Migrations;
@@ -9,13 +10,13 @@ namespace UrlTracker.Core.Database.Migrations
 {
     [ExcludeFromCodeCoverage]
     internal class M202208011724_MigrateOldData
-        : MigrationBase
+        : AsyncMigrationBase
     {
         public M202208011724_MigrateOldData(IMigrationContext context)
             : base(context)
         { }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             // transfer referrers
             // Sqlite doesn't understand GUIDS,
@@ -118,6 +119,8 @@ from [icUrlTrackerIgnore404] where [urltrackerClientError].[url] = [icUrlTracker
                     TargetUrl = i.RedirectUrl.DefaultIfNullOrWhiteSpace(null)
                 }));
             });
+            
+            return Task.CompletedTask;
         }
 
         private class OldReferrerDto

@@ -32,8 +32,10 @@ namespace UrlTracker.Core.Database
 
         public ClientErrorRepository(IScopeAccessor scopeAccessor,
                                      AppCaches appCaches,
-                                     ILogger<EntityRepositoryBase<int, IClientError>> logger)
-            : base(scopeAccessor, appCaches, logger)
+                                     ILogger<ClientErrorRepository> logger,
+                                     IRepositoryCacheVersionService repositoryCacheVersionService,
+                                     ICacheSyncService cacheSyncService)
+            : base(scopeAccessor, appCaches, logger, repositoryCacheVersionService, cacheSyncService)
         { }
 
         #region Old implementation

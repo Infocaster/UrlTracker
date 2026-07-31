@@ -10,24 +10,25 @@ using UrlTracker.Core.Database.Migrations;
 namespace UrlTracker.Core.Database.Strategy
 {
     [ExcludeFromCodeCoverage]
-    public class CultureUpdateSqlServerMigrationStrategy : MigrationBase, IMigrationStrategy
+    public class CultureUpdateSqlServerMigrationStrategy : AsyncMigrationBase, IMigrationStrategy
     {
         public CultureUpdateSqlServerMigrationStrategy(IMigrationContext context) : base(context)
         {
         }
 
-        public void DoMigration()
+        public Task DoMigrationAsync()
         {
-            Migrate();
+            return MigrateAsync();
         }
 
-        protected override void Migrate()
+        protected override Task MigrateAsync()
         {
             string cultureColumnName = "culture";
             if (ColumnExists(M202206251507_Rework_RedirectDto.TableName, cultureColumnName))
             {
                 Alter.Table(M202206251507_Rework_RedirectDto.TableName).AlterColumn(cultureColumnName).AsString(11).Nullable().Do();
             }
+            return Task.CompletedTask;
         }
     }
 }

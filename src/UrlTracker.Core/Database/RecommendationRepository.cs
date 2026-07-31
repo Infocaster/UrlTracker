@@ -23,8 +23,8 @@ namespace UrlTracker.Core.Database
     {
         private readonly IRedactionScoreRepository _redactionScoreRepository;
 
-        public RecommendationRepository(IScopeAccessor scopeAccessor, AppCaches appCaches, ILogger<RecommendationRepository> logger, IRedactionScoreRepository redactionScoreRepository)
-            : base(scopeAccessor, appCaches, logger)
+        public RecommendationRepository(IScopeAccessor scopeAccessor, AppCaches appCaches, ILogger<RecommendationRepository> logger, IRepositoryCacheVersionService repositoryCacheVersionService, ICacheSyncService cacheSyncService, IRedactionScoreRepository redactionScoreRepository)
+            : base(scopeAccessor, appCaches, logger, repositoryCacheVersionService, cacheSyncService)
         {
             _redactionScoreRepository = redactionScoreRepository;
         }
