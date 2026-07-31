@@ -47,10 +47,8 @@ export class UrlTrackerRedirectOutgoingUrl extends UmbElementMixin(LitElement) {
 
   private inputRef: Ref<HTMLInputElement> = createRef();
 
-  #documentTreeRepository = new UmbDocumentTreeRepository(this);
   #documentItemRepository = new UmbDocumentItemRepository(this);
   #documentUrlRepository = new UmbDocumentUrlRepository(this);
-  #documentDetailRepository = new UmbDocumentDetailRepository(this);
 
   public _typeButtons = [
     {
@@ -177,16 +175,6 @@ export class UrlTrackerRedirectOutgoingUrl extends UmbElementMixin(LitElement) {
     if (!unique) throw new Error('Could not open permissions modal, no unique was provided');
 
     const { data } = await this.#documentItemRepository.requestItems([unique]);
-
-    const documentItem = data?.[0];
-    if (!documentItem) throw new Error('No document item found');
-    return documentItem;
-  }
-
-  async #requestDocumentUrl(unique: string) {
-    if (!unique) throw new Error('Could not open permissions modal, no unique was provided');
-
-    const { data } = await this.#documentUrlRepository.requestItems([unique]);
 
     const documentItem = data?.[0];
     if (!documentItem) throw new Error('No document item found');
