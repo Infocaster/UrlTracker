@@ -1,9 +1,9 @@
 import {
-  getUmbracoManagementApiV1UrlTrackerLandingPageMetric,
-  getUmbracoManagementApiV1UrlTrackerRecommendations,
-  postUmbracoManagementApiV1UrlTrackerRecommendationsByRecommendationId,
-} from '@/../../api-client';
-import type { Client } from '@/../../api-client/client/types.gen';
+  getUrlTrackerLandingPageMetric,
+  getUrlTrackerRecommendations,
+  postUrlTrackerRecommendationsByRecommendationId,
+} from '@/api-client';
+import type { Client } from '@/api-client/client/types.gen';
 import { RECOMMENDATION_SORT_TYPE } from '@/enums/sortType';
 import variableresourceService from '@/util/tools/variableresource.service';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
@@ -18,7 +18,7 @@ import type {
   RecommendationCollectionResponse,
   RecommendationResponse,
   RedirectRequest,
-} from '../../../../api-client/types.gen';
+} from '../../api-client/types.gen';
 import { UrlTrackerNotificationWrapper } from '../notifications/notifications.mixin';
 import { URL_TRACKER_ANALYSE_RECOMMENDATION_MODAL } from '../sidebars/analyseRecommendation-modal.token';
 import { URL_TRACKER_EXPLAIN_RECOMMENDATION_MODAL } from '../sidebars/explainRecommendation-modal.token';
@@ -94,7 +94,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(UmbEleme
 
       const { data } = await tryExecute(
         this,
-        getUmbracoManagementApiV1UrlTrackerRecommendations({
+        getUrlTrackerRecommendations({
           client: umbHttpClient as unknown as Client,
           query: {
             Page: 1,
@@ -109,7 +109,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(UmbEleme
 
       const { data: numericMetricData } = await tryExecute(
         this,
-        getUmbracoManagementApiV1UrlTrackerLandingPageMetric({
+        getUrlTrackerLandingPageMetric({
           client: umbHttpClient as unknown as Client,
         }),
       );
@@ -174,7 +174,7 @@ export class UrlTrackerLandingTab extends UrlTrackerNotificationWrapper(UmbEleme
     try {
       await tryExecute(
         this,
-        postUmbracoManagementApiV1UrlTrackerRecommendationsByRecommendationId({
+        postUrlTrackerRecommendationsByRecommendationId({
           client: umbHttpClient as unknown as Client,
           path: {
             recommendationId: event.detail.id,

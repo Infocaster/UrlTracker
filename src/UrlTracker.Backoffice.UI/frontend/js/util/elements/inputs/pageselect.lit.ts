@@ -1,5 +1,5 @@
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
-import { UUIPaginationElement } from '@umbraco-ui/uui-pagination';
+import { UUIPaginationElement } from '@umbraco-cms/backoffice/external/uui';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';

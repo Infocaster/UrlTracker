@@ -1,13 +1,9 @@
 import { defineConfig } from '@hey-api/openapi-ts';
 
 export default defineConfig({
-  client: {
-    name: '@hey-api/client-axios',
-    baseUrl: '/',
-  },
-  input: 'https://localhost:44349/umbraco/swagger/url-tracker/swagger.json',
+  input: 'https://localhost:44349/umbraco/openapi/url-tracker.json',
   output: {
     format: 'prettier',
-    path: './api-client',
+    path: './frontend/js/api-client',
   },
 });

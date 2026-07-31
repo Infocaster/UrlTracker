@@ -1,6 +1,6 @@
 import { css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import type { RedirectResponse } from '../../../../../api-client/types.gen';
+import type { RedirectResponse } from '../../../api-client/types.gen';
 import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';
 import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
 

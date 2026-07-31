@@ -1,5 +1,5 @@
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
-import { UUIFileDropzoneEvent } from '@umbraco-ui/uui-file-dropzone';
+import { UUIFileDropzoneEvent } from '@umbraco-cms/backoffice/external/uui';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 

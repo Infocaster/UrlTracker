@@ -3,7 +3,7 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbModalContext, UmbModalExtensionElement } from '@umbraco-cms/backoffice/modal';
 import { css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import type { RedirectResponse } from '../../../../../api-client/types.gen';
+import type { RedirectResponse } from '../../../api-client/types.gen';
 import sourceStrategyResolver from '../../tabs/redirects/source/source.strategy';
 import {
   UrlTrackerInspectRedirectModalData,

@@ -1,4 +1,4 @@
-import type { RedirectResponse } from '../../../../../../api-client/types.gen';
+import type { RedirectResponse } from '../../../../api-client/types.gen';
 import { StrategyResolver } from '../../../../util/tools/strategy/strategyresolver';
 import { UnknownTargetStrategyFactory } from './implementations/fallbacktarget';
 

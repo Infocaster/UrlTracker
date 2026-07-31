@@ -1,7 +1,7 @@
 import { provide } from '@lit/context';
 import { html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-import type { RedirectResponse } from '../../../../../../../api-client/types.gen';
+import type { RedirectResponse } from '../../../../../api-client/types.gen';
 import { redirectContext } from '../../../../../context/redirectitem.context';
 import { IVariableResource } from '../../../../../util/tools/variableresource.service';
 import { ITargetStrategies } from '../target.constants';

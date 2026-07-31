@@ -2,7 +2,7 @@ import { ISourceStrategies } from '@/dashboard/tabs/redirects/source/source.cons
 import { debounce } from '@/util/functions/debounce';
 import variableresourceService from '@/util/tools/variableresource.service';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
-import { UUIInputElement, UUIInputEvent } from '@umbraco-ui/uui-input';
+import { UUIInputElement, UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
 import { LitElement, css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';

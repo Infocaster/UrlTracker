@@ -11,12 +11,12 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbModalContext, UmbModalExtensionElement } from '@umbraco-cms/backoffice/modal';
 import { UMB_NOTIFICATION_CONTEXT } from '@umbraco-cms/backoffice/notification';
 import { tryExecute } from '@umbraco-cms/backoffice/resources';
-import type { Client } from '../../../../../api-client/client/types.gen';
+import type { Client } from '../../../api-client/client/types.gen';
 import {
-  postUmbracoManagementApiV1UrlTrackerRedirects,
-  postUmbracoManagementApiV1UrlTrackerRedirectsByRedirectId,
-} from '../../../../../api-client/sdk.gen';
-import { CreateRedirectRequest, RedirectRequest } from '../../../../../api-client/types.gen';
+  postUrlTrackerRedirects,
+  postUrlTrackerRedirectsByRedirectId,
+} from '../../../api-client/sdk.gen';
+import { CreateRedirectRequest, RedirectRequest } from '../../../api-client/types.gen';
 
 import '../../../util/elements/redirects/simpleRedirect/createSimpleRedirect.lit';
 import { UrlTrackerSimpleRedirectModalData, UrlTrackerSimpleRedirectModalValue } from '../simpleRedirect-modal.token';
@@ -101,7 +101,7 @@ export class UrlTrackerSidebarSimpleRedirect
       if (this.data?.id) {
         const result = await tryExecute(
           this,
-          postUmbracoManagementApiV1UrlTrackerRedirectsByRedirectId({
+          postUrlTrackerRedirectsByRedirectId({
             client: umbHttpClient as unknown as Client,
             path: {
               redirectId: this.data.id,
@@ -129,7 +129,7 @@ export class UrlTrackerSidebarSimpleRedirect
       } else {
         const result = await tryExecute(
           this,
-          postUmbracoManagementApiV1UrlTrackerRedirects({
+          postUrlTrackerRedirects({
             client: umbHttpClient as unknown as Client,
             body: {
               source: this.redirectData.source,

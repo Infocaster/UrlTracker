@@ -15,7 +15,6 @@
     "api:generate": "cross-env NODE_TLS_REJECT_UNAUTHORIZED=0 openapi-ts"
   },
   "dependencies": {
-    "@hey-api/openapi-ts": "^0.99.0",
     "@lit/context": "^1.1.6",
     "@lit/task": "^1.0.3",
     "@oddbird/popover-polyfill": "^0.7.1",
@@ -25,6 +24,7 @@
     "qs": "^6.15.3"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "^0.0.0-next-20260729142554",
     "@types/js-cookie": "^3.0.6",
     "@types/qs": "^6.15.1",
     "@typescript-eslint/eslint-plugin": "^7.11.0",

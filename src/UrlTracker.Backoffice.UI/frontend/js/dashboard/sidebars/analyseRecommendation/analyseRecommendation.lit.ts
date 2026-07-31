@@ -8,12 +8,12 @@ import { UmbLitElement } from '@umbraco-cms/backoffice/lit-element';
 import { UmbModalContext, UmbModalExtensionElement } from '@umbraco-cms/backoffice/modal';
 import { tryExecute } from '@umbraco-cms/backoffice/resources';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import type { Client } from '../../../../../api-client/client/types.gen';
+import type { Client } from '../../../api-client/client/types.gen';
 import {
-  getUmbracoManagementApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistory,
-  getUmbracoManagementApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrers,
-} from '../../../../../api-client/sdk.gen';
-import { RecommendationHistory, RecommendationResponse, ReferrerResponse } from '../../../../../api-client/types.gen';
+  getUrlTrackerRecommendationAnalysisByRecommendationIdHistory,
+  getUrlTrackerRecommendationAnalysisByRecommendationIdReferrers,
+} from '../../../api-client/sdk.gen';
+import { RecommendationHistory, RecommendationResponse, ReferrerResponse } from '../../../api-client/types.gen';
 import {
   UrlTrackerAnalyseRecommendationModalData,
   UrlTrackerAnalyseRecommendationModalValue,
@@ -71,7 +71,7 @@ export class UrlTrackerSidebarAnalyseRecommendation
 
     const referrersPromise = tryExecute(
       this,
-      getUmbracoManagementApiV1UrlTrackerRecommendationAnalysisByRecommendationIdReferrers({
+      getUrlTrackerRecommendationAnalysisByRecommendationIdReferrers({
         client: umbHttpClient as unknown as Client,
         path: {
           recommendationId: this.data?.recommendation?.id!,
@@ -81,7 +81,7 @@ export class UrlTrackerSidebarAnalyseRecommendation
 
     const historyPromise = tryExecute(
       this,
-      getUmbracoManagementApiV1UrlTrackerRecommendationAnalysisByRecommendationIdHistory({
+      getUrlTrackerRecommendationAnalysisByRecommendationIdHistory({
         client: umbHttpClient as unknown as Client,
         path: {
           recommendationId: this.data?.recommendation?.id!,

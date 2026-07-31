@@ -1,5 +1,5 @@
 import { LitElement } from 'lit';
-import { RecommendationResponse } from '../../../../../../api-client';
+import { RecommendationResponse } from '../../../../api-client';
 import { UnsafeStrategyResolver } from '../../../../util/tools/strategy/strategyresolver';
 
 export interface IRecommendationTypeStrategy {

@@ -2,7 +2,7 @@ import { toReadableDateOnly } from '@/util/functions/dateformatter';
 import { css, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
-import { RecommendationResponse } from '../../../../../api-client';
+import { RecommendationResponse } from '../../../api-client';
 import { UrlTrackerSelectableResultListItem } from '../../../util/elements/selectableresultlistitem.lit';
 import { actionButton, cardWithClickableHeader, errorStyle } from '../styles';
 import {

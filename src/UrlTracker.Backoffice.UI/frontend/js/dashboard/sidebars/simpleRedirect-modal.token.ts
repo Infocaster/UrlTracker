@@ -1,6 +1,6 @@
 import { UmbModalToken } from '@umbraco-cms/backoffice/modal';
-import { RedirectResponse } from '../../../../api-client';
-import type { RedirectRequest } from '../../../../api-client/types.gen';
+import { RedirectResponse } from '../../api-client';
+import type { RedirectRequest } from '../../api-client/types.gen';
 
 export type UrlTrackerSimpleRedirectModalData = {
   title: string;

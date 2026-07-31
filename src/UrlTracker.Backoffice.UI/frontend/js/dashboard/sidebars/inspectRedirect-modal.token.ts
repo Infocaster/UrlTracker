@@ -1,5 +1,5 @@
 import { UmbModalToken } from '@umbraco-cms/backoffice/modal';
-import { RedirectResponse } from '../../../../api-client';
+import { RedirectResponse } from '../../api-client';
 
 export type UrlTrackerInspectRedirectModalData = {
   redirect: RedirectResponse;

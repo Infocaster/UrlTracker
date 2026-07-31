@@ -1,5 +1,5 @@
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
-import { UUIInputEvent } from '@umbraco-ui/uui-input';
+import { UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
 import { LitElement, css, html } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';

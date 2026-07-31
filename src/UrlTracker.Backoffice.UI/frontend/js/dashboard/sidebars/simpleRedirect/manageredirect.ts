@@ -1,5 +1,5 @@
 import { ICancelSubmitEditor, ICustomEditor } from '@/umbraco/editor.service';
-import type { RedirectRequest, RedirectResponse } from '../../../../../api-client/types.gen';
+import type { RedirectRequest, RedirectResponse } from '../../../api-client/types.gen';
 
 export interface IManageRedirectModel {
   advanced: boolean;

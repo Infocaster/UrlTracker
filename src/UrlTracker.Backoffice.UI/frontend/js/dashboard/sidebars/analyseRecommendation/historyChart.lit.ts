@@ -4,7 +4,7 @@ import Chart from 'chart.js/auto';
 import { LitElement, PropertyValueMap, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
-import type { RecommendationHistory } from '../../../../../api-client/types.gen';
+import type { RecommendationHistory } from '../../../api-client/types.gen';
 
 export const ContentElementTag = 'urltracker-history-chart';
 

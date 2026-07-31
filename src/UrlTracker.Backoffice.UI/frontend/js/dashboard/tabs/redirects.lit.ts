@@ -13,16 +13,16 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
 import { repeat } from 'lit/directives/repeat.js';
-import type { Client } from '../../../../api-client/client/types.gen';
+import type { Client } from '../../api-client/client/types.gen';
 import {
-  getUmbracoManagementApiV1UrlTrackerRedirectImportExportexample,
-  getUmbracoManagementApiV1UrlTrackerRedirects,
-  postUmbracoManagementApiV1UrlTrackerRedirectsByRedirectIdDelete,
-  postUmbracoManagementApiV1UrlTrackerRedirectsDeletebulk,
-  postUmbracoManagementApiV1UrlTrackerRedirectsUpdatebulk,
-} from '../../../../api-client/sdk.gen';
-import type { RedirectRequest } from '../../../../api-client/types.gen';
-import { RedirectCollectionResponse, RedirectResponse } from '../../../../api-client/types.gen';
+  getUrlTrackerRedirectImportExportexample,
+  getUrlTrackerRedirects,
+  postUrlTrackerRedirectsByRedirectIdDelete,
+  postUrlTrackerRedirectsDeletebulk,
+  postUrlTrackerRedirectsUpdatebulk,
+} from '../../api-client/sdk.gen';
+import type { RedirectRequest } from '../../api-client/types.gen';
+import { RedirectCollectionResponse, RedirectResponse } from '../../api-client/types.gen';
 import { IChangeManager, changeManagerContext } from '../../context/changemanager.context';
 import '../../util/elements/bulkActions.lit';
 import '../../util/elements/inputs/pagination.lit';
@@ -143,7 +143,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(UmbElem
     try {
       const { data } = await tryExecute(
         this,
-        getUmbracoManagementApiV1UrlTrackerRedirects({
+        getUrlTrackerRedirects({
           client: umbHttpClient as unknown as Client,
           query: {
             Page: page.page,
@@ -240,7 +240,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(UmbElem
     try {
       await tryExecute(
         this,
-        postUmbracoManagementApiV1UrlTrackerRedirectsByRedirectIdDelete({
+        postUrlTrackerRedirectsByRedirectIdDelete({
           client: umbHttpClient as unknown as Client,
           path: { redirectId: e.detail.id },
         }),
@@ -308,14 +308,14 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(UmbElem
     try {
       const { data } = await tryExecute(
         this,
-        getUmbracoManagementApiV1UrlTrackerRedirectImportExportexample({
+        getUrlTrackerRedirectImportExportexample({
           client: umbHttpClient as unknown as Client,
         }),
       );
 
       if (!data) throw new Error('Export failed');
 
-      this.downloadBlob(data, 'redirect-template');
+      this.downloadBlob(data.fileStream, 'redirect-template');
 
       this.#notificationContext?.peek('positive', {
         data: {
@@ -381,7 +381,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(UmbElem
       });
       await tryExecute(
         this,
-        postUmbracoManagementApiV1UrlTrackerRedirectsUpdatebulk({
+        postUrlTrackerRedirectsUpdatebulk({
           client: umbHttpClient as unknown as Client,
           body: bulkToUpdate,
         }),
@@ -413,7 +413,7 @@ export class UrlTrackerRedirectTab extends UrlTrackerNotificationWrapper(UmbElem
       const bulkToDelete = selectedRedirects.map((r: any) => r.id);
       await tryExecute(
         this,
-        postUmbracoManagementApiV1UrlTrackerRedirectsDeletebulk({
+        postUrlTrackerRedirectsDeletebulk({
           client: umbHttpClient as unknown as Client,
           body: bulkToDelete,
         }),

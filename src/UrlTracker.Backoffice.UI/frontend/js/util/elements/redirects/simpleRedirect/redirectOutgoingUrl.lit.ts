@@ -14,7 +14,7 @@ import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { umbHttpClient } from '@umbraco-cms/backoffice/http-client';
 import { umbOpenModal } from '@umbraco-cms/backoffice/modal';
 import { tryExecute } from '@umbraco-cms/backoffice/resources';
-import { UUIInputEvent } from '@umbraco-ui/uui-input';
+import { UUIInputEvent } from '@umbraco-cms/backoffice/external/uui';
 import { LitElement, css, html } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
@@ -22,9 +22,9 @@ import { Ref, createRef, ref } from 'lit/directives/ref.js';
 import { repeat } from 'lit/directives/repeat.js';
 import {
   ContentTargetResponse,
-  getUmbracoManagementApiV1UrlTrackerRedirectTargetContent,
-} from '../../../../../../api-client';
-import type { Client } from '../../../../../../api-client/client/types.gen';
+  getUrlTrackerRedirectTargetContent,
+} from '../../../../api-client';
+import type { Client } from '../../../../api-client/client/types.gen';
 import './simpleRedirectTypeProvider';
 import { ITypeButton } from './simpleRedirectTypeProvider';
 
@@ -101,7 +101,7 @@ export class UrlTrackerRedirectOutgoingUrl extends UmbElementMixin(LitElement) {
 
             const { data } = await tryExecute(
               this,
-              getUmbracoManagementApiV1UrlTrackerRedirectTargetContent({
+              getUrlTrackerRedirectTargetContent({
                 client: umbHttpClient as unknown as Client,
                 query: {
                   Id: id,
@@ -219,7 +219,7 @@ export class UrlTrackerRedirectOutgoingUrl extends UmbElementMixin(LitElement) {
       if (!umbHttpClient) throw new Error('No HTTP client available');
       const { data } = await tryExecute(
         this,
-        getUmbracoManagementApiV1UrlTrackerRedirectTargetContent({
+        getUrlTrackerRedirectTargetContent({
           client: umbHttpClient as unknown as Client,
           query: {
             Id: selectedUniqueKey,

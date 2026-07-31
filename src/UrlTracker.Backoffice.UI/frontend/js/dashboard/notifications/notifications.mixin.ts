@@ -1,11 +1,9 @@
-import { ContextConsumer } from '@lit/context';
 import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { umbHttpClient } from '@umbraco-cms/backoffice/http-client';
 import { tryExecute } from '@umbraco-cms/backoffice/resources';
 import { html, nothing } from 'lit';
-import { getUmbracoManagementApiV1UrlTrackerNotificationsByAlias } from '../../../../api-client';
-import type { Client } from '../../../../api-client/client/types.gen';
-import { INotificationService, notificationServiceContext } from '../../context/notificationservice.context';
+import { getUrlTrackerNotificationsByAlias } from '../../api-client';
+import type { Client } from '../../api-client/client/types.gen';
 import { LitElementConstructor } from '../../util/tools/litelementconstructor';
 import { ITranslatedNotification, ITranslatedNotificationCollection } from './notification';
 import './notification.lit';
@@ -26,14 +24,6 @@ export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructo
       this.requestUpdate('notifications');
     }
 
-    private _notificationServiceConsumer = new ContextConsumer(this, {
-      context: notificationServiceContext,
-    });
-
-    protected get notificationService(): INotificationService | undefined {
-      return this._notificationServiceConsumer.value;
-    }
-
     private async onNotificationClosed(event: CustomEvent<ITranslatedNotification>) {
       const seenNotifications = localStorage.getItem('seenNotifications');
       if (seenNotifications) {
@@ -49,7 +39,7 @@ export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructo
     protected async updateNotifications(alias: string): Promise<void> {
       const response = await tryExecute(
         this,
-        getUmbracoManagementApiV1UrlTrackerNotificationsByAlias({
+        getUrlTrackerNotificationsByAlias({
           client: umbHttpClient as unknown as Client,
           path: {
             alias: alias,
@@ -62,21 +52,6 @@ export function UrlTrackerNotificationWrapper<TBase extends LitElementConstructo
       }
 
       const notifications = response.data;
-
-      //TODO: check token replace
-      //   const [titleTranslations, bodyTranslations] = await Promise.all([
-      //     // localize all titles and descriptions
-      //     localizationService.localizeMany(notifications.map((n) => n.translatableTitleComponent)),
-      //     localizationService.localizeMany(notifications.map((n) => n.translatableBodyComponent)),
-      //   ]);
-
-      //   const normalizedNotifications = {
-      //     notifications: notifications.map<ITranslatedNotification>((n, i) => ({
-      //       id: n.id,
-      //       title: localizationService.tokenReplace(titleTranslations[i], n.titleArguments),
-      //       body: localizationService.tokenReplace(bodyTranslations[i], n.bodyArguments),
-      //     })),
-      //   };
 
       const titleTranslations = notifications
         .map((n) => n.translatableTitleComponent)

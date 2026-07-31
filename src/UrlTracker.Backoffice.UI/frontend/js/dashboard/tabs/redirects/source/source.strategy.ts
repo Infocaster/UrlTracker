@@ -1,5 +1,5 @@
 import { LitElement } from 'lit';
-import type { RedirectResponse } from '../../../../../../api-client/types.gen';
+import type { RedirectResponse } from '../../../../api-client/types.gen';
 import { UnsafeStrategyResolver } from '../../../../util/tools/strategy/strategyresolver';
 
 export interface IRedirectSourceStrategyFactoryParameters {

@@ -3,7 +3,7 @@ import { Chart } from 'chart.js';
 import { LitElement, PropertyValueMap, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
-import type { ReferrerResponse } from '../../../../../api-client/types.gen';
+import type { ReferrerResponse } from '../../../api-client/types.gen';
 
 export const ContentElementTag = 'urltracker-referrers-chart';
 

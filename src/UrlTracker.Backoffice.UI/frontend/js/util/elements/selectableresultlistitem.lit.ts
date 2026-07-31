@@ -1,4 +1,4 @@
-import { UUIBooleanInputEvent } from '@umbraco-ui/uui-boolean-input';
+import { UUIBooleanInputEvent } from '@umbraco-cms/backoffice/external/uui';
 import { css, html, nothing } from 'lit';
 import { UrlTrackerResultListItem } from './resultlistitem.lit';
 

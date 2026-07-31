@@ -1,6 +1,6 @@
 import { LitElement, PropertyValueMap, css, html, nothing } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import type { RedirectRequest } from '../../../../../../api-client/types.gen';
+import type { RedirectRequest } from '../../../../api-client/types.gen';
 import './redirectForce.lit';
 import './redirectIncomingUrl.lit';
 import './redirectOutgoingUrl.lit';

@@ -2,7 +2,7 @@ import { UmbElementMixin } from '@umbraco-cms/backoffice/element-api';
 import { LitElement, PropertyValueMap, css, html, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Ref, createRef, ref } from 'lit/directives/ref.js';
-import type { EntityWithIdRequest1, RecommendationResponse } from '../../../../api-client/types.gen';
+import type { EntityWithIdRequestOfUpdateRecommendationRequest, RecommendationResponse } from '../../api-client/types.gen';
 import { UrlTrackerPagination } from '../../util/elements/inputs/pagination.lit';
 import { UrlTrackerNotificationWrapper } from '../notifications/notifications.mixin';
 
@@ -15,14 +15,14 @@ import { UMB_NOTIFICATION_CONTEXT } from '@umbraco-cms/backoffice/notification';
 import { tryExecute } from '@umbraco-cms/backoffice/resources';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import { repeat } from 'lit/directives/repeat.js';
-import type { Client } from '../../../../api-client/client/types.gen';
+import type { Client } from '../../api-client/client/types.gen';
 import {
-  getUmbracoManagementApiV1UrlTrackerRecommendations,
-  postUmbracoManagementApiV1UrlTrackerRecommendationsByRecommendationId,
-  postUmbracoManagementApiV1UrlTrackerRecommendationsUpdatebulk,
-} from '../../../../api-client/sdk.gen';
-import type { RedirectRequest } from '../../../../api-client/types.gen';
-import { RecommendationCollectionResponse } from '../../../../api-client/types.gen';
+  getUrlTrackerRecommendations,
+  postUrlTrackerRecommendationsByRecommendationId,
+  postUrlTrackerRecommendationsUpdatebulk,
+} from '../../api-client/sdk.gen';
+import type { RedirectRequest } from '../../api-client/types.gen';
+import { RecommendationCollectionResponse } from '../../api-client/types.gen';
 import { IChangeManager, changeManagerContext } from '../../context/changemanager.context';
 import { RECOMMENDATION_SORT_TYPE, RecommendationSortType } from '../../enums/sortType';
 import { DropdownChangeEvent, IDropdownValue } from '../../util/elements/inputs/dropdown.lit';
@@ -126,7 +126,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     try {
       const { data } = await tryExecute(
         this,
-        getUmbracoManagementApiV1UrlTrackerRecommendations({
+        getUrlTrackerRecommendations({
           client: umbHttpClient as unknown as Client,
           query: {
             Page: page.page,
@@ -190,7 +190,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     try {
       await tryExecute(
         this,
-        postUmbracoManagementApiV1UrlTrackerRecommendationsByRecommendationId({
+        postUrlTrackerRecommendationsByRecommendationId({
           client: umbHttpClient as unknown as Client,
           path: {
             recommendationId: event.detail.id,
@@ -326,7 +326,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
     try {
       const selectedRecommendations =
         this.recommendationCollection?.results.filter((r) => this.selectedItems.some((i) => i === r.id)) || [];
-      const bulkToUpdate: EntityWithIdRequest1[] = selectedRecommendations.map((r) => {
+      const bulkToUpdate: EntityWithIdRequestOfUpdateRecommendationRequest[] = selectedRecommendations.map((r) => {
         return {
           id: r.id,
           data: {
@@ -338,7 +338,7 @@ export class UrlTrackerRecommendationsTab extends UrlTrackerNotificationWrapper(
 
       await tryExecute(
         this,
-        postUmbracoManagementApiV1UrlTrackerRecommendationsUpdatebulk({
+        postUrlTrackerRecommendationsUpdatebulk({
           client: umbHttpClient as unknown as Client,
           body: bulkToUpdate,
         }),

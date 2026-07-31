@@ -7,9 +7,9 @@ import { customElement, state } from 'lit/decorators.js';
 import { ifDefined } from 'lit/directives/if-defined.js';
 import {
   ContentTargetResponse,
-  getUmbracoManagementApiV1UrlTrackerRedirectTargetContent,
-} from '../../../../../../../api-client';
-import type { Client } from '../../../../../../../api-client/client/types.gen';
+  getUrlTrackerRedirectTargetContent,
+} from '../../../../../api-client';
+import type { Client } from '../../../../../api-client/client/types.gen';
 import { IChangeManager, changeManagerContext } from '../../../../../context/changemanager.context';
 import { UrlTrackerRedirectTarget } from '../targetbase.mixin';
 
@@ -81,7 +81,7 @@ export class UrlTrackerContentRedirectTarget extends baseType {
 
       const { data } = await tryExecute(
         this,
-        getUmbracoManagementApiV1UrlTrackerRedirectTargetContent({
+        getUrlTrackerRedirectTargetContent({
           client: umbHttpClient as unknown as Client,
           query: {
             Id: id,
