@@ -214,7 +214,7 @@ namespace UrlTracker.Core.Database
                .LeftJoin<ReferrerDto>(_referrerTableAlias)
                .On<ClientError2ReferrerDto, ReferrerDto>((l, r) => l.Referrer == r.Id, _mostCommonReferrerTableAlias, _referrerTableAlias);
 
-            sql.Where<ClientError2ReferrerDto>(e => clientErrors.Contains(e.ClientError), _occurrancesTableAlias)
+            sql.WhereIn<ClientError2ReferrerDto>(e => e.ClientError, clientErrors, _occurrancesTableAlias)
                .GroupBy<ClientError2ReferrerDto>(_occurrancesTableAlias, e => e.ClientError)
                .Append($", {SqlSyntax.GetQuotedTableName(_referrerTableAlias)}.{SqlSyntax.GetQuotedTableName("url")}");
 
