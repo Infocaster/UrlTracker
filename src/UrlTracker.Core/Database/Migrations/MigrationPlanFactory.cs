@@ -19,7 +19,8 @@ namespace UrlTracker.Core.Database.Migrations
                 .To<M202212111209_PopulateRedactionScores>("3.1")
                 .To<M202406061746_PatchSqlite>("3.2")
                 .To<M202407260819_PostMigrationCorrectValueLength>("3.3")
-                .To<M202407261301_AddAdvancedFlag>("3.4");
+                .To<M202407261301_AddAdvancedFlag>("3.4")
+                .To<M202608151200_RecommendationUrlColumnLength>("3.5");
             // Use ☝️ this path for new migrations
 
             result.From("urlTracker") // support for older db and long route if the url tracker had already been used before
