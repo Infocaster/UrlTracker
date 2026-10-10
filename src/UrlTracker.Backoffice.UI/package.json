@@ -24,7 +24,7 @@
     "@umbraco-ui/uui-icon-registry": "^1.15.0",
     "@umbraco-ui/uui-input": "^1.7.1",
     "@umbraco-ui/uui-pagination": "^1.7.1",
-    "axios": "^1.7.7",
+    "axios": "^1.15.2",
     "chart.js": "^4.4.3",
     "js-cookie": "^3.0.5",
     "lit": "^3.1.3",
